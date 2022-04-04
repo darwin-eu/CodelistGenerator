@@ -1,0 +1,263 @@
+---
+title: "Introduction to CodelistGenerator"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction_to_CodelistGenerator}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Creating a codelist for dementia
+For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain.
+
+## Getting the OMOP CDM vocabularies
+If you do not have ready access to a database with the OMOP CDM, we need to first obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, we can make a vocabulary only database like so:
+
+```{r import vocabularies,  message=FALSE, warning=FALSE}
+library(readr)
+library(DBI)
+library(RSQLite)
+library(here)
+vocab.folder<-Sys.getenv("omop_cdm_vocab_path") # path to directory of unzipped files
+concept<-read_delim(paste0(vocab.folder,"/CONCEPT.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
+concept_relationship<-read_delim(paste0(vocab.folder,"/CONCEPT_RELATIONSHIP.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE) 
+concept_ancestor<-read_delim(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
+concept_synonym<-read_delim(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
+
+db <- dbConnect(RSQLite::SQLite(), here::here("vocab_cdm.sqlite"))
+dbWriteTable(db, "concept", concept, overwrite=TRUE)
+dbWriteTable(db, "concept_relationship", concept_relationship, overwrite=TRUE)
+dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite=TRUE)
+dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
+rm(concept,concept_relationship, concept_ancestor, concept_synonym)
+vocabulary_database_schema<-"main"
+```
+
+The structure of each of these tables is described in detail at: https://ohdsi.github.io/CommonDataModel/cdm53.html#Vocabulary_Tables 
+
+## Codelist from "Dementia" (4182210) and its descendants
+The simplest approach to identifying potential codes is to take a high-level code and include all its descendents. 
+```{r,  message=FALSE, warning=FALSE }
+library(dplyr)
+library(stringr)
+library(DT)
+library(kableExtra)
+
+codes_from_descendants<-tbl(db, sql(paste0("SELECT * FROM ",
+     vocabulary_database_schema,
+     ".concept_ancestor"))) %>% 
+  filter(ancestor_concept_id=="4182210") %>% 
+  select("descendant_concept_id") %>% 
+  rename("concept_id"="descendant_concept_id") %>% 
+  left_join(tbl(db, sql(paste0("SELECT * FROM ",
+     vocabulary_database_schema,
+     ".concept"))))%>%
+  select("concept_id", "concept_name", "domain_id", "vocabulary_id") %>% 
+  collect()
+  
+datatable(codes_from_descendants,
+          rownames=FALSE,
+          options = list(pageLength = 10,
+                         lengthMenu = c(10, 20,50)))
+
+```
+This looks to pick up most relevant codes. But, this approach misses codes that aren´t a descendant of 4182210. For example, codes such as "Wandering due to dementia" (37312577; https://athena.ohdsi.org/search-terms/terms/37312577) and "Anxiety due to dementia" (37312031; https://athena.ohdsi.org/search-terms/terms/37312031) aren´t picked up.
+
+## Generating a candidate codelist using Codelist Generator
+To try and include all such terms that could be included we can use CodelistGenerator.
+
+```{r,  message=FALSE, warning=FALSE }
+library(CodelistGenerator)
+```
+
+First, let's do a simple search for a single keyword of "dementia" without any exclusions, without searching synonyms, and including descendents but not ancestors.
+```{r,  message=FALSE, warning=FALSE, results='hide'  }
+dementia_codes1<-get_candidate_codes(keywords="dementia",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+```{r,  message=FALSE, warning=FALSE }
+datatable(dementia_codes1,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+What is the difference between this codelist and the one from 4182210 and its descendants?
+```{r,  message=FALSE, warning=FALSE }
+code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="4182210 and descendants"), 
+                     dementia_codes1  %>% mutate(type2="CodelistGenerator")) %>% 
+  mutate(type=ifelse(!is.na(type1) & !is.na(type2),
+                     "Both",
+              ifelse(!is.na(type1) & is.na(type2),
+                     "Only 4182210 and descendants",
+              ifelse(is.na(type1) & !is.na(type2),
+                     "Only CodelistGenerator",
+                     NA)))) %>% 
+  select(-c("type1","type2"))
+```
+
+```{r,  message=FALSE, warning=FALSE } 
+kable(code_comparison %>% 
+  group_by(type) %>% 
+  tally())
+```
+
+What are these extra codes picked up by CodelistGenerator?
+```{r,  message=FALSE, warning=FALSE }
+datatable(code_comparison %>% filter(type=="Only CodelistGenerator"),
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+## Options for searching with CodelistGenerator
+Do we pick up any more codes if we add alzheimer as a keyword?
+```{r,  message=FALSE, warning=FALSE, results='hide'  }
+dementia_codes2<-get_candidate_codes(keywords=c("dementia","alzheimer"),
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What extra codes do we pick up?
+```{r,  message=FALSE, warning=FALSE }
+new_codes_1_2<-bind_rows(dementia_codes1, dementia_codes2) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+
+datatable(new_codes_1_2,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+
+Now, we could search synonyms and see if we pick up any extra codes
+```{r,  message=FALSE, warning=FALSE, results='hide'  }
+dementia_codes3<-get_candidate_codes(keywords=c("dementia","alzheimer"),
+                    domains="Condition",
+                    search.synonyms = TRUE,
+                    fuzzy.match = FALSE,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What extra codes do we pick up from searching synonyms?
+```{r,  message=FALSE, warning=FALSE }
+new_codes_2_3<-bind_rows(dementia_codes2, dementia_codes3) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+
+datatable(new_codes_2_3,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+Ok, now let' see what we get from also doing a fuzzy search
+```{r,  message=FALSE, warning=FALSE, results='hide'  }
+dementia_codes4<-get_candidate_codes(keywords=c("dementia","alzheimer"),
+                    domains="Condition",
+                    search.synonyms = TRUE,
+                    fuzzy.match = TRUE,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What extra codes do we pick up?
+```{r,  message=FALSE, warning=FALSE }
+new_codes_3_4<-bind_rows(dementia_codes3, dementia_codes4) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+
+datatable(new_codes_3_4,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+And this is what the candidate codelist now looks like
+```{r,  message=FALSE, warning=FALSE }
+datatable(dementia_codes4,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+
+## Review mappings from source vocabularies
+Perhaps we want to see what ICD10CM codes map to our candidate codelist. We can get these by running
+```{r,  message=FALSE, warning=FALSE }
+icd_mappings<-show_mappings(candidate_codelist=dementia_codes4,
+source_vocabularies="ICD10CM",
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+
+datatable(icd_mappings,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+```{r,  message=FALSE, warning=FALSE }
+read_mappings<-show_mappings(candidate_codelist=dementia_codes4,
+source_vocabularies="Read",
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+
+datatable(read_mappings,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```

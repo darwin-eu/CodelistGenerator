@@ -1,0 +1,28 @@
+Package: CodelistGenerator
+Title: Genrate candidate codelists for the OMOP CDM
+Version: 0.0.0.9000
+Authors@R: 
+    person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-9286-1128"))
+Description: This package is designed to generate a candidate codelist for the OMOP CDM to facilitate phenotyping.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports:
+    checkmate (>= 2.0.0),
+    dplyr (>= 1.0.0),
+    tidyr (>= 1.2.0),
+    stringr (>= 1.4.0),
+    magrittr (>= 2.0.0),
+    rlang (>= 1.0.0),
+    readr (>= 2.1.0),
+    DatabaseConnector (>= 5.0.0),
+    Eunomia (>= 1.0.0),
+    dtplyr (>= 1.0.0)
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
