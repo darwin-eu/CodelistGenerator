@@ -1,0 +1,7 @@
+pandoc: 2.7.2
+pkgdown: 2.0.2
+pkgdown_sha: ~
+articles:
+  Introduction_to_CodelistGenerator: Introduction_to_CodelistGenerator.html
+last_built: 2022-04-04T21:53Z
+
