@@ -5,9 +5,9 @@ devtools::spell_check()
 devtools::test()
 devtools::check()
 
-# load_all()
+# devtools::load_all()
 usethis::use_github_pages()
-
+usethis::use_pkgdown_github_pages()
 
 
 
