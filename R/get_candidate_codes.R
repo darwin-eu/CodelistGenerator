@@ -14,7 +14,7 @@
 #' @param include.descendants Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.
 #' @param include.ancestor Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.
 #' @param db Database connection via DBI::dbConnect()
-#' @param vocabulary_schema Name of database schema with vocab tables
+#' @param vocabulary_database_schema Name of database schema with vocab tables
 #'
 #' @return Dataframe
 #' @importFrom rlang .data

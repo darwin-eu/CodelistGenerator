@@ -2,8 +2,8 @@
 #'
 #' @param candidate_codelist Dataframe
 #' @param source_vocabularies Character vector
-#' @param concept Dataframe
-#' @param concept_relationship Dataframe
+#' @param db Database connection via DBI::dbConnect()
+#' @param vocabulary_database_schema Name of database schema with vocab tables
 #'
 #' @return Dataframe
 #' @export
