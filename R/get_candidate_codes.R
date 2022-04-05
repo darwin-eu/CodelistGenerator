@@ -21,10 +21,13 @@
 #' @export
 #'
 #' @examples
-# # note, Eunomia, used in the example below, does not include a full set of vocabularies. The full set can be downloaded from https://athena.ohdsi.org
+#' ### note, Eunomia, used in the example below, does not include a full set of vocabularies. The full set can be downloaded from https://athena.ohdsi.org
+#'library(Eunomia)
+#'library(DBI)
+#'library(RSQLite)
 #'untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
 #'        exdir =  tempdir())
-#'db <- dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
+#'db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
 #'vocabulary_database_schema<-"main"
 #'get_candidate_codes(keywords="asthma",
 #'                    db=db,
@@ -283,7 +286,7 @@ if(include.ancestor==TRUE){
 print("Getting concepts to include from direct ancestors of identified concepts")
 
 candidate.code.ancestor <- dtplyr::lazy_dt(candidate.codes) %>%
-  left_join( dtplyr::lazy_dt(concept_ancestor  %>%
+   dplyr::left_join( dtplyr::lazy_dt(concept_ancestor  %>%
    dplyr::filter(.data$min_levels_of_separation==1)  %>%
    dplyr::select("ancestor_concept_id")  %>%
    dplyr::rename("concept_id"="ancestor_concept_id") ) ,

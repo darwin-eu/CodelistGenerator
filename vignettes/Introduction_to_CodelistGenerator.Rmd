@@ -37,7 +37,7 @@ concept_ancestor<-read_delim(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv"),
 concept_synonym<-read_delim(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv"),
      "\t", escape_double = FALSE, trim_ws = TRUE)
 
-db <- dbConnect(RSQLite::SQLite(), here::here("vocab_cdm.sqlite"))
+db <- dbConnect(RSQLite::SQLite(), ":memory:")
 dbWriteTable(db, "concept", concept, overwrite=TRUE)
 dbWriteTable(db, "concept_relationship", concept_relationship, overwrite=TRUE)
 dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite=TRUE)
