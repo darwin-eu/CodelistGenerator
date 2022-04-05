@@ -1,5 +1,5 @@
 url: https://oxford-pharmacoepi.github.io/CodelistGenerator/
 template:
   bootstrap: 5
-  bootswatch: simplex
+  bootswatch: flatly
 

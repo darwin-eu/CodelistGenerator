@@ -24,6 +24,7 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
+Remotes: OHDSI/Eunomia
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://oxford-pharmacoepi.github.io/CodelistGenerator/
