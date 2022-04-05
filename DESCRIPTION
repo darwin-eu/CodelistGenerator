@@ -12,6 +12,7 @@ RoxygenNote: 7.1.2
 Imports:
     checkmate (>= 2.0.0),
     dplyr (>= 1.0.0),
+    dbplyr (>= 2.0.0),
     tidyr (>= 1.2.0),
     stringr (>= 1.4.0),
     magrittr (>= 2.0.0),
@@ -23,6 +24,7 @@ Imports:
     RSQLite (>= 2.2.0),
     dtplyr (>= 1.0.0),
     kableExtra (>= 1.0.0),
+    DBI (>= 1.1.0),
     DT
 Suggests: 
     knitr,

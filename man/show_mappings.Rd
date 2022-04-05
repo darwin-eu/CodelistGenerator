@@ -28,16 +28,16 @@ Dataframe
 Show mappings from source vocabularies to standard
 }
 \examples{
-# note, Eunomia, which is used for the example below,
-# does not include a full set of vocabularies.
-# The full set can be downloaded from https://athena.ohdsi.org
+### note, Eunomia, which is used for the example below,
+### does not include a full set of vocabularies.
+### The full set can be downloaded from https://athena.ohdsi.org
 library(Eunomia)
 library(RSQLite)
 library(dplyr)
 library(DBI)
 untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
      exdir =  tempdir())
-db <- dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\\\cdm.sqlite"))
+db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\\\cdm.sqlite"))
 asthma_codes<-get_candidate_codes(keywords="asthma",
                  db=db,
                  vocabulary_database_schema = "main")

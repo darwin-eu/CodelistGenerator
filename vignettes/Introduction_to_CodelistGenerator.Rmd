@@ -22,6 +22,17 @@ For this example we are going to generate a candidate codelist for dementia, onl
 ## Getting the OMOP CDM vocabularies
 If you do not have ready access to a database with the OMOP CDM, we need to first obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, we can make a vocabulary only database like so:
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+vocab.folder<-Sys.getenv("omop_cdm_vocab_path")
+if (any(!file.exists(paste0(vocab.folder,"/CONCEPT.csv")) | 
+        !file.exists(paste0(vocab.folder,"/CONCEPT_RELATIONSHIP.csv")) | 
+        !file.exists(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv")) | 
+        !file.exists(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv")))==TRUE) {
+  knitr::knit_exit()
+}
+```
+
+
 ```{r import vocabularies,  message=FALSE, warning=FALSE}
 library(readr)
 library(DBI)
