@@ -36,7 +36,7 @@ get_candidate_codes(
 
 \item{db}{Database connection via DBI::dbConnect()}
 
-\item{vocabulary_schema}{Name of database schema with vocab tables}
+\item{vocabulary_database_schema}{Name of database schema with vocab tables}
 }
 \value{
 Dataframe
@@ -53,10 +53,6 @@ library(RSQLite)
 untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
        exdir =  tempdir())
 db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\\\cdm.sqlite"))
-vocabulary_database_schema<-"main"
-get_candidate_codes(keywords="asthma",
-                   db=db,
-                   vocabulary_schema = "main")
 get_candidate_codes(keywords="asthma",
                    search.synonyms=TRUE,
                              fuzzy.match=TRUE,

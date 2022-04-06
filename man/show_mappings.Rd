@@ -17,9 +17,9 @@ show_mappings(
 
 \item{source_vocabularies}{Character vector}
 
-\item{concept}{Dataframe}
+\item{db}{Database connection via DBI::dbConnect()}
 
-\item{concept_relationship}{Dataframe}
+\item{vocabulary_database_schema}{Name of database schema with vocab tables}
 }
 \value{
 Dataframe

@@ -9,7 +9,12 @@ editor_options:
   chunk_output_type: console
 ---
 
-
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 # Creating a codelist for dementia
 For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain.
@@ -17,11 +22,18 @@ For this example we are going to generate a candidate codelist for dementia, onl
 ## Getting the OMOP CDM vocabularies
 If you do not have ready access to a database with the OMOP CDM, we need to first obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, we can make a vocabulary only database like so:
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+vocab.folder<-Sys.getenv("omop_cdm_vocab_path")
+if (any(!file.exists(paste0(vocab.folder,"/CONCEPT.csv")) | 
+        !file.exists(paste0(vocab.folder,"/CONCEPT_RELATIONSHIP.csv")) | 
+        !file.exists(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv")) | 
+        !file.exists(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv")))==TRUE) {
+  knitr::knit_exit()
+}
+```
 
 
-
-
-```r
+```{r import vocabularies,  message=FALSE, warning=FALSE}
 library(readr)
 library(DBI)
 library(RSQLite)
@@ -49,8 +61,7 @@ The structure of each of these tables is described in detail at: https://ohdsi.g
 
 ## Codelist from "Dementia" (4182210) and its descendants
 The simplest approach to identifying potential codes is to take a high-level code and include all its descendents. 
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 library(dplyr)
 library(stringr)
 library(DT)
@@ -72,22 +83,19 @@ datatable(codes_from_descendants,
           rownames=FALSE,
           options = list(pageLength = 10,
                          lengthMenu = c(10, 20,50)))
-```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+```
 This looks to pick up most relevant codes. But, this approach misses codes that aren´t a descendant of 4182210. For example, codes such as "Wandering due to dementia" (37312577; https://athena.ohdsi.org/search-terms/terms/37312577) and "Anxiety due to dementia" (37312031; https://athena.ohdsi.org/search-terms/terms/37312031) aren´t picked up.
 
 ## Generating a candidate codelist using Codelist Generator
 To try and include all such terms that could be included we can use CodelistGenerator.
 
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 library(CodelistGenerator)
 ```
 
 First, let's do a simple search for a single keyword of "dementia" without any exclusions, without searching synonyms, and including descendents but not ancestors.
-
-```r
+```{r,  message=FALSE, warning=FALSE, results='hide'  }
 dementia_codes1<-get_candidate_codes(keywords="dementia",
                     domains="Condition",
                     search.synonyms = FALSE,
@@ -99,8 +107,7 @@ dementia_codes1<-get_candidate_codes(keywords="dementia",
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```
 
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 datatable(dementia_codes1,
           rownames=FALSE,
           options = list(
@@ -109,11 +116,8 @@ datatable(dementia_codes1,
 ))
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
-
 What is the difference between this codelist and the one from 4182210 and its descendants?
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="4182210 and descendants"), 
                      dementia_codes1  %>% mutate(type2="CodelistGenerator")) %>% 
   mutate(type=ifelse(!is.na(type1) & !is.na(type2),
@@ -126,35 +130,14 @@ code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="4182210 and
   select(-c("type1","type2"))
 ```
 
-
-```r
+```{r,  message=FALSE, warning=FALSE } 
 kable(code_comparison %>% 
   group_by(type) %>% 
   tally())
 ```
 
-<table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> type </th>
-   <th style="text-align:right;"> n </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> Both </td>
-   <td style="text-align:right;"> 139 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Only CodelistGenerator </td>
-   <td style="text-align:right;"> 37 </td>
-  </tr>
-</tbody>
-</table>
-
 What are these extra codes picked up by CodelistGenerator?
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 datatable(code_comparison %>% filter(type=="Only CodelistGenerator"),
           rownames=FALSE,
           options = list(
@@ -163,12 +146,9 @@ datatable(code_comparison %>% filter(type=="Only CodelistGenerator"),
 ))
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
-
 ## Options for searching with CodelistGenerator
 Do we pick up any more codes if we add alzheimer as a keyword?
-
-```r
+```{r,  message=FALSE, warning=FALSE, results='hide'  }
 dementia_codes2<-get_candidate_codes(keywords=c("dementia","alzheimer"),
                     domains="Condition",
                     search.synonyms = FALSE,
@@ -181,8 +161,7 @@ dementia_codes2<-get_candidate_codes(keywords=c("dementia","alzheimer"),
 ```
 
 What extra codes do we pick up?
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 new_codes_1_2<-bind_rows(dementia_codes1, dementia_codes2) %>% 
   group_by(concept_id) %>% 
   mutate(seq=length(concept_name)) %>%
@@ -196,12 +175,9 @@ datatable(new_codes_1_2,
 ))
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png)
-
 
 Now, we could search synonyms and see if we pick up any extra codes
-
-```r
+```{r,  message=FALSE, warning=FALSE, results='hide'  }
 dementia_codes3<-get_candidate_codes(keywords=c("dementia","alzheimer"),
                     domains="Condition",
                     search.synonyms = TRUE,
@@ -214,8 +190,7 @@ dementia_codes3<-get_candidate_codes(keywords=c("dementia","alzheimer"),
 ```
 
 What extra codes do we pick up from searching synonyms?
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 new_codes_2_3<-bind_rows(dementia_codes2, dementia_codes3) %>% 
   group_by(concept_id) %>% 
   mutate(seq=length(concept_name)) %>%
@@ -229,11 +204,8 @@ datatable(new_codes_2_3,
 ))
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png)
-
 Ok, now let' see what we get from also doing a fuzzy search
-
-```r
+```{r,  message=FALSE, warning=FALSE, results='hide'  }
 dementia_codes4<-get_candidate_codes(keywords=c("dementia","alzheimer"),
                     domains="Condition",
                     search.synonyms = TRUE,
@@ -246,8 +218,7 @@ dementia_codes4<-get_candidate_codes(keywords=c("dementia","alzheimer"),
 ```
 
 What extra codes do we pick up?
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 new_codes_3_4<-bind_rows(dementia_codes3, dementia_codes4) %>% 
   group_by(concept_id) %>% 
   mutate(seq=length(concept_name)) %>%
@@ -261,11 +232,8 @@ datatable(new_codes_3_4,
 ))
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
-
 And this is what the candidate codelist now looks like
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 datatable(dementia_codes4,
           rownames=FALSE,
           options = list(
@@ -274,13 +242,10 @@ datatable(dementia_codes4,
 ))
 ```
 
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png)
-
 
 ## Review mappings from source vocabularies
 Perhaps we want to see what ICD10CM codes map to our candidate codelist. We can get these by running
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 icd_mappings<-show_mappings(candidate_codelist=dementia_codes4,
 source_vocabularies="ICD10CM",
                     db=db,
@@ -294,10 +259,7 @@ datatable(icd_mappings,
 ))
 ```
 
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png)
-
-
-```r
+```{r,  message=FALSE, warning=FALSE }
 read_mappings<-show_mappings(candidate_codelist=dementia_codes4,
 source_vocabularies="Read",
                     db=db,
@@ -310,5 +272,3 @@ datatable(read_mappings,
   lengthMenu = c(10, 20,50)
 ))
 ```
-
-![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png)
