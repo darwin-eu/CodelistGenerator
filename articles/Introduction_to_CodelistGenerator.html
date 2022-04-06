@@ -77,6 +77,271 @@
 <h3 id="getting-the-omop-cdm-vocabularies">Getting the OMOP CDM vocabularies<a class="anchor" aria-label="anchor" href="#getting-the-omop-cdm-vocabularies"></a>
 </h3>
 <p>If you do not have ready access to a database with the OMOP CDM, we need to first obtain the OMOP CDM vocabularies from <a href="https://athena.ohdsi.org" class="external-link uri">https://athena.ohdsi.org</a>. Once these are downloaded, we can make a vocabulary only database like so:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org" class="external-link">RSQLite</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/" class="external-link">here</a></span><span class="op">)</span>
+<span class="va">vocab.folder</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"omop_cdm_vocab_path"</span><span class="op">)</span> <span class="co"># path to directory of unzipped files</span>
+<span class="va">concept</span><span class="op">&lt;-</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/CONCEPT.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">concept_relationship</span><span class="op">&lt;-</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/CONCEPT_RELATIONSHIP.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> 
+<span class="va">concept_ancestor</span><span class="op">&lt;-</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/CONCEPT_ANCESTOR.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">concept_synonym</span><span class="op">&lt;-</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/CONCEPT_SYNONYM.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">":memory:"</span><span class="op">)</span>
+<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbWriteTable.html" class="external-link">dbWriteTable</a></span><span class="op">(</span><span class="va">db</span>, <span class="st">"concept"</span>, <span class="va">concept</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbWriteTable.html" class="external-link">dbWriteTable</a></span><span class="op">(</span><span class="va">db</span>, <span class="st">"concept_relationship"</span>, <span class="va">concept_relationship</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbWriteTable.html" class="external-link">dbWriteTable</a></span><span class="op">(</span><span class="va">db</span>, <span class="st">"concept_ancestor"</span>, <span class="va">concept_ancestor</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://dbi.r-dbi.org/reference/dbWriteTable.html" class="external-link">dbWriteTable</a></span><span class="op">(</span><span class="va">db</span>, <span class="st">"concept_synonym"</span>, <span class="va">concept_synonym</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">concept</span>,<span class="va">concept_relationship</span>, <span class="va">concept_ancestor</span>, <span class="va">concept_synonym</span><span class="op">)</span>
+<span class="va">vocabulary_database_schema</span><span class="op">&lt;-</span><span class="st">"main"</span></code></pre></div>
+<p>The structure of each of these tables is described in detail at: <a href="https://ohdsi.github.io/CommonDataModel/cdm53.html#Vocabulary_Tables" class="external-link uri">https://ohdsi.github.io/CommonDataModel/cdm53.html#Vocabulary_Tables</a></p>
+</div>
+<div class="section level3">
+<h3 id="codelist-from-dementia-4182210-and-its-descendants">Codelist from “Dementia” (4182210) and its descendants<a class="anchor" aria-label="anchor" href="#codelist-from-dementia-4182210-and-its-descendants"></a>
+</h3>
+<p>The simplest approach to identifying potential codes is to take a high-level code and include all its descendents.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/DT" class="external-link">DT</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span>
+
+<span class="va">codes_from_descendants</span><span class="op">&lt;-</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">db</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/sql.html" class="external-link">sql</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"SELECT * FROM "</span>,
+     <span class="va">vocabulary_database_schema</span>,
+     <span class="st">".concept_ancestor"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ancestor_concept_id</span><span class="op">==</span><span class="st">"4182210"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="st">"descendant_concept_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span><span class="st">"concept_id"</span><span class="op">=</span><span class="st">"descendant_concept_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">db</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/sql.html" class="external-link">sql</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"SELECT * FROM "</span>,
+     <span class="va">vocabulary_database_schema</span>,
+     <span class="st">".concept"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="st">"concept_id"</span>, <span class="st">"concept_name"</span>, <span class="st">"domain_id"</span>, <span class="st">"vocabulary_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span>
+  
+<span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">codes_from_descendants</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>pageLength <span class="op">=</span> <span class="fl">10</span>,
+                         lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="figure/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3"> This looks to pick up most relevant codes. But, this approach misses codes that aren´t a descendant of 4182210. For example, codes such as “Wandering due to dementia” (37312577; <a href="https://athena.ohdsi.org/search-terms/terms/37312577" class="external-link uri">https://athena.ohdsi.org/search-terms/terms/37312577</a>) and “Anxiety due to dementia” (37312031; <a href="https://athena.ohdsi.org/search-terms/terms/37312031" class="external-link uri">https://athena.ohdsi.org/search-terms/terms/37312031</a>) aren´t picked up.</p>
+</div>
+<div class="section level3">
+<h3 id="generating-a-candidate-codelist-using-codelist-generator">Generating a candidate codelist using Codelist Generator<a class="anchor" aria-label="anchor" href="#generating-a-candidate-codelist-using-codelist-generator"></a>
+</h3>
+<p>To try and include all such terms that could be included we can use CodelistGenerator.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://oxford-pharmacoepi.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></code></pre></div>
+<p>First, let’s do a simple search for a single keyword of “dementia” without any exclusions, without searching synonyms, and including descendents but not ancestors.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dementia_codes1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"dementia"</span>,
+                    domains<span class="op">=</span><span class="st">"Condition"</span>,
+                    search.synonyms <span class="op">=</span> <span class="cn">FALSE</span>,
+                    fuzzy.match <span class="op">=</span> <span class="cn">FALSE</span>,
+                    exclude <span class="op">=</span> <span class="cn">NULL</span>,
+                    include.descendants <span class="op">=</span> <span class="cn">TRUE</span>,
+                    include.ancestor <span class="op">=</span> <span class="cn">FALSE</span>,
+                    db<span class="op">=</span><span class="va">db</span>,
+                    vocabulary_database_schema <span class="op">=</span>  <span class="va">vocabulary_database_schema</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">dementia_codes1</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  pageLength <span class="op">=</span> <span class="fl">10</span>,
+  lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span>
+<span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="figure/unnamed-chunk-6-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-6</p>
+</div>
+<p>What is the difference between this codelist and the one from 4182210 and its descendants?</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">code_comparison</span><span class="op">&lt;-</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">full_join</a></span><span class="op">(</span><span class="va">codes_from_descendants</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>type1<span class="op">=</span><span class="st">"4182210 and descendants"</span><span class="op">)</span>, 
+                     <span class="va">dementia_codes1</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>type2<span class="op">=</span><span class="st">"CodelistGenerator"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>type<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">type1</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">type2</span><span class="op">)</span>,
+                     <span class="st">"Both"</span>,
+              <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">type1</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">type2</span><span class="op">)</span>,
+                     <span class="st">"Only 4182210 and descendants"</span>,
+              <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">type1</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">type2</span><span class="op">)</span>,
+                     <span class="st">"Only CodelistGenerator"</span>,
+                     <span class="cn">NA</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"type1"</span>,<span class="st">"type2"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">code_comparison</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">type</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr>
+<th style="text-align:left;">
+type
+</th>
+<th style="text-align:right;">
+n
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Both
+</td>
+<td style="text-align:right;">
+139
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Only CodelistGenerator
+</td>
+<td style="text-align:right;">
+37
+</td>
+</tr>
+</tbody>
+</table>
+<p>What are these extra codes picked up by CodelistGenerator?</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">code_comparison</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">type</span><span class="op">==</span><span class="st">"Only CodelistGenerator"</span><span class="op">)</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  pageLength <span class="op">=</span> <span class="fl">10</span>,
+  lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span>
+<span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="figure/unnamed-chunk-9-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-9</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="options-for-searching-with-codelistgenerator">Options for searching with CodelistGenerator<a class="anchor" aria-label="anchor" href="#options-for-searching-with-codelistgenerator"></a>
+</h3>
+<p>Do we pick up any more codes if we add alzheimer as a keyword?</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dementia_codes2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dementia"</span>,<span class="st">"alzheimer"</span><span class="op">)</span>,
+                    domains<span class="op">=</span><span class="st">"Condition"</span>,
+                    search.synonyms <span class="op">=</span> <span class="cn">FALSE</span>,
+                    fuzzy.match <span class="op">=</span> <span class="cn">FALSE</span>,
+                    exclude <span class="op">=</span> <span class="cn">NULL</span>,
+                    include.descendants <span class="op">=</span> <span class="cn">TRUE</span>,
+                    include.ancestor <span class="op">=</span> <span class="cn">FALSE</span>,
+                    db<span class="op">=</span><span class="va">db</span>,
+                    vocabulary_database_schema <span class="op">=</span>  <span class="va">vocabulary_database_schema</span><span class="op">)</span></code></pre></div>
+<p>What extra codes do we pick up?</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">new_codes_1_2</span><span class="op">&lt;-</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">dementia_codes1</span>, <span class="va">dementia_codes2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">concept_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>seq<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">concept_name</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">seq</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">new_codes_1_2</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  pageLength <span class="op">=</span> <span class="fl">10</span>,
+  lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span>
+<span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="figure/unnamed-chunk-11-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-11</p>
+</div>
+<p>Now, we could search synonyms and see if we pick up any extra codes</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dementia_codes3</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dementia"</span>,<span class="st">"alzheimer"</span><span class="op">)</span>,
+                    domains<span class="op">=</span><span class="st">"Condition"</span>,
+                    search.synonyms <span class="op">=</span> <span class="cn">TRUE</span>,
+                    fuzzy.match <span class="op">=</span> <span class="cn">FALSE</span>,
+                    exclude <span class="op">=</span> <span class="cn">NULL</span>,
+                    include.descendants <span class="op">=</span> <span class="cn">TRUE</span>,
+                    include.ancestor <span class="op">=</span> <span class="cn">FALSE</span>,
+                    db<span class="op">=</span><span class="va">db</span>,
+                    vocabulary_database_schema <span class="op">=</span>  <span class="va">vocabulary_database_schema</span><span class="op">)</span></code></pre></div>
+<p>What extra codes do we pick up from searching synonyms?</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">new_codes_2_3</span><span class="op">&lt;-</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">dementia_codes2</span>, <span class="va">dementia_codes3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">concept_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>seq<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">concept_name</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">seq</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">new_codes_2_3</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  pageLength <span class="op">=</span> <span class="fl">10</span>,
+  lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span>
+<span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="figure/unnamed-chunk-13-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-13</p>
+</div>
+<p>Ok, now let’ see what we get from also doing a fuzzy search</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dementia_codes4</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dementia"</span>,<span class="st">"alzheimer"</span><span class="op">)</span>,
+                    domains<span class="op">=</span><span class="st">"Condition"</span>,
+                    search.synonyms <span class="op">=</span> <span class="cn">TRUE</span>,
+                    fuzzy.match <span class="op">=</span> <span class="cn">TRUE</span>,
+                    exclude <span class="op">=</span> <span class="cn">NULL</span>,
+                    include.descendants <span class="op">=</span> <span class="cn">TRUE</span>,
+                    include.ancestor <span class="op">=</span> <span class="cn">FALSE</span>,
+                    db<span class="op">=</span><span class="va">db</span>,
+                    vocabulary_database_schema <span class="op">=</span>  <span class="va">vocabulary_database_schema</span><span class="op">)</span></code></pre></div>
+<p>What extra codes do we pick up?</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">new_codes_3_4</span><span class="op">&lt;-</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">dementia_codes3</span>, <span class="va">dementia_codes4</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">concept_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>seq<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">concept_name</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">seq</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">new_codes_3_4</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  pageLength <span class="op">=</span> <span class="fl">10</span>,
+  lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span>
+<span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="figure/unnamed-chunk-15-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-15</p>
+</div>
+<p>And this is what the candidate codelist now looks like</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">dementia_codes4</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  pageLength <span class="op">=</span> <span class="fl">10</span>,
+  lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span>
+<span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="figure/unnamed-chunk-16-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-16</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="review-mappings-from-source-vocabularies">Review mappings from source vocabularies<a class="anchor" aria-label="anchor" href="#review-mappings-from-source-vocabularies"></a>
+</h3>
+<p>Perhaps we want to see what ICD10CM codes map to our candidate codelist. We can get these by running</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">icd_mappings</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/show_mappings.html">show_mappings</a></span><span class="op">(</span>candidate_codelist<span class="op">=</span><span class="va">dementia_codes4</span>,
+source_vocabularies<span class="op">=</span><span class="st">"ICD10CM"</span>,
+                    db<span class="op">=</span><span class="va">db</span>,
+                    vocabulary_database_schema <span class="op">=</span>  <span class="va">vocabulary_database_schema</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">icd_mappings</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  pageLength <span class="op">=</span> <span class="fl">10</span>,
+  lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span>
+<span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="figure/unnamed-chunk-17-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-17</p>
+</div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">read_mappings</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/show_mappings.html">show_mappings</a></span><span class="op">(</span>candidate_codelist<span class="op">=</span><span class="va">dementia_codes4</span>,
+source_vocabularies<span class="op">=</span><span class="st">"Read"</span>,
+                    db<span class="op">=</span><span class="va">db</span>,
+                    vocabulary_database_schema <span class="op">=</span>  <span class="va">vocabulary_database_schema</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span><span class="va">read_mappings</span>,
+          rownames<span class="op">=</span><span class="cn">FALSE</span>,
+          options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  pageLength <span class="op">=</span> <span class="fl">10</span>,
+  lengthMenu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">20</span>,<span class="fl">50</span><span class="op">)</span>
+<span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="figure/unnamed-chunk-18-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-18</p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
