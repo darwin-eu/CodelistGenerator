@@ -24,9 +24,8 @@ remotes::install_github("oxford-pharmacoepi/CodelistGenerator")
 
 ## Example
 
-# Note, Eunomia, used in the example below, does not include a full set of vocabularies.
-
 ``` r
+# Note, Eunomia, used in the example below, does not include a full set of vocabularies. 
 library(CodelistGenerator)
 library(dplyr)
 library(Eunomia)
