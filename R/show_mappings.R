@@ -66,7 +66,7 @@ mapped.codes<- concept_db %>%
    dplyr::collect()
 
 mapped.codes<-mapped.codes %>%
-  dplyr::select("concept_id_1", "concept_id", "concept_name", "concept_code")
+  dplyr::select("concept_id_1", "concept_id", "concept_name", "concept_code", "vocabulary_id")
 
 mapped.codes<-mapped.codes %>%
   dplyr::select("concept_id_1")%>%
@@ -81,7 +81,8 @@ mapped.codes<-mapped.codes %>%
   dplyr::rename("Standard concept_id (mapped to)"="concept_id_1") %>%
   dplyr::rename("Source concept_id (mapped from)"="concept_id") %>%
   dplyr::rename("Source code"="concept_code") %>%
-  dplyr::rename("Source name"="concept_name")
+  dplyr::rename("Source name"="concept_name")%>%
+  dplyr::rename("Vocabulary"="vocabulary_id")
 
 mapped.codes
 }
