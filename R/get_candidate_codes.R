@@ -21,7 +21,8 @@
 #' @export
 #'
 #' @examples
-#' ### note, Eunomia, used in the example below, does not include a full set of vocabularies. The full set can be downloaded from https://athena.ohdsi.org
+#' ### note, Eunomia, used in the example below, does not include a full set of vocabularies.
+#' ### The full set can be downloaded from https://athena.ohdsi.org
 #'library(Eunomia)
 #'library(DBI)
 #'library(RSQLite)

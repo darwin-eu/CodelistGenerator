@@ -9,10 +9,6 @@ devtools::check()
 usethis::use_github_pages()
 usethis::use_pkgdown_github_pages()
 
-# render precomputed vignettes
-knitr::knit("vignettes/Introduction_to_CodelistGenerator.Rmd.to.precompute",
-            output = "vignettes/Introduction_to_CodelistGenerator.Rmd")
-
 # usethis::use_vignette("Introduction_to_CodelistGenerator")
 
 # usethis::use_version()
