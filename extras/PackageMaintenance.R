@@ -30,7 +30,7 @@ usethis::use_pkgdown_github_pages()
 #
 # use_readme_rmd()
 #
-# load_all()
+# devtools::load_all()
 
 
 # data for vignettes -----
@@ -64,7 +64,7 @@ library(dplyr)
 library(stringr)
 library(DT)
 library(kableExtra)
-library(CodelistGenerator)
+devtools::load_all()
 
 codes_from_descendants<-tbl(db, sql(paste0("SELECT * FROM ",
      vocabulary_database_schema,

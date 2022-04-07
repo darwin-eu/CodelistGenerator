@@ -74,7 +74,8 @@ mapped.codes<-mapped.codes %>%
   dplyr::left_join(concept_db %>%
               dplyr::filter(.data$concept_id %in% !!mapped.codes$concept_id_1) %>%
               dplyr::collect())%>%
-  dplyr::select("concept_id", "concept_name") %>%
+  dplyr::select("concept_id", "concept_name", "vocabulary_id") %>%
+  dplyr::rename("Standard vocabulary"="vocabulary_id") %>%
   dplyr::rename("concept_id_1"="concept_id") %>%
   dplyr::rename("Standard concept_id name"="concept_name") %>%
   dplyr::full_join(mapped.codes) %>%
@@ -82,7 +83,7 @@ mapped.codes<-mapped.codes %>%
   dplyr::rename("Source concept_id (mapped from)"="concept_id") %>%
   dplyr::rename("Source code"="concept_code") %>%
   dplyr::rename("Source name"="concept_name")%>%
-  dplyr::rename("Vocabulary"="vocabulary_id")
+  dplyr::rename("Source vocabulary"="vocabulary_id")
 
 mapped.codes
 }
