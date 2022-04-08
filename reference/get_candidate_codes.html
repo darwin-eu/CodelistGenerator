@@ -60,6 +60,7 @@ using the OMOP CDM.</p>
   exclude <span class="op">=</span> <span class="cn">NULL</span>,
   include.descendants <span class="op">=</span> <span class="cn">TRUE</span>,
   include.ancestor <span class="op">=</span> <span class="cn">FALSE</span>,
+  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
   <span class="va">db</span>,
   <span class="va">vocabulary_database_schema</span>
 <span class="op">)</span></code></pre></div>
@@ -83,6 +84,8 @@ using the OMOP CDM.</p>
 <dd><p>Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.</p></dd>
 <dt>include.ancestor</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.</p></dd>
+<dt>verbose</dt>
+<dd><p>Either TRUE or FALSE. If TRUE, progress will be printed.</p></dd>
 <dt>db</dt>
 <dd><p>Database connection via DBI::dbConnect()</p></dd>
 <dt>vocabulary_database_schema</dt>
@@ -95,7 +98,8 @@ using the OMOP CDM.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">### note, Eunomia, used in the example below, does not include a full set of vocabularies. The full set can be downloaded from https://athena.ohdsi.org</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">### note, Eunomia, used in the example below, does not include a full set of vocabularies.</span></span>
+<span class="r-in"><span class="co">### The full set can be downloaded from https://athena.ohdsi.org</span></span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/OHDSI/Eunomia" class="external-link">Eunomia</a></span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: DatabaseConnector</span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span></span>
