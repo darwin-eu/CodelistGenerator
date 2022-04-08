@@ -70,17 +70,19 @@ using the OMOP CDM.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>keywords</dt>
-<dd><p>Character vector of words to search for. Where more than one word is given (e.g. "knee osteoarthritis"), all words will be identified but can be in different positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
+<dd><p>Character vector of words to search for. Where more than one word is given (e.g. "knee osteoarthritis"),
+all combinations of those words should be identified
+positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
 <dt>domains</dt>
-<dd><p>Character vector with one or more of the OMOP CDM domain (e.g. "Condition").</p></dd>
+<dd><p>Character vector with one or more of the OMOP CDM domain.</p></dd>
 <dt>search.synonyms</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.</p></dd>
 <dt>fuzzy.match</dt>
-<dd><p>Either TRUE or FALSE. If TRUE the fuzzy matches will be used, with approximate matches identified.</p></dd>
+<dd><p>Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.</p></dd>
 <dt>fuzzy.match.max.distance</dt>
 <dd><p>The max.distance parmeter for fuzzy matching (see ??base::agrep for further details).</p></dd>
 <dt>exclude</dt>
-<dd><p>Character vector of words to search for to identify concepts to exclude.</p></dd>
+<dd><p>Character vector of words to identify concepts to exclude.</p></dd>
 <dt>include.descendants</dt>
 <dd><p>Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.</p></dd>
 <dt>include.ancestor</dt>
