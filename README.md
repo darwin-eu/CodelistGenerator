@@ -37,11 +37,6 @@ db <- dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
 get_candidate_codes(keywords="asthma",
                     db=db,
                     vocabulary_database_schema = "main")
-#> [1] "Limiting to potential concepts of interest (database side)"
-#> [1] "Bringing filtered tables into memory"
-#> [1] "Getting concepts to include from exact matches"
-#> [1] "Getting concepts to include from descendants of identified concepts"
-#> [1] "Getting candidate codelist took 0 minutes and 1 seconds"
 #> # A tibble: 3 x 4
 #>   concept_id concept_name     domain_id vocabulary_id
 #>        <dbl> <chr>            <chr>     <chr>        

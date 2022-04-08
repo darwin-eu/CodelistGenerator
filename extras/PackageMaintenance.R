@@ -11,6 +11,7 @@ devtools::check()
 # usethis::use_pkgdown_github_pages()
 
 # usethis::use_vignette("Introduction_to_CodelistGenerator")
+# usethis::use_vignette("Options_for_CodelistGenerator")
 
 # usethis::use_version()
 
@@ -67,7 +68,7 @@ dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
 rm(concept,concept_relationship, concept_ancestor, concept_synonym)
 vocabulary_database_schema<-"main"
 
-
+# for intro vignette
 codes_from_descendants<-tbl(db, sql(paste0("SELECT * FROM ",
      vocabulary_database_schema,
      ".concept_ancestor"))) %>%
@@ -122,5 +123,107 @@ saveRDS(read_mappings,
         here("vignettes","intro_data_05.RData"))
 
 
+# for options vignette
+oa_codes1<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    exclude = NULL,
+                    include.descendants = FALSE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(oa_codes1,
+        here("vignettes","options_data_01.RData"))
 
+oa_codes2<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(oa_codes2,
+        here("vignettes","options_data_02.RData"))
 
+oa_codes3<-get_candidate_codes(keywords="osteoarthritis",
+                    domains=c("Condition","Observation"),
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    fuzzy.match.max.distance=0.1,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(oa_codes3,
+        here("vignettes","options_data_03.RData"))
+
+oa_codes4<-get_candidate_codes(keywords="osteoarthritis",
+                    domains=c("Condition","Observation"),
+                    search.synonyms = TRUE,
+                    fuzzy.match = FALSE,
+                    fuzzy.match.max.distance=0.1,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(oa_codes4,
+        here("vignettes","options_data_04.RData"))
+
+oa_codes5<-get_candidate_codes(keywords="osteoarthritis",
+                    domains=c("Condition","Observation"),
+                    search.synonyms = TRUE,
+                    fuzzy.match = TRUE,
+                    fuzzy.match.max.distance=0.1,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(oa_codes4,
+        here("vignettes","options_data_04.RData"))
+
+oa_codes5<-get_candidate_codes(keywords="osteoarthritis",
+                    domains=c("Condition","Observation"),
+                    search.synonyms = TRUE,
+                    fuzzy.match = TRUE,
+                    fuzzy.match.max.distance=0.2,
+                    exclude = NULL,
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(oa_codes5,
+        here("vignettes","options_data_05.RData"))
+
+oa_codes6<-get_candidate_codes(keywords="osteoarthritis",
+                    domains=c("Condition"),
+                    search.synonyms = TRUE,
+                    fuzzy.match = TRUE,
+                    fuzzy.match.max.distance=0.2,
+                    exclude = c("shoulder", "wrist", "ankle",
+                                "post-traumatic"),
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(oa_codes6,
+        here("vignettes","options_data_05.RData"))
+
+oa_codes6<-get_candidate_codes(keywords="osteoarthritis",
+                    domains=c("Condition"),
+                    search.synonyms = TRUE,
+                    fuzzy.match = TRUE,
+                    fuzzy.match.max.distance=0.2,
+                    exclude = c("shoulder", "wrist", "ankle",
+                                "post-traumatic"),
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(oa_codes6,
+        here("vignettes","options_data_05.RData"))

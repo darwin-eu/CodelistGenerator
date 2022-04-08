@@ -1,0 +1,87 @@
+---
+title: "Options for CodelistGenerator"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Options_for_CodelistGenerator}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+library(here)
+library(readr)
+library(DBI)
+library(RSQLite)
+library(here)
+library(dplyr)
+library(stringr)
+library(DT)
+library(kableExtra)
+library(CodelistGenerator)
+```
+
+
+# Creating a codelist for osteoarthritis
+For this example we are going to generate a candidate codelist for osteoarthritis. 
+
+# Set up 
+```{r, eval=FALSE}
+library(readr)
+library(DBI)
+library(RSQLite)
+library(here)
+```
+
+```{r, eval=FALSE}
+# postgres database connection details
+server_dbi<-Sys.getenv("SERVER_DBI_FEB22")
+user<-Sys.getenv("DB_USER_FEB22")
+password<- Sys.getenv("DB_PASSWORD_FEB22")
+port<-Sys.getenv("DB_PORT_FEB22")
+host<-Sys.getenv("DB_HOST_FEB22")
+
+db <- dbConnect(RPostgres::Postgres(),
+                dbname = server_dbi,
+                port = port,
+                host = host,
+                user = user,
+                password = password)
+
+# name of vocabulary schema
+vocabulary_database_schema<-"omop21t2_cmbd"
+```
+
+
+# Search strategies
+# Condition domain, without searching synonyms, fuzzy match, exclusions, including descendeants or ancestor
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+oa_codes1<-readRDS(here("vignettes","options_data_01.RData"))
+```
+
+```{r, eval=FALSE}
+oa_codes1<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    exclude = NULL,
+                    include.descendants = FALSE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+```{r,  message=FALSE, warning=FALSE }  
+datatable(oa_codes1,
+          options = list(pageLength = 10,
+                         lengthMenu = c(10, 20,250)))
+
+```
