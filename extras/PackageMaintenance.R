@@ -128,7 +128,8 @@ oa_codes1<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
                     search.synonyms = FALSE,
                     fuzzy.match = FALSE,
-                    exclude = NULL,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
                     include.descendants = FALSE,
                     include.ancestor = FALSE,
                     db=db,
@@ -136,11 +137,13 @@ oa_codes1<-get_candidate_codes(keywords="osteoarthritis",
 saveRDS(oa_codes1,
         here("vignettes","options_data_01.RData"))
 
+# include desc
 oa_codes2<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
                     search.synonyms = FALSE,
                     fuzzy.match = FALSE,
-                    exclude = NULL,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
                     include.descendants = TRUE,
                     include.ancestor = FALSE,
                     db=db,
@@ -148,82 +151,77 @@ oa_codes2<-get_candidate_codes(keywords="osteoarthritis",
 saveRDS(oa_codes2,
         here("vignettes","options_data_02.RData"))
 
+# include obs
 oa_codes3<-get_candidate_codes(keywords="osteoarthritis",
                     domains=c("Condition","Observation"),
                     search.synonyms = FALSE,
                     fuzzy.match = FALSE,
                     fuzzy.match.max.distance=0.1,
-                    exclude = NULL,
-                    include.descendants = TRUE,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = FALSE,
                     include.ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 saveRDS(oa_codes3,
         here("vignettes","options_data_03.RData"))
 
+# search syn
 oa_codes4<-get_candidate_codes(keywords="osteoarthritis",
-                    domains=c("Condition","Observation"),
+                    domains="Condition",
                     search.synonyms = TRUE,
                     fuzzy.match = FALSE,
                     fuzzy.match.max.distance=0.1,
-                    exclude = NULL,
-                    include.descendants = TRUE,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = FALSE,
                     include.ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 saveRDS(oa_codes4,
         here("vignettes","options_data_04.RData"))
 
+# fuzzy search
 oa_codes5<-get_candidate_codes(keywords="osteoarthritis",
-                    domains=c("Condition","Observation"),
-                    search.synonyms = TRUE,
+                    domains="Condition",
+                    search.synonyms = FALSE,
                     fuzzy.match = TRUE,
                     fuzzy.match.max.distance=0.1,
-                    exclude = NULL,
-                    include.descendants = TRUE,
-                    include.ancestor = FALSE,
-                    db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
-saveRDS(oa_codes4,
-        here("vignettes","options_data_04.RData"))
-
-oa_codes5<-get_candidate_codes(keywords="osteoarthritis",
-                    domains=c("Condition","Observation"),
-                    search.synonyms = TRUE,
-                    fuzzy.match = TRUE,
-                    fuzzy.match.max.distance=0.2,
-                    exclude = NULL,
-                    include.descendants = TRUE,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = FALSE,
                     include.ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 saveRDS(oa_codes5,
         here("vignettes","options_data_05.RData"))
 
+# fuzzy search 0.2
 oa_codes6<-get_candidate_codes(keywords="osteoarthritis",
-                    domains=c("Condition"),
-                    search.synonyms = TRUE,
+                    domains="Condition",
+                    search.synonyms = FALSE,
                     fuzzy.match = TRUE,
                     fuzzy.match.max.distance=0.2,
-                    exclude = c("shoulder", "wrist", "ankle",
+                    exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = TRUE,
+                    include.descendants = FALSE,
                     include.ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 saveRDS(oa_codes6,
-        here("vignettes","options_data_05.RData"))
+        here("vignettes","options_data_06.RData"))
 
-oa_codes6<-get_candidate_codes(keywords="osteoarthritis",
-                    domains=c("Condition"),
-                    search.synonyms = TRUE,
-                    fuzzy.match = TRUE,
-                    fuzzy.match.max.distance=0.2,
-                    exclude = c("shoulder", "wrist", "ankle",
+# include ancestor
+oa_codes7<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    fuzzy.match.max.distance=0.1,
+                    exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = TRUE,
-                    include.ancestor = FALSE,
+                    include.descendants = FALSE,
+                    include.ancestor = TRUE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
-saveRDS(oa_codes6,
-        here("vignettes","options_data_05.RData"))
+saveRDS(oa_codes7,
+        here("vignettes","options_data_07.RData"))

@@ -30,10 +30,10 @@ library(CodelistGenerator)
 ```
 
 
-# Creating a codelist for osteoarthritis
+## Creating a codelist for osteoarthritis
 For this example we are going to generate a candidate codelist for osteoarthritis. 
 
-# Set up 
+## Set up 
 ```{r, eval=FALSE}
 library(readr)
 library(DBI)
@@ -61,27 +61,237 @@ vocabulary_database_schema<-"omop21t2_cmbd"
 ```
 
 
-# Search strategies
-# Condition domain, without searching synonyms, fuzzy match, exclusions, including descendeants or ancestor
+## Search strategies
+### Condition domain, without searching synonyms, without fuzzy match, with exclusions, without including descendeants or ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oa_codes1<-readRDS(here("vignettes","options_data_01.RData"))
 ```
+
+To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without fuzzy match, and without including descendeants or the direct ancestor of the included concepts.
 
 ```{r, eval=FALSE}
 oa_codes1<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
                     search.synonyms = FALSE,
                     fuzzy.match = FALSE,
-                    exclude = NULL,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
                     include.descendants = FALSE,
                     include.ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```
 
+What is the candidate codelist?
 ```{r,  message=FALSE, warning=FALSE }  
 datatable(oa_codes1,
           options = list(pageLength = 10,
                          lengthMenu = c(10, 20,250)))
 
 ```
+
+
+### Including descendants
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+oa_codes2<-readRDS(here("vignettes","options_data_02.RData"))
+```
+
+Now we will also include the descendants of included concepts.
+```{r, eval=FALSE}
+oa_codes2<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = TRUE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What new codes do we pick up?
+```{r,  message=FALSE, warning=FALSE }  
+new_codes_1_2<-bind_rows(oa_codes1, oa_codes2) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+datatable(new_codes_1_2,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+
+```
+
+### Including observation domain
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+oa_codes3<-readRDS(here("vignettes","options_data_03.RData"))
+```
+
+Now we will search the observation domain as welll as the condition domain.
+```{r, eval=FALSE}
+oa_codes3<-get_candidate_codes(keywords="osteoarthritis",
+                    domains=c("Condition","Observation"),
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    fuzzy.match.max.distance=0.1,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = FALSE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What new codes do we pick up?
+```{r,  message=FALSE, warning=FALSE }  
+new_codes_1_3<-bind_rows(oa_codes1, oa_codes3) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+datatable(new_codes_1_3,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+### Search synonyms
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+oa_codes4<-readRDS(here("vignettes","options_data_04.RData"))
+```
+
+Now we will search the concept synonym table to identify concepts to include.
+```{r, eval=FALSE}
+oa_codes4<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = TRUE,
+                    fuzzy.match = FALSE,
+                    fuzzy.match.max.distance=0.1,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = FALSE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What new codes do we pick up?
+```{r,  message=FALSE, warning=FALSE }  
+new_codes_1_4<-bind_rows(oa_codes1, oa_codes4) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+datatable(new_codes_1_4,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+### Using a fuzzy search
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+oa_codes5<-readRDS(here("vignettes","options_data_05.RData"))
+```
+
+Now we will use an approximate search. See https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/agrep for further details (as this is what is running under the hood). Note, we set the default max distance as 0.1 (equivalent to 10% of the pattern length).
+```{r, eval=FALSE}
+oa_codes5<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = TRUE,
+                    fuzzy.match.max.distance=0.1,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = FALSE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What new codes do we pick up?
+```{r,  message=FALSE, warning=FALSE }  
+new_codes_1_5<-bind_rows(oa_codes1, oa_codes5) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+datatable(new_codes_1_5,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+### Using a more generous fuzzy search
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+oa_codes6<-readRDS(here("vignettes","options_data_06.RData"))
+```
+
+Here we widen the approximate searching, increasing the maximum distance allowed for a match to 0.2 (equivalent to 20% of the pattern length).
+```{r, eval=FALSE}
+oa_codes6<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = TRUE,
+                    fuzzy.match.max.distance=0.2,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = FALSE,
+                    include.ancestor = FALSE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What new codes do we pick up?
+```{r,  message=FALSE, warning=FALSE }  
+new_codes_1_6<-bind_rows(oa_codes1, oa_codes6) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+datatable(new_codes_1_6,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+
+### Include ancestor
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+oa_codes7<-readRDS(here("vignettes","options_data_07.RData"))
+```
+
+Now we include the direct ancestor of included terms.
+```{r, eval=FALSE}
+oa_codes7<-get_candidate_codes(keywords="osteoarthritis",
+                    domains="Condition",
+                    search.synonyms = FALSE,
+                    fuzzy.match = FALSE,
+                    fuzzy.match.max.distance=0.1,
+                    exclude = c("post-infection",
+                                "post-traumatic"),
+                    include.descendants = FALSE,
+                    include.ancestor = TRUE,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+```
+
+What new codes do we pick up?
+```{r,  message=FALSE, warning=FALSE }  
+new_codes_1_7<-bind_rows(oa_codes1, oa_codes7) %>% 
+  group_by(concept_id) %>% 
+  mutate(seq=length(concept_name)) %>%
+  filter(seq==1)
+datatable(new_codes_1_7,
+          rownames=FALSE,
+          options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20,50)
+))
+```
+

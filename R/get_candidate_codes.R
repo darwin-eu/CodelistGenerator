@@ -5,12 +5,14 @@
 #' This function generates a set of codes that can be considered for creating a phenotype
 #' using the OMOP CDM.
 #'
-#' @param keywords Character vector of words to search for. Where more than one word is given (e.g. "knee osteoarthritis"), all words will be identified but can be in different positions (e.g. "osteoarthritis of knee") should be identified.
-#' @param domains  Character vector with one or more of the OMOP CDM domain (e.g. "Condition").
+#' @param keywords Character vector of words to search for. Where more than one word is given (e.g. "knee osteoarthritis"),
+#' all combinations of those words should be identified
+#' positions (e.g. "osteoarthritis of knee") should be identified.
+#' @param domains  Character vector with one or more of the OMOP CDM domain.
 #' @param search.synonyms Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.
-#' @param fuzzy.match Either TRUE or FALSE. If TRUE the fuzzy matches will be used, with approximate matches identified.
+#' @param fuzzy.match Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.
 #' @param fuzzy.match.max.distance The max.distance parmeter for fuzzy matching (see ??base::agrep for further details).
-#' @param exclude  Character vector of words to search for to identify concepts to exclude.
+#' @param exclude  Character vector of words to identify concepts to exclude.
 #' @param include.descendants Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.
 #' @param include.ancestor Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.
 #' @param verbose Either TRUE or FALSE. If TRUE, progress will be printed.
@@ -305,16 +307,19 @@ if(include.ancestor==TRUE){
 print("Getting concepts to include from direct ancestors of identified concepts")
 }
 
-candidate.code.ancestor <- dtplyr::lazy_dt(candidate.codes) %>%
-   dplyr::left_join( dtplyr::lazy_dt(concept_ancestor  %>%
-   dplyr::filter(.data$min_levels_of_separation==1)  %>%
-   dplyr::select("ancestor_concept_id")  %>%
-   dplyr::rename("concept_id"="ancestor_concept_id") ) ,
-   by = "concept_id") %>%
+candidate.code.ancestor <- dtplyr::lazy_dt(candidate.codes %>%
+                                               select(concept_id)%>%
+   dplyr::rename("descendant_concept_id"="concept_id")) %>%
+   dplyr::left_join(dtplyr::lazy_dt(concept_ancestor),
+   by = "descendant_concept_id")%>%
+   dplyr::filter(min_levels_of_separation=="1") %>%
+   dplyr::select("ancestor_concept_id")%>%
+   dplyr::rename("concept_id"="ancestor_concept_id")  %>%
+   dplyr::left_join(dtplyr::lazy_dt(concept)) %>%
    as.data.frame() %>%
    dplyr::mutate(concept_name=clean_words(.data$concept_name))
 
-# only if not already in candidate.codes
+# keep if not already in candidate.codes
 candidate.code.ancestor<-candidate.code.ancestor %>%
   dplyr::anti_join(candidate.codes %>% dplyr::select("concept_id"),
              by = "concept_id")%>%

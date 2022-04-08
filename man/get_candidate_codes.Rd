@@ -19,17 +19,19 @@ get_candidate_codes(
 )
 }
 \arguments{
-\item{keywords}{Character vector of words to search for. Where more than one word is given (e.g. "knee osteoarthritis"), all words will be identified but can be in different positions (e.g. "osteoarthritis of knee") should be identified.}
+\item{keywords}{Character vector of words to search for. Where more than one word is given (e.g. "knee osteoarthritis"),
+all combinations of those words should be identified
+positions (e.g. "osteoarthritis of knee") should be identified.}
 
-\item{domains}{Character vector with one or more of the OMOP CDM domain (e.g. "Condition").}
+\item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
 \item{search.synonyms}{Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.}
 
-\item{fuzzy.match}{Either TRUE or FALSE. If TRUE the fuzzy matches will be used, with approximate matches identified.}
+\item{fuzzy.match}{Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.}
 
 \item{fuzzy.match.max.distance}{The max.distance parmeter for fuzzy matching (see ??base::agrep for further details).}
 
-\item{exclude}{Character vector of words to search for to identify concepts to exclude.}
+\item{exclude}{Character vector of words to identify concepts to exclude.}
 
 \item{include.descendants}{Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.}
 
