@@ -13,6 +13,7 @@
 #' @param exclude  Character vector of words to search for to identify concepts to exclude.
 #' @param include.descendants Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.
 #' @param include.ancestor Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.
+#' @param verbose Either TRUE or FALSE. If TRUE, progress will be printed.
 #' @param db Database connection via DBI::dbConnect()
 #' @param vocabulary_database_schema Name of database schema with vocab tables
 #'
@@ -47,6 +48,7 @@ get_candidate_codes<-function(keywords,
                               exclude=NULL,
                               include.descendants=TRUE,
                               include.ancestor=FALSE,
+                              verbose=FALSE,
                               db,
                               vocabulary_database_schema){
 
@@ -80,7 +82,9 @@ concept_synonym_db<-dplyr::rename_with(concept_synonym_db, tolower)
 
 # filter to only relevant data
 # will use dtplyr for these
-print("Limiting to potential concepts of interest (database side)")
+if(verbose==TRUE){
+ print("Limiting to potential concepts of interest (database side)")
+}
 concept_db<-concept_db %>%
   dplyr::filter(.data$domain_id %in% domains) %>%
   dplyr::filter(.data$standard_concept=="S") %>%
@@ -102,7 +106,9 @@ concept_synonym_db<-concept_db %>%
   dplyr::inner_join(concept_synonym_db, by="concept_id") %>%
   dplyr::compute()
 
+if(verbose==TRUE){
 print("Bringing filtered tables into memory")
+}
 concept<-concept_db %>% dplyr::collect()
 concept_ancestor<-dplyr::bind_rows(concept_ancestor_db1 %>% dplyr::collect(),
                             concept_ancestor_db2 %>% dplyr::collect()) %>%
@@ -115,7 +121,10 @@ rm(concept_db,concept_ancestor_db,concept_ancestor_db1,concept_ancestor_db2,conc
 # exact matches only
 
 if(length(exclude)>0){
+
+if(verbose==TRUE){
 print("Getting concepts to exclude")
+}
 # Get standard, condition concepts which include one of the exclusion words
 exclude<-clean_words(exclude)
 
@@ -134,7 +143,9 @@ exclude.codes<-dplyr::bind_rows(exclude.codes)
 }
 
 # 2) Get standard, condition concepts which include one of the keywords
+if(verbose==TRUE){
 print("Getting concepts to include from exact matches")
+}
 
 keywords<-clean_words(keywords)
 
@@ -165,7 +176,10 @@ candidate.codes<-candidate.codes %>%
 
 # 2) use fuzzy match to include
 if(fuzzy.match==TRUE){
+
+if(verbose==TRUE){
   print("Getting concepts to include from fuzzy matches")
+}
 
 candidate.codes.fuzzy<-list()
 for(i in 1:length(keywords)){
@@ -202,7 +216,10 @@ message("-- No codes found for given keywords")
 # 4) look for any standard, condition concepts with a synonym of the
 # codes found from the keywords
 if(search.synonyms==TRUE){
+
+if(verbose==TRUE){
 print("Getting concepts to include from exact matches of synonyms")
+}
 
 synonyms<-dtplyr::lazy_dt(concept_synonym) %>%
   dplyr::inner_join(dtplyr::lazy_dt(candidate.codes) %>%
@@ -246,7 +263,10 @@ candidate.codes<-candidate.codes %>%
 
 # 5) add any codes lower in the hierachy (and deduplicate)
 if(include.descendants==TRUE){
+
+if(verbose==TRUE){
 print("Getting concepts to include from descendants of identified concepts")
+}
 
 candidate.code.descendants <-  dtplyr::lazy_dt(candidate.codes %>%
    dplyr::select("concept_id") %>%
@@ -280,7 +300,10 @@ candidate.codes<-candidate.codes %>%
 
 # 5) add any codes one level above in the hierachy (and deduplicate)
 if(include.ancestor==TRUE){
+
+  if(verbose==TRUE){
 print("Getting concepts to include from direct ancestors of identified concepts")
+}
 
 candidate.code.ancestor <- dtplyr::lazy_dt(candidate.codes) %>%
    dplyr::left_join( dtplyr::lazy_dt(concept_ancestor  %>%
@@ -322,8 +345,12 @@ candidate.codes<- candidate.codes %>%
   dplyr::select("concept_id", "concept_name", "domain_id", "vocabulary_id")
 
 x <- abs(as.numeric(Sys.time()-start, units="secs"))
+
+if(verbose==TRUE){
 print(paste0("Getting candidate codelist took ",
              floor(x/60), " minutes and ",  x %% 60 %/% 1, " seconds"))
+}
+
 candidate.codes %>%
   dplyr::distinct() # return
 }

@@ -13,6 +13,7 @@ get_candidate_codes(
   exclude = NULL,
   include.descendants = TRUE,
   include.ancestor = FALSE,
+  verbose = FALSE,
   db,
   vocabulary_database_schema
 )
@@ -34,6 +35,8 @@ get_candidate_codes(
 
 \item{include.ancestor}{Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.}
 
+\item{verbose}{Either TRUE or FALSE. If TRUE, progress will be printed.}
+
 \item{db}{Database connection via DBI::dbConnect()}
 
 \item{vocabulary_database_schema}{Name of database schema with vocab tables}
@@ -46,7 +49,8 @@ This function generates a set of codes that can be considered for creating a phe
 using the OMOP CDM.
 }
 \examples{
-### note, Eunomia, used in the example below, does not include a full set of vocabularies. The full set can be downloaded from https://athena.ohdsi.org
+### note, Eunomia, used in the example below, does not include a full set of vocabularies.
+### The full set can be downloaded from https://athena.ohdsi.org
 library(Eunomia)
 library(DBI)
 library(RSQLite)

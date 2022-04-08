@@ -3,11 +3,12 @@ devtools::build_readme()
 devtools::document()
 devtools::spell_check()
 devtools::test()
+
 devtools::check()
 
 # devtools::load_all()
-usethis::use_github_pages()
-usethis::use_pkgdown_github_pages()
+# usethis::use_github_pages()
+# usethis::use_pkgdown_github_pages()
 
 # usethis::use_vignette("Introduction_to_CodelistGenerator")
 
@@ -27,7 +28,8 @@ usethis::use_pkgdown_github_pages()
 
 # use_testthat()
 # use_test("clean_words")
-#
+# usethis::use_test("show_mappings")
+
 # use_readme_rmd()
 #
 # devtools::load_all()
@@ -41,6 +43,11 @@ library(readr)
 library(DBI)
 library(RSQLite)
 library(here)
+library(dplyr)
+library(stringr)
+library(DT)
+library(kableExtra)
+devtools::load_all()
 
 vocab.folder<-Sys.getenv("omop_cdm_vocab_path") # path to directory of unzipped files
 concept<-read_delim(paste0(vocab.folder,"/CONCEPT.csv"),
@@ -60,11 +67,6 @@ dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
 rm(concept,concept_relationship, concept_ancestor, concept_synonym)
 vocabulary_database_schema<-"main"
 
-library(dplyr)
-library(stringr)
-library(DT)
-library(kableExtra)
-devtools::load_all()
 
 codes_from_descendants<-tbl(db, sql(paste0("SELECT * FROM ",
      vocabulary_database_schema,

@@ -85,5 +85,6 @@ mapped.codes<-mapped.codes %>%
   dplyr::rename("Source name"="concept_name")%>%
   dplyr::rename("Source vocabulary"="vocabulary_id")
 
-mapped.codes
+mapped.codes %>%
+  dplyr::distinct()
 }
