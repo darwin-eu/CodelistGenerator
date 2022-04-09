@@ -55,12 +55,12 @@ using the OMOP CDM.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_candidate_codes</span><span class="op">(</span>
   <span class="va">keywords</span>,
   domains <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Condition"</span>, <span class="st">"Drug"</span>, <span class="st">"Device"</span>, <span class="st">"Observation"</span>, <span class="st">"Procedure"</span><span class="op">)</span>,
-  search.synonyms <span class="op">=</span> <span class="cn">FALSE</span>,
-  fuzzy.match <span class="op">=</span> <span class="cn">FALSE</span>,
-  fuzzy.match.max.distance <span class="op">=</span> <span class="fl">0.1</span>,
+  search_synonyms <span class="op">=</span> <span class="cn">FALSE</span>,
+  fuzzy_match <span class="op">=</span> <span class="cn">FALSE</span>,
+  fuzzy_match_max_distance <span class="op">=</span> <span class="fl">0.1</span>,
   exclude <span class="op">=</span> <span class="cn">NULL</span>,
-  include.descendants <span class="op">=</span> <span class="cn">TRUE</span>,
-  include.ancestor <span class="op">=</span> <span class="cn">FALSE</span>,
+  include_descendants <span class="op">=</span> <span class="cn">TRUE</span>,
+  include_ancestor <span class="op">=</span> <span class="cn">FALSE</span>,
   verbose <span class="op">=</span> <span class="cn">FALSE</span>,
   <span class="va">db</span>,
   <span class="va">vocabulary_database_schema</span>
@@ -75,17 +75,17 @@ all combinations of those words should be identified
 positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
 <dt>domains</dt>
 <dd><p>Character vector with one or more of the OMOP CDM domain.</p></dd>
-<dt>search.synonyms</dt>
+<dt>search_synonyms</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.</p></dd>
-<dt>fuzzy.match</dt>
+<dt>fuzzy_match</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.</p></dd>
-<dt>fuzzy.match.max.distance</dt>
-<dd><p>The max.distance parmeter for fuzzy matching (see ??base::agrep for further details).</p></dd>
+<dt>fuzzy_match_max_distance</dt>
+<dd><p>The maximum distance parameter for fuzzy matching (see ??base::agrep for further details).</p></dd>
 <dt>exclude</dt>
 <dd><p>Character vector of words to identify concepts to exclude.</p></dd>
-<dt>include.descendants</dt>
+<dt>include_descendants</dt>
 <dd><p>Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.</p></dd>
-<dt>include.ancestor</dt>
+<dt>include_ancestor</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.</p></dd>
 <dt>verbose</dt>
 <dd><p>Either TRUE or FALSE. If TRUE, progress will be printed.</p></dd>
@@ -111,11 +111,11 @@ positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
 <span class="r-in">       exdir <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,<span class="st">"\\cdm.sqlite"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">get_candidate_codes</span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"asthma"</span>,</span>
-<span class="r-in">                   search.synonyms<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span class="r-in">                             fuzzy.match<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span class="r-in">                   search_synonyms<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span class="r-in">                             fuzzy_match<span class="op">=</span><span class="cn">TRUE</span>,</span>
 <span class="r-in">                             exclude<span class="op">=</span><span class="cn">NULL</span>,</span>
-<span class="r-in">                             include.descendants<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span class="r-in">                             include.ancestor<span class="op">=</span><span class="cn">FALSE</span>,</span>
+<span class="r-in">                             include_descendants<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span class="r-in">                             include_ancestor<span class="op">=</span><span class="cn">FALSE</span>,</span>
 <span class="r-in">                   db<span class="op">=</span><span class="va">db</span>,</span>
 <span class="r-in">                   vocabulary_database_schema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> no such table: main.concept</span>
