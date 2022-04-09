@@ -26,6 +26,7 @@
 #' @examples
 #' ### note, Eunomia, used in the example below, does not include a full set of vocabularies.
 #' ### The full set can be downloaded from https://athena.ohdsi.org
+#' \dontrun{
 #'library(Eunomia)
 #'library(DBI)
 #'library(RSQLite)
@@ -40,7 +41,7 @@
 #'                              include_ancestor=FALSE,
 #'                    db=db,
 #'                    vocabulary_database_schema = "main")
-#'
+#' }
 get_candidate_codes<-function(keywords,
                               domains=c("Condition", "Drug" ,"Device", "Observation",
                                         "Procedure"),
