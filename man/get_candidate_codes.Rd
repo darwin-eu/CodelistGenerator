@@ -53,6 +53,7 @@ using the OMOP CDM.
 \examples{
 ### note, Eunomia, used in the example below, does not include a full set of vocabularies.
 ### The full set can be downloaded from https://athena.ohdsi.org
+\dontrun{
 library(Eunomia)
 library(DBI)
 library(RSQLite)
@@ -67,5 +68,5 @@ get_candidate_codes(keywords="asthma",
                              include_ancestor=FALSE,
                    db=db,
                    vocabulary_database_schema = "main")
-
+}
 }

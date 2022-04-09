@@ -21,9 +21,11 @@ Get vocabulary version
 library(Eunomia)
 library(DBI)
 library(RSQLite)
+\dontrun{
 untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
        exdir =  tempdir())
 db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\\\cdm.sqlite"))
 get_vocab_version(db=db,
                   vocabulary_database_schema = "main")
+}
 }
