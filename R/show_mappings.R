@@ -39,9 +39,10 @@ errorMessage <- checkmate::makeAssertCollection()
 
 checkmate::assertVector(source_vocabularies, add = errorMessage)
 checkmate::assertDataFrame(candidate_codelist, add = errorMessage)
-# checkmate::assertDataFrame(concept, add = errorMessage)
-# checkmate::assertDataFrame(concept_relationship, add = errorMessage)
-
+db_inherits<-inherits(db, "DBIConnection")
+if(!isTRUE(db_inherits)){
+errorMessage$push("db must be a database connection via DBI::dbConnect()")
+}
 checkmate::reportAssertions(collection = errorMessage)
 
 concept_db<-dplyr::tbl(db, dplyr::sql(paste0("SELECT * FROM ",

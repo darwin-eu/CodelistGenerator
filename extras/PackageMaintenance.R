@@ -14,7 +14,7 @@ devtools::check()
 # usethis::use_vignette("Options_for_CodelistGenerator")
 
 # usethis::use_version()
-
+# usethis::use_pipe()
 # use_r("clean_words")
 # use_r("get_candidate_codes")
 # use_r("show_mappings")

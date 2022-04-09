@@ -43,11 +43,11 @@ library(here)
 
 ```{r, eval=FALSE}
 # postgres database connection details
-server_dbi<-Sys.getenv("SERVER_DBI_FEB22")
-user<-Sys.getenv("DB_USER_FEB22")
-password<- Sys.getenv("DB_PASSWORD_FEB22")
-port<-Sys.getenv("DB_PORT_FEB22")
-host<-Sys.getenv("DB_HOST_FEB22")
+server_dbi<-Sys.getenv("server")
+user<-Sys.getenv("user")
+password<- Sys.getenv("password")
+port<-Sys.getenv("port")
+host<-Sys.getenv("host")
 
 db <- dbConnect(RPostgres::Postgres(),
                 dbname = server_dbi,
@@ -57,7 +57,7 @@ db <- dbConnect(RPostgres::Postgres(),
                 password = password)
 
 # name of vocabulary schema
-vocabulary_database_schema<-"omop21t2_cmbd"
+vocabulary_database_schema<-"vocabulary"
 ```
 
 

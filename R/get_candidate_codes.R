@@ -59,12 +59,17 @@ start<-Sys.time()
 
 errorMessage <- checkmate::makeAssertCollection()
 
+db_inherits<-inherits(db, "DBIConnection")
+if(!isTRUE(db_inherits)){
+errorMessage$push("db must be a database connection via DBI::dbConnect()")
+}
 checkmate::assertVector(keywords, add = errorMessage)
 checkmate::assertVector(exclude,null.ok = TRUE, add = errorMessage)
-
-# checkmate::assertDataFrame(concept, add = errorMessage)
-# checkmate::assertDataFrame(concept_synonym, add = errorMessage)
-# checkmate::assertDataFrame(concept_ancestor, add = errorMessage)
+checkmate::assert_logical(search_synonyms, add = errorMessage)
+checkmate::assert_logical(fuzzy_match, add = errorMessage)
+checkmate::assert_logical(include_descendants, add = errorMessage)
+checkmate::assert_logical(include_ancestor, add = errorMessage)
+checkmate::assert_logical(verbose, add = errorMessage)
 
 checkmate::reportAssertions(collection = errorMessage)
 
