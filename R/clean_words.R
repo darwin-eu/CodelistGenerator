@@ -1,7 +1,7 @@
 
 #' Prepare words for search
 #' @param words A character vector.
-#' @NoRd
+#' @noRd
 
 clean_words<-function(words){
   # some generic formatting
