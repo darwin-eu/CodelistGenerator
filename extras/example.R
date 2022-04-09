@@ -16,12 +16,15 @@ concept_ancestor<-read_delim(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv"),
      "\t", escape_double = FALSE, trim_ws = TRUE)
 concept_synonym<-read_delim(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv"),
      "\t", escape_double = FALSE, trim_ws = TRUE)
+vocabulary<-read_delim(paste0(vocab.folder,"/VOCABULARY.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
 
 db <- dbConnect(RSQLite::SQLite(), here::here("db1.sqlite"))
 dbWriteTable(db, "concept", concept)
 dbWriteTable(db, "concept_relationship", concept_relationship)
 dbWriteTable(db, "concept_ancestor", concept_ancestor)
 dbWriteTable(db, "concept_synonym", concept_synonym)
+dbWriteTable(db, "vocabulary", vocabulary)
 dbSendQuery(db, "CREATE UNIQUE INDEX idx_concept ON concept (concept_id);")
 dbSendQuery(db, "CREATE UNIQUE INDEX idx_concept_ancestor ON concept_ancestor (ancestor_concept_id,descendant_concept_id );")
 rm(concept,concept_relationship, concept_ancestor, concept_synonym)

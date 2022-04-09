@@ -2,6 +2,7 @@
 
 export(clean_words)
 export(get_candidate_codes)
+export(get_vocab_version)
 export(show_mappings)
 importFrom(magrittr,"%>%")
 importFrom(rlang,.data)

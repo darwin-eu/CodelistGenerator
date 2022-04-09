@@ -18,6 +18,7 @@ devtools::check()
 # use_r("clean_words")
 # use_r("get_candidate_codes")
 # use_r("show_mappings")
+# usethis::use_r("get_vocab_version")
 
 # usethis::use_package("checkmate")
 # usethis::use_package("dplyr")
@@ -59,16 +60,24 @@ concept_ancestor<-read_delim(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv"),
      "\t", escape_double = FALSE, trim_ws = TRUE)
 concept_synonym<-read_delim(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv"),
      "\t", escape_double = FALSE, trim_ws = TRUE)
+vocabulary<-read_delim(paste0(vocab.folder,"/VOCABULARY.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
 
 db <- dbConnect(RSQLite::SQLite(), ":memory:")
 dbWriteTable(db, "concept", concept, overwrite=TRUE)
 dbWriteTable(db, "concept_relationship", concept_relationship, overwrite=TRUE)
 dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite=TRUE)
 dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
+dbWriteTable(db, "vocabulary", vocabulary)
 rm(concept,concept_relationship, concept_ancestor, concept_synonym)
 vocabulary_database_schema<-"main"
 
 # for intro vignette
+vocab_version<-get_vocab_version(db=db,
+                  vocabulary_database_schema = "main")
+saveRDS(vocab_version,
+        here("vignettes","intro_vocab.RData"))
+
 codes_from_descendants<-tbl(db, sql(paste0("SELECT * FROM ",
      vocabulary_database_schema,
      ".concept_ancestor"))) %>%

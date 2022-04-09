@@ -34,7 +34,7 @@ library(CodelistGenerator)
 For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain.
 
 ## Getting the OMOP CDM vocabularies
-If you do not have ready access to a database with the OMOP CDM, we need to first obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, we can make a vocabulary only database like so:
+If you do not have ready access to a database with data in the OMOP CDM format (which will necessarily contain the vocabulary tables), you will first need to obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, we can make a vocabulary only database like so:
 
 ```{r, eval=FALSE}
 library(readr)
@@ -53,17 +53,33 @@ concept_ancestor<-read_delim(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv"),
      "\t", escape_double = FALSE, trim_ws = TRUE)
 concept_synonym<-read_delim(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv"),
      "\t", escape_double = FALSE, trim_ws = TRUE)
+vocabulary<-read_delim(paste0(vocab.folder,"/VOCABULARY.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
 
 db <- dbConnect(RSQLite::SQLite(), ":memory:")
 dbWriteTable(db, "concept", concept, overwrite=TRUE)
 dbWriteTable(db, "concept_relationship", concept_relationship, overwrite=TRUE)
 dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite=TRUE)
 dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
-rm(concept,concept_relationship, concept_ancestor, concept_synonym)
+dbWriteTable(db, "vocabulary", vocabulary)
+rm(concept,concept_relationship, concept_ancestor, concept_synonym, vocabulary)
 vocabulary_database_schema<-"main"
 ```
 
 The structure of each of these tables is described in detail at: https://ohdsi.github.io/CommonDataModel/cdm53.html#Vocabulary_Tables 
+
+## Check version of the vocabularies
+It is important to note that the results from CodelistGenerator will be specific to a particular version of the OMOP CDM. We can see the version of the vocabulary being used like so
+```{r, eval=FALSE}
+get_vocab_version(db=db,
+                  vocabulary_database_schema = "main")
+```
+
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+vocab_version<-readRDS(here("vignettes","intro_vocab.RData"))
+vocab_version
+```
+
 
 ## Codelist from "Dementia" (4182210) and its descendants
 The simplest approach to identifying potential codes is to take a high-level code and include all its descendents. 

@@ -1,14 +1,8 @@
 
-#' Prepare words for search.
-#'
+#' Prepare words for search
 #' @param words A character vector.
-#'
-#' @return A character vector of the same length.
-#' @export
-#'
-#' @importFrom magrittr %>%
-#'
-#' @examples clean_words(c("Type-1 diabetes "))
+#' @NoRd
+
 clean_words<-function(words){
   # some generic formatting
   working_words<-trimws(words)
