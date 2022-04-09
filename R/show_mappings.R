@@ -54,7 +54,7 @@ concept_relationship_db<-dplyr::tbl(db, dplyr::sql(paste0("SELECT * FROM ",
 concept_db<-dplyr::rename_with(concept_db, tolower)
 concept_relationship_db<-dplyr::rename_with(concept_relationship_db, tolower)
 
-mapped.codes<- concept_db %>%
+mapped_codes<- concept_db %>%
    dplyr::inner_join(concept_relationship_db %>%
              dplyr::filter(.data$relationship_id=="Mapped from") %>%
              dplyr::filter(.data$concept_id_1 %in% !!candidate_codelist$concept_id) %>%
@@ -65,26 +65,26 @@ mapped.codes<- concept_db %>%
    dplyr::distinct() %>%
    dplyr::collect()
 
-mapped.codes<-mapped.codes %>%
+mapped_codes<-mapped_codes %>%
   dplyr::select("concept_id_1", "concept_id", "concept_name", "concept_code", "vocabulary_id")
 
-mapped.codes<-mapped.codes %>%
+mapped_codes<-mapped_codes %>%
   dplyr::select("concept_id_1")%>%
   dplyr::rename("concept_id"="concept_id_1") %>%
   dplyr::left_join(concept_db %>%
-              dplyr::filter(.data$concept_id %in% !!mapped.codes$concept_id_1) %>%
+              dplyr::filter(.data$concept_id %in% !!mapped_codes$concept_id_1) %>%
               dplyr::collect())%>%
   dplyr::select("concept_id", "concept_name", "vocabulary_id") %>%
   dplyr::rename("Standard vocabulary"="vocabulary_id") %>%
   dplyr::rename("concept_id_1"="concept_id") %>%
   dplyr::rename("Standard concept_id name"="concept_name") %>%
-  dplyr::full_join(mapped.codes) %>%
+  dplyr::full_join(mapped_codes) %>%
   dplyr::rename("Standard concept_id (mapped to)"="concept_id_1") %>%
   dplyr::rename("Source concept_id (mapped from)"="concept_id") %>%
   dplyr::rename("Source code"="concept_code") %>%
   dplyr::rename("Source name"="concept_name")%>%
   dplyr::rename("Source vocabulary"="vocabulary_id")
 
-mapped.codes %>%
+mapped_codes %>%
   dplyr::distinct()
 }

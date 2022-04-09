@@ -7,12 +7,12 @@
 get_candidate_codes(
   keywords,
   domains = c("Condition", "Drug", "Device", "Observation", "Procedure"),
-  search.synonyms = FALSE,
-  fuzzy.match = FALSE,
-  fuzzy.match.max.distance = 0.1,
+  search_synonyms = FALSE,
+  fuzzy_match = FALSE,
+  fuzzy_match_max_distance = 0.1,
   exclude = NULL,
-  include.descendants = TRUE,
-  include.ancestor = FALSE,
+  include_descendants = TRUE,
+  include_ancestor = FALSE,
   verbose = FALSE,
   db,
   vocabulary_database_schema
@@ -25,17 +25,17 @@ positions (e.g. "osteoarthritis of knee") should be identified.}
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
-\item{search.synonyms}{Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.}
+\item{search_synonyms}{Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.}
 
-\item{fuzzy.match}{Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.}
+\item{fuzzy_match}{Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.}
 
-\item{fuzzy.match.max.distance}{The max.distance parmeter for fuzzy matching (see ??base::agrep for further details).}
+\item{fuzzy_match_max_distance}{The maximum distance parameter for fuzzy matching (see ??base::agrep for further details).}
 
 \item{exclude}{Character vector of words to identify concepts to exclude.}
 
-\item{include.descendants}{Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.}
+\item{include_descendants}{Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.}
 
-\item{include.ancestor}{Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.}
+\item{include_ancestor}{Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.}
 
 \item{verbose}{Either TRUE or FALSE. If TRUE, progress will be printed.}
 
@@ -60,11 +60,11 @@ untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "r
        exdir =  tempdir())
 db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\\\cdm.sqlite"))
 get_candidate_codes(keywords="asthma",
-                   search.synonyms=TRUE,
-                             fuzzy.match=TRUE,
+                   search_synonyms=TRUE,
+                             fuzzy_match=TRUE,
                              exclude=NULL,
-                             include.descendants=TRUE,
-                             include.ancestor=FALSE,
+                             include_descendants=TRUE,
+                             include_ancestor=FALSE,
                    db=db,
                    vocabulary_database_schema = "main")
 

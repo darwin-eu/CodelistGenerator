@@ -62,22 +62,22 @@ vocabulary_database_schema<-"omop21t2_cmbd"
 
 
 ## Search strategies
-### Condition domain, without searching synonyms, without fuzzy match, with exclusions, without including descendeants or ancestor
+### Condition domain, without searching synonyms, without fuzzy match, with exclusions, without including descendants or ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oa_codes1<-readRDS(here("vignettes","options_data_01.RData"))
 ```
 
-To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without fuzzy match, and without including descendeants or the direct ancestor of the included concepts.
+To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without fuzzy match, and without including descendants or the direct ancestor of the included concepts.
 
 ```{r, eval=FALSE}
 oa_codes1<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search.synonyms = FALSE,
-                    fuzzy.match = FALSE,
+                    search_synonyms = FALSE,
+                    fuzzy_match = FALSE,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = FALSE,
-                    include.ancestor = FALSE,
+                    include_descendants = FALSE,
+                    include_ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```
@@ -100,12 +100,12 @@ Now we will also include the descendants of included concepts.
 ```{r, eval=FALSE}
 oa_codes2<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search.synonyms = FALSE,
-                    fuzzy.match = FALSE,
+                    search_synonyms = FALSE,
+                    fuzzy_match = FALSE,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = TRUE,
-                    include.ancestor = FALSE,
+                    include_descendants = TRUE,
+                    include_ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```
@@ -130,17 +130,17 @@ datatable(new_codes_1_2,
 oa_codes3<-readRDS(here("vignettes","options_data_03.RData"))
 ```
 
-Now we will search the observation domain as welll as the condition domain.
+Now we will search the observation domain as well as the condition domain.
 ```{r, eval=FALSE}
 oa_codes3<-get_candidate_codes(keywords="osteoarthritis",
                     domains=c("Condition","Observation"),
-                    search.synonyms = FALSE,
-                    fuzzy.match = FALSE,
-                    fuzzy.match.max.distance=0.1,
+                    search_synonyms = FALSE,
+                    fuzzy_match = FALSE,
+                    fuzzy_match_max_distance=0.1,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = FALSE,
-                    include.ancestor = FALSE,
+                    include_descendants = FALSE,
+                    include_ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```
@@ -168,13 +168,13 @@ Now we will search the concept synonym table to identify concepts to include.
 ```{r, eval=FALSE}
 oa_codes4<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search.synonyms = TRUE,
-                    fuzzy.match = FALSE,
-                    fuzzy.match.max.distance=0.1,
+                    search_synonyms = TRUE,
+                    fuzzy_match = FALSE,
+                    fuzzy_match_max_distance=0.1,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = FALSE,
-                    include.ancestor = FALSE,
+                    include_descendants = FALSE,
+                    include_ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```
@@ -202,13 +202,13 @@ Now we will use an approximate search. See https://www.rdocumentation.org/packag
 ```{r, eval=FALSE}
 oa_codes5<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search.synonyms = FALSE,
-                    fuzzy.match = TRUE,
-                    fuzzy.match.max.distance=0.1,
+                    search_synonyms = FALSE,
+                    fuzzy_match = TRUE,
+                    fuzzy_match_max_distance=0.1,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = FALSE,
-                    include.ancestor = FALSE,
+                    include_descendants = FALSE,
+                    include_ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```
@@ -236,13 +236,13 @@ Here we widen the approximate searching, increasing the maximum distance allowed
 ```{r, eval=FALSE}
 oa_codes6<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search.synonyms = FALSE,
-                    fuzzy.match = TRUE,
-                    fuzzy.match.max.distance=0.2,
+                    search_synonyms = FALSE,
+                    fuzzy_match = TRUE,
+                    fuzzy_match_max_distance=0.2,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = FALSE,
-                    include.ancestor = FALSE,
+                    include_descendants = FALSE,
+                    include_ancestor = FALSE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```
@@ -270,13 +270,13 @@ Now we include the direct ancestor of included terms.
 ```{r, eval=FALSE}
 oa_codes7<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search.synonyms = FALSE,
-                    fuzzy.match = FALSE,
-                    fuzzy.match.max.distance=0.1,
+                    search_synonyms = FALSE,
+                    fuzzy_match = FALSE,
+                    fuzzy_match_max_distance=0.1,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include.descendants = FALSE,
-                    include.ancestor = TRUE,
+                    include_descendants = FALSE,
+                    include_ancestor = TRUE,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 ```

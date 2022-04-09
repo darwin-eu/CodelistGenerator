@@ -6,11 +6,11 @@ untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "r
        exdir =  tempdir())
 db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
 codes<-get_candidate_codes(keywords="a",
-                   search.synonyms=TRUE,
-                             fuzzy.match=TRUE,
+                   search_synonyms=TRUE,
+                             fuzzy_match=TRUE,
                              exclude=NULL,
-                             include.descendants=TRUE,
-                             include.ancestor=FALSE,
+                             include_descendants=TRUE,
+                             include_ancestor=FALSE,
                    db=db,
                    vocabulary_database_schema = "main")
 

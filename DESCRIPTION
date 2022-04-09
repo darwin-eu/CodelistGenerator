@@ -1,5 +1,5 @@
 Package: CodelistGenerator
-Title: Genrate candidate codelists for the OMOP CDM
+Title: Generate candidate codelists for the OMOP CDM
 Version: 0.0.0.9000
 Authors@R: 
     person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", role = c("aut", "cre"),
