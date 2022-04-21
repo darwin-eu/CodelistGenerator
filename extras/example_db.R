@@ -1,4 +1,13 @@
 
+library(readr)
+library(DBI)
+library(RSQLite)
+library(here)
+library(dplyr)
+library(stringr)
+library(DT)
+library(kableExtra)
+devtools::load_all()
 
 
 # usethis::edit_r_environ()
@@ -27,3 +36,20 @@ show_mappings(dementia_codes,
               source_vocabularies="ICD10CM",
               db=db,
               vocabulary_database_schema =vocabulary_database_schema)
+
+## test Adam´s DatabaseConnector
+# devtools::install_github("ablack3/DatabaseConnector", ref="dbplyr")
+# library(DatabaseConnector)
+# server<-Sys.getenv("SERVER_FEB22")
+# connectionDetails <-DatabaseConnector::downloadJdbcDrivers("postgresql", here::here())
+# connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "postgresql",
+#                                                                 server =server,
+#                                                                 user = user,
+#                                                                 password = password,
+#                                                                 port = port ,
+#                                                                 pathToDriver = here::here())
+# db<-connect(connectionDetails)
+# dementia_codes<-get_candidate_codes(keywords="dementia",
+#                      domains="Condition",
+#                      db=db,
+#                      vocabulary_database_schema =vocabulary_database_schema )
