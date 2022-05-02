@@ -27,4 +27,14 @@ mappings2<-show_mappings(candidate_codelist= codes,
                  db=db,
                  vocabulary_database_schema = "main")
 expect_true(nrow(mappings2)>=nrow(mappings))
+
+# expect error if not dbi connection
+expect_error(show_mappings(candidate_codelist= codes,
+                source_vocabularies=c("ATC","ICD10CM","ICD10PCS" ,
+                                              "ICD9CM",  "ICD9Proc" ,
+                                              "LOINC","OPCS4","Read",
+                                              "RxNorm" ,"RxNorm Extension",
+                                              "SNOMED"),
+                 db="a",
+                 vocabulary_database_schema = "main"))
 })

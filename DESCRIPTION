@@ -17,19 +17,21 @@ Imports:
     stringr (>= 1.4.0),
     magrittr (>= 2.0.0),
     rlang (>= 1.0.0),
-    readr (>= 2.1.0),
-    DatabaseConnector (>= 5.0.0),
-    Eunomia (>= 1.0.0),
-    here (>= 1.0.0),
-    RSQLite (>= 2.2.0),
     dtplyr (>= 1.0.0),
-    kableExtra (>= 1.0.0),
     DBI (>= 1.1.0),
-    DT
+    glue
 Suggests: 
+    covr,
     knitr,
+    readr (>= 2.1.0),
+    DT,
     rmarkdown,
-    testthat (>= 3.0.0)
+    here (>= 1.0.0),
+    DatabaseConnector (>= 5.0.0),
+    testthat (>= 3.0.0),
+    Eunomia (>= 1.0.0),
+    kableExtra (>= 1.0.0),
+    RSQLite (>= 2.2.0)
 Remotes: OHDSI/Eunomia
 Config/testthat/edition: 3
 VignetteBuilder: knitr

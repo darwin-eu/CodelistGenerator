@@ -82,7 +82,7 @@ vocab_version
 
 
 ## Codelist from "Dementia" (4182210) and its descendants
-The simplest approach to identifying potential codes is to take a high-level code and include all its descendents. 
+The simplest approach to identifying potential codes is to take a high-level code and include all its descendants. 
 ```{r, eval=FALSE}
 library(dplyr)
 library(stringr)
@@ -118,7 +118,7 @@ datatable(codes_from_descendants,
 
 ```
 
-This looks to pick up most relevant codes. But, this approach misses codes that aren´t a descendant of 4182210. For example, codes such as "Wandering due to dementia" (37312577; https://athena.ohdsi.org/search-terms/terms/37312577) and "Anxiety due to dementia" (37312031; https://athena.ohdsi.org/search-terms/terms/37312031) aren´t picked up.
+This looks to pick up most relevant codes. But, this approach misses codes that are not a descendant of 4182210. For example, codes such as "Wandering due to dementia" (37312577; https://athena.ohdsi.org/search-terms/terms/37312577) and "Anxiety due to dementia" (37312031; https://athena.ohdsi.org/search-terms/terms/37312031) are not picked up.
 
 ## Generating a candidate codelist using Codelist Generator
 To try and include all such terms that could be included we can use CodelistGenerator.

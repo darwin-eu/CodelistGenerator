@@ -6,7 +6,7 @@
 \usage{
 get_candidate_codes(
   keywords,
-  domains = c("Condition", "Drug", "Device", "Observation", "Procedure"),
+  domains = c("Condition", "Drug", "Observation", "Procedure"),
   search_synonyms = FALSE,
   fuzzy_match = FALSE,
   fuzzy_match_max_distance = 0.1,
@@ -37,7 +37,7 @@ positions (e.g. "osteoarthritis of knee") should be identified.}
 
 \item{include_ancestor}{Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.}
 
-\item{verbose}{Either TRUE or FALSE. If TRUE, progress will be printed.}
+\item{verbose}{Either TRUE or FALSE. If TRUE, progress will be reported.}
 
 \item{db}{Database connection via DBI::dbConnect()}
 
@@ -58,15 +58,18 @@ library(Eunomia)
 library(DBI)
 library(RSQLite)
 untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
-       exdir =  tempdir())
-db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\\\cdm.sqlite"))
-get_candidate_codes(keywords="asthma",
-                   search_synonyms=TRUE,
-                             fuzzy_match=TRUE,
-                             exclude=NULL,
-                             include_descendants=TRUE,
-                             include_ancestor=FALSE,
-                   db=db,
-                   vocabulary_database_schema = "main")
+  exdir = tempdir()
+)
+db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(), "\\\\cdm.sqlite"))
+get_candidate_codes(
+  keywords = "asthma",
+  search_synonyms = TRUE,
+  fuzzy_match = TRUE,
+  exclude = NULL,
+  include_descendants = TRUE,
+  include_ancestor = FALSE,
+  db = db,
+  vocabulary_database_schema = "main"
+)
 }
 }
