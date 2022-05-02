@@ -32,7 +32,7 @@ Suggests:
     Eunomia (>= 1.0.0),
     kableExtra (>= 1.0.0),
     RSQLite (>= 2.2.0)
-Remotes: OHDSI/Eunomia
+Remotes: OHDSI/Eunomia@main
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://oxford-pharmacoepi.github.io/CodelistGenerator/

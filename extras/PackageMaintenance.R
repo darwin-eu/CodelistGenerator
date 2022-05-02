@@ -24,8 +24,8 @@ devtools::test()
 # usethis::use_coverage()
 # usethis::use_github_action("test-coverage")
 covr::report()
-cov <- covr::package_coverage(here::here())
-covr::zero_coverage(cov)
+# cov <- covr::package_coverage(here::here())
+# covr::zero_coverage(cov)
 
 devtools::check()
 
@@ -33,15 +33,15 @@ devtools::build_readme()
 devtools::document()
 devtools::spell_check()
 
-myPkgs <- c("CodelisttGenerator")
-pdb <- available.packages()
-tools::package_dependencies(myPkgs, db = pdb) # all arguments at default
-
-BiocManager::install("ComplexHeatmap")
-library(pkgndep)
-pkg <- pkgndep(here::here())
-plot(pkg, fix_size = FALSE)
-heaviness(pkg)
+# myPkgs <- c("CodelisttGenerator")
+# pdb <- available.packages()
+# tools::package_dependencies(myPkgs, db = pdb) # all arguments at default
+#
+# BiocManager::install("ComplexHeatmap")
+# library(pkgndep)
+# pkg <- pkgndep(here::here())
+# plot(pkg, fix_size = FALSE)
+# heaviness(pkg)
 
 
 # devtools::load_all()
@@ -63,10 +63,13 @@ heaviness(pkg)
 # devtools::load_all()
 
 usethis::use_github_action("lint")
+
+covr::package_coverage(type = "all")
 usethis::use_coverage(type = "codecov")
 
 usethis::use_github_action_check_standard()
 
+devtools::check_rhub() # All os
 
 # data for vignettes -----
 # to avoid fails in continuous integration of vignettes
