@@ -65,6 +65,8 @@ heaviness(pkg)
 usethis::use_github_action("lint")
 usethis::use_coverage(type = "codecov")
 
+usethis::use_github_action_check_standard()
+
 
 # data for vignettes -----
 # to avoid fails in continuous integration of vignettes

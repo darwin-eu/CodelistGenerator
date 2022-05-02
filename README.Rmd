@@ -13,6 +13,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+<!-- badges: start -->
+[![codecov.io](https://codecov.io/github/oxford-pharmacoepi/CodelistGenerator/coverage.svg?branch=main)](https://codecov.io/github/oxford-pharmacoepi/CodelistGenerator?branch=main)
+[![R-CMD-check](https://github.com/oxford-pharmacoepi/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/oxford-pharmacoepi/CodelistGenerator/actions)
+<!-- badges: end -->
+
 # CodelistGenerator
 
 ## Introduction
@@ -29,13 +34,12 @@ remotes::install_github("oxford-pharmacoepi/CodelistGenerator")
 Note, Eunomia, used in the example below, does not include a full set of vocabularies. 
 ```{r,  message=FALSE, warning=FALSE}
 library(CodelistGenerator)
-library(dplyr)
 library(Eunomia)
 library(RSQLite)
 library(DBI)
 untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
         exdir =  tempdir())
-db <- dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
+db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
 
 ```
 

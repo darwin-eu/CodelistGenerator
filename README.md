@@ -1,6 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+<!-- badges: start -->
+
+[![codecov.io](https://codecov.io/github/oxford-pharmacoepi/CodelistGenerator/coverage.svg?branch=main)](https://codecov.io/github/oxford-pharmacoepi/CodelistGenerator?branch=main)
+[![R-CMD-check](https://github.com/oxford-pharmacoepi/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/oxford-pharmacoepi/CodelistGenerator/actions)
+<!-- badges: end -->
+
 # CodelistGenerator
 
 ## Introduction
@@ -28,13 +34,12 @@ vocabularies.
 
 ``` r
 library(CodelistGenerator)
-library(dplyr)
 library(Eunomia)
 library(RSQLite)
 library(DBI)
 untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
         exdir =  tempdir())
-db <- dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
+db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
 ```
 
 Every codelist is specific to a version of the OMOP CDM vocabularies, so
