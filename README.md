@@ -27,10 +27,60 @@ install.packages("remotes")
 remotes::install_github("oxford-pharmacoepi/CodelistGenerator")
 ```
 
-## Example
+## Connecting to the OMOP CDM vocabularies
 
-Note, Eunomia, used in the example below, does not include a full set of
-vocabularies.
+### Option 1: Connect to a live OMOP CDM database
+
+``` r
+# example with postgres database connection details
+server_dbi<-Sys.getenv("server")
+user<-Sys.getenv("user")
+password<- Sys.getenv("password")
+port<-Sys.getenv("port")
+host<-Sys.getenv("host")
+
+db <- DBI::dbConnect(RPostgres::Postgres(),
+                dbname = server_dbi,
+                port = port,
+                host = host,
+                user = user,
+                password = password)
+
+# name of vocabulary schema
+vocabulary_database_schema<-Sys.getenv("vocabulary_schema")
+```
+
+### Option 2: Download the vocabularies from Athena
+
+You will first need to obtain the OMOP CDM vocabularies from
+<https://athena.ohdsi.org>. Once these are downloaded, you can make a
+vocabulary only SQLite database like so:
+
+``` r
+vocab.folder<-Sys.getenv("omop_cdm_vocab_path") # path to directory of unzipped files
+concept<-read_delim(paste0(vocab.folder,"/CONCEPT.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
+concept_relationship<-read_delim(paste0(vocab.folder,"/CONCEPT_RELATIONSHIP.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE) 
+concept_ancestor<-read_delim(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
+concept_synonym<-read_delim(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
+vocabulary<-read_delim(paste0(vocab.folder,"/VOCABULARY.csv"),
+     "\t", escape_double = FALSE, trim_ws = TRUE)
+
+db <- dbConnect(RSQLite::SQLite(), ":memory:")
+dbWriteTable(db, "concept", concept, overwrite=TRUE)
+dbWriteTable(db, "concept_relationship", concept_relationship, overwrite=TRUE)
+dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite=TRUE)
+dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
+dbWriteTable(db, "vocabulary", vocabulary)
+rm(concept,concept_relationship, concept_ancestor, concept_synonym, vocabulary)
+
+vocabulary_database_schema<-"main"
+```
+
+### Option 3: Use Eunomia (for testing and examples only - Eunomia does not include a full set of vocabularies)
 
 ``` r
 library(CodelistGenerator)
@@ -41,6 +91,8 @@ untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "r
         exdir =  tempdir())
 db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
 ```
+
+## Examaple search using Eunomia
 
 Every codelist is specific to a version of the OMOP CDM vocabularies, so
 we can first check the version.
@@ -79,3 +131,9 @@ get_candidate_codes(keywords="asthma",
 #>        <dbl> <chr>        <chr>     <chr>        
 #> 1     317009 Asthma       Condition SNOMED
 ```
+
+Please see vignettes for futher details.
+
+## Development status
+
+Alpha
