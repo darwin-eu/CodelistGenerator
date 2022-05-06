@@ -56,7 +56,7 @@ get_candidate_codes <- function(keywords,
                                 fuzzy_match = FALSE,
                                 fuzzy_match_max_distance_sub = 0.1,
                                 fuzzy_match_max_distance_del = 0.1,
-                                fuzzy_match_max_distance_ins = 0.1
+                                fuzzy_match_max_distance_ins = 0.1,
                                 exclude = NULL,
                                 include_descendants = TRUE,
                                 include_ancestor = FALSE,
