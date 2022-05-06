@@ -75,10 +75,60 @@
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"oxford-pharmacoepi/CodelistGenerator"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="connecting-to-the-omop-cdm-vocabularies">Connecting to the OMOP CDM vocabularies<a class="anchor" aria-label="anchor" href="#connecting-to-the-omop-cdm-vocabularies"></a>
 </h2>
-<p>Note, Eunomia, used in the example below, does not include a full set of vocabularies.</p>
+<div class="section level3">
+<h3 id="option-1-connect-to-a-live-omop-cdm-database">Option 1: Connect to a live OMOP CDM database<a class="anchor" aria-label="anchor" href="#option-1-connect-to-a-live-omop-cdm-database"></a>
+</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># example with postgres database connection details</span>
+<span class="va">server_dbi</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"server"</span><span class="op">)</span>
+<span class="va">user</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span>
+<span class="va">password</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"password"</span><span class="op">)</span>
+<span class="va">port</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"port"</span><span class="op">)</span>
+<span class="va">host</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"host"</span><span class="op">)</span>
+
+<span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RPostgres</span><span class="fu">::</span><span class="fu">Postgres</span><span class="op">(</span><span class="op">)</span>,
+                dbname <span class="op">=</span> <span class="va">server_dbi</span>,
+                port <span class="op">=</span> <span class="va">port</span>,
+                host <span class="op">=</span> <span class="va">host</span>,
+                user <span class="op">=</span> <span class="va">user</span>,
+                password <span class="op">=</span> <span class="va">password</span><span class="op">)</span>
+
+<span class="co"># name of vocabulary schema</span>
+<span class="va">vocabulary_database_schema</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"vocabulary_schema"</span><span class="op">)</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="option-2-download-the-vocabularies-from-athena">Option 2: Download the vocabularies from Athena<a class="anchor" aria-label="anchor" href="#option-2-download-the-vocabularies-from-athena"></a>
+</h3>
+<p>You will first need to obtain the OMOP CDM vocabularies from <a href="https://athena.ohdsi.org" class="external-link uri">https://athena.ohdsi.org</a>. Once these are downloaded, you can make a vocabulary only SQLite database like so:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">vocab.folder</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"omop_cdm_vocab_path"</span><span class="op">)</span> <span class="co"># path to directory of unzipped files</span>
+<span class="va">concept</span><span class="op">&lt;-</span><span class="fu">read_delim</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/CONCEPT.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">concept_relationship</span><span class="op">&lt;-</span><span class="fu">read_delim</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/CONCEPT_RELATIONSHIP.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> 
+<span class="va">concept_ancestor</span><span class="op">&lt;-</span><span class="fu">read_delim</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/CONCEPT_ANCESTOR.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">concept_synonym</span><span class="op">&lt;-</span><span class="fu">read_delim</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/CONCEPT_SYNONYM.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">vocabulary</span><span class="op">&lt;-</span><span class="fu">read_delim</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vocab.folder</span>,<span class="st">"/VOCABULARY.csv"</span><span class="op">)</span>,
+     <span class="st">"\t"</span>, escape_double <span class="op">=</span> <span class="cn">FALSE</span>, trim_ws <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">":memory:"</span><span class="op">)</span>
+<span class="fu">dbWriteTable</span><span class="op">(</span><span class="va">db</span>, <span class="st">"concept"</span>, <span class="va">concept</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu">dbWriteTable</span><span class="op">(</span><span class="va">db</span>, <span class="st">"concept_relationship"</span>, <span class="va">concept_relationship</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu">dbWriteTable</span><span class="op">(</span><span class="va">db</span>, <span class="st">"concept_ancestor"</span>, <span class="va">concept_ancestor</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu">dbWriteTable</span><span class="op">(</span><span class="va">db</span>, <span class="st">"concept_synonym"</span>, <span class="va">concept_synonym</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu">dbWriteTable</span><span class="op">(</span><span class="va">db</span>, <span class="st">"vocabulary"</span>, <span class="va">vocabulary</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">concept</span>,<span class="va">concept_relationship</span>, <span class="va">concept_ancestor</span>, <span class="va">concept_synonym</span>, <span class="va">vocabulary</span><span class="op">)</span>
+
+<span class="va">vocabulary_database_schema</span><span class="op">&lt;-</span><span class="st">"main"</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="option-3-use-eunomia-for-testing-and-examples-only---eunomia-does-not-include-a-full-set-of-vocabularies">Option 3: Use Eunomia (for testing and examples only - Eunomia does not include a full set of vocabularies)<a class="anchor" aria-label="anchor" href="#option-3-use-eunomia-for-testing-and-examples-only---eunomia-does-not-include-a-full-set-of-vocabularies"></a>
+</h3>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://oxford-pharmacoepi.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/OHDSI/Eunomia" class="external-link">Eunomia</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org" class="external-link">RSQLite</a></span><span class="op">)</span>
@@ -86,13 +136,18 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/untar.html" class="external-link">untar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">xzfile</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"sqlite"</span>, <span class="st">"cdm.tar.xz"</span>, package <span class="op">=</span> <span class="st">"Eunomia"</span><span class="op">)</span>, open <span class="op">=</span> <span class="st">"rb"</span><span class="op">)</span>,
         exdir <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,<span class="st">"\\cdm.sqlite"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="examaple-search-using-eunomia">Examaple search using Eunomia<a class="anchor" aria-label="anchor" href="#examaple-search-using-eunomia"></a>
+</h2>
 <p>Every codelist is specific to a version of the OMOP CDM vocabularies, so we can first check the version.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/get_vocab_version.html">get_vocab_version</a></span><span class="op">(</span>db<span class="op">=</span><span class="va">db</span>,
                   vocabulary_database_schema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span>
 <span class="co">#&gt; [1] "v5.0 18-JAN-19"</span></code></pre></div>
 <p>We can then search for asthma like so</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"asthma"</span>,
                     domains <span class="op">=</span> <span class="st">"Condition"</span>,
                     db<span class="op">=</span><span class="va">db</span>,
@@ -103,7 +158,7 @@
 <span class="co">#&gt; 1    4051466 Childhood asthma Condition SNOMED       </span>
 <span class="co">#&gt; 2     317009 Asthma           Condition SNOMED</span></code></pre></div>
 <p>Perhaps we want to exclude asthma in children as part of the search strategy, in which case this can be added like so</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"asthma"</span>,
                     domains <span class="op">=</span> <span class="st">"Condition"</span>,
                     exclude <span class="op">=</span> <span class="st">"Childhood asthma"</span>,
@@ -113,6 +168,12 @@
 <span class="co">#&gt;   concept_id concept_name domain_id vocabulary_id</span>
 <span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;        </span>
 <span class="co">#&gt; 1     317009 Asthma       Condition SNOMED</span></code></pre></div>
+<p>Please see vignettes for futher details.</p>
+</div>
+<div class="section level2">
+<h2 id="development-status">Development status<a class="anchor" aria-label="anchor" href="#development-status"></a>
+</h2>
+<p>Alpha</p>
 </div>
 </div>
 
