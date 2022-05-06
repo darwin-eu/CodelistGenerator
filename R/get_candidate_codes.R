@@ -60,13 +60,10 @@ get_candidate_codes <- function(keywords,
                                 db,
                                 vocabulary_database_schema) {
   start <- Sys.time()
-  ##convert first letter of domains type to capital letter
-  firstup <- function(x) {
-    substr(x, 1, 1) <- toupper(substr(x, 1, 1))
-    x
-  }
-  
-  domains <- firstup(domains)
+
+  ##domain to sentence case
+  domains <- stringr::str_to_sentence(domains)
+
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertVector(keywords, add = errorMessage)
