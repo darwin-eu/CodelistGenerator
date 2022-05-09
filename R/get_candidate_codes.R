@@ -11,9 +11,9 @@
 #' @param domains  Character vector with one or more of the OMOP CDM domain.
 #' @param search_synonyms Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.
 #' @param fuzzy_match Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.
-#' @param fuzzy_match_max_distance_sub, The maximum distance parameter of substitution for fuzzy matching (see ??base::agrep for further details).
-#' @param fuzzy_match_max_distance_ins, The maximum distance parameter of insertion for fuzzy matching (see ??base::agrep for further details).
-#' @param fuzzy_match_max_distance_del, The maximum distance parameter of deletion for fuzzy matching (see ??base::agrep for further details).
+#' @param fuzzy_match_max_distance_substitutions, The maximum distance parameter of substitution for fuzzy matching (see ??base::agrep for further details).
+#' @param fuzzy_match_max_distance_insertions, The maximum distance parameter of insertion for fuzzy matching (see ??base::agrep for further details).
+#' @param fuzzy_match_max_distance_deletions, The maximum distance parameter of deletion for fuzzy matching (see ??base::agrep for further details).
 #' @param exclude  Character vector of words to identify concepts to exclude.
 #' @param include_descendants Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.
 #' @param include_ancestor Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.
@@ -54,9 +54,9 @@ get_candidate_codes <- function(keywords,
                                 ),
                                 search_synonyms = FALSE,
                                 fuzzy_match = FALSE,
-                                fuzzy_match_max_distance_sub = 0.1,
-                                fuzzy_match_max_distance_del = 0.1,
-                                fuzzy_match_max_distance_ins = 0.1,
+                                fuzzy_match_max_distance_substitutions = 0.1,
+                                fuzzy_match_max_distance_deletions = 0.1,
+                                fuzzy_match_max_distance_insertions = 0.1,
                                 exclude = NULL,
                                 include_descendants = TRUE,
                                 include_ancestor = FALSE,
@@ -74,9 +74,9 @@ get_candidate_codes <- function(keywords,
   checkmate::assertVector(domains, add = errorMessage)
   checkmate::assert_logical(search_synonyms, add = errorMessage)
   checkmate::assert_logical(fuzzy_match, add = errorMessage)
-  checkmate::assert_numeric(fuzzy_match_max_distance_sub, add = errorMessage)
-  checkmate::assert_numeric(fuzzy_match_max_distance_del, add = errorMessage)
-  checkmate::assert_numeric(fuzzy_match_max_distance_ins, add = errorMessage)
+  checkmate::assert_numeric(fuzzy_match_max_distance_substitutions, add = errorMessage)
+  checkmate::assert_numeric(fuzzy_match_max_distance_deletions, add = errorMessage)
+  checkmate::assert_numeric(fuzzy_match_max_distance_insertions, add = errorMessage)
   checkmate::assertVector(exclude, null.ok = TRUE, add = errorMessage)
   checkmate::assert_logical(include_descendants, add = errorMessage)
   checkmate::assert_logical(include_ancestor, add = errorMessage)
@@ -271,9 +271,9 @@ get_candidate_codes <- function(keywords,
 
       for (j in 1:length(working_keywords)) { # filter each term
         indx <- agrep(working_keywords[j], working_concepts$concept_name,
-                      max.distance = list(substitutions = fuzzy_match_max_distance_sub,
-                                          deletions = fuzzy_match_max_distance_del,
-                                          insertions = fuzzy_match_max_distance_ins)
+                      max.distance = list(substitutions = fuzzy_match_max_distance_substitutions,
+                                          deletions = fuzzy_match_max_distance_deletions,
+                                          insertions = fuzzy_match_max_distance_insertions)
         )
         working_concepts <- working_concepts[indx, ]
       }

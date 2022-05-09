@@ -92,7 +92,7 @@ untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "r
 db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
 ```
 
-## Examaple search using Eunomia
+## Example search using Eunomia
 
 Every codelist is specific to a version of the OMOP CDM vocabularies, so
 we can first check the version.
@@ -132,7 +132,7 @@ get_candidate_codes(keywords="asthma",
 #> 1     317009 Asthma       Condition SNOMED
 ```
 
-Please see vignettes for futher details.
+Please see vignettes for further details.
 
 ## Development status
 

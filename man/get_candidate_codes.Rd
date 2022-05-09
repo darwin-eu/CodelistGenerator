@@ -9,7 +9,9 @@ get_candidate_codes(
   domains = c("Condition", "Drug", "Observation", "Procedure"),
   search_synonyms = FALSE,
   fuzzy_match = FALSE,
-  fuzzy_match_max_distance = 0.1,
+  fuzzy_match_max_distance_substitutions = 0.1,
+  fuzzy_match_max_distance_deletions = 0.1,
+  fuzzy_match_max_distance_insertions = 0.1,
   exclude = NULL,
   include_descendants = TRUE,
   include_ancestor = FALSE,
@@ -29,7 +31,11 @@ positions (e.g. "osteoarthritis of knee") should be identified.}
 
 \item{fuzzy_match}{Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.}
 
-\item{fuzzy_match_max_distance}{The maximum distance parameter for fuzzy matching (see ??base::agrep for further details).}
+\item{fuzzy_match_max_distance_substitutions, }{The maximum distance parameter of substitution for fuzzy matching (see ??base::agrep for further details).}
+
+\item{fuzzy_match_max_distance_deletions, }{The maximum distance parameter of deletion for fuzzy matching (see ??base::agrep for further details).}
+
+\item{fuzzy_match_max_distance_insertions, }{The maximum distance parameter of insertion for fuzzy matching (see ??base::agrep for further details).}
 
 \item{exclude}{Character vector of words to identify concepts to exclude.}
 

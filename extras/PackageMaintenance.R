@@ -251,9 +251,9 @@ oa_codes3 <- get_candidate_codes(
   domains = c("Condition", "Observation"),
   search_synonyms = FALSE,
   fuzzy_match = FALSE,
-                    fuzzy_match_max_distance_sub = 0.1,
-                    fuzzy_match_max_distance_del = 0.1,
-                    fuzzy_match_max_distance_ins = 0.1,
+                    fuzzy_match_max_distance_substitutions = 0.1,
+                    fuzzy_match_max_distance_deletions = 0.1,
+                    fuzzy_match_max_distance_insertions = 0.1,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -274,9 +274,9 @@ oa_codes4 <- get_candidate_codes(
   domains = "Condition",
   search_synonyms = TRUE,
   fuzzy_match = FALSE,
-                    fuzzy_match_max_distance_sub = 0.1,
-                    fuzzy_match_max_distance_del = 0.1,
-                    fuzzy_match_max_distance_ins = 0.1,
+                    fuzzy_match_max_distance_substitutions = 0.1,
+                    fuzzy_match_max_distance_deletions = 0.1,
+                    fuzzy_match_max_distance_insertions = 0.1,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -297,9 +297,9 @@ oa_codes5 <- get_candidate_codes(
   domains = "Condition",
   search_synonyms = FALSE,
   fuzzy_match = TRUE,
-                    fuzzy_match_max_distance_sub = 0.1,
-                    fuzzy_match_max_distance_del = 0.1,
-                    fuzzy_match_max_distance_ins = 0.1,
+                    fuzzy_match_max_distance_substitutions = 0.1,
+                    fuzzy_match_max_distance_deletions = 0.1,
+                    fuzzy_match_max_distance_insertions = 0.1,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -320,9 +320,9 @@ oa_codes6 <- get_candidate_codes(
   domains = "Condition",
   search_synonyms = FALSE,
   fuzzy_match = TRUE,
-                    fuzzy_match_max_distance_sub = 0.2,
-                    fuzzy_match_max_distance_del = 0.2,
-                    fuzzy_match_max_distance_ins = 0.2,
+                    fuzzy_match_max_distance_substitutions = 0.2,
+                    fuzzy_match_max_distance_deletions = 0.2,
+                    fuzzy_match_max_distance_insertions = 0.2,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -343,9 +343,9 @@ oa_codes7 <- get_candidate_codes(
   domains = "Condition",
   search_synonyms = FALSE,
   fuzzy_match = FALSE,
-                    fuzzy_match_max_distance_sub = 0.2,
-                    fuzzy_match_max_distance_del = 0.2,
-                    fuzzy_match_max_distance_ins = 0.2,
+                    fuzzy_match_max_distance_substitutions = 0.2,
+                    fuzzy_match_max_distance_deletions = 0.2,
+                    fuzzy_match_max_distance_insertions = 0.2,
   exclude = c(
     "post-infection",
     "post-traumatic"

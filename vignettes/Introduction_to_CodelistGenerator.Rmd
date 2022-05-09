@@ -127,7 +127,7 @@ To try and include all such terms that could be included we can use CodelistGene
 library(CodelistGenerator)
 ```
 
-First, let's do a simple search for a single keyword of "dementia" without any exclusions, without searching synonyms, and including descendents but not ancestors.
+First, let's do a simple search for a single keyword of "dementia" without any exclusions, without searching synonyms, and including descendants but not ancestors.
 ```{r, eval=FALSE }
 dementia_codes1<-get_candidate_codes(keywords="dementia",
                     domains="Condition",
