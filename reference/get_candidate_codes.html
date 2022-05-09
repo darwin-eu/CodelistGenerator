@@ -57,7 +57,9 @@ using the OMOP CDM.</p>
   domains <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Condition"</span>, <span class="st">"Drug"</span>, <span class="st">"Observation"</span>, <span class="st">"Procedure"</span><span class="op">)</span>,
   search_synonyms <span class="op">=</span> <span class="cn">FALSE</span>,
   fuzzy_match <span class="op">=</span> <span class="cn">FALSE</span>,
-  fuzzy_match_max_distance <span class="op">=</span> <span class="fl">0.1</span>,
+  fuzzy_match_max_distance_substitutions <span class="op">=</span> <span class="fl">0.1</span>,
+  fuzzy_match_max_distance_deletions <span class="op">=</span> <span class="fl">0.1</span>,
+  fuzzy_match_max_distance_insertions <span class="op">=</span> <span class="fl">0.1</span>,
   exclude <span class="op">=</span> <span class="cn">NULL</span>,
   include_descendants <span class="op">=</span> <span class="cn">TRUE</span>,
   include_ancestor <span class="op">=</span> <span class="cn">FALSE</span>,
@@ -79,8 +81,12 @@ positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.</p></dd>
 <dt>fuzzy_match</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.</p></dd>
-<dt>fuzzy_match_max_distance</dt>
-<dd><p>The maximum distance parameter for fuzzy matching (see ??base::agrep for further details).</p></dd>
+<dt>fuzzy_match_max_distance_substitutions, </dt>
+<dd><p>The maximum distance parameter of substitution for fuzzy matching (see ??base::agrep for further details).</p></dd>
+<dt>fuzzy_match_max_distance_deletions, </dt>
+<dd><p>The maximum distance parameter of deletion for fuzzy matching (see ??base::agrep for further details).</p></dd>
+<dt>fuzzy_match_max_distance_insertions, </dt>
+<dd><p>The maximum distance parameter of insertion for fuzzy matching (see ??base::agrep for further details).</p></dd>
 <dt>exclude</dt>
 <dd><p>Character vector of words to identify concepts to exclude.</p></dd>
 <dt>include_descendants</dt>
