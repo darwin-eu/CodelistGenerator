@@ -91,16 +91,23 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, setdiff, setequal, union</span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/untar.html" class="external-link">untar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">xzfile</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"sqlite"</span>, <span class="st">"cdm.tar.xz"</span>, package <span class="op">=</span> <span class="st">"Eunomia"</span><span class="op">)</span>, open <span class="op">=</span> <span class="st">"rb"</span><span class="op">)</span>,</span>
-<span class="r-in">     exdir <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,<span class="st">"\\cdm.sqlite"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">asthma_codes</span><span class="op">&lt;-</span><span class="fu"><a href="get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"asthma"</span>,</span>
-<span class="r-in">                 db<span class="op">=</span><span class="va">db</span>,</span>
-<span class="r-in">                 vocabulary_database_schema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/untar.html" class="external-link">untar</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">xzfile</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"sqlite"</span>, <span class="st">"cdm.tar.xz"</span>,</span>
+<span class="r-in">  package <span class="op">=</span> <span class="st">"Eunomia"</span></span>
+<span class="r-in"><span class="op">)</span>, open <span class="op">=</span> <span class="st">"rb"</span><span class="op">)</span>,</span>
+<span class="r-in">exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"\\cdm.sqlite"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">asthma_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span></span>
+<span class="r-in">  keywords <span class="op">=</span> <span class="st">"asthma"</span>,</span>
+<span class="r-in">  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span class="r-in">  vocabulary_database_schema <span class="op">=</span> <span class="st">"main"</span></span>
+<span class="r-in"><span class="op">)</span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> no such table: main.concept</span>
-<span class="r-in"><span class="fu">show_mappings</span><span class="op">(</span>candidate_codelist<span class="op">=</span> <span class="va">asthma_codes</span>,</span>
-<span class="r-in">                 db<span class="op">=</span><span class="va">db</span>,</span>
-<span class="r-in">                 vocabulary_database_schema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">show_mappings</span><span class="op">(</span></span>
+<span class="r-in">  candidate_codelist <span class="op">=</span> <span class="va">asthma_codes</span>,</span>
+<span class="r-in">  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span class="r-in">  vocabulary_database_schema <span class="op">=</span> <span class="st">"main"</span></span>
+<span class="r-in"><span class="op">)</span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in isTRUE(lhs):</span> object 'asthma_codes' not found</span>
 </code></pre></div>
     </div>
