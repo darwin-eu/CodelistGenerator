@@ -35,13 +35,20 @@ library(Eunomia)
 library(RSQLite)
 library(dplyr)
 library(DBI)
-untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
-     exdir =  tempdir())
-db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\\\cdm.sqlite"))
-asthma_codes<-get_candidate_codes(keywords="asthma",
-                 db=db,
-                 vocabulary_database_schema = "main")
-show_mappings(candidate_codelist= asthma_codes,
-                 db=db,
-                 vocabulary_database_schema = "main")
+untar(xzfile(system.file("sqlite", "cdm.tar.xz",
+  package = "Eunomia"
+), open = "rb"),
+exdir = tempdir()
+)
+db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(), "\\\\cdm.sqlite"))
+asthma_codes <- get_candidate_codes(
+  keywords = "asthma",
+  db = db,
+  vocabulary_database_schema = "main"
+)
+show_mappings(
+  candidate_codelist = asthma_codes,
+  db = db,
+  vocabulary_database_schema = "main"
+)
 }

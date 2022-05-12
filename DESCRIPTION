@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9286-1128"))
-Description: Generate a candidate codelist for the OMOP CDM based on string matching
+Description: Generate a candidate codelist for the OMOP CDM based on string matching. For a given search strategy, a candidate codelist will be returned.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

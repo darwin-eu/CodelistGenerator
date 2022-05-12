@@ -2,10 +2,13 @@ test_that("db via DBI::dbConnect()", {
   library(Eunomia)
   library(DBI)
   library(RSQLite)
-  untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
+  untar(xzfile(system.file("sqlite", "cdm.tar.xz",
+                           package = "Eunomia"),
+               open = "rb"),
     exdir = tempdir()
   )
-  db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(), "\\cdm.sqlite"))
+  db <- DBI::dbConnect(RSQLite::SQLite(),
+                       paste0(tempdir(), "\\cdm.sqlite"))
   expect_error(
     get_candidate_codes(
       keywords = "a",
@@ -18,6 +21,7 @@ test_that("db via DBI::dbConnect()", {
       vocabulary_database_schema = "main"
     )
   )
+    DBI::dbDisconnect(db)
 })
 
 test_that("concept table names", {
@@ -25,14 +29,27 @@ test_that("concept table names", {
   library(DBI)
   library(RSQLite)
   library(dplyr)
-  untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
+  untar(xzfile(system.file("sqlite", "cdm.tar.xz",
+                           package = "Eunomia"), open = "rb"),
     exdir = tempdir()
   )
   db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(), "\\cdm.sqlite"))
   vocabulary_database_schema <- "main"
-  concept_db <- dplyr::tbl(db, dplyr::sql(glue::glue("SELECT * FROM {vocabulary_database_schema}.concept")))
-  concept_ancestor_db <- dplyr::tbl(db, dplyr::sql(glue::glue("SELECT * FROM {vocabulary_database_schema}.concept_ancestor")))
-  concept_synonym_db <- dplyr::tbl(db, dplyr::sql(glue::glue("SELECT * FROM {vocabulary_database_schema}.concept_synonym")))
+  concept_db <- dplyr::tbl(db,
+                           dplyr::sql(
+                             glue::glue(
+                               "SELECT * FROM {vocabulary_database_schema}.
+                               concept")))
+  concept_ancestor_db <- dplyr::tbl(db,
+                                    dplyr::sql(
+                                      glue::glue(
+                               "SELECT * FROM {vocabulary_database_schema}.
+                                        concept_ancestor")))
+  concept_synonym_db <- dplyr::tbl(db,
+                                   dplyr::sql(
+                                     glue::glue(
+                                "SELECT * FROM {vocabulary_database_schema}.
+                                       concept_synonym")))
 
   concept <- concept_db %>%
     dplyr::collect() %>%
@@ -45,8 +62,10 @@ test_that("concept table names", {
     dplyr::rename("CONCEPT_PAT_ID" = "CONCEPT_ID")
   db_wrong_variable_names <- dbConnect(RSQLite::SQLite())
   DBI::dbWriteTable(db_wrong_variable_names, "concept", concept)
-  DBI::dbWriteTable(db_wrong_variable_names, "concept_ancestor", concept_ancestor)
-  DBI::dbWriteTable(db_wrong_variable_names, "concept_synonym", concept_synonym)
+  DBI::dbWriteTable(db_wrong_variable_names, "concept_ancestor",
+                    concept_ancestor)
+  DBI::dbWriteTable(db_wrong_variable_names, "concept_synonym",
+                    concept_synonym)
   expect_error(
     get_candidate_codes(
       keywords = "a",
@@ -59,6 +78,7 @@ test_that("concept table names", {
       vocabulary_database_schema = "main"
     )
   )
+  DBI::dbDisconnect(db)
 })
 
 
@@ -67,10 +87,13 @@ test_that("candidate codes variable names", {
   library(Eunomia)
   library(DBI)
   library(RSQLite)
-  untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
+  untar(xzfile(system.file("sqlite", "cdm.tar.xz",
+                           package = "Eunomia"),
+               open = "rb"),
     exdir = tempdir()
   )
-  db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(), "\\cdm.sqlite"))
+  db <- DBI::dbConnect(RSQLite::SQLite(),
+                       paste0(tempdir(), "\\cdm.sqlite"))
   codes <- get_candidate_codes(
     keywords = "a",
     search_synonyms = TRUE,
@@ -87,6 +110,7 @@ test_that("candidate codes variable names", {
     "vocabulary_id", "concept_id"
   ) %in%
     names(codes)))
+    DBI::dbDisconnect(db)
 })
 
 
@@ -94,10 +118,12 @@ test_that("check options", {
   library(Eunomia)
   library(DBI)
   library(RSQLite)
-  untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
+  untar(xzfile(system.file("sqlite", "cdm.tar.xz",
+                           package = "Eunomia"), open = "rb"),
     exdir = tempdir()
   )
-  db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(), "\\cdm.sqlite"))
+  db <- DBI::dbConnect(RSQLite::SQLite(),
+                       paste0(tempdir(), "\\cdm.sqlite"))
   # check search_synonyms
   codes1 <- get_candidate_codes(
     keywords = "asthma",
@@ -159,9 +185,9 @@ test_that("check options", {
     domains = c("Condition"),
     search_synonyms = TRUE,
     fuzzy_match = TRUE,
-    fuzzy_match_max_distance_substitutions = 0.1,
-    fuzzy_match_max_distance_insertions = 0.1,
-    fuzzy_match_max_distance_deletions = 0.1,
+    max_distance_substitutions = 0.1,
+    max_distance_insertions = 0.1,
+    max_distance_deletions = 0.1,
     exclude = "Childhood asthma",
     include_descendants = TRUE,
     include_ancestor = TRUE,
@@ -170,4 +196,5 @@ test_that("check options", {
     vocabulary_database_schema = "main"
   )
   expect_true(nrow(codes5) >= 1)
+    DBI::dbDisconnect(db)
 })

@@ -9,9 +9,9 @@ get_candidate_codes(
   domains = c("Condition", "Drug", "Observation", "Procedure"),
   search_synonyms = FALSE,
   fuzzy_match = FALSE,
-  fuzzy_match_max_distance_substitutions = 0.1,
-  fuzzy_match_max_distance_deletions = 0.1,
-  fuzzy_match_max_distance_insertions = 0.1,
+  max_distance_substitutions = 0.1,
+  max_distance_deletions = 0.1,
+  max_distance_insertions = 0.1,
   exclude = NULL,
   include_descendants = TRUE,
   include_ancestor = FALSE,
@@ -21,52 +21,72 @@ get_candidate_codes(
 )
 }
 \arguments{
-\item{keywords}{Character vector of words to search for. Where more than one word is given (e.g. "knee osteoarthritis"),
+\item{keywords}{Character vector of words to search for.
+Where more than one word is given (e.g. "knee osteoarthritis"),
 all combinations of those words should be identified
 positions (e.g. "osteoarthritis of knee") should be identified.}
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
-\item{search_synonyms}{Either TRUE or FALSE. If TRUE the code will also search via the concept synonym table.}
+\item{search_synonyms}{Either TRUE or FALSE. If TRUE the code will also
+search via the concept synonym table.}
 
-\item{fuzzy_match}{Either TRUE or FALSE. If TRUE the fuzzy matching will be used, with approximate matches identified.}
+\item{fuzzy_match}{Either TRUE or FALSE. If TRUE the fuzzy matching
+will be used, with approximate matches identified.}
 
-\item{fuzzy_match_max_distance_substitutions, }{The maximum distance parameter of substitution for fuzzy matching (see ??base::agrep for further details).}
+\item{max_distance_substitutions, }{The maximum distance
+parameter of substitution for fuzzy matching
+(see ??base::agrep for further details).}
 
-\item{fuzzy_match_max_distance_deletions, }{The maximum distance parameter of deletion for fuzzy matching (see ??base::agrep for further details).}
+\item{max_distance_deletions, }{The
+maximum distance parameter of deletion
+for fuzzy matching (see ??base::agrep for further details).}
 
-\item{fuzzy_match_max_distance_insertions, }{The maximum distance parameter of insertion for fuzzy matching (see ??base::agrep for further details).}
+\item{max_distance_insertions, }{The
+maximum distance parameter of insertion for
+fuzzy matching (see ??base::agrep for further details).}
 
-\item{exclude}{Character vector of words to identify concepts to exclude.}
+\item{exclude}{Character vector of words
+to identify concepts to exclude.}
 
-\item{include_descendants}{Either TRUE or FALSE. If TRUE descendant concepts of identified concepts will be included in the candidate codelist.}
+\item{include_descendants}{Either TRUE or FALSE.
+If TRUE descendant concepts of identified concepts
+will be included in the candidate codelist.}
 
-\item{include_ancestor}{Either TRUE or FALSE. If TRUE the direct ancestor concepts of identified concepts will be included in the candidate codelist.}
+\item{include_ancestor}{Either TRUE or FALSE.
+If TRUE the direct ancestor concepts of identified concepts
+will be included in the candidate codelist.}
 
-\item{verbose}{Either TRUE or FALSE. If TRUE, progress will be reported.}
+\item{verbose}{Either TRUE or FALSE.
+If TRUE, progress will be reported.}
 
 \item{db}{Database connection via DBI::dbConnect()}
 
-\item{vocabulary_database_schema}{Name of database schema with vocab tables}
+\item{vocabulary_database_schema}{Name of database
+schema with vocab tables}
 }
 \value{
 Dataframe
 }
 \description{
-This function generates a set of codes that can be considered for creating a phenotype
+This function generates a set of codes that
+can be considered for creating a phenotype
 using the OMOP CDM.
 }
 \examples{
-### note, Eunomia, used in the example below, does not include a full set of vocabularies.
+### note, Eunomia, used in the example below,
+ ### does not include a full set of vocabularies.
 ### The full set can be downloaded from https://athena.ohdsi.org
 \dontrun{
 library(Eunomia)
 library(DBI)
 library(RSQLite)
-untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
+untar(xzfile(system.file("sqlite", "cdm.tar.xz",
+  package = "Eunomia"), open = "rb"),
   exdir = tempdir()
 )
-db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(), "\\\\cdm.sqlite"))
+db <- DBI::dbConnect(RSQLite::SQLite(),
+paste0(tempdir(), "\\\\cdm.sqlite"))
 get_candidate_codes(
   keywords = "asthma",
   search_synonyms = TRUE,
