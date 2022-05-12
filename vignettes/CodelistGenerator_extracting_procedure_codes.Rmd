@@ -1,5 +1,5 @@
 ---
-title: "CodelistGenerator Extracting Procedure Codes"
+title: "CodelistGenerator_extracting_procedure_codes"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{CodelistGenerator_extracting_procedure_codes}
@@ -29,7 +29,6 @@ library(dplyr)
 library(stringr)
 library(DT)
 library(kableExtra)
-library(tictoc)
 library(CodelistGenerator)
 ```
 
@@ -47,9 +46,8 @@ library(here)
 ```
 
 ```{r, eval=FALSE}
-#vocab.folder<-Sys.getenv("omop_cdm_vocab_path") # path to directory of unzipped files
 
-vocab.folder<-"C:/Users/dnewby/Desktop/Athena Vocabs"
+vocab.folder<-Sys.getenv("omop_cdm_vocab_path") # path to directory of unzipped files
 
 concept<-read_delim(paste0(vocab.folder,"/CONCEPT.csv"),
      "\t", escape_double = FALSE, trim_ws = TRUE)
@@ -85,7 +83,6 @@ library(kableExtra)
 
 ```{r, eval=FALSE}
 
-tic()
 codes_from_descendants<-tbl(db, 
   sql(paste0("SELECT * FROM ",
      vocabulary_database_schema,
@@ -100,9 +97,6 @@ codes_from_descendants<-tbl(db,
          "domain_id", "vocabulary_id") %>% 
   collect()
 
-toc()
-
-# saveRDS(codes_from_descendants, here("GitHub", "CodelistGenerator", "vignettes","proc_data_01.RData"))
 
 ```
 
@@ -127,7 +121,7 @@ library(CodelistGenerator)
 
 First, let's do a simple search for a single keyword of "colonoscopy" without any exclusions, and including descendants but not ancestors.
 ```{r, eval=FALSE }
-tic()
+
 colonoscopy_codes1<-get_candidate_codes(keywords="colonoscopy",
                     domains="Procedure",
                     search_synonyms = TRUE,
@@ -138,9 +132,7 @@ colonoscopy_codes1<-get_candidate_codes(keywords="colonoscopy",
                     verbose = TRUE ,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
-toc()
 
-saveRDS(colonoscopy_codes1, here("GitHub", "CodelistGenerator", "vignettes","proc_data_02.RData"))
 
 ```
 
@@ -170,10 +162,6 @@ code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="4249893 and
                      NA)))) %>% 
   select(-c("type1","type2"))
 
-
-
-saveRDS(code_comparison, here("GitHub", "CodelistGenerator", "vignettes","proc_data_03.RData"))
-
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
@@ -200,7 +188,7 @@ datatable(code_comparison %>%
 Next, let's do a search for a single keyword of "colonoscopy" with excluding CT/virtual colonoscopy, looking at both procedure and observation domains including descendants but excluding ancestors.
 
 ```{r, eval=FALSE }
-tic()
+
 colonoscopy_codes2<-get_candidate_codes(keywords="colonoscopy",
                     domains=c("Procedure","Observation"),
                     search_synonyms = FALSE,
@@ -211,9 +199,7 @@ colonoscopy_codes2<-get_candidate_codes(keywords="colonoscopy",
                     verbose = TRUE ,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
-toc()
 
-saveRDS(colonoscopy_codes2, here("GitHub", "CodelistGenerator", "vignettes","proc_data_04.RData"))
 
 ```
 
@@ -231,7 +217,7 @@ datatable(colonoscopy_codes2,
   lengthMenu = c(10, 20,50)
 ))
 ```
-```
+
 
 ## Review mappings from source vocabularies
 Perhaps we want to see what read codes map to our candidate codelist. We can get these by running
@@ -245,9 +231,6 @@ read_mappings<-show_mappings(candidate_codelist=colonoscopy_codes2,
                     source_vocabularies="Read",
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
-
-saveRDS(read_mappings, here("GitHub", "CodelistGenerator", "vignettes","proc_data_05.RData"))
-
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
