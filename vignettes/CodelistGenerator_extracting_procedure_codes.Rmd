@@ -101,7 +101,7 @@ codes_from_descendants<-tbl(db,
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codes_from_descendants<-readRDS(here("GitHub", "CodelistGenerator", "vignettes","proc_data_01.RData"))
+codes_from_descendants<-readRDS(here("vignettes","proc_data_01.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
@@ -137,7 +137,7 @@ colonoscopy_codes1<-get_candidate_codes(keywords="colonoscopy",
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-colonoscopy_codes1<-readRDS(here("GitHub", "CodelistGenerator", "vignettes","proc_data_02.RData"))
+colonoscopy_codes1<-readRDS(here("vignettes","proc_data_02.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
@@ -165,7 +165,7 @@ code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="4249893 and
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-code_comparison<-readRDS(here("GitHub", "CodelistGenerator", "vignettes","proc_data_03.RData"))
+code_comparison<-readRDS(here("vignettes","proc_data_03.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE } 
@@ -204,7 +204,7 @@ colonoscopy_codes2<-get_candidate_codes(keywords="colonoscopy",
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-colonoscopy_codes2<-readRDS(here("GitHub", "CodelistGenerator", "vignettes","proc_data_04.RData"))
+colonoscopy_codes2<-readRDS(here("vignettes","proc_data_04.RData"))
 ```
 
 What are the codes now?
@@ -223,7 +223,7 @@ datatable(colonoscopy_codes2,
 Perhaps we want to see what read codes map to our candidate codelist. We can get these by running
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-read_mappings<-readRDS(here("GitHub", "CodelistGenerator", "vignettes","intro_data_05.RData"))
+read_mappings<-readRDS(here("vignettes","intro_data_05.RData"))
 ```
 
 ```{r,  eval=FALSE }
