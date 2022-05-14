@@ -2,7 +2,7 @@
 title: "02 Options for CodelistGenerator"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Options_for_CodelistGenerator}
+  %\VignetteIndexEntry{02_Options_for_CodelistGenerator}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

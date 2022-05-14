@@ -2,7 +2,7 @@
 title: "01 Introduction to CodelistGenerator"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction_to_CodelistGenerator}
+  %\VignetteIndexEntry{01_Introduction_to_CodelistGenerator}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

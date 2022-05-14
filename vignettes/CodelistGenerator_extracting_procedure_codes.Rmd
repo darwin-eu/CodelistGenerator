@@ -2,7 +2,7 @@
 title: "03 Generating a codelist for procedures"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{CodelistGenerator_extracting_procedure_codes}
+  %\VignetteIndexEntry{03_CodelistGenerator_extracting_procedure_codes}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
