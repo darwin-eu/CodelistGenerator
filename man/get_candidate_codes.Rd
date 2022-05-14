@@ -75,18 +75,21 @@ using the OMOP CDM.
 }
 \examples{
 ### note, Eunomia, used in the example below,
- ### does not include a full set of vocabularies.
+### does not include a full set of vocabularies.
 ### The full set can be downloaded from https://athena.ohdsi.org
 \dontrun{
 library(Eunomia)
 library(DBI)
 library(RSQLite)
 untar(xzfile(system.file("sqlite", "cdm.tar.xz",
-  package = "Eunomia"), open = "rb"),
-  exdir = tempdir()
+  package = "Eunomia"
+), open = "rb"),
+exdir = tempdir()
 )
-db <- DBI::dbConnect(RSQLite::SQLite(),
-paste0(tempdir(), "\\\\cdm.sqlite"))
+db <- DBI::dbConnect(
+  RSQLite::SQLite(),
+  paste0(tempdir(), "\\\\cdm.sqlite")
+)
 get_candidate_codes(
   keywords = "asthma",
   search_synonyms = TRUE,

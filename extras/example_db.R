@@ -37,6 +37,20 @@ show_mappings(dementia_codes,
               db=db,
               vocabulary_database_schema =vocabulary_database_schema)
 
+colonoscopy_codes<-get_candidate_codes(keywords="colonoscopy",
+                     domains="Procedure",
+                     include_descendants=TRUE,
+                     include_ancestor=TRUE,
+                     db=db,
+                     vocabulary_database_schema =vocabulary_database_schema )
+
+metformin_codes<-get_candidate_codes(keywords="metformin",
+                     domains="Drug",
+                     db=db,
+                     vocabulary_database_schema =vocabulary_database_schema,
+                     verbose = TRUE)
+
+
 ## test Adam´s DatabaseConnector
 # devtools::install_github("ablack3/DatabaseConnector", ref="dbplyr")
 # library(DatabaseConnector)

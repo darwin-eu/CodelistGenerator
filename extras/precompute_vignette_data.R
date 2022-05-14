@@ -1,6 +1,6 @@
-# precompute data for vignettes -----
+## precompute data for vignettes -----
 # to avoid fails in continuous integration of vignettes
-# (because of the use of external date)
+# (because of the use of external data)
 # will create the data for vignettes here
 library(readr)
 library(DBI)
@@ -43,7 +43,7 @@ dbWriteTable(db, "vocabulary", vocabulary)
 rm(concept, concept_relationship, concept_ancestor, concept_synonym)
 vocabulary_database_schema <- "main"
 
-# for intro vignette
+# intro vignette ----
 vocab_version <- get_vocab_version(
   db = db,
   vocabulary_database_schema = "main"
@@ -132,7 +132,7 @@ saveRDS(
 )
 
 
-# for options vignette
+# options vignette ------
 oa_codes1 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
@@ -285,4 +285,52 @@ oa_codes7 <- get_candidate_codes(
 saveRDS(
   oa_codes7,
   here("vignettes", "options_data_07.RData")
+)
+
+# colonoscopy vignette ------
+codes_from_descendants<-tbl(db,
+  sql(paste0("SELECT * FROM ",
+     vocabulary_database_schema,
+     ".concept_ancestor"))) %>%
+  filter(ancestor_concept_id %in% c("4249893", "937652", "46257627", "4149125")) %>%
+  select("descendant_concept_id") %>%
+  rename("concept_id"="descendant_concept_id") %>%
+  inner_join(tbl(db, sql(paste0("SELECT * FROM ",
+     vocabulary_database_schema,
+     ".concept"))))%>%
+  select("concept_id", "concept_name",
+         "domain_id", "vocabulary_id") %>%
+  collect()
+
+saveRDS(
+  codes_from_descendants,
+  here("vignettes", "proc_data_01.RData")
+)
+
+
+
+colonoscopy_codes2<-get_candidate_codes(keywords="colonoscopy",
+                    domains=c("Procedure","Observation", "Measurement"),
+                    search_synonyms = TRUE,
+                    fuzzy_match = FALSE,
+                    exclude = NULL,
+                    include_descendants = TRUE,
+                    include_ancestor = FALSE,
+                    verbose = TRUE ,
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(
+  colonoscopy_codes2,
+  here("vignettes", "proc_data_02.RData")
+)
+
+
+
+read_mappings<-show_mappings(candidate_codelist=colonoscopy_codes2,
+                    source_vocabularies="Read",
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+saveRDS(
+  read_mappings,
+  here("vignettes", "proc_data_03.RData")
 )

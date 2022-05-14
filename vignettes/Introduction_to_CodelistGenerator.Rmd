@@ -1,5 +1,5 @@
 ---
-title: "Introduction to CodelistGenerator"
+title: "01 Introduction to CodelistGenerator"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction_to_CodelistGenerator}

@@ -1,5 +1,5 @@
 ---
-title: "CodelistGenerator_extracting_procedure_codes"
+title: "03 Generating a codelist for procedures"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{CodelistGenerator_extracting_procedure_codes}
@@ -18,8 +18,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-rm(list = ls()) # clear environment
-
 library(here)
 library(readr)
 library(DBI)
@@ -32,48 +30,34 @@ library(kableExtra)
 library(CodelistGenerator)
 ```
 
-## Creating a codelists for procedure
-For this vignette we are going to create codelists for the procedure "colonoscopy" (https://athena.ohdsi.org/search-terms/terms/4249893). In these example we are going to generate a candidate codelists only looking for codes in the procedure domain.
+## Creating a codelists for colonoscopy
+For this vignette we are going to create codelists for identifying a colonoscopy. For this example we are going to generate a candidate codelists looking for codes in either the procedure, observation, or measurement domain. Note that the vocabulary we´re using doesn't include CPT4 codes or OPCS4.
 
-## Getting the OMOP CDM vocabularies
-As stated in other vignettes if you do not have ready access to a database with data in the OMOP CDM format (which will necessarily contain the vocabulary tables), you will first need to obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, we can make a vocabulary only database like so:
-
-```{r, eval=FALSE}
-library(readr)
-library(DBI)
-library(RSQLite)
-library(here)
-```
+## Connecting to a database with the OMOP CDM vocabularies
+As described previously there are alternative ways to link to the vocabularie. A connection to an existing database can be made like so:
 
 ```{r, eval=FALSE}
+# postgres database connection details
+server_dbi<-Sys.getenv("server")
+user<-Sys.getenv("user")
+password<- Sys.getenv("password")
+port<-Sys.getenv("port")
+host<-Sys.getenv("host")
 
-vocab.folder<-Sys.getenv("omop_cdm_vocab_path") # path to directory of unzipped files
+db <- dbConnect(RPostgres::Postgres(),
+                dbname = server_dbi,
+                port = port,
+                host = host,
+                user = user,
+                password = password)
 
-concept<-read_delim(paste0(vocab.folder,"/CONCEPT.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE)
-concept_relationship<-read_delim(paste0(vocab.folder,"/CONCEPT_RELATIONSHIP.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE) 
-concept_ancestor<-read_delim(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE)
-concept_synonym<-read_delim(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE)
-vocabulary<-read_delim(paste0(vocab.folder,"/VOCABULARY.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE)
-
-db <- dbConnect(RSQLite::SQLite(), ":memory:")
-dbWriteTable(db, "concept", concept, overwrite=TRUE)
-dbWriteTable(db, "concept_relationship", concept_relationship, overwrite=TRUE)
-dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite=TRUE)
-dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
-dbWriteTable(db, "vocabulary", vocabulary)
-rm(concept,concept_relationship, concept_ancestor, concept_synonym, vocabulary)
-vocabulary_database_schema<-"main"
+# name of vocabulary schema
+vocabulary_database_schema<-"vocabulary"
 ```
 
-The structure of each of these tables is described in detail at: https://ohdsi.github.io/CommonDataModel/cdm53.html#Vocabulary_Tables 
+## Codelist from "colonoscopy" and its descendants
+First we can follow the approach of identifying high-level codes and include all their descendants.
 
-## Codelist from "colonoscopy"and its descendants
-The simplest approach to identifying potential codes is to take a high-level code and include all its descendants. There are some codes in this example that are not mapped so do not contain concept names.
 ```{r, eval=FALSE}
 library(dplyr)
 library(stringr)
@@ -82,12 +66,11 @@ library(kableExtra)
 ```
 
 ```{r, eval=FALSE}
-
 codes_from_descendants<-tbl(db, 
   sql(paste0("SELECT * FROM ",
      vocabulary_database_schema,
      ".concept_ancestor"))) %>% 
-  filter(ancestor_concept_id=="4249893") %>% 
+  filter(ancestor_concept_id %in% c("4249893", "937652", "4149125")) %>% 
   select("descendant_concept_id") %>% 
   rename("concept_id"="descendant_concept_id") %>% 
   left_join(tbl(db, sql(paste0("SELECT * FROM ",
@@ -113,7 +96,7 @@ datatable(codes_from_descendants,
 ```
 
 ## Generating a candidate codelist using Codelist Generator
-To try and include all such terms that could be included we can use CodelistGenerator.
+But we can also use CodelistGenerator to generate a candidate codelist for colonoscopy.
 
 ```{r, eval=FALSE }
 library(CodelistGenerator)
@@ -121,15 +104,13 @@ library(CodelistGenerator)
 
 First, let's do a simple search for a single keyword of "colonoscopy" without any exclusions, and including descendants but not ancestors.
 ```{r, eval=FALSE }
-
-colonoscopy_codes1<-get_candidate_codes(keywords="colonoscopy",
-                    domains="Procedure",
+colonoscopy_codes2<-get_candidate_codes(keywords="colonoscopy",
+                    domains=c("Procedure","Observation", "Measurement"),
                     search_synonyms = TRUE,
                     fuzzy_match = FALSE,
                     exclude = NULL,
                     include_descendants = TRUE,
                     include_ancestor = FALSE,
-                    verbose = TRUE ,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 
@@ -137,11 +118,11 @@ colonoscopy_codes1<-get_candidate_codes(keywords="colonoscopy",
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-colonoscopy_codes1<-readRDS(here("vignettes","proc_data_02.RData"))
+colonoscopy_codes2<-readRDS(here("vignettes","proc_data_02.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(colonoscopy_codes1,
+datatable(colonoscopy_codes2,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -149,14 +130,14 @@ datatable(colonoscopy_codes1,
 ))
 ```
 
-What is the difference between this codelist and the one from 4249893 and its descendants?
-```{r,  eval=FALSE }
-code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="4249893 and descendants"), 
-                     colonoscopy_codes1  %>% mutate(type2="CodelistGenerator")) %>% 
+What is the difference between this codelist and the one based on descendants?
+```{r,  eval=TRUE }
+code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="Specified codes and descendants"), 
+                     colonoscopy_codes2  %>% mutate(type2="CodelistGenerator")) %>% 
   mutate(type=ifelse(!is.na(type1) & !is.na(type2),
                      "Both",
               ifelse(!is.na(type1) & is.na(type2),
-                     "Only 4249893 and descendants",
+                    "Only specified codes and descendants",
               ifelse(is.na(type1) & !is.na(type2),
                      "Only CodelistGenerator",
                      NA)))) %>% 
@@ -164,9 +145,6 @@ code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="4249893 and
 
 ```
 
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-code_comparison<-readRDS(here("vignettes","proc_data_03.RData"))
-```
 
 ```{r,  message=FALSE, warning=FALSE } 
 kable(code_comparison %>% 
@@ -185,45 +163,11 @@ datatable(code_comparison %>%
 ))
 ```
 
-Next, let's do a search for a single keyword of "colonoscopy" with excluding CT/virtual colonoscopy, looking at both procedure and observation domains including descendants but excluding ancestors.
-
-```{r, eval=FALSE }
-
-colonoscopy_codes2<-get_candidate_codes(keywords="colonoscopy",
-                    domains=c("Procedure","Observation"),
-                    search_synonyms = FALSE,
-                    fuzzy_match = FALSE,
-                    exclude = c("Virtual CT colonoscopy", "CT colonoscopy"),
-                    include_descendants = TRUE,
-                    include_ancestor = FALSE,
-                    verbose = TRUE ,
-                    db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
-
-
-```
-
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-colonoscopy_codes2<-readRDS(here("vignettes","proc_data_04.RData"))
-```
-
-What are the codes now?
-```{r,  message=FALSE, warning=FALSE }
-
-datatable(colonoscopy_codes2,
-          rownames=FALSE,
-          options = list(
-  pageLength = 10,
-  lengthMenu = c(10, 20,50)
-))
-```
-
-
 ## Review mappings from source vocabularies
 Perhaps we want to see what read codes map to our candidate codelist. We can get these by running
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-read_mappings<-readRDS(here("vignettes","intro_data_05.RData"))
+read_mappings<-readRDS(here("vignettes","proc_data_03.RData"))
 ```
 
 ```{r,  eval=FALSE }

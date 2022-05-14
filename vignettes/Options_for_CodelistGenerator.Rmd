@@ -1,5 +1,5 @@
 ---
-title: "Options for CodelistGenerator"
+title: "02 Options for CodelistGenerator"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Options_for_CodelistGenerator}
