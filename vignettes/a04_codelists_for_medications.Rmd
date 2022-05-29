@@ -28,11 +28,9 @@ library(CodelistGenerator)
 ```
 
 ## Creating a codelists for colonoscopy
-For this vignette we are going to create codelists for identifying a colonoscopy. For this example we are going to generate a candidate codelists looking for codes in either the procedure domain.
+For this vignette we are going to create codelists for identifying a metformin, looking in the drug domain.
 
 ## Connecting to a database with the OMOP CDM vocabularies
-As described previously there are alternative ways to link to the vocabularies. A connection to an existing database can be made like so:
-
 ```{r, eval=FALSE}
 library(DBI)
 library(RPostgres)
@@ -97,7 +95,7 @@ datatable(codes_from_descendants,
 ```
 
 ## Generating a candidate codelist using Codelist Generator
-But we can also use CodelistGenerator to generate a candidate codelist for colonoscopy.
+But we can also use CodelistGenerator to generate a candidate codelist for metformin,
 
 ```{r, eval=FALSE }
 library(CodelistGenerator)
@@ -107,12 +105,7 @@ Let's do a search for a single keyword of "colonoscopy" without any exclusions a
 ```{r, eval=FALSE }
 metformin_codes2<-get_candidate_codes(keywords="metformin",
                     domains=c("Drug"),
-                    search_synonyms = FALSE,
-                    fuzzy_match = FALSE,
-                    exclude = NULL,
                     include_descendants = TRUE,
-                    include_ancestor = FALSE,
-                    verbose = TRUE ,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 
