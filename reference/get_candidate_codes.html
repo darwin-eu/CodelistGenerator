@@ -31,6 +31,7 @@ using the OMOP CDM."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
     <a class="dropdown-item" href="../articles/a01_Introduction_to_CodelistGenerator.html">01 Introduction to CodelistGenerator</a>
     <a class="dropdown-item" href="../articles/a02_Options_for_CodelistGenerator.html">02 Options for CodelistGenerator</a>
     <a class="dropdown-item" href="../articles/a03_CodelistGenerator_extracting_procedure_codes.html">03 Generating a codelist for procedures</a>
+    <a class="dropdown-item" href="../articles/a04_codelists_for_medications.html">04 Codelists for medications</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -59,7 +60,9 @@ using the OMOP CDM.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_candidate_codes</span><span class="op">(</span>
   <span class="va">keywords</span>,
   domains <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Condition"</span>, <span class="st">"Drug"</span>, <span class="st">"Observation"</span>, <span class="st">"Procedure"</span><span class="op">)</span>,
+  standard_concept <span class="op">=</span> <span class="st">"Standard"</span>,
   search_synonyms <span class="op">=</span> <span class="cn">FALSE</span>,
+  search_source <span class="op">=</span> <span class="cn">FALSE</span>,
   fuzzy_match <span class="op">=</span> <span class="cn">FALSE</span>,
   max_distance_substitutions <span class="op">=</span> <span class="fl">0.1</span>,
   max_distance_deletions <span class="op">=</span> <span class="fl">0.1</span>,
@@ -82,9 +85,16 @@ all combinations of those words should be identified
 positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
 <dt>domains</dt>
 <dd><p>Character vector with one or more of the OMOP CDM domain.</p></dd>
+<dt>standard_concept</dt>
+<dd><p>Character vector with one or more of "Standard",
+"Classification", and "Non-standard". These correspond to the flags used
+for the standard_concept field in the concept table of the cdm.</p></dd>
 <dt>search_synonyms</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also
 search via the concept synonym table.</p></dd>
+<dt>search_source</dt>
+<dd><p>Either TRUE or FALSE. If TRUE the code will also
+search via source concepts.</p></dd>
 <dt>fuzzy_match</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the fuzzy matching
 will be used, with approximate matches identified.</p></dd>
