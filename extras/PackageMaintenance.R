@@ -88,7 +88,7 @@ devtools::build_vignettes()
 
 # usethis::use_vignette("Introduction_to_CodelistGenerator")
 # usethis::use_vignette("Options_for_CodelistGenerator")
-
+# usethis::use_vignette("a04_codelists_for_medications")
 
 
 

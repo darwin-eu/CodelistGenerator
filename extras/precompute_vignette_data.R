@@ -12,36 +12,10 @@ library(DT)
 library(kableExtra)
 devtools::load_all()
 
-vocab.folder <- Sys.getenv("omop_cdm_vocab_path") # path to directory of unzipped files
-concept <- read_delim(paste0(vocab.folder, "/CONCEPT.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-concept_relationship <- read_delim(paste0(vocab.folder, "/CONCEPT_RELATIONSHIP.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-concept_ancestor <- read_delim(paste0(vocab.folder, "/CONCEPT_ANCESTOR.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-concept_synonym <- read_delim(paste0(vocab.folder, "/CONCEPT_SYNONYM.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-vocabulary <- read_delim(paste0(vocab.folder, "/VOCABULARY.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-
-db <- dbConnect(RSQLite::SQLite(), ":memory:")
-dbWriteTable(db, "concept", concept, overwrite = TRUE)
-dbWriteTable(db, "concept_relationship", concept_relationship, overwrite = TRUE)
-dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite = TRUE)
-dbWriteTable(db, "concept_synonym", concept_synonym, overwrite = TRUE)
-dbWriteTable(db, "vocabulary", vocabulary)
-rm(concept, concept_relationship, concept_ancestor, concept_synonym)
+db<-dbConnect(RSQLite::SQLite(), paste0(Sys.getenv("omop_cdm_vocab_path"),".sqlite"))
 vocabulary_database_schema <- "main"
+
+
 
 # intro vignette ----
 vocab_version <- get_vocab_version(
@@ -218,8 +192,29 @@ saveRDS(
   here("vignettes", "options_data_04.RData")
 )
 
-# fuzzy search
+# search source
 oa_codes5 <- get_candidate_codes(
+  keywords = "osteoarthritis",
+  domains = "Condition",
+  search_source = TRUE,
+  exclude = c(
+    "post-infection",
+    "post-traumatic"
+  ),
+  include_descendants = FALSE,
+  include_ancestor = FALSE,
+  db = db,
+  vocabulary_database_schema = vocabulary_database_schema
+)
+saveRDS(
+  oa_codes5,
+  here("vignettes", "options_data_04.RData")
+)
+
+
+
+# fuzzy search
+oa_codes6 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   search_synonyms = FALSE,
@@ -237,12 +232,12 @@ oa_codes5 <- get_candidate_codes(
   vocabulary_database_schema = vocabulary_database_schema
 )
 saveRDS(
-  oa_codes5,
+  oa_codes6,
   here("vignettes", "options_data_05.RData")
 )
 
 # fuzzy search 0.2
-oa_codes6 <- get_candidate_codes(
+oa_codes7 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   search_synonyms = FALSE,
@@ -260,12 +255,12 @@ oa_codes6 <- get_candidate_codes(
   vocabulary_database_schema = vocabulary_database_schema
 )
 saveRDS(
-  oa_codes6,
+  oa_codes7,
   here("vignettes", "options_data_06.RData")
 )
 
 # include ancestor
-oa_codes7 <- get_candidate_codes(
+oa_codes8 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   search_synonyms = FALSE,
@@ -283,7 +278,7 @@ oa_codes7 <- get_candidate_codes(
   vocabulary_database_schema = vocabulary_database_schema
 )
 saveRDS(
-  oa_codes7,
+  oa_codes8,
   here("vignettes", "options_data_07.RData")
 )
 
@@ -292,7 +287,7 @@ codes_from_descendants<-tbl(db,
   sql(paste0("SELECT * FROM ",
      vocabulary_database_schema,
      ".concept_ancestor"))) %>%
-  filter(ancestor_concept_id %in% c("4249893", "937652", "46257627", "4149125")) %>%
+  filter(ancestor_concept_id %in% c("4249893", "937652", "40480729")) %>%
   select("descendant_concept_id") %>%
   rename("concept_id"="descendant_concept_id") %>%
   inner_join(tbl(db, sql(paste0("SELECT * FROM ",
@@ -310,11 +305,11 @@ saveRDS(
 
 
 colonoscopy_codes2<-get_candidate_codes(keywords="colonoscopy",
-                    domains=c("Procedure","Observation", "Measurement"),
-                    search_synonyms = TRUE,
+                    domains=c("Procedure", "Measurement"),
+                    search_synonyms = FALSE,
                     fuzzy_match = FALSE,
                     exclude = NULL,
-                    include_descendants = TRUE,
+                    include_descendants = FALSE,
                     include_ancestor = FALSE,
                     verbose = TRUE ,
                     db=db,
@@ -326,11 +321,43 @@ saveRDS(
 
 
 
-read_mappings<-show_mappings(candidate_codelist=colonoscopy_codes2,
-                    source_vocabularies="Read",
+# medication vignette ------
+codes_from_descendants<-tbl(db,
+  sql(paste0("SELECT * FROM ",
+     vocabulary_database_schema,
+     ".concept_ancestor"))) %>%
+  filter(ancestor_concept_id %in% c("1503297")) %>%
+  select("descendant_concept_id") %>%
+  rename("concept_id"="descendant_concept_id") %>%
+  inner_join(tbl(db, sql(paste0("SELECT * FROM ",
+     vocabulary_database_schema,
+     ".concept"))))%>%
+  select("concept_id", "concept_name",
+         "domain_id", "vocabulary_id") %>%
+  collect()
+
+saveRDS(
+  codes_from_descendants,
+  here("vignettes", "med_data_01.RData")
+)
+
+
+
+metformin_codes2<-get_candidate_codes(keywords="metformin",
+                    domains=c("Drug"),
+                    standard_concept=c("Standard", "Classification"),
+                    search_synonyms = FALSE,
+                    fuzzy_match = FALSE,
+                    exclude = NULL,
+                    include_descendants = TRUE,
+                    include_ancestor = FALSE,
+                    verbose = TRUE ,
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
 saveRDS(
-  read_mappings,
-  here("vignettes", "proc_data_03.RData")
+  metformin_codes2,
+  here("vignettes", "metformin_codes2.RData")
 )
+
+
+

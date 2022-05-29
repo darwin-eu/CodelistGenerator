@@ -179,11 +179,28 @@ test_that("check options", {
     vocabulary_database_schema = "main"
   ))
 
-  # all options used
+  # all options used with eact
   codes5 <- get_candidate_codes(
     keywords = "asthma",
     domains = c("Condition"),
     search_synonyms = TRUE,
+    search_source = TRUE,
+    fuzzy_match = FALSE,
+    exclude = "Childhood asthma",
+    include_descendants = TRUE,
+    include_ancestor = TRUE,
+    verbose = TRUE,
+    db = db,
+    vocabulary_database_schema = "main"
+  )
+  expect_true(nrow(codes5) >= 1)
+
+  # all options used with fuzzy
+  codes6 <- get_candidate_codes(
+    keywords = "asthma",
+    domains = c("Condition"),
+    search_synonyms = TRUE,
+    search_source = TRUE,
     fuzzy_match = TRUE,
     max_distance_substitutions = 0.1,
     max_distance_insertions = 0.1,
@@ -195,6 +212,7 @@ test_that("check options", {
     db = db,
     vocabulary_database_schema = "main"
   )
-  expect_true(nrow(codes5) >= 1)
+  expect_true(nrow(codes6) >= 1)
     DBI::dbDisconnect(db)
+
 })

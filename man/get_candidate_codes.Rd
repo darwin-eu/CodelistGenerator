@@ -7,7 +7,9 @@
 get_candidate_codes(
   keywords,
   domains = c("Condition", "Drug", "Observation", "Procedure"),
+  standard_concept = "Standard",
   search_synonyms = FALSE,
+  search_source = FALSE,
   fuzzy_match = FALSE,
   max_distance_substitutions = 0.1,
   max_distance_deletions = 0.1,
@@ -28,8 +30,15 @@ positions (e.g. "osteoarthritis of knee") should be identified.}
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
+\item{standard_concept}{Character vector with one or more of "Standard",
+"Classification", and "Non-standard". These correspond to the flags used
+for the standard_concept field in the concept table of the cdm.}
+
 \item{search_synonyms}{Either TRUE or FALSE. If TRUE the code will also
 search via the concept synonym table.}
+
+\item{search_source}{Either TRUE or FALSE. If TRUE the code will also
+search via source concepts.}
 
 \item{fuzzy_match}{Either TRUE or FALSE. If TRUE the fuzzy matching
 will be used, with approximate matches identified.}
