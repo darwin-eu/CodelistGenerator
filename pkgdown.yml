@@ -6,8 +6,8 @@ articles:
   a02_Options_for_CodelistGenerator: a02_Options_for_CodelistGenerator.html
   a03_CodelistGenerator_extracting_procedure_codes: a03_CodelistGenerator_extracting_procedure_codes.html
   a04_codelists_for_medications: a04_codelists_for_medications.html
-last_built: 2022-05-30T08:27Z
+last_built: 2022-05-30T08:46Z
 urls:
-  reference: https://oxford-pharmacoepi.github.io/CodelistGenerator/reference
-  article: https://oxford-pharmacoepi.github.io/CodelistGenerator/articles
+  reference: https://darwin-eu.github.io/CodelistGenerator/reference
+  article: https://darwin-eu.github.io/CodelistGenerator/articles
 
