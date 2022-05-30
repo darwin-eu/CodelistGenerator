@@ -24,7 +24,7 @@ You can install the development version of CodelistGenerator like so:
 
 ``` r
 install.packages("remotes")
-remotes::install_github("oxford-pharmacoepi/CodelistGenerator")
+remotes::install_github("darwin-eu/CodelistGenerator")
 ```
 
 ## Connecting to the OMOP CDM vocabularies
