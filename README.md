@@ -3,8 +3,8 @@
 
 <!-- badges: start -->
 
-[![codecov.io](https://codecov.io/github/oxford-pharmacoepi/CodelistGenerator/coverage.svg?branch=main)](https://codecov.io/github/oxford-pharmacoepi/CodelistGenerator?branch=main)
-[![R-CMD-check](https://github.com/oxford-pharmacoepi/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/oxford-pharmacoepi/CodelistGenerator/actions)
+[![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
+[![R-CMD-check](https://github.com/darwin-eu/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CodelistGenerator/actions)
 <!-- badges: end -->
 
 # CodelistGenerator

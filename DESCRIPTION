@@ -35,4 +35,4 @@ Suggests:
 Remotes: OHDSI/Eunomia@main
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://oxford-pharmacoepi.github.io/CodelistGenerator/
+URL: https://darwin-eu.github.io/CodelistGenerator/
