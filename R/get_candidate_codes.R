@@ -117,7 +117,8 @@ get_candidate_codes <- function(keywords,
   checkmate::assertVector(standard_concept,
     add = error_message
   )
-  standard_concept_check <- all(standard_concept %in% c("Standard", "Classification", "Non-standard"))
+  standard_concept_check <- all(standard_concept %in%
+                                  c("Standard", "Classification", "Non-standard"))
   checkmate::assertTRUE(standard_concept_check, add = error_message)
 
   checkmate::assert_logical(search_synonyms, add = error_message)
@@ -202,7 +203,7 @@ get_candidate_codes <- function(keywords,
     "concept_id", "concept_name", "domain_id",
     "vocabulary_id", "standard_concept"
   )
-  concept_db_names_check <-all(concept_db_names %in%
+  concept_db_names_check <- all(concept_db_names %in%
       names(concept_db %>%
        utils::head(1) %>%
        dplyr::collect()))
@@ -213,32 +214,36 @@ get_candidate_codes <- function(keywords,
     "ancestor_concept_id", "descendant_concept_id",
     "min_levels_of_separation", "max_levels_of_separation"
   )
-    concept_ancestor_db_names_check <-all(
+    c_ancestor_db_names_check <- all(
       concept_ancestor_db_names %in%
       names(concept_ancestor_db %>%
        utils::head(1) %>%
        dplyr::collect()))
-  checkmate::assertTRUE(concept_ancestor_db_names_check, add = error_message)
+  checkmate::assertTRUE(c_ancestor_db_names_check,
+                        add = error_message)
   # concept_synonym table
-  concept_synonym_db_names <- c("concept_id", "concept_synonym_name")
-  concept_synonym_db_names_check <-all(
+  concept_synonym_db_names <- c("concept_id",
+                                "concept_synonym_name")
+  concept_synonym_db_names_check <- all(
       concept_synonym_db_names %in%
       names(concept_synonym_db %>%
        utils::head(1) %>%
        dplyr::collect()))
-  checkmate::assertTRUE(concept_synonym_db_names_check, add = error_message)
+  checkmate::assertTRUE(concept_synonym_db_names_check,
+                        add = error_message)
 
   # concept_relationship_db table
   concept_relationship_db_names <- c(
     "concept_id_1", "concept_id_2",
     "relationship_id"
   )
-  concept_relationship_db_names_check <-all(
+  concept_relationship_db_names_check <- all(
       concept_relationship_db_names %in%
       names(concept_relationship_db %>%
        utils::head(1) %>%
        dplyr::collect()))
-  checkmate::assertTRUE(concept_relationship_db_names_check, add = error_message)
+  checkmate::assertTRUE(concept_relationship_db_names_check,
+                        add = error_message)
   # check domains in db
   domains_in_db <- concept_db %>%
     dplyr::group_by(.data$domain_id) %>%
