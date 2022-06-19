@@ -3,7 +3,7 @@
 #' @param words A character vector.
 #' @noRd
 
-clean_words <- function(words) {
+tidy_words <- function(words) {
   error_message <- checkmate::makeAssertCollection()
   checkmate::assertVector(words, add = error_message)
   checkmate::reportAssertions(collection = error_message)

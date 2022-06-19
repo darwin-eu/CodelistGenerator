@@ -44,10 +44,10 @@ devtools::build_vignettes()
 # Setting up -----
 # usethis::use_version()
 # usethis::use_pipe()
-# use_r("clean_words")
+# use_r("tidy_words")
 # use_r("get_candidate_codes")
 # use_r("show_mappings")
-# usethis::use_r("get_vocab_version")
+# usethis::use_r("generate_mock_db")
 
 # usethis::use_package("checkmate")
 # usethis::use_package("dplyr")
@@ -57,10 +57,10 @@ devtools::build_vignettes()
 # usethis::use_package("glue")
 
 # use_testthat()
-# use_test("clean_words")
+# use_test("tidy_words")
 # usethis::use_test("show_mappings")
 # usethis::use_test("get_candidate_codes")
-# usethis::use_test("get_vocab_version")
+# usethis::use_test("generate_mock_db")
 
 # Coverage
 # usethis::use_coverage()

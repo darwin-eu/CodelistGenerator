@@ -333,7 +333,7 @@ get_candidate_codes <- function(keywords,
     # Get standard, condition concepts which include one of the exclusion words
     # always use exact matching
     exclude_codes <- get_exact_matches(
-      words = clean_words(exclude),
+      words = tidy_words(exclude),
       concept_df = concept
     )
   }
@@ -350,7 +350,7 @@ get_candidate_codes <- function(keywords,
   # 2a) on exact match
   if (fuzzy_match == FALSE) {
     candidate_codes <- get_exact_matches(
-      words = clean_words(keywords),
+      words = tidy_words(keywords),
       concept_df = concept
     )
   }
@@ -358,7 +358,7 @@ get_candidate_codes <- function(keywords,
   # 2b) or using fuzzy match
   if (fuzzy_match == TRUE) {
     candidate_codes <- get_fuzzy_matches(
-      words = clean_words(keywords),
+      words = tidy_words(keywords),
       concept_df = concept,
       md_substitutions = max_distance_substitutions,
       md_deletions = max_distance_deletions,
@@ -408,7 +408,7 @@ get_candidate_codes <- function(keywords,
       # looking for these adds a lot of run time
       # while being highly unlikely to have a match
       synonyms <- synonyms[stringr::str_count(synonyms, "\\S+") <= 6]
-      synonyms <- unique(clean_words(synonyms))
+      synonyms <- unique(tidy_words(synonyms))
       # more than one character
       synonyms <- synonyms[stringr::str_count(synonyms) > 1]
 
@@ -421,7 +421,7 @@ get_candidate_codes <- function(keywords,
 
       if (fuzzy_match == TRUE) {
         synonym_codes <- get_fuzzy_matches(
-          words = clean_words(synonyms),
+          words = tidy_words(synonyms),
           concept_df = concept,
           md_substitutions = max_distance_substitutions,
           md_deletions = max_distance_deletions,
@@ -522,14 +522,14 @@ get_candidate_codes <- function(keywords,
 
       if (fuzzy_match == FALSE) {
         candidate_codes_ns <- get_exact_matches(
-          words = clean_words(keywords),
+          words = tidy_words(keywords),
           concept_df = concept_ns
         )
       }
 
       if (fuzzy_match == TRUE) {
         candidate_codes_ns <- get_fuzzy_matches(
-          words = clean_words(keywords),
+          words = tidy_words(keywords),
           concept_df = concept_ns,
           md_substitutions = max_distance_substitutions,
           md_deletions = max_distance_deletions,
@@ -550,7 +550,7 @@ get_candidate_codes <- function(keywords,
         dplyr::inner_join(concept,
           by = "concept_id"
         ) %>%
-        dplyr::mutate(concept_name = clean_words(.data$concept_name))
+        dplyr::mutate(concept_name = tidy_words(.data$concept_name))
 
       candidate_codes <- dplyr::bind_rows(
         candidate_codes,
@@ -617,7 +617,7 @@ get_exact_matches <- function(words,
   for (i in seq_along(words)) {
     working_exclude <- unlist(strsplit(words[i], " "))
     working_concepts <- concept_df %>% # start with all
-      dplyr::mutate(concept_name = clean_words(.data$concept_name))
+      dplyr::mutate(concept_name = tidy_words(.data$concept_name))
 
     concepts_found[[i]] <- working_concepts %>%
       dplyr::filter(apply(sapply(
@@ -643,7 +643,7 @@ get_fuzzy_matches <- function(words,
     working_keywords <- working_keywords[
                 stringr::str_count(working_keywords) > 1]
     working_concepts <- concept_df %>% # start with all
-      dplyr::mutate(concept_name = clean_words(.data$concept_name))
+      dplyr::mutate(concept_name = tidy_words(.data$concept_name))
     for (j in seq_along(working_keywords)) {
       # filter each term within the loop, one after the other
       indx <- agrep(working_keywords[j], working_concepts$concept_name,
@@ -683,7 +683,7 @@ add_descendants <- function(working_candidate_codes,
     dtplyr::lazy_dt(candidate_code_descendants) %>%
     dplyr::left_join(dtplyr::lazy_dt(concept_df), by = "concept_id") %>%
     as.data.frame() %>%
-    dplyr::mutate(concept_name = clean_words(.data$concept_name))
+    dplyr::mutate(concept_name = tidy_words(.data$concept_name))
 
   candidate_code_descendants
 }
@@ -703,7 +703,7 @@ add_ancestor <- function(working_candidate_codes,
     dplyr::left_join(dtplyr::lazy_dt(concept_df),
                      by = "concept_id") %>%
     as.data.frame() %>%
-    dplyr::mutate(concept_name = clean_words(.data$concept_name))
+    dplyr::mutate(concept_name = tidy_words(.data$concept_name))
 
   # keep if not already in candidate_codes
   candidate_code_ancestor <- candidate_code_ancestor %>%
