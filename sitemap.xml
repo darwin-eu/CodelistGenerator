@@ -16,6 +16,9 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02_Options_for_CodelistGenerator.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02a_Options_for_CodelistGenerator.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a03_CodelistGenerator_extracting_procedure_codes.html</loc>
   </url>
   <url>
@@ -32,9 +35,6 @@
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/get_candidate_codes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/get_vocab_version.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc>

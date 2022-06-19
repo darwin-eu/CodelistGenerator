@@ -30,6 +30,7 @@ using the OMOP CDM."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/a01_Introduction_to_CodelistGenerator.html">01 Introduction to CodelistGenerator</a>
     <a class="dropdown-item" href="../articles/a02_Options_for_CodelistGenerator.html">02 Options for CodelistGenerator</a>
+    <a class="dropdown-item" href="../articles/a02a_Options_for_CodelistGenerator.html">02 Options for CodelistGenerator (with mock database)</a>
     <a class="dropdown-item" href="../articles/a03_CodelistGenerator_extracting_procedure_codes.html">03 Generating a codelist for procedures</a>
     <a class="dropdown-item" href="../articles/a04_codelists_for_medications.html">04 Codelists for medications</a>
   </div>
@@ -83,56 +84,87 @@ using the OMOP CDM.</p>
 Where more than one word is given (e.g. "knee osteoarthritis"),
 all combinations of those words should be identified
 positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
+
+
 <dt>domains</dt>
 <dd><p>Character vector with one or more of the OMOP CDM domain.</p></dd>
+
+
 <dt>standard_concept</dt>
 <dd><p>Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.</p></dd>
+
+
 <dt>search_synonyms</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also
 search via the concept synonym table.</p></dd>
+
+
 <dt>search_source</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also
 search via source concepts.</p></dd>
+
+
 <dt>fuzzy_match</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the fuzzy matching
 will be used, with approximate matches identified.</p></dd>
+
+
 <dt>max_distance_substitutions, </dt>
 <dd><p>The maximum distance
 parameter of substitution for fuzzy matching
 (see ??base::agrep for further details).</p></dd>
+
+
 <dt>max_distance_deletions, </dt>
 <dd><p>The
 maximum distance parameter of deletion
 for fuzzy matching (see ??base::agrep for further details).</p></dd>
+
+
 <dt>max_distance_insertions, </dt>
 <dd><p>The
 maximum distance parameter of insertion for
 fuzzy matching (see ??base::agrep for further details).</p></dd>
+
+
 <dt>exclude</dt>
 <dd><p>Character vector of words
 to identify concepts to exclude.</p></dd>
+
+
 <dt>include_descendants</dt>
 <dd><p>Either TRUE or FALSE.
 If TRUE descendant concepts of identified concepts
 will be included in the candidate codelist.</p></dd>
+
+
 <dt>include_ancestor</dt>
 <dd><p>Either TRUE or FALSE.
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Either TRUE or FALSE.
 If TRUE, progress will be reported.</p></dd>
+
+
 <dt>db</dt>
 <dd><p>Database connection via DBI::dbConnect()</p></dd>
+
+
 <dt>vocabulary_database_schema</dt>
 <dd><p>Name of database
 schema with vocab tables</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Dataframe</p>
+    
+
+<p>Dataframe</p>
     </div>
 
     <div class="section level2">
@@ -175,7 +207,7 @@ schema with vocab tables</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
     </footer></div>
