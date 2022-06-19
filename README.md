@@ -5,6 +5,7 @@
 
 [![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
 [![R-CMD-check](https://github.com/darwin-eu/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CodelistGenerator/actions)
+[![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 # CodelistGenerator
@@ -141,7 +142,3 @@ get_candidate_codes(keywords="asthma",
 ```
 
 Please see vignettes for further details.
-
-## Development status
-
-Alpha

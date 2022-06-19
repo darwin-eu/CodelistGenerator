@@ -118,7 +118,9 @@ get_candidate_codes <- function(keywords,
     add = error_message
   )
   standard_concept_check <- all(standard_concept %in%
-                                  c("Standard", "Classification", "Non-standard"))
+                    c("Standard",
+                      "Classification",
+                      "Non-standard"))
   checkmate::assertTRUE(standard_concept_check, add = error_message)
 
   checkmate::assert_logical(search_synonyms, add = error_message)
@@ -237,12 +239,12 @@ get_candidate_codes <- function(keywords,
     "concept_id_1", "concept_id_2",
     "relationship_id"
   )
-  concept_relationship_db_names_check <- all(
+  concept_rel_db_names_check <- all(
       concept_relationship_db_names %in%
       names(concept_relationship_db %>%
        utils::head(1) %>%
        dplyr::collect()))
-  checkmate::assertTRUE(concept_relationship_db_names_check,
+  checkmate::assertTRUE(concept_rel_db_names_check,
                         add = error_message)
   # check domains in db
   domains_in_db <- concept_db %>%

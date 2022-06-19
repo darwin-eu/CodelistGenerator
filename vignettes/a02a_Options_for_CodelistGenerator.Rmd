@@ -1,5 +1,5 @@
 ---
-title: "02 Options for CodelistGenerator (with mock database)"
+title: "02 Options for CodelistGenerator (with mock vocabulary)"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{02a_Options_for_CodelistGenerator}
