@@ -98,8 +98,16 @@ Every codelist is specific to a version of the OMOP CDM vocabularies, so
 we can first check the version.
 
 ``` r
-get_vocab_version(db=db,
-                  vocabulary_database_schema = "main")
+dplyr::tbl(db, dplyr::sql(paste0(
+    "SELECT * FROM ",
+    "main",
+    ".vocabulary"
+    ))) %>%
+    dplyr::rename_with(tolower) %>%
+    dplyr::filter(.data$vocabulary_id == "None") %>%
+    dplyr::select("vocabulary_version") %>%
+    dplyr::collect() %>%
+    dplyr::pull()
 #> [1] "v5.0 18-JAN-19"
 ```
 

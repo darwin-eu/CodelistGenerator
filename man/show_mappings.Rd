@@ -31,6 +31,7 @@ Show mappings from source vocabularies to standard
 ### note, Eunomia, which is used for the example below,
 ### does not include a full set of vocabularies.
 ### The full set can be downloaded from https://athena.ohdsi.org
+\dontrun{
 library(Eunomia)
 library(RSQLite)
 library(dplyr)
@@ -51,4 +52,5 @@ show_mappings(
   db = db,
   vocabulary_database_schema = "main"
 )
+}
 }

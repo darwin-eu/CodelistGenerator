@@ -12,6 +12,7 @@
 #' ### note, Eunomia, which is used for the example below,
 #' ### does not include a full set of vocabularies.
 #' ### The full set can be downloaded from https://athena.ohdsi.org
+#' \dontrun{
 #' library(Eunomia)
 #' library(RSQLite)
 #' library(dplyr)
@@ -32,6 +33,7 @@
 #'   db = db,
 #'   vocabulary_database_schema = "main"
 #' )
+#' }
 show_mappings <- function(candidate_codelist,
                           source_vocabularies = c(
                             "ATC", "ICD10CM", "ICD10PCS",
