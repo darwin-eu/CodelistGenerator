@@ -18,10 +18,16 @@ vocabulary_database_schema <- "main"
 
 
 # intro vignette ----
-vocab_version <- get_vocab_version(
-  db = db,
-  vocabulary_database_schema = "main"
-)
+vocab_version <- dplyr::tbl(db, dplyr::sql(paste0(
+    "SELECT * FROM ",
+    vocabulary_database_schema,
+    ".vocabulary"
+    ))) %>%
+    dplyr::rename_with(tolower) %>%
+    dplyr::filter(.data$vocabulary_id == "None") %>%
+    dplyr::select("vocabulary_version") %>%
+    dplyr::collect() %>%
+    dplyr::pull()
 saveRDS(
   vocab_version,
   here("vignettes", "intro_vocab.RData")

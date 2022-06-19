@@ -30,17 +30,34 @@ dbSendQuery(db, "CREATE UNIQUE INDEX idx_concept_ancestor ON concept_ancestor (a
 rm(concept,concept_relationship, concept_ancestor, concept_synonym)
 vocabulary_database_schema<-"main"
 
+
+dementia_codes<-get_candidate_codes(keywords="dementia",
+                     domains="Condition",
+                     db=db,
+                     vocabulary_database_schema =vocabulary_database_schema,
+                     verbose = TRUE)
+show_mappings(dementia_codes,
+              source_vocabularies="ICD10CM",
+              db=db,
+              vocabulary_database_schema =vocabulary_database_schema)
+
+
 get_candidate_codes(keywords="childhood asthma",
                      domains="Condition",
                     db=db,
-                    vocabulary_database_schema =  "main")
+                    vocabulary_database_schema =  "main",
+                    verbose = TRUE)
 
-profvis::profvis({
-  dementia_codes<-get_candidate_codes(keywords="dementia",
+get_candidate_codes(keywords="kidney stone",
                      domains="Condition",
                     db=db,
-                    vocabulary_database_schema = "main")
-})
+                    vocabulary_database_schema =  "main",
+                    verbose = TRUE)
+
+
+
+
+
 
 
 
@@ -72,7 +89,8 @@ kidney_stone<-get_candidate_codes(keywords="kidney stone",
                      domains="Condition",
                     concept=concept,
                     concept_ancestor = concept_ancestor,
-                    concept_synonym = concept_synonym)
+                    concept_synonym = concept_synonym,
+                    verbose=TRUE)
 get_candidate_codes(keywords="kidney stone",
                     concept=concept,
                     concept_ancestor = concept_ancestor,

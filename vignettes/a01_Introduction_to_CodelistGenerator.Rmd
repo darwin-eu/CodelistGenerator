@@ -71,8 +71,16 @@ The structure of each of these tables is described in detail at: https://ohdsi.g
 ## Check version of the vocabularies
 It is important to note that the results from CodelistGenerator will be specific to a particular version of the OMOP CDM vocabularies. We can see the version of the vocabulary being used like so
 ```{r, eval=FALSE}
-get_vocab_version(db=db,
-                  vocabulary_database_schema = "main")
+dplyr::tbl(db, dplyr::sql(paste0(
+    "SELECT * FROM ",
+    vocabulary_database_schema,
+    ".vocabulary"
+    ))) %>%
+    dplyr::rename_with(tolower) %>%
+    dplyr::filter(.data$vocabulary_id == "None") %>%
+    dplyr::select("vocabulary_version") %>%
+    dplyr::collect() %>%
+    dplyr::pull()
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
