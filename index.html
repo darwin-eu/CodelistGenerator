@@ -75,7 +75,7 @@
 <p>You can install the development version of CodelistGenerator like so:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"darwin-eu/CodelistGenerator"</span><span class="op">)</span></code></pre></div>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"darwin-eu/CodelistGenerator"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="connecting-to-the-omop-cdm-vocabularies">Connecting to the OMOP CDM vocabularies<a class="anchor" aria-label="anchor" href="#connecting-to-the-omop-cdm-vocabularies"></a>
@@ -146,8 +146,16 @@
 </h2>
 <p>Every codelist is specific to a version of the OMOP CDM vocabularies, so we can first check the version.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">get_vocab_version</span><span class="op">(</span>db<span class="op">=</span><span class="va">db</span>,
-                  vocabulary_database_schema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">db</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sql.html" class="external-link">sql</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>
+    <span class="st">"SELECT * FROM "</span>,
+    <span class="st">"main"</span>,
+    <span class="st">".vocabulary"</span>
+    <span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span><span class="va">tolower</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vocabulary_id</span> <span class="op">==</span> <span class="st">"None"</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="st">"vocabulary_version"</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; [1] "v5.0 18-JAN-19"</span></code></pre></div>
 <p>We can then search for asthma like so</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
