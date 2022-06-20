@@ -78,24 +78,35 @@ rm(concept,concept_relationship, concept_ancestor, concept_synonym, vocabulary)
 vocabulary_database_schema<-"main"
 ```
 
-
-### Option 3: Use Eunomia (for testing and examples only - Eunomia does not include a full set of vocabularies)
-```{r,  message=FALSE, warning=FALSE}
-library(CodelistGenerator)
-library(Eunomia)
-library(RSQLite)
+## Example search
+Every codelist is specific to a version of the OMOP CDM vocabularies, so we can first check the version.
+```{r example,  message=FALSE, warning=FALSE,echo=FALSE}
 library(DBI)
-untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
-        exdir =  tempdir())
-db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
+library(RPostgres)
+library(dplyr)
+library(CodelistGenerator)
+
+# usethis::edit_r_environ()
+server_dbi<-Sys.getenv("SERVER_DBI_FEB22")
+user<-Sys.getenv("DB_USER_FEB22")
+password<- Sys.getenv("DB_PASSWORD_FEB22")
+port<-Sys.getenv("DB_PORT_FEB22")
+host<-Sys.getenv("DB_HOST_FEB22")
+
+db <- dbConnect(RPostgres::Postgres(),
+                dbname = server_dbi,
+                port = port,
+                host = host,
+                user = user,
+                password = password)
+vocabulary_database_schema<-Sys.getenv("DB_VOCAB_FEB22")
 ```
 
-## Example search using Eunomia
-Every codelist is specific to a version of the OMOP CDM vocabularies, so we can first check the version.
-```{r example,  message=FALSE, warning=FALSE}
+
+```{r,  message=FALSE, warning=FALSE}
 dplyr::tbl(db, dplyr::sql(paste0(
     "SELECT * FROM ",
-    "main",
+    vocabulary_database_schema,
     ".vocabulary"
     ))) %>%
     dplyr::rename_with(tolower) %>%
@@ -107,21 +118,33 @@ dplyr::tbl(db, dplyr::sql(paste0(
 
 We can then search for asthma like so
 ```{r,  message=FALSE, warning=FALSE}
-get_candidate_codes(keywords="asthma",
+asthma_1<-get_candidate_codes(keywords="asthma",
                     domains = "Condition",
                     db=db,
-                    vocabulary_database_schema = "main")
+                    vocabulary_database_schema = vocabulary_database_schema)
+head(asthma_1, 10)
 ```
 
-Perhaps we want to exclude asthma in children as part of the search strategy, in which case this can be added like so
+Perhaps we want to exclude certain concepts as part of the search strategy, in which case this can be added like so
 ```{r,  message=FALSE, warning=FALSE}
-get_candidate_codes(keywords="asthma",
+asthma_2<-get_candidate_codes(keywords="asthma",
                     domains = "Condition",
-                    exclude = "Childhood asthma",
+                    exclude = "Poisoning by antiasthmatic",
                     db=db,
-                    vocabulary_database_schema = "main")
-
+                    vocabulary_database_schema = vocabulary_database_schema)
+head(asthma_2, 10)
 ```
 
-Please see vignettes for further details.
+We can then also see source codes these are mapped from, for example
+```{r,  message=FALSE, warning=FALSE}
+asthma_icd_mappings<-show_mappings(candidate_codelist=asthma_2,
+                     source_vocabularies="ICD10CM",
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+head(asthma_icd_mappings %>% 
+       select("Standard concept_id name",
+              "Source name" ),
+     10)
 
+dbDisconnect(db)
+```

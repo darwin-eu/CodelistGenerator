@@ -81,19 +81,7 @@ rm(concept,concept_relationship, concept_ancestor, concept_synonym, vocabulary)
 vocabulary_database_schema<-"main"
 ```
 
-### Option 3: Use Eunomia (for testing and examples only - Eunomia does not include a full set of vocabularies)
-
-``` r
-library(CodelistGenerator)
-library(Eunomia)
-library(RSQLite)
-library(DBI)
-untar(xzfile(system.file("sqlite", "cdm.tar.xz", package = "Eunomia"), open = "rb"),
-        exdir =  tempdir())
-db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(),"\\cdm.sqlite"))
-```
-
-## Example search using Eunomia
+## Example search
 
 Every codelist is specific to a version of the OMOP CDM vocabularies, so
 we can first check the version.
@@ -101,7 +89,7 @@ we can first check the version.
 ``` r
 dplyr::tbl(db, dplyr::sql(paste0(
     "SELECT * FROM ",
-    "main",
+    vocabulary_database_schema,
     ".vocabulary"
     ))) %>%
     dplyr::rename_with(tolower) %>%
@@ -109,36 +97,81 @@ dplyr::tbl(db, dplyr::sql(paste0(
     dplyr::select("vocabulary_version") %>%
     dplyr::collect() %>%
     dplyr::pull()
-#> [1] "v5.0 18-JAN-19"
+#> [1] "v5.0 13-JUL-21"
 ```
 
 We can then search for asthma like so
 
 ``` r
-get_candidate_codes(keywords="asthma",
+asthma_1<-get_candidate_codes(keywords="asthma",
                     domains = "Condition",
                     db=db,
-                    vocabulary_database_schema = "main")
-#> # A tibble: 2 x 4
-#>   concept_id concept_name     domain_id vocabulary_id
-#>        <dbl> <chr>            <chr>     <chr>        
-#> 1    4051466 Childhood asthma Condition SNOMED       
-#> 2     317009 Asthma           Condition SNOMED
+                    vocabulary_database_schema = vocabulary_database_schema)
+head(asthma_1, 10)
+#> # A tibble: 10 x 4
+#>    concept_id concept_name                               domain_id vocabulary_id
+#>         <int> <chr>                                      <chr>     <chr>        
+#>  1     252658 Intrinsic asthma without status asthmatic~ Condition SNOMED       
+#>  2     252942 Asthmatic pulmonary eosinophilia           Condition SNOMED       
+#>  3     256448 Chronic asthmatic bronchitis               Condition SNOMED       
+#>  4     257581 Exacerbation of asthma                     Condition SNOMED       
+#>  5     312950 IgE-mediated allergic asthma               Condition SNOMED       
+#>  6     313236 Cough variant asthma                       Condition SNOMED       
+#>  7     316577 Poisoning by antiasthmatic                 Condition SNOMED       
+#>  8     317009 Asthma                                     Condition SNOMED       
+#>  9     443801 Exercise-induced asthma                    Condition SNOMED       
+#> 10     761844 Inhaled steroid-dependent asthma           Condition SNOMED
 ```
 
-Perhaps we want to exclude asthma in children as part of the search
+Perhaps we want to exclude certain concepts as part of the search
 strategy, in which case this can be added like so
 
 ``` r
-get_candidate_codes(keywords="asthma",
+asthma_2<-get_candidate_codes(keywords="asthma",
                     domains = "Condition",
-                    exclude = "Childhood asthma",
+                    exclude = "Poisoning by antiasthmatic",
                     db=db,
-                    vocabulary_database_schema = "main")
-#> # A tibble: 1 x 4
-#>   concept_id concept_name domain_id vocabulary_id
-#>        <dbl> <chr>        <chr>     <chr>        
-#> 1     317009 Asthma       Condition SNOMED
+                    vocabulary_database_schema = vocabulary_database_schema)
+head(asthma_2, 10)
+#> # A tibble: 10 x 4
+#>    concept_id concept_name                               domain_id vocabulary_id
+#>         <int> <chr>                                      <chr>     <chr>        
+#>  1     252658 Intrinsic asthma without status asthmatic~ Condition SNOMED       
+#>  2     252942 Asthmatic pulmonary eosinophilia           Condition SNOMED       
+#>  3     256448 Chronic asthmatic bronchitis               Condition SNOMED       
+#>  4     257581 Exacerbation of asthma                     Condition SNOMED       
+#>  5     312950 IgE-mediated allergic asthma               Condition SNOMED       
+#>  6     313236 Cough variant asthma                       Condition SNOMED       
+#>  7     317009 Asthma                                     Condition SNOMED       
+#>  8     443801 Exercise-induced asthma                    Condition SNOMED       
+#>  9     761844 Inhaled steroid-dependent asthma           Condition SNOMED       
+#> 10     764677 Persistent asthma                          Condition SNOMED
 ```
 
-Please see vignettes for further details.
+We can then also see source codes these are mapped from, for example
+
+``` r
+asthma_icd_mappings<-show_mappings(candidate_codelist=asthma_2,
+                     source_vocabularies="ICD10CM",
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+head(asthma_icd_mappings %>% 
+       select("Standard concept_id name",
+              "Source name" ),
+     10)
+#> # A tibble: 10 x 2
+#>    `Standard concept_id name`         `Source name`                             
+#>    <chr>                              <chr>                                     
+#>  1 Eosinophilic asthma                Pulmonary eosinophilia, not elsewhere cla~
+#>  2 Eosinophilic asthma                Eosinophilic asthma                       
+#>  3 Eosinophilic asthma                Other pulmonary eosinophilia, not elsewhe~
+#>  4 Eosinophilic asthma                Pulmonary eosinophilia, not elsewhere cla~
+#>  5 Cryptogenic pulmonary eosinophilia Chronic eosinophilic pneumonia            
+#>  6 Simple pulmonary eosinophilia      Acute eosinophilic pneumonia              
+#>  7 Asthma                             Asthma                                    
+#>  8 Asthma                             Other and unspecified asthma              
+#>  9 Asthma                             Unspecified asthma                        
+#> 10 Asthma                             Other asthma
+
+dbDisconnect(db)
+```

@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
   library(CodelistGenerator)
 ```
 
-Let´s say we have a mock vocabulary database with these hypothethical concepts and relationships.
+Let´s say we have a mock vocabulary database with these hypothetical concepts and relationships.
 
 ```{r,echo=FALSE}
 knitr::include_graphics("mock_db_fig1.png")
@@ -204,7 +204,7 @@ kable(codes)
 knitr::include_graphics("mock_db_fig5.png")
 ```
 
-We can also exlude specific terms 
+We can also exclude specific terms 
 
 ```{r}
 codes<-get_candidate_codes(

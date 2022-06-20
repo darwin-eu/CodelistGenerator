@@ -32,25 +32,18 @@ Show mappings from source vocabularies to standard
 ### does not include a full set of vocabularies.
 ### The full set can be downloaded from https://athena.ohdsi.org
 \dontrun{
-library(Eunomia)
-library(RSQLite)
-library(dplyr)
 library(DBI)
-untar(xzfile(system.file("sqlite", "cdm.tar.xz",
-  package = "Eunomia"
-), open = "rb"),
-exdir = tempdir()
-)
-db <- DBI::dbConnect(RSQLite::SQLite(), paste0(tempdir(), "\\\\cdm.sqlite"))
+library(CodelistGenerator)
+db <- DBI::dbConnect(" Your database connection here " )
+vocabulary_database_schema <- " Your vocabulary schema here "
 asthma_codes <- get_candidate_codes(
   keywords = "asthma",
   db = db,
-  vocabulary_database_schema = "main"
-)
+  vocabulary_database_schema = " Your vocabulary schema here ")
 show_mappings(
   candidate_codelist = asthma_codes,
   db = db,
-  vocabulary_database_schema = "main"
+  vocabulary_database_schema = " Your vocabulary schema here "
 )
 }
 }

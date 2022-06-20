@@ -87,27 +87,14 @@ using the OMOP CDM.
 ### does not include a full set of vocabularies.
 ### The full set can be downloaded from https://athena.ohdsi.org
 \dontrun{
-library(Eunomia)
 library(DBI)
-library(RSQLite)
-untar(xzfile(system.file("sqlite", "cdm.tar.xz",
-  package = "Eunomia"
-), open = "rb"),
-exdir = tempdir()
-)
-db <- DBI::dbConnect(
-  RSQLite::SQLite(),
-  paste0(tempdir(), "\\\\cdm.sqlite")
-)
+library(CodelistGenerator)
+db <- DBI::dbConnect(" Your database connection here " )
+vocabulary_database_schema <- " Your vocabulary schema here "
 get_candidate_codes(
   keywords = "asthma",
-  search_synonyms = TRUE,
-  fuzzy_match = TRUE,
-  exclude = NULL,
-  include_descendants = TRUE,
-  include_ancestor = FALSE,
   db = db,
-  vocabulary_database_schema = "main"
+  vocabulary_database_schema = vocabulary_database_schema
 )
 }
 }

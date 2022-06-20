@@ -19,6 +19,7 @@ Imports:
     rlang (>= 1.0.0),
     dtplyr (>= 1.0.0),
     DBI (>= 1.1.0),
+    RSQLite (>= 2.2.0),
     glue
 Suggests: 
     covr,
@@ -27,11 +28,8 @@ Suggests:
     DT,
     rmarkdown,
     here (>= 1.0.0),
-    DatabaseConnector (>= 5.0.0),
     testthat (>= 3.0.0),
-    Eunomia (>= 1.0.0),
-    kableExtra (>= 1.0.0),
-    RSQLite (>= 2.2.0)
+    kableExtra (>= 1.0.0)
 Remotes: OHDSI/Eunomia@main
 Config/testthat/edition: 3
 VignetteBuilder: knitr
