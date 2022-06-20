@@ -45,6 +45,8 @@ db<-generate_mock_db()
     max_distance_substitutions = 0.2,
     max_distance_deletions = 0.2,
     max_distance_insertions = 0.2,
+    max_distance_cost = 0.2,
+    ignore_case_input = TRUE,
     domains = "Condition",
     include_descendants = FALSE,
     db = db,
@@ -53,8 +55,7 @@ db<-generate_mock_db()
   expect_true(any(codes$concept_name %in% "Arthritis"))
   expect_true(any(codes$concept_name %in% "Osteoarthritis of knee"))
   expect_true(any(codes$concept_name %in% "Osteoarthritis of hip"))
-  # with fuzzy, should pick up arthrosis
-  # expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
+  expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
   # test include descendants
   codes <- get_candidate_codes(

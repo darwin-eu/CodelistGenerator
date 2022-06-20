@@ -29,6 +29,12 @@
 #' @param max_distance_deletions, The
 #' maximum distance parameter of deletion
 #' for fuzzy matching (see ??base::agrep for further details).
+#' @param max_distance_cost, The
+#' maximum number/fraction of match cost (generalized Levenshtein distance)
+#' for fuzzy matching (see ??base::agrep for further details).
+#' #' @param ignore_case_input
+#' if FALSE, the pattern matching is case sensitive and if TRUE, case is ignored during matching.
+#' for fuzzy matching (see ??base::agrep for further details).
 #' @param exclude  Character vector of words
 #' to identify concepts to exclude.
 #' @param include_descendants Either TRUE or FALSE.
@@ -87,6 +93,8 @@ get_candidate_codes <- function(keywords,
                                 max_distance_substitutions = 0.1,
                                 max_distance_deletions = 0.1,
                                 max_distance_insertions = 0.1,
+                                max_distance_cost = 0.1,
+                                ignore_case_input = TRUE,
                                 exclude = NULL,
                                 include_descendants = TRUE,
                                 include_ancestor = FALSE,
@@ -137,9 +145,16 @@ get_candidate_codes <- function(keywords,
   checkmate::assert_numeric(max_distance_insertions,
     add = error_message
   )
+  checkmate::assert_numeric(max_distance_cost,
+                            add = error_message
+  )
   checkmate::assertVector(exclude,
     null.ok = TRUE,
     add = error_message
+  )
+  checkmate::assertVector(ignore_case_input,
+                          null.ok = TRUE,
+                          add = error_message
   )
   checkmate::assert_logical(include_descendants,
     add = error_message
@@ -362,7 +377,9 @@ get_candidate_codes <- function(keywords,
       concept_df = concept,
       md_substitutions = max_distance_substitutions,
       md_deletions = max_distance_deletions,
-      md_insertions = max_distance_insertions
+      md_insertions = max_distance_insertions,
+      md_cost = max_distance_cost,
+      ignore_case = ignore_case_input
     )
 
     candidate_codes <- candidate_codes %>%
@@ -425,7 +442,9 @@ get_candidate_codes <- function(keywords,
           concept_df = concept,
           md_substitutions = max_distance_substitutions,
           md_deletions = max_distance_deletions,
-          md_insertions = max_distance_insertions
+          md_insertions = max_distance_insertions,
+          md_cost = max_distance_cost,
+          ignore_case = ignore_case_input
         )
       }
 
@@ -533,7 +552,9 @@ get_candidate_codes <- function(keywords,
           concept_df = concept_ns,
           md_substitutions = max_distance_substitutions,
           md_deletions = max_distance_deletions,
-          md_insertions = max_distance_insertions
+          md_insertions = max_distance_insertions,
+          md_cost = max_distance_cost,
+          ignore_case = ignore_case_input
         )
       }
 
@@ -635,7 +656,9 @@ get_fuzzy_matches <- function(words,
                               concept_df,
                               md_substitutions,
                               md_deletions,
-                              md_insertions) {
+                              md_insertions,
+                              md_cost,
+                              ignore_case) {
   concepts_found <- list()
   for (i in seq_along(words)) {
     working_keywords <- unlist(strsplit(words[i], " "))
@@ -650,8 +673,10 @@ get_fuzzy_matches <- function(words,
         max.distance = list(
           substitutions = md_substitutions,
           deletions = md_deletions,
-          insertions = md_insertions
-        )
+          insertions = md_insertions,
+          cost = md_cost
+        ),
+        ignore.case = ignore_case
       )
       working_concepts <- working_concepts[indx, ]
     }
