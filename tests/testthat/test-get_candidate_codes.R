@@ -42,6 +42,9 @@ db<-generate_mock_db()
   codes <- get_candidate_codes(
     keywords = c("Arthritis"),
     fuzzy_match = TRUE,
+    max_distance_substitutions = 0.2,
+    max_distance_deletions = 0.2,
+    max_distance_insertions = 0.2,
     domains = "Condition",
     include_descendants = FALSE,
     db = db,
