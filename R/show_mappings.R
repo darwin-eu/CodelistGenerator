@@ -5,13 +5,10 @@
 #' @param db Database connection via DBI::dbConnect()
 #' @param vocabulary_database_schema Name of database schema with vocab tables
 #'
-#' @return Dataframe
+#' @return tibble
 #' @export
 #'
 #' @examples
-#' ### note, Eunomia, which is used for the example below,
-#' ### does not include a full set of vocabularies.
-#' ### The full set can be downloaded from https://athena.ohdsi.org
 #' \dontrun{
 #' library(DBI)
 #' library(CodelistGenerator)

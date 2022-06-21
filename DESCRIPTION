@@ -30,7 +30,6 @@ Suggests:
     here (>= 1.0.0),
     testthat (>= 3.0.0),
     kableExtra (>= 1.0.0)
-Remotes: OHDSI/Eunomia@main
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/

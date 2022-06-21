@@ -37,14 +37,11 @@
 #' @param vocabulary_database_schema Name of database
 #' schema with vocab tables
 #'
-#' @return Dataframe
+#' @return tibble
 #' @importFrom rlang .data
 #' @export
 #'
 #' @examples
-#' ### note, Eunomia, used in the example below,
-#' ### does not include a full set of vocabularies.
-#' ### The full set can be downloaded from https://athena.ohdsi.org
 #' \dontrun{
 #' library(DBI)
 #' library(CodelistGenerator)
