@@ -57,10 +57,7 @@
 #' )
 #' }
 get_candidate_codes <- function(keywords,
-                                domains = c(
-                                  "Condition", "Drug",
-                                  "Observation", "Procedure"
-                                ),
+                                domains = "Condition",
                                 standard_concept = "Standard",
                                 search_synonyms = FALSE,
                                 search_source = FALSE,
@@ -82,7 +79,7 @@ get_candidate_codes <- function(keywords,
   }
 
   ## domains and standard_concept to sentence case
-  domains <- stringr::str_to_sentence(domains)
+  domains <- stringr::str_to_title(domains)
   standard_concept <- stringr::str_to_sentence(standard_concept)
 
   ## checks for standard types of user error
@@ -152,26 +149,6 @@ get_candidate_codes <- function(keywords,
     ".concept_relationship"
   )))
 
-
-  # lowercase names
-  concept_db <- dplyr::rename_with(concept_db, tolower) %>%
-    dplyr::compute()
-  concept_ancestor_db <- dplyr::rename_with(
-    concept_ancestor_db,
-    tolower
-  ) %>%
-    dplyr::compute()
-  concept_synonym_db <- dplyr::rename_with(
-    concept_synonym_db,
-    tolower
-  ) %>%
-    dplyr::compute()
-  concept_relationship_db <- dplyr::rename_with(
-    concept_relationship_db,
-    tolower
-  ) %>%
-    dplyr::compute()
-
   # check variable names
   # concept table
   concept_db_names <- c(
@@ -181,7 +158,8 @@ get_candidate_codes <- function(keywords,
   concept_db_names_check <- all(concept_db_names %in%
       names(concept_db %>%
        utils::head(1) %>%
-       dplyr::collect()))
+       dplyr::collect() %>%
+       dplyr::rename_with(tolower)))
   checkmate::assertTRUE(concept_db_names_check, add = error_message)
 
   # concept_ancestor table
@@ -193,7 +171,8 @@ get_candidate_codes <- function(keywords,
       concept_ancestor_db_names %in%
       names(concept_ancestor_db %>%
        utils::head(1) %>%
-       dplyr::collect()))
+       dplyr::collect() %>%
+       dplyr::rename_with(tolower)))
   checkmate::assertTRUE(c_ancestor_db_names_check,
                         add = error_message)
   # concept_synonym table
@@ -203,7 +182,8 @@ get_candidate_codes <- function(keywords,
       concept_synonym_db_names %in%
       names(concept_synonym_db %>%
        utils::head(1) %>%
-       dplyr::collect()))
+       dplyr::collect() %>%
+       dplyr::rename_with(tolower)))
   checkmate::assertTRUE(concept_synonym_db_names_check,
                         add = error_message)
 
@@ -216,25 +196,25 @@ get_candidate_codes <- function(keywords,
       concept_relationship_db_names %in%
       names(concept_relationship_db %>%
        utils::head(1) %>%
-       dplyr::collect()))
+       dplyr::collect() %>%
+       dplyr::rename_with(tolower)))
   checkmate::assertTRUE(concept_rel_db_names_check,
                         add = error_message)
-  # check domains in db
-  domains_in_db <- concept_db %>%
-    dplyr::group_by(.data$domain_id) %>%
-    dplyr::tally() %>%
-    dplyr::collect() %>%
-    dplyr::select(.data$domain_id) %>%
-    dplyr::pull()
-  for (i in seq_along(domains)) {
-    domains_check <- domains[i] %in% domains_in_db
-    checkmate::assertTRUE(domains_check, add = error_message)
-    if (!isTRUE(domains_check)) {
-      error_message$push(
-        glue::glue("- domain_id {domains[i]} not found in concept table")
-      )
-    }
-  }
+  # # check domains in db
+  # domains_in_db <- concept_db %>%
+  #   dplyr::select(.data$domain_id) %>%
+  #   dplyr::distinct() %>%
+  #   dplyr::collect() %>%
+  #   dplyr::pull()
+  # for (i in seq_along(domains)) {
+  #   domains_check <- domains[i] %in% domains_in_db
+  #   checkmate::assertTRUE(domains_check, add = error_message)
+  #   if (!isTRUE(domains_check)) {
+  #     error_message$push(
+  #       glue::glue("- domain_id {domains[i]} not found in concept table")
+  #     )
+  #   }
+  # }
 
   # report all assertions
   checkmate::reportAssertions(collection = error_message)
@@ -260,7 +240,8 @@ get_candidate_codes <- function(keywords,
   concept <- concept_db %>%
     dplyr::filter(.data$domain_id %in% domains) %>%
     dplyr::filter(.data$standard_concept %in% standard_concept_flags) %>%
-    dplyr::collect()
+    dplyr::collect() %>%
+    dplyr::rename_with(tolower)
 
   concept_ancestor_db <- concept_ancestor_db %>%
     dplyr::left_join(concept_db %>%
@@ -282,7 +263,8 @@ get_candidate_codes <- function(keywords,
     dplyr::filter(.data$domain_id %in% domains) %>%
     dplyr::filter(.data$standard_concept %in% standard_concept_flags) %>%
     dplyr::select(-c("domain_id", "standard_concept")) %>%
-    dplyr::collect()
+    dplyr::collect() %>%
+    dplyr::rename_with(tolower)
 
   # will only collect concept_synonym later if needed
   concept_synonym_db <- concept_synonym_db %>%
@@ -364,7 +346,9 @@ get_candidate_codes <- function(keywords,
     }
 
     if (search_synonyms == TRUE) {
-      concept_synonym <- concept_synonym_db %>% dplyr::collect()
+      concept_synonym <- concept_synonym_db %>%
+        dplyr::collect() %>%
+        dplyr::rename_with(tolower)
 
       synonyms <- dtplyr::lazy_dt(concept_synonym) %>%
         dplyr::inner_join(dtplyr::lazy_dt(candidate_codes) %>%
@@ -487,7 +471,8 @@ get_candidate_codes <- function(keywords,
       concept_ns <- concept_db %>%
         dplyr::filter(.data$domain_id %in% domains) %>%
         dplyr::filter(.data$standard_concept == "Non-standard") %>%
-        dplyr::collect()
+        dplyr::collect() %>%
+        dplyr::rename_with(tolower)
 
       if (fuzzy_match == FALSE) {
         candidate_codes_ns <- get_exact_matches(
@@ -508,7 +493,8 @@ get_candidate_codes <- function(keywords,
         dplyr::select("concept_id") %>%
         dplyr::inner_join(concept_relationship_db %>%
           dplyr::filter(.data$relationship_id == "Mapped from") %>%
-          dplyr::collect(),
+          dplyr::collect() %>%
+          dplyr::rename_with(tolower),
         by = c("concept_id" = "concept_id_2")
         ) %>%
         dplyr::select("concept_id_1") %>%

@@ -6,7 +6,7 @@
 \usage{
 get_candidate_codes(
   keywords,
-  domains = c("Condition", "Drug", "Observation", "Procedure"),
+  domains = "Condition",
   standard_concept = "Standard",
   search_synonyms = FALSE,
   search_source = FALSE,
