@@ -32,7 +32,6 @@ remotes::install_github("darwin-eu/CodelistGenerator")
 ```
 
 ## Connecting to the OMOP CDM vocabularies
-### Option 1: Connect to a live OMOP CDM database
 ```{r, eval=FALSE}
 # example with postgres database connection details
 server_dbi<-Sys.getenv("server")
@@ -52,32 +51,6 @@ db <- DBI::dbConnect(RPostgres::Postgres(),
 vocabulary_database_schema<-Sys.getenv("vocabulary_schema")
 ```
 
-### Option 2: Download the vocabularies from Athena 
-You will first need to obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, you can make a vocabulary only SQLite database like so:
-```{r, eval=FALSE}
-vocab.folder<-Sys.getenv("omop_cdm_vocab_path") # path to directory of unzipped files
-concept<-read_delim(paste0(vocab.folder,"/CONCEPT.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE)
-concept_relationship<-read_delim(paste0(vocab.folder,"/CONCEPT_RELATIONSHIP.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE) 
-concept_ancestor<-read_delim(paste0(vocab.folder,"/CONCEPT_ANCESTOR.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE)
-concept_synonym<-read_delim(paste0(vocab.folder,"/CONCEPT_SYNONYM.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE)
-vocabulary<-read_delim(paste0(vocab.folder,"/VOCABULARY.csv"),
-     "\t", escape_double = FALSE, trim_ws = TRUE)
-
-db <- dbConnect(RSQLite::SQLite(), ":memory:")
-dbWriteTable(db, "concept", concept, overwrite=TRUE)
-dbWriteTable(db, "concept_relationship", concept_relationship, overwrite=TRUE)
-dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite=TRUE)
-dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
-dbWriteTable(db, "vocabulary", vocabulary)
-rm(concept,concept_relationship, concept_ancestor, concept_synonym, vocabulary)
-
-vocabulary_database_schema<-"main"
-```
-
 ## Example search
 Every codelist is specific to a version of the OMOP CDM vocabularies, so we can first check the version.
 ```{r example,  message=FALSE, warning=FALSE,echo=FALSE}
@@ -85,6 +58,7 @@ library(DBI)
 library(RPostgres)
 library(dplyr)
 library(CodelistGenerator)
+library(kableExtra)
 
 # usethis::edit_r_environ()
 server_dbi<-Sys.getenv("SERVER_DBI_FEB22")
@@ -122,7 +96,7 @@ asthma_1<-get_candidate_codes(keywords="asthma",
                     domains = "Condition",
                     db=db,
                     vocabulary_database_schema = vocabulary_database_schema)
-head(asthma_1, 10)
+kable(head(asthma_1, 10))
 ```
 
 Perhaps we want to exclude certain concepts as part of the search strategy, in which case this can be added like so
@@ -132,7 +106,7 @@ asthma_2<-get_candidate_codes(keywords="asthma",
                     exclude = "Poisoning by antiasthmatic",
                     db=db,
                     vocabulary_database_schema = vocabulary_database_schema)
-head(asthma_2, 10)
+kable(head(asthma_2, 10))
 ```
 
 We can then also see source codes these are mapped from, for example
@@ -141,10 +115,15 @@ asthma_icd_mappings<-show_mappings(candidate_codelist=asthma_2,
                      source_vocabularies="ICD10CM",
                     db=db,
                     vocabulary_database_schema =  vocabulary_database_schema)
-head(asthma_icd_mappings %>% 
-       select("Standard concept_id name",
-              "Source name" ),
-     10)
+kable(head(asthma_icd_mappings %>% 
+       select(standard_concept_name,
+              standard_vocabulary_id,
+              source_concept_name,
+              source_vocabulary_id),
+     10))
+```
 
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
 dbDisconnect(db)
 ```

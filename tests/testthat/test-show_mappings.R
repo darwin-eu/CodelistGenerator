@@ -20,26 +20,26 @@ test_that("tests with mock db", {
     vocabulary_database_schema = "main"
   )
   expect_true(
-    any(mappings$`Standard concept_id name` %in% "Osteoarthrosis")
+    any(mappings$standard_concept_name %in% "Osteoarthrosis")
   )
   expect_true(
-    any(mappings$`Source name` %in% "Degenerative arthropathy")
+    any(mappings$source_concept_name %in% "Degenerative arthropathy")
   )
   expect_true(
-    any(mappings$`Standard concept_id name` %in% "Osteoarthritis of knee")
+    any(mappings$standard_concept_name %in% "Osteoarthritis of knee")
   )
   expect_true(
-    any(mappings$`Source name` %in% "Knee osteoarthritis")
+    any(mappings$source_concept_name %in% "Knee osteoarthritis")
   )
 
   expect_true(all(c(
-    "Standard concept_id (mapped to)",
-    "Standard concept_id name",
-    "Standard vocabulary",
-    "Source concept_id (mapped from)",
-    "Source name",
-    "Source code",
-    "Source vocabulary"
+    "standard_concept_id",
+    "standard_concept_name",
+    "standard_vocabulary_id",
+    "source_concept_id",
+    "source_concept_name",
+    "source_concept_code",
+    "source_vocabulary_id"
   ) %in%
     names(mappings)))
 
@@ -49,7 +49,12 @@ test_that("tests with mock db", {
     db = "a",
     vocabulary_database_schema = "main"
   ))
-
+  # expect error if vocabulary_database_schema does not exist
+    expect_error(show_mappings(
+    candidate_codelist = codes,
+    db = db,
+    vocabulary_database_schema = "a"
+  ))
 
   DBI::dbDisconnect(db)
 })

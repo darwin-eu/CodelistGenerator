@@ -87,16 +87,16 @@ show_mappings <- function(candidate_codelist,
       dplyr::collect(),
       by = c("concept_id")) %>%
     dplyr::select("concept_id", "concept_name", "vocabulary_id") %>%
-    dplyr::rename("Standard vocabulary" = "vocabulary_id") %>%
+    dplyr::rename("standard_vocabulary_id" = "vocabulary_id") %>%
     dplyr::rename("concept_id_1" = "concept_id") %>%
-    dplyr::rename("Standard concept_id name" = "concept_name") %>%
+    dplyr::rename("standard_concept_name" = "concept_name") %>%
     dplyr::full_join(mapped_codes,
                      by = "concept_id_1") %>%
-    dplyr::rename("Standard concept_id (mapped to)" = "concept_id_1") %>%
-    dplyr::rename("Source concept_id (mapped from)" = "concept_id") %>%
-    dplyr::rename("Source code" = "concept_code") %>%
-    dplyr::rename("Source name" = "concept_name") %>%
-    dplyr::rename("Source vocabulary" = "vocabulary_id")
+    dplyr::rename("standard_concept_id" = "concept_id_1") %>%
+    dplyr::rename("source_concept_id" = "concept_id") %>%
+    dplyr::rename("source_concept_code" = "concept_code") %>%
+    dplyr::rename("source_concept_name" = "concept_name") %>%
+    dplyr::rename("source_vocabulary_id" = "vocabulary_id")
 
   mapped_codes %>%
     dplyr::distinct()
