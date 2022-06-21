@@ -84,12 +84,14 @@ show_mappings <- function(candidate_codelist,
     dplyr::rename("concept_id" = "concept_id_1") %>%
     dplyr::left_join(concept_db %>%
       dplyr::filter(.data$concept_id %in% !!mapped_codes$concept_id_1) %>%
-      dplyr::collect()) %>%
+      dplyr::collect(),
+      by = c("concept_id")) %>%
     dplyr::select("concept_id", "concept_name", "vocabulary_id") %>%
     dplyr::rename("Standard vocabulary" = "vocabulary_id") %>%
     dplyr::rename("concept_id_1" = "concept_id") %>%
     dplyr::rename("Standard concept_id name" = "concept_name") %>%
-    dplyr::full_join(mapped_codes) %>%
+    dplyr::full_join(mapped_codes,
+                     by = "concept_id_1") %>%
     dplyr::rename("Standard concept_id (mapped to)" = "concept_id_1") %>%
     dplyr::rename("Source concept_id (mapped from)" = "concept_id") %>%
     dplyr::rename("Source code" = "concept_code") %>%

@@ -37,13 +37,14 @@ show_mappings(dementia_codes,
               source_vocabularies="ICD10CM",
               db=db,
               vocabulary_database_schema =vocabulary_database_schema)
-
+profvis::profvis({
 colonoscopy_codes<-get_candidate_codes(keywords="colonoscopy",
                      domains="Procedure",
                      include_descendants=TRUE,
                      include_ancestor=TRUE,
                      db=db,
                      vocabulary_database_schema =vocabulary_database_schema )
+})
 
 # metformin_codes<-get_candidate_codes(keywords="metformin",
 #                      domains="Drug",

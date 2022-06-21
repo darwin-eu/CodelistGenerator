@@ -1,10 +1,21 @@
 
-#' Prepare words for search
-#' @noRd
 
-generate_mock_db<-function(){
+#' Generate example vocabulary database
+#'
+#' @return DBIConnection to SQLite database
+#' with mock vocabulary
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(DBI)
+#' library(RSQLite)
+#' library(CodelistGenerator)
+#' db <- generate_mock_vocab_db()
+#' }
+generate_mock_vocab_db <- function() {
 
-# tables
+  # tables
   concept <- data.frame(
     concept_id = 1:7,
     concept_name = c(
@@ -86,21 +97,28 @@ generate_mock_db<-function(){
   db <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept",
-                 concept, overwrite = TRUE)
+      concept,
+      overwrite = TRUE
+    )
   })
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept_ancestor",
-                 concept_ancestor, overwrite = TRUE)
+      concept_ancestor,
+      overwrite = TRUE
+    )
   })
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept_synonym",
-                 concept_synonym, overwrite = TRUE)
+      concept_synonym,
+      overwrite = TRUE
+    )
   })
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept_relationship",
-                 concept_relationship, overwrite = TRUE)
+      concept_relationship,
+      overwrite = TRUE
+    )
   })
 
   return(db)
-
 }

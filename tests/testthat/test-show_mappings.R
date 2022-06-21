@@ -4,7 +4,7 @@ test_that("tests with mock db", {
   library(dplyr)
 
   # mock db
-db<-generate_mock_db()
+  db <- generate_mock_vocab_db()
 
   # tests
   codes <- get_candidate_codes(

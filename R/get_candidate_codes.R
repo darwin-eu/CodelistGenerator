@@ -20,14 +20,8 @@
 #' search via source concepts.
 #' @param fuzzy_match Either TRUE or FALSE. If TRUE the fuzzy matching
 #' will be used, with approximate matches identified.
-#' @param max_distance_substitutions, The maximum distance
-#' parameter of substitution for fuzzy matching
-#' (see ??base::agrep for further details).
-#' @param max_distance_insertions, The
-#' maximum distance parameter of insertion for
-#' fuzzy matching (see ??base::agrep for further details).
-#' @param max_distance_deletions, The
-#' maximum distance parameter of deletion
+#' @param max_distance_cost, The
+#' maximum number/fraction of match cost (generalized Levenshtein distance)
 #' for fuzzy matching (see ??base::agrep for further details).
 #' @param exclude  Character vector of words
 #' to identify concepts to exclude.
@@ -71,9 +65,7 @@ get_candidate_codes <- function(keywords,
                                 search_synonyms = FALSE,
                                 search_source = FALSE,
                                 fuzzy_match = FALSE,
-                                max_distance_substitutions = 0.1,
-                                max_distance_deletions = 0.1,
-                                max_distance_insertions = 0.1,
+                                max_distance_cost = 0.1,
                                 exclude = NULL,
                                 include_descendants = TRUE,
                                 include_ancestor = FALSE,
@@ -115,13 +107,7 @@ get_candidate_codes <- function(keywords,
   checkmate::assert_logical(fuzzy_match,
     add = error_message
   )
-  checkmate::assert_numeric(max_distance_substitutions,
-    add = error_message
-  )
-  checkmate::assert_numeric(max_distance_deletions,
-    add = error_message
-  )
-  checkmate::assert_numeric(max_distance_insertions,
+  checkmate::assert_numeric(max_distance_cost,
     add = error_message
   )
   checkmate::assertVector(exclude,
@@ -347,9 +333,7 @@ get_candidate_codes <- function(keywords,
     candidate_codes <- get_fuzzy_matches(
       words = tidy_words(keywords),
       concept_df = concept,
-      md_substitutions = max_distance_substitutions,
-      md_deletions = max_distance_deletions,
-      md_insertions = max_distance_insertions
+      md_cost = max_distance_cost
     )
 
     candidate_codes <- candidate_codes %>%
@@ -410,9 +394,7 @@ get_candidate_codes <- function(keywords,
         synonym_codes <- get_fuzzy_matches(
           words = tidy_words(synonyms),
           concept_df = concept,
-          md_substitutions = max_distance_substitutions,
-          md_deletions = max_distance_deletions,
-          md_insertions = max_distance_insertions
+          md_cost = max_distance_cost
         )
       }
 
@@ -518,9 +500,7 @@ get_candidate_codes <- function(keywords,
         candidate_codes_ns <- get_fuzzy_matches(
           words = tidy_words(keywords),
           concept_df = concept_ns,
-          md_substitutions = max_distance_substitutions,
-          md_deletions = max_distance_deletions,
-          md_insertions = max_distance_insertions
+          md_cost = max_distance_cost
         )
       }
 
@@ -620,9 +600,7 @@ get_exact_matches <- function(words,
 
 get_fuzzy_matches <- function(words,
                               concept_df,
-                              md_substitutions,
-                              md_deletions,
-                              md_insertions) {
+                              md_cost) {
   concepts_found <- list()
   for (i in seq_along(words)) {
     working_keywords <- unlist(strsplit(words[i], " "))
@@ -635,9 +613,7 @@ get_fuzzy_matches <- function(words,
       # filter each term within the loop, one after the other
       indx <- agrep(working_keywords[j], working_concepts$concept_name,
         max.distance = list(
-          substitutions = md_substitutions,
-          deletions = md_deletions,
-          insertions = md_insertions
+          cost = md_cost
         )
       )
       working_concepts <- working_concepts[indx, ]

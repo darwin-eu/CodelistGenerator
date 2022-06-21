@@ -4,7 +4,7 @@ test_that("tests with mock db", {
   library(dplyr)
 
   # mock db
-db<-generate_mock_db()
+  db <- generate_mock_vocab_db()
 
   # tests
   # test keywords search - exact
@@ -42,9 +42,7 @@ db<-generate_mock_db()
   codes <- get_candidate_codes(
     keywords = c("Arthritis"),
     fuzzy_match = TRUE,
-    max_distance_substitutions = 0.2,
-    max_distance_deletions = 0.2,
-    max_distance_insertions = 0.2,
+    max_distance_cost = 0.2,
     domains = "Condition",
     include_descendants = FALSE,
     db = db,
@@ -54,7 +52,7 @@ db<-generate_mock_db()
   expect_true(any(codes$concept_name %in% "Osteoarthritis of knee"))
   expect_true(any(codes$concept_name %in% "Osteoarthritis of hip"))
   # with fuzzy, should pick up arthrosis
-  # expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
+  expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
   # test include descendants
   codes <- get_candidate_codes(
@@ -104,7 +102,6 @@ db<-generate_mock_db()
     all(!codes$concept_id %in% c(1, 2, 6))))
 
   # test search_synonyms
-  # TO ADD - need to add into mock db
   codes <- get_candidate_codes(
     keywords = "arthritis",
     domains = "Condition",
@@ -168,9 +165,7 @@ db<-generate_mock_db()
     search_synonyms = TRUE,
     search_source = TRUE,
     fuzzy_match = TRUE,
-    max_distance_substitutions = 0.1,
-    max_distance_insertions = 0.1,
-    max_distance_deletions = 0.1,
+    max_distance_cost = 0.1,
     include_descendants = TRUE,
     include_ancestor = TRUE,
     verbose = TRUE,
