@@ -201,20 +201,20 @@ get_candidate_codes <- function(keywords,
   checkmate::assertTRUE(concept_rel_db_names_check,
                         add = error_message)
   # # check domains in db
-  # domains_in_db <- concept_db %>%
-  #   dplyr::select(.data$domain_id) %>%
-  #   dplyr::distinct() %>%
-  #   dplyr::collect() %>%
-  #   dplyr::pull()
-  # for (i in seq_along(domains)) {
-  #   domains_check <- domains[i] %in% domains_in_db
-  #   checkmate::assertTRUE(domains_check, add = error_message)
-  #   if (!isTRUE(domains_check)) {
-  #     error_message$push(
-  #       glue::glue("- domain_id {domains[i]} not found in concept table")
-  #     )
-  #   }
-  # }
+  domains_in_db <- concept_db %>%
+    dplyr::select(.data$domain_id) %>%
+    dplyr::distinct() %>%
+    dplyr::collect() %>%
+    dplyr::pull()
+  for (i in seq_along(domains)) {
+    domains_check <- domains[i] %in% domains_in_db
+    checkmate::assertTRUE(domains_check, add = error_message)
+    if (!isTRUE(domains_check)) {
+      error_message$push(
+        glue::glue("- domain_id {domains[i]} not found in concept table")
+      )
+    }
+  }
 
   # report all assertions
   checkmate::reportAssertions(collection = error_message)
