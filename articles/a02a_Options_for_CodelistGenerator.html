@@ -73,15 +73,15 @@
 
     
     
-<div class="section level3">
-<h3 id="mock-vocabulary-database">Mock vocabulary database<a class="anchor" aria-label="anchor" href="#mock-vocabulary-database"></a>
-</h3>
+<div class="section level2">
+<h2 id="mock-vocabulary-database">Mock vocabulary database<a class="anchor" aria-label="anchor" href="#mock-vocabulary-database"></a>
+</h2>
 <p>Let´s say we have a mock vocabulary database with these hypothetical concepts and relationships.</p>
 <p><img src="mock_db_fig1.png"><!-- --></p>
 </div>
-<div class="section level3">
-<h3 id="search-for-exact-keyword-match">Search for exact keyword match<a class="anchor" aria-label="anchor" href="#search-for-exact-keyword-match"></a>
-</h3>
+<div class="section level2">
+<h2 id="search-for-exact-keyword-match">Search for exact keyword match<a class="anchor" aria-label="anchor" href="#search-for-exact-keyword-match"></a>
+</h2>
 <p><img src="mock_db_fig2.png"><!-- --></p>
 <p>To find “Musculoskeletal disorder” we can search for that like so</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -166,9 +166,9 @@ SNOMED
 </tr></tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="add-descendants">Add descendants<a class="anchor" aria-label="anchor" href="#add-descendants"></a>
-</h3>
+<div class="section level2">
+<h2 id="add-descendants">Add descendants<a class="anchor" aria-label="anchor" href="#add-descendants"></a>
+</h2>
 <p><img src="mock_db_fig7.png"><!-- --></p>
 <p>To include descendants of an identified code, we can set include_descendants to TRUE</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -268,9 +268,9 @@ SNOMED
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="multiple-search-terms">Multiple search terms<a class="anchor" aria-label="anchor" href="#multiple-search-terms"></a>
-</h3>
+<div class="section level2">
+<h2 id="multiple-search-terms">Multiple search terms<a class="anchor" aria-label="anchor" href="#multiple-search-terms"></a>
+</h2>
 <p>We can also search for multiple keywords at the same time, and would have picked these all up with the following search</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>
@@ -434,15 +434,15 @@ SNOMED
 </tr>
 </tbody>
 </table>
-<div class="section level3">
-<h3 id="searches-with-multiple-words">Searches with multiple words<a class="anchor" aria-label="anchor" href="#searches-with-multiple-words"></a>
-</h3>
+</div>
+<div class="section level2">
+<h2 id="searches-with-multiple-words">Searches with multiple words<a class="anchor" aria-label="anchor" href="#searches-with-multiple-words"></a>
+</h2>
 <p><img src="mock_db_fig4.png"><!-- --></p>
 <p>We can also find concepts with multiple words even if they are in a different order. For example, a search for “Knee osteoarthritis” will pick up “Osteoarthritis of knee”.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>
     keywords <span class="op">=</span> <span class="st">"Knee osteoarthritis"</span>,
-    fuzzy_match <span class="op">=</span> <span class="cn">TRUE</span>,
     domains<span class="op">=</span><span class="st">"Condition"</span>,
     include_descendants <span class="op">=</span> <span class="cn">TRUE</span>,
     db <span class="op">=</span> <span class="va">db</span>,
@@ -481,9 +481,9 @@ SNOMED
 </tr></tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="with-exclusions">With exclusions<a class="anchor" aria-label="anchor" href="#with-exclusions"></a>
-</h3>
+<div class="section level2">
+<h2 id="with-exclusions">With exclusions<a class="anchor" aria-label="anchor" href="#with-exclusions"></a>
+</h2>
 <p><img src="mock_db_fig5.png"><!-- --></p>
 <p>We can also exclude specific terms</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -543,9 +543,9 @@ SNOMED
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="search-via-synonyms">Search via synonyms<a class="anchor" aria-label="anchor" href="#search-via-synonyms"></a>
-</h3>
+<div class="section level2">
+<h2 id="search-via-synonyms">Search via synonyms<a class="anchor" aria-label="anchor" href="#search-via-synonyms"></a>
+</h2>
 <p><img src="mock_db_fig6.png"><!-- --></p>
 <p>We can also pick up codes based on their synonyms. In this case “Arthritis” (which gets identified first) has a synonym of “Osteoarthrosis”, and based on this synonym we can also include the “Osteoarthrosis” concept.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -633,9 +633,9 @@ SNOMED
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="fuzzy-matches-instead-of-only-exact-matches">Fuzzy matches instead of only exact matches<a class="anchor" aria-label="anchor" href="#fuzzy-matches-instead-of-only-exact-matches"></a>
-</h3>
+<div class="section level2">
+<h2 id="fuzzy-matches-instead-of-only-exact-matches">Fuzzy matches instead of only exact matches<a class="anchor" aria-label="anchor" href="#fuzzy-matches-instead-of-only-exact-matches"></a>
+</h2>
 <p><img src="mock_db_fig6.png"><!-- --></p>
 <p>We could have also picked up “Osteoarthrosis” by doing fuzzy matching which allows for some differences in spelling.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -643,6 +643,7 @@ SNOMED
     keywords <span class="op">=</span> <span class="st">"arthritis"</span>,
     domains<span class="op">=</span><span class="st">"Condition"</span>,
     fuzzy_match <span class="op">=</span> <span class="cn">TRUE</span>,
+    max_distance_cost <span class="op">=</span> <span class="fl">0.2</span>,
     db <span class="op">=</span> <span class="va">db</span>,
     vocabulary_database_schema <span class="op">=</span> <span class="st">"main"</span>
   <span class="op">)</span>
@@ -664,6 +665,20 @@ vocabulary_id
 </th>
 </tr></thead>
 <tbody>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+Osteoarthrosis
+</td>
+<td style="text-align:left;">
+Condition
+</td>
+<td style="text-align:left;">
+SNOMED
+</td>
+</tr>
 <tr>
 <td style="text-align:right;">
 3
@@ -709,9 +724,9 @@ SNOMED
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="search-via-source">Search via source<a class="anchor" aria-label="anchor" href="#search-via-source"></a>
-</h3>
+<div class="section level2">
+<h2 id="search-via-source">Search via source<a class="anchor" aria-label="anchor" href="#search-via-source"></a>
+</h2>
 <p>Or we could have also picked up “Osteoarthrosis” by searching via source.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>
@@ -798,9 +813,9 @@ SNOMED
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="search-for-both-standard-and-non-standard-concepts">Search for both standard and non-standard concepts<a class="anchor" aria-label="anchor" href="#search-for-both-standard-and-non-standard-concepts"></a>
-</h3>
+<div class="section level2">
+<h2 id="search-for-both-standard-and-non-standard-concepts">Search for both standard and non-standard concepts<a class="anchor" aria-label="anchor" href="#search-for-both-standard-and-non-standard-concepts"></a>
+</h2>
 <p><img src="mock_db_fig8.png"><!-- --></p>
 <p>We can also include non-standard codes in our results like so</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -932,7 +947,8 @@ SNOMED
 </tr>
 </tbody>
 </table>
-</div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
