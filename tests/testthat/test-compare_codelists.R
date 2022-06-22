@@ -29,27 +29,27 @@ test_that("comparing two codelists", {
   )
 
   # tests
-  # expect_true(all(c(
-  #   "concept_id",
-  #   "concept_name",
-  #   "domain_id",
-  #   "vocabulary_id",
-  #   "codelist"
-  # ) %in%
-  #   names(codes_compared)))
-  #
-  # expect_true(codes_compared %>%
-  #   filter(concept_id==3) %>%
-  #   select(codelist) %>%
-  #   pull() == "Only codelist_1")
-  #
-  # expect_true(codes_compared %>%
-  #   filter(concept_id==4) %>%
-  #   select(codelist) %>%
-  #   pull() == "Both")
-  #
-  # expect_true(codes_compared %>%
-  #   filter(concept_id==5) %>%
-  #   select(codelist) %>%
-  #   pull() == "Only codelist_2")
+   expect_true(all(c(
+     "concept_id",
+     "concept_name",
+     "domain_id",
+     "vocabulary_id",
+     "codelist"
+   ) %in%
+     names(codes_compared)))
+  
+   expect_true(codes_compared %>%
+     filter(concept_id==3) %>%
+     select(codelist) %>%
+     pull() == "Only codelist_1")
+  
+   expect_true(codes_compared %>%
+     filter(concept_id==4) %>%
+     select(codelist) %>%
+     pull() == "Both")
+  
+   expect_true(codes_compared %>%
+     filter(concept_id==5) %>%
+     select(codelist) %>%
+     pull() == "Only codelist_2")
 })
