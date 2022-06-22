@@ -28,5 +28,33 @@
 #' }
 compare_codelists <- function(codelist_1,
                               codelist_2) {
+  
+
+All_list <- rbind(codelist_1, codelist_2) # row combine both list
+duplicate_list <- All_list[duplicated(All_list), ] # create list duplicate
+unique_list <- unique(All_list) # list of unique rows from both list
+
+# function to return new column which indicate which list the concept came from. If return "Both" it means the concept contain in both list.
+unique_list$check <-
+  ifelse(is.na(
+    match(
+    
+    paste0(unique_list$concept_id, unique_list$concept_name),
+    
+    paste0(duplicate_list$concept_id, duplicate_list$concept_name)
+    
+  )
+  ),  ifelse(is.na(
+    match(
+      
+      paste0(unique_list$concept_id, unique_list$concept_name),
+      
+      paste0(codelist_1$concept_id, codelist_1$concept_name)
+      
+    )
+  ), deparse(substitute(codelist_2)), deparse(substitute(codelist_1))), "Both")
+
+unique_list # return new list
 
 }
+
