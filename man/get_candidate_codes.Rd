@@ -65,7 +65,7 @@ If TRUE, progress will be reported.}
 schema with vocab tables}
 }
 \value{
-Dataframe
+tibble
 }
 \description{
 This function generates a set of codes that
@@ -73,9 +73,6 @@ can be considered for creating a phenotype
 using the OMOP CDM.
 }
 \examples{
-### note, Eunomia, used in the example below,
-### does not include a full set of vocabularies.
-### The full set can be downloaded from https://athena.ohdsi.org
 \dontrun{
 library(DBI)
 library(CodelistGenerator)

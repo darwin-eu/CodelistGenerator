@@ -47,6 +47,7 @@ devtools::build_vignettes()
 # use_r("tidy_words")
 # use_r("get_candidate_codes")
 # use_r("show_mappings")
+# usethis::use_r("compare_codelists")
 # usethis::use_r("generate_mock_db")
 
 # usethis::use_package("checkmate")
@@ -61,6 +62,7 @@ devtools::build_vignettes()
 # usethis::use_test("show_mappings")
 # usethis::use_test("get_candidate_codes")
 # usethis::use_test("generate_mock_db")
+# usethis::use_test("compare_codelists")
 
 # Coverage
 # usethis::use_coverage()

@@ -118,258 +118,6 @@ vocabulary\_id
 
 <td style="text-align:right;">
 
-252658
-
-</td>
-
-<td style="text-align:left;">
-
-Intrinsic asthma without status asthmaticus
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-252942
-
-</td>
-
-<td style="text-align:left;">
-
-Asthmatic pulmonary eosinophilia
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-256448
-
-</td>
-
-<td style="text-align:left;">
-
-Chronic asthmatic bronchitis
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-257581
-
-</td>
-
-<td style="text-align:left;">
-
-Exacerbation of asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-312950
-
-</td>
-
-<td style="text-align:left;">
-
-IgE-mediated allergic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-313236
-
-</td>
-
-<td style="text-align:left;">
-
-Cough variant asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-316577
-
-</td>
-
-<td style="text-align:left;">
-
-Poisoning by antiasthmatic
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-317009
-
-</td>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-443801
-
-</td>
-
-<td style="text-align:left;">
-
-Exercise-induced asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
 761844
 
 </td>
@@ -377,6 +125,258 @@ SNOMED
 <td style="text-align:left;">
 
 Inhaled steroid-dependent asthma
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+764677
+
+</td>
+
+<td style="text-align:left;">
+
+Persistent asthma
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+764949
+
+</td>
+
+<td style="text-align:left;">
+
+Persistent asthma, well controlled
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+3661412
+
+</td>
+
+<td style="text-align:left;">
+
+Thunderstorm asthma
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4015819
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma disturbs sleep weekly
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4015947
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma causing night waking
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4017025
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma disturbing sleep
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4017026
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma not limiting activities
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4017182
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma disturbs sleep frequently
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4017183
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma not disturbing sleep
 
 </td>
 
@@ -450,230 +450,6 @@ vocabulary\_id
 
 <td style="text-align:right;">
 
-252658
-
-</td>
-
-<td style="text-align:left;">
-
-Intrinsic asthma without status asthmaticus
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-252942
-
-</td>
-
-<td style="text-align:left;">
-
-Asthmatic pulmonary eosinophilia
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-256448
-
-</td>
-
-<td style="text-align:left;">
-
-Chronic asthmatic bronchitis
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-257581
-
-</td>
-
-<td style="text-align:left;">
-
-Exacerbation of asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-312950
-
-</td>
-
-<td style="text-align:left;">
-
-IgE-mediated allergic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-313236
-
-</td>
-
-<td style="text-align:left;">
-
-Cough variant asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-317009
-
-</td>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-443801
-
-</td>
-
-<td style="text-align:left;">
-
-Exercise-induced asthma
-
-</td>
-
-<td style="text-align:left;">
-
-Condition
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
 761844
 
 </td>
@@ -709,6 +485,230 @@ SNOMED
 <td style="text-align:left;">
 
 Persistent asthma
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+764949
+
+</td>
+
+<td style="text-align:left;">
+
+Persistent asthma, well controlled
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+3661412
+
+</td>
+
+<td style="text-align:left;">
+
+Thunderstorm asthma
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4015819
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma disturbs sleep weekly
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4015947
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma causing night waking
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4017025
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma disturbing sleep
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4017026
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma not limiting activities
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4017182
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma disturbs sleep frequently
+
+</td>
+
+<td style="text-align:left;">
+
+Condition
+
+</td>
+
+<td style="text-align:left;">
+
+SNOMED
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:right;">
+
+4017183
+
+</td>
+
+<td style="text-align:left;">
+
+Asthma not disturbing sleep
 
 </td>
 

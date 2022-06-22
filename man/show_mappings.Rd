@@ -22,15 +22,12 @@ show_mappings(
 \item{vocabulary_database_schema}{Name of database schema with vocab tables}
 }
 \value{
-Dataframe
+tibble
 }
 \description{
 Show mappings from source vocabularies to standard
 }
 \examples{
-### note, Eunomia, which is used for the example below,
-### does not include a full set of vocabularies.
-### The full set can be downloaded from https://athena.ohdsi.org
 \dontrun{
 library(DBI)
 library(CodelistGenerator)
