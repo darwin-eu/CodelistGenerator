@@ -1,5 +1,5 @@
 pandoc: 2.7.3
-pkgdown: 2.0.4
+pkgdown: 2.0.5
 pkgdown_sha: ~
 articles:
   a01_Introduction_to_CodelistGenerator: a01_Introduction_to_CodelistGenerator.html
@@ -7,7 +7,7 @@ articles:
   a02b_Options_for_CodelistGenerator: a02b_Options_for_CodelistGenerator.html
   a03_CodelistGenerator_extracting_procedure_codes: a03_CodelistGenerator_extracting_procedure_codes.html
   a04_codelists_for_medications: a04_codelists_for_medications.html
-last_built: 2022-06-22T16:21Z
+last_built: 2022-06-23T15:45Z
 urls:
   reference: https://darwin-eu.github.io/CodelistGenerator/reference
   article: https://darwin-eu.github.io/CodelistGenerator/articles
