@@ -126,30 +126,21 @@ datatable(metformin_codes2,
 
 What is the difference between this codelist and the one based on descendants?
 ```{r,  eval=TRUE }
-code_comparison<-full_join(codes_from_descendants  %>% mutate(type1="Specified codes and descendants"), 
-                     metformin_codes2  %>% mutate(type2="CodelistGenerator")) %>% 
-  mutate(type=ifelse(!is.na(type1) & !is.na(type2),
-                     "Both",
-              ifelse(!is.na(type1) & is.na(type2),
-                    "Only specified codes and descendants",
-              ifelse(is.na(type1) & !is.na(type2),
-                     "Only CodelistGenerator",
-                     NA)))) %>% 
-  select(-c("type1","type2"))
+code_comparison<- compare_codelists(codes_from_descendants, metformin_codes2)
 
 ```
 
 
 ```{r,  message=FALSE, warning=FALSE } 
 kable(code_comparison %>% 
-  group_by(type) %>% 
+  group_by(codelist) %>% 
   tally())
 ```
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
 datatable(code_comparison %>% 
-            filter(type=="Only CodelistGenerator"),
+            filter(codelist=="Only codelist_2"),
           rownames=FALSE,
           options = list(
   pageLength = 10,

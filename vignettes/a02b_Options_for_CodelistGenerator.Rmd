@@ -114,10 +114,10 @@ oa_codes2<-get_candidate_codes(keywords="osteoarthritis",
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_2<-bind_rows(oa_codes1, oa_codes2) %>% 
-  group_by(concept_id) %>% 
-  mutate(seq=length(concept_name)) %>%
-  filter(seq==1)
+new_codes_1_2<-compare_codelists(oa_codes1, oa_codes2) %>% 
+  filter(codelist=="Only codelist_2") %>% 
+  select(-"codelist")
+
 datatable(new_codes_1_2,
           rownames=FALSE,
           options = list(
@@ -149,10 +149,10 @@ oa_codes3<-get_candidate_codes(keywords="osteoarthritis",
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_3<-bind_rows(oa_codes1, oa_codes3) %>% 
-  group_by(concept_id) %>% 
-  mutate(seq=length(concept_name)) %>%
-  filter(seq==1)
+new_codes_1_3<-compare_codelists(oa_codes1, oa_codes3) %>% 
+  filter(codelist=="Only codelist_2") %>% 
+  select(-"codelist")
+
 datatable(new_codes_1_3,
           rownames=FALSE,
           options = list(
@@ -183,10 +183,10 @@ oa_codes4<-get_candidate_codes(keywords="osteoarthritis",
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_4<-bind_rows(oa_codes1, oa_codes4) %>% 
-  group_by(concept_id) %>% 
-  mutate(seq=length(concept_name)) %>%
-  filter(seq==1)
+new_codes_1_4<-compare_codelists(oa_codes1, oa_codes4) %>% 
+  filter(codelist=="Only codelist_2") %>% 
+  select(-"codelist")
+
 datatable(new_codes_1_4,
           rownames=FALSE,
           options = list(
@@ -217,10 +217,10 @@ oa_codes5<-get_candidate_codes(keywords="osteoarthritis",
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_5<-bind_rows(oa_codes1, oa_codes5) %>% 
-  group_by(concept_id) %>% 
-  mutate(seq=length(concept_name)) %>%
-  filter(seq==1)
+new_codes_1_5<-compare_codelists(oa_codes1, oa_codes5) %>% 
+  filter(codelist=="Only codelist_2") %>% 
+  select(-"codelist")
+
 datatable(new_codes_1_5,
           rownames=FALSE,
           options = list(
@@ -252,10 +252,10 @@ oa_codes6<-get_candidate_codes(keywords="osteoarthritis",
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_6<-bind_rows(oa_codes1, oa_codes6) %>% 
-  group_by(concept_id) %>% 
-  mutate(seq=length(concept_name)) %>%
-  filter(seq==1)
+new_codes_1_6<-compare_codelists(oa_codes1, oa_codes6) %>% 
+  filter(codelist=="Only codelist_2") %>% 
+  select(-"codelist")
+
 datatable(new_codes_1_6,
           rownames=FALSE,
           options = list(
@@ -287,10 +287,10 @@ oa_codes7<-get_candidate_codes(keywords="osteoarthritis",
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_7<-bind_rows(oa_codes1, oa_codes7) %>% 
-  group_by(concept_id) %>% 
-  mutate(seq=length(concept_name)) %>%
-  filter(seq==1)
+new_codes_1_7<-compare_codelists(oa_codes1, oa_codes7) %>% 
+  filter(codelist=="Only codelist_2") %>% 
+  select(-"codelist")
+
 datatable(new_codes_1_7,
           rownames=FALSE,
           options = list(
@@ -322,10 +322,10 @@ oa_codes8<-get_candidate_codes(keywords="osteoarthritis",
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_8<-bind_rows(oa_codes1, oa_codes8) %>% 
-  group_by(concept_id) %>% 
-  mutate(seq=length(concept_name)) %>%
-  filter(seq==1)
+new_codes_1_8<-compare_codelists(oa_codes1, oa_codes8) %>% 
+  filter(codelist=="Only codelist_2") %>% 
+  select(-"codelist")
+
 datatable(new_codes_1_8,
           rownames=FALSE,
           options = list(

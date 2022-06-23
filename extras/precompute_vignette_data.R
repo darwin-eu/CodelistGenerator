@@ -69,21 +69,8 @@ saveRDS(
   here("vignettes", "intro_data_02.RData")
 )
 
-code_comparison <- full_join(
-  codes_from_descendants %>% mutate(type1 = "4182210 and descendants"),
-  dementia_codes1 %>% mutate(type2 = "CodelistGenerator")
-) %>%
-  mutate(type = ifelse(!is.na(type1) & !is.na(type2),
-    "Both",
-    ifelse(!is.na(type1) & is.na(type2),
-      "Only 4182210 and descendants",
-      ifelse(is.na(type1) & !is.na(type2),
-        "Only CodelistGenerator",
-        NA
-      )
-    )
-  )) %>%
-  select(-c("type1", "type2"))
+code_comparison <- compare_codelists(codes_from_descendants,
+                  dementia_codes1)
 saveRDS(
   code_comparison,
   here("vignettes", "intro_data_03.RData")
