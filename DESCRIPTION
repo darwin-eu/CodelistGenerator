@@ -16,7 +16,6 @@ Imports:
     stringr (>= 1.4.0),
     magrittr (>= 2.0.0),
     rlang (>= 1.0.0),
-    dtplyr (>= 1.0.0),
     DBI (>= 1.1.0),
     glue
 Suggests: 

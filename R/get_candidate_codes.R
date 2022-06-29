@@ -347,11 +347,10 @@ get_candidate_codes <- function(keywords,
         dplyr::collect() %>%
         dplyr::rename_with(tolower)
 
-      synonyms <- dtplyr::lazy_dt(concept_synonym) %>%
-        dplyr::inner_join(dtplyr::lazy_dt(candidate_codes) %>%
+      synonyms <- concept_synonym %>%
+        dplyr::inner_join(candidate_codes %>%
           dplyr::select("concept_id"),
           by = "concept_id") %>%
-        as.data.frame() %>%
         dplyr::select("concept_synonym_name") %>%
         dplyr::distinct() %>%
         dplyr::pull()
@@ -612,23 +611,21 @@ get_fuzzy_matches <- function(words,
 add_descendants <- function(working_candidate_codes,
                             concept_ancestor_df,
                             concept_df) {
-  candidate_code_descendants <- dtplyr::lazy_dt(working_candidate_codes %>%
+  candidate_code_descendants <- working_candidate_codes %>%
     dplyr::select("concept_id") %>%
     dplyr::rename("ancestor_concept_id" = "concept_id") %>%
-    dplyr::distinct()) %>%
-    dplyr::left_join(dtplyr::lazy_dt(concept_ancestor_df %>%
-      dplyr::filter("ancestor_concept_id" != "descendant_concept_id")),
+    dplyr::distinct() %>%
+    dplyr::left_join(concept_ancestor_df %>%
+      dplyr::filter("ancestor_concept_id" != "descendant_concept_id"),
     by = "ancestor_concept_id"
     ) %>%
-    as.data.frame() %>%
     dplyr::select("descendant_concept_id") %>%
     dplyr::distinct() %>%
     dplyr::rename("concept_id" = "descendant_concept_id")
 
   candidate_code_descendants <-
-    dtplyr::lazy_dt(candidate_code_descendants) %>%
-    dplyr::left_join(dtplyr::lazy_dt(concept_df), by = "concept_id") %>%
-    as.data.frame() %>%
+    candidate_code_descendants %>%
+    dplyr::left_join(concept_df, by = "concept_id") %>%
     dplyr::mutate(concept_name = tidy_words(.data$concept_name))
 
   candidate_code_descendants
@@ -637,18 +634,17 @@ add_descendants <- function(working_candidate_codes,
 add_ancestor <- function(working_candidate_codes,
                          concept_ancestor_df,
                          concept_df) {
-  candidate_code_ancestor <- dtplyr::lazy_dt(working_candidate_codes %>%
+  candidate_code_ancestor <- working_candidate_codes %>%
     dplyr::select("concept_id") %>%
-    dplyr::rename("descendant_concept_id" = "concept_id")) %>%
-    dplyr::left_join(dtplyr::lazy_dt(concept_ancestor_df),
+    dplyr::rename("descendant_concept_id" = "concept_id") %>%
+    dplyr::left_join(concept_ancestor_df,
       by = "descendant_concept_id"
     ) %>%
     dplyr::filter(.data$min_levels_of_separation == "1") %>%
     dplyr::select("ancestor_concept_id") %>%
     dplyr::rename("concept_id" = "ancestor_concept_id") %>%
-    dplyr::left_join(dtplyr::lazy_dt(concept_df),
+    dplyr::left_join(concept_df,
                      by = "concept_id") %>%
-    as.data.frame() %>%
     dplyr::mutate(concept_name = tidy_words(.data$concept_name))
 
   # keep if not already in candidate_codes
