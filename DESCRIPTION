@@ -28,7 +28,8 @@ Suggests:
     rmarkdown,
     here (>= 1.0.0),
     testthat (>= 3.0.0),
-    kableExtra (>= 1.0.0)
+    kableExtra (>= 1.0.0),
+    RPostgres
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
