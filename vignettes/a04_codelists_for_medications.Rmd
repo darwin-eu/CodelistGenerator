@@ -21,6 +21,7 @@ library(DBI)
 library(RSQLite)
 library(here)
 library(dplyr)
+library(dbplyr)
 library(stringr)
 library(DT)
 library(kableExtra)
@@ -60,6 +61,7 @@ First we can follow the approach of identifying high-level codes and include all
 
 ```{r, eval=FALSE}
 library(dplyr)
+library(dbplyr)
 library(stringr)
 library(DT)
 library(kableExtra)

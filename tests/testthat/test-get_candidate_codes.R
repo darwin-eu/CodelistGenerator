@@ -1,6 +1,7 @@
 test_that("tests with mock db", {
   library(DBI)
   library(RSQLite)
+  library(dbplyr)
   library(dplyr)
 
   # mock db

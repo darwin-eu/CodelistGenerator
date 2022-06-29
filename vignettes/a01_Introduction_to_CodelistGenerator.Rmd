@@ -93,6 +93,7 @@ vocab_version
 The simplest approach to identifying potential codes is to take a high-level code and include all its descendants. 
 ```{r, eval=FALSE}
 library(dplyr)
+library(dbplyr)
 library(stringr)
 library(DT)
 library(kableExtra)

@@ -1,6 +1,7 @@
 test_that("comparing two codelists", {
   library(DBI)
   library(RSQLite)
+  library(dbplyr)
   library(dplyr)
 
   # mock db

@@ -34,6 +34,7 @@ remotes::install_github("darwin-eu/CodelistGenerator")
 # First load required libraries
 library(DBI)
 library(dplyr)
+library(dbplyr)
 library(CodelistGenerator)
 
 # Note that you will also need another library, like RPostgres, to make your database connection

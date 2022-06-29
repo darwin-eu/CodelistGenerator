@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
   library(DBI)
   library(RSQLite)
   library(dplyr)
+  library(dbplyr)
   library(here)
   library(kableExtra)
   library(CodelistGenerator)
