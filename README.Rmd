@@ -33,6 +33,15 @@ remotes::install_github("darwin-eu/CodelistGenerator")
 
 ## Connecting to the OMOP CDM vocabularies
 ```{r, eval=FALSE}
+# First load required libraries
+library(DBI)
+library(dplyr)
+library(CodelistGenerator)
+
+# Note that you will also need another library, like RPostgres, to make your database connection
+```
+
+```{r, eval=FALSE}
 # example with postgres database connection details
 server_dbi<-Sys.getenv("server")
 user<-Sys.getenv("user")
@@ -91,7 +100,15 @@ dplyr::tbl(db, dplyr::sql(paste0(
 ```
 
 We can then search for asthma like so
-```{r,  message=FALSE, warning=FALSE}
+```{r,  message=FALSE, warning=FALSE, eval=FALSE}
+asthma_1<-get_candidate_codes(keywords="asthma",
+                    domains = "Condition",
+                    db=db,
+                    vocabulary_database_schema = vocabulary_database_schema)
+head(asthma_1, 10)
+```
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
 asthma_1<-get_candidate_codes(keywords="asthma",
                     domains = "Condition",
                     db=db,
@@ -100,7 +117,16 @@ kable(head(asthma_1, 10))
 ```
 
 Perhaps we want to exclude certain concepts as part of the search strategy, in which case this can be added like so
-```{r,  message=FALSE, warning=FALSE}
+```{r,  message=FALSE, warning=FALSE, eval=FALSE}
+asthma_2<-get_candidate_codes(keywords="asthma",
+                    domains = "Condition",
+                    exclude = "Poisoning by antiasthmatic",
+                    db=db,
+                    vocabulary_database_schema = vocabulary_database_schema)
+head(asthma_2, 10)
+```
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
 asthma_2<-get_candidate_codes(keywords="asthma",
                     domains = "Condition",
                     exclude = "Poisoning by antiasthmatic",
@@ -110,7 +136,20 @@ kable(head(asthma_2, 10))
 ```
 
 We can then also see source codes these are mapped from, for example
-```{r,  message=FALSE, warning=FALSE}
+```{r,  message=FALSE, warning=FALSE, eval=FALSE}
+asthma_icd_mappings<-show_mappings(candidate_codelist=asthma_2,
+                     source_vocabularies="ICD10CM",
+                    db=db,
+                    vocabulary_database_schema =  vocabulary_database_schema)
+head(asthma_icd_mappings %>% 
+       select(standard_concept_name,
+              standard_vocabulary_id,
+              source_concept_name,
+              source_vocabulary_id),
+     10)
+```
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
 asthma_icd_mappings<-show_mappings(candidate_codelist=asthma_2,
                      source_vocabularies="ICD10CM",
                     db=db,
