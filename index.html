@@ -74,53 +74,60 @@
 </h2>
 <p>You can install the development version of CodelistGenerator like so:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"darwin-eu/CodelistGenerator"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"darwin-eu/CodelistGenerator"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="connecting-to-the-omop-cdm-vocabularies">Connecting to the OMOP CDM vocabularies<a class="anchor" aria-label="anchor" href="#connecting-to-the-omop-cdm-vocabularies"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># example with postgres database connection details</span>
-<span class="va">server_dbi</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"server"</span><span class="op">)</span>
-<span class="va">user</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span>
-<span class="va">password</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"password"</span><span class="op">)</span>
-<span class="va">port</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"port"</span><span class="op">)</span>
-<span class="va">host</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"host"</span><span class="op">)</span>
-
-<span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RPostgres</span><span class="fu">::</span><span class="fu">Postgres</span><span class="op">(</span><span class="op">)</span>,
-                dbname <span class="op">=</span> <span class="va">server_dbi</span>,
-                port <span class="op">=</span> <span class="va">port</span>,
-                host <span class="op">=</span> <span class="va">host</span>,
-                user <span class="op">=</span> <span class="va">user</span>,
-                password <span class="op">=</span> <span class="va">password</span><span class="op">)</span>
-
-<span class="co"># name of vocabulary schema</span>
-<span class="va">vocabulary_database_schema</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"vocabulary_schema"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># First load required libraries</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Note that you will also need another library, like RPostgres, to make your database connection</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># example with postgres database connection details</span></span>
+<span><span class="va">server_dbi</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"server"</span><span class="op">)</span></span>
+<span><span class="va">user</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span></span>
+<span><span class="va">password</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"password"</span><span class="op">)</span></span>
+<span><span class="va">port</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"port"</span><span class="op">)</span></span>
+<span><span class="va">host</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"host"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RPostgres</span><span class="fu">::</span><span class="fu"><a href="https://rpostgres.r-dbi.org/reference/Postgres.html" class="external-link">Postgres</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>                dbname <span class="op">=</span> <span class="va">server_dbi</span>,</span>
+<span>                port <span class="op">=</span> <span class="va">port</span>,</span>
+<span>                host <span class="op">=</span> <span class="va">host</span>,</span>
+<span>                user <span class="op">=</span> <span class="va">user</span>,</span>
+<span>                password <span class="op">=</span> <span class="va">password</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># name of vocabulary schema</span></span>
+<span><span class="va">vocabulary_database_schema</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"vocabulary_schema"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example-search">Example search<a class="anchor" aria-label="anchor" href="#example-search"></a>
 </h2>
 <p>Every codelist is specific to a version of the OMOP CDM vocabularies, so we can first check the version.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">db</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sql.html" class="external-link">sql</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span>
-    <span class="st">"SELECT * FROM "</span>,
-    <span class="va">vocabulary_database_schema</span>,
-    <span class="st">".vocabulary"</span>
-    <span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span><span class="va">tolower</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vocabulary_id</span> <span class="op">==</span> <span class="st">"None"</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="st">"vocabulary_version"</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "v5.0 13-JUL-21"</span></code></pre></div>
-<p>We can then search for asthma like so</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">asthma_1</span><span class="op">&lt;-</span><span class="fu"><a href="reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"asthma"</span>,
-                    domains <span class="op">=</span> <span class="st">"Condition"</span>,
-                    db<span class="op">=</span><span class="va">db</span>,
-                    vocabulary_database_schema <span class="op">=</span> <span class="va">vocabulary_database_schema</span><span class="op">)</span>
-<span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">asthma_1</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">db</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sql.html" class="external-link">sql</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span>    <span class="st">"SELECT * FROM "</span>,</span>
+<span>    <span class="va">vocabulary_database_schema</span>,</span>
+<span>    <span class="st">".vocabulary"</span></span>
+<span>    <span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename_with</a></span><span class="op">(</span><span class="va">tolower</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.data</span><span class="op">$</span><span class="va">vocabulary_id</span> <span class="op">==</span> <span class="st">"None"</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="st">"vocabulary_version"</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "v5.0 13-JUL-21"</span></span></code></pre></div>
+<p>We can then search for asthma like so</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">asthma_1</span><span class="op">&lt;-</span><span class="fu"><a href="reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"asthma"</span>,</span>
+<span>                    domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>                    db<span class="op">=</span><span class="va">db</span>,</span>
+<span>                    vocabulary_database_schema <span class="op">=</span> <span class="va">vocabulary_database_schema</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">asthma_1</span>, <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;"><p>concept_id</p></th>
@@ -130,75 +137,75 @@
 </tr></thead>
 <tbody>
 <tr>
+<td style="text-align:right;"><p>252658</p></td>
+<td style="text-align:left;"><p>Intrinsic asthma without status asthmaticus</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>252942</p></td>
+<td style="text-align:left;"><p>Asthmatic pulmonary eosinophilia</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>256448</p></td>
+<td style="text-align:left;"><p>Chronic asthmatic bronchitis</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>257581</p></td>
+<td style="text-align:left;"><p>Exacerbation of asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>312950</p></td>
+<td style="text-align:left;"><p>IgE-mediated allergic asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>313236</p></td>
+<td style="text-align:left;"><p>Cough variant asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>316577</p></td>
+<td style="text-align:left;"><p>Poisoning by antiasthmatic</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>317009</p></td>
+<td style="text-align:left;"><p>Asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>443801</p></td>
+<td style="text-align:left;"><p>Exercise-induced asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
 <td style="text-align:right;"><p>761844</p></td>
 <td style="text-align:left;"><p>Inhaled steroid-dependent asthma</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>764677</p></td>
-<td style="text-align:left;"><p>Persistent asthma</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>764949</p></td>
-<td style="text-align:left;"><p>Persistent asthma, well controlled</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>3661412</p></td>
-<td style="text-align:left;"><p>Thunderstorm asthma</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4015819</p></td>
-<td style="text-align:left;"><p>Asthma disturbs sleep weekly</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4015947</p></td>
-<td style="text-align:left;"><p>Asthma causing night waking</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4017025</p></td>
-<td style="text-align:left;"><p>Asthma disturbing sleep</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4017026</p></td>
-<td style="text-align:left;"><p>Asthma not limiting activities</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4017182</p></td>
-<td style="text-align:left;"><p>Asthma disturbs sleep frequently</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4017183</p></td>
-<td style="text-align:left;"><p>Asthma not disturbing sleep</p></td>
 <td style="text-align:left;"><p>Condition</p></td>
 <td style="text-align:left;"><p>SNOMED</p></td>
 </tr>
 </tbody>
 </table>
 <p>Perhaps we want to exclude certain concepts as part of the search strategy, in which case this can be added like so</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">asthma_2</span><span class="op">&lt;-</span><span class="fu"><a href="reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"asthma"</span>,
-                    domains <span class="op">=</span> <span class="st">"Condition"</span>,
-                    exclude <span class="op">=</span> <span class="st">"Poisoning by antiasthmatic"</span>,
-                    db<span class="op">=</span><span class="va">db</span>,
-                    vocabulary_database_schema <span class="op">=</span> <span class="va">vocabulary_database_schema</span><span class="op">)</span>
-<span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">asthma_2</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">asthma_2</span><span class="op">&lt;-</span><span class="fu"><a href="reference/get_candidate_codes.html">get_candidate_codes</a></span><span class="op">(</span>keywords<span class="op">=</span><span class="st">"asthma"</span>,</span>
+<span>                    domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>                    exclude <span class="op">=</span> <span class="st">"Poisoning by antiasthmatic"</span>,</span>
+<span>                    db<span class="op">=</span><span class="va">db</span>,</span>
+<span>                    vocabulary_database_schema <span class="op">=</span> <span class="va">vocabulary_database_schema</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">asthma_2</span>, <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;"><p>concept_id</p></th>
@@ -207,6 +214,54 @@
 <th style="text-align:left;"><p>vocabulary_id</p></th>
 </tr></thead>
 <tbody>
+<tr>
+<td style="text-align:right;"><p>252658</p></td>
+<td style="text-align:left;"><p>Intrinsic asthma without status asthmaticus</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>252942</p></td>
+<td style="text-align:left;"><p>Asthmatic pulmonary eosinophilia</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>256448</p></td>
+<td style="text-align:left;"><p>Chronic asthmatic bronchitis</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>257581</p></td>
+<td style="text-align:left;"><p>Exacerbation of asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>312950</p></td>
+<td style="text-align:left;"><p>IgE-mediated allergic asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>313236</p></td>
+<td style="text-align:left;"><p>Cough variant asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>317009</p></td>
+<td style="text-align:left;"><p>Asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
+<tr>
+<td style="text-align:right;"><p>443801</p></td>
+<td style="text-align:left;"><p>Exercise-induced asthma</p></td>
+<td style="text-align:left;"><p>Condition</p></td>
+<td style="text-align:left;"><p>SNOMED</p></td>
+</tr>
 <tr>
 <td style="text-align:right;"><p>761844</p></td>
 <td style="text-align:left;"><p>Inhaled steroid-dependent asthma</p></td>
@@ -219,68 +274,20 @@
 <td style="text-align:left;"><p>Condition</p></td>
 <td style="text-align:left;"><p>SNOMED</p></td>
 </tr>
-<tr>
-<td style="text-align:right;"><p>764949</p></td>
-<td style="text-align:left;"><p>Persistent asthma, well controlled</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>3661412</p></td>
-<td style="text-align:left;"><p>Thunderstorm asthma</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4015819</p></td>
-<td style="text-align:left;"><p>Asthma disturbs sleep weekly</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4015947</p></td>
-<td style="text-align:left;"><p>Asthma causing night waking</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4017025</p></td>
-<td style="text-align:left;"><p>Asthma disturbing sleep</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4017026</p></td>
-<td style="text-align:left;"><p>Asthma not limiting activities</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4017182</p></td>
-<td style="text-align:left;"><p>Asthma disturbs sleep frequently</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
-<tr>
-<td style="text-align:right;"><p>4017183</p></td>
-<td style="text-align:left;"><p>Asthma not disturbing sleep</p></td>
-<td style="text-align:left;"><p>Condition</p></td>
-<td style="text-align:left;"><p>SNOMED</p></td>
-</tr>
 </tbody>
 </table>
 <p>We can then also see source codes these are mapped from, for example</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">asthma_icd_mappings</span><span class="op">&lt;-</span><span class="fu"><a href="reference/show_mappings.html">show_mappings</a></span><span class="op">(</span>candidate_codelist<span class="op">=</span><span class="va">asthma_2</span>,
-                     source_vocabularies<span class="op">=</span><span class="st">"ICD10CM"</span>,
-                    db<span class="op">=</span><span class="va">db</span>,
-                    vocabulary_database_schema <span class="op">=</span>  <span class="va">vocabulary_database_schema</span><span class="op">)</span>
-<span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">asthma_icd_mappings</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> 
-       <span class="fu">select</span><span class="op">(</span><span class="va">standard_concept_name</span>,
-              <span class="va">standard_vocabulary_id</span>,
-              <span class="va">source_concept_name</span>,
-              <span class="va">source_vocabulary_id</span><span class="op">)</span>,
-     <span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">asthma_icd_mappings</span><span class="op">&lt;-</span><span class="fu"><a href="reference/show_mappings.html">show_mappings</a></span><span class="op">(</span>candidate_codelist<span class="op">=</span><span class="va">asthma_2</span>,</span>
+<span>                     source_vocabularies<span class="op">=</span><span class="st">"ICD10CM"</span>,</span>
+<span>                    db<span class="op">=</span><span class="va">db</span>,</span>
+<span>                    vocabulary_database_schema <span class="op">=</span>  <span class="va">vocabulary_database_schema</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">asthma_icd_mappings</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> </span>
+<span>       <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">standard_concept_name</span>,</span>
+<span>              <span class="va">standard_vocabulary_id</span>,</span>
+<span>              <span class="va">source_concept_name</span>,</span>
+<span>              <span class="va">source_vocabulary_id</span><span class="op">)</span>,</span>
+<span>     <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:left;"><p>standard_concept_name</p></th>
