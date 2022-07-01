@@ -94,7 +94,7 @@ devtools::build_vignettes()
 
 
 
-# use_mit_license()
+# usethis::use_apache_license(version = 2, include_future = TRUE)
 
 
 
