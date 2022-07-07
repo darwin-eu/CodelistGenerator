@@ -30,7 +30,11 @@ devtools::check_rhub() # All os
 # note you can use stlyer to fix formatting
 # ignore formatting warning for .datatable.aware
 # doesn´t pick up vars used in glue (So ignore warningn about duration)
-lintr::lint_package()
+lintr::lint_package(".",
+             linters = lintr::linters_with_defaults(
+              lintr::object_name_linter(styles = "camelCase")
+             )
+)
 
 devtools::build_readme()
 devtools::document() #  Use roxygen to document a package.

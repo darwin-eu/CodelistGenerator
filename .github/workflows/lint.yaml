@@ -25,5 +25,5 @@ jobs:
           extra-packages: lintr
 
       - name: Lint
-        run: lintr::lint_package()
+        run: lintr::lint_package(".",linters = lintr::linters_with_defaults(lintr::object_name_linter(styles = "camelCase")))
         shell: Rscript {0}
