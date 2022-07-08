@@ -63,7 +63,7 @@ dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite=TRUE)
 dbWriteTable(db, "concept_synonym", concept_synonym, overwrite=TRUE)
 dbWriteTable(db, "vocabulary", vocabulary)
 rm(concept,concept_relationship, concept_ancestor, concept_synonym, vocabulary)
-vocabulary_database_schema<-"main"
+vocabularyDatabaseSchema<-"main"
 ```
 
 The structure of each of these tables is described in detail at: https://ohdsi.github.io/CommonDataModel/cdm53.html#Vocabulary_Tables 
@@ -73,7 +73,7 @@ It is important to note that the results from CodelistGenerator will be specific
 ```{r, eval=FALSE}
 dplyr::tbl(db, dplyr::sql(paste0(
     "SELECT * FROM ",
-    vocabulary_database_schema,
+    vocabularyDatabaseSchema,
     ".vocabulary"
     ))) %>%
     dplyr::rename_with(tolower) %>%
@@ -84,8 +84,8 @@ dplyr::tbl(db, dplyr::sql(paste0(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-vocab_version<-readRDS(here("vignettes","intro_vocab.RData"))
-vocab_version
+vocabVersion<-readRDS(here("vignettes","introVocab.RData"))
+vocabVersion
 ```
 
 
@@ -100,15 +100,15 @@ library(kableExtra)
 ```
 
 ```{r, eval=FALSE}
-codes_from_descendants<-tbl(db, 
+codesFromDescendants<-tbl(db, 
   sql(paste0("SELECT * FROM ",
-     vocabulary_database_schema,
+     vocabularyDatabaseSchema,
      ".concept_ancestor"))) %>% 
   filter(ancestor_concept_id=="4182210") %>% 
   select("descendant_concept_id") %>% 
   rename("concept_id"="descendant_concept_id") %>% 
   left_join(tbl(db, sql(paste0("SELECT * FROM ",
-     vocabulary_database_schema,
+     vocabularyDatabaseSchema,
      ".concept"))))%>%
   select("concept_id", "concept_name", 
          "domain_id", "vocabulary_id") %>% 
@@ -116,11 +116,11 @@ codes_from_descendants<-tbl(db,
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codes_from_descendants<-readRDS(here("vignettes","intro_data_01.RData"))
+codesFromDescendants<-readRDS(here("vignettes","introData01.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
-datatable(codes_from_descendants,
+datatable(codesFromDescendants,
           rownames=FALSE,
           options = list(pageLength = 10,
                          lengthMenu = c(10, 20,50)))
@@ -138,19 +138,19 @@ library(CodelistGenerator)
 
 First, let's do a simple search for a single keyword of "dementia", including descendants of the identified codes.
 ```{r, eval=FALSE }
-dementia_codes1<-get_candidate_codes(keywords="dementia",
+dementiaCodes1<-getCandidateCodes(keywords="dementia",
                     domains="Condition",
-                    include_descendants = TRUE,
+                    includeDescendants = TRUE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-dementia_codes1<-readRDS(here("vignettes","intro_data_02.RData"))
+dementiaCodes1<-readRDS(here("vignettes","introData02.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(dementia_codes1,
+datatable(dementiaCodes1,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -160,23 +160,23 @@ datatable(dementia_codes1,
 
 What is the difference between this codelist and the one from 4182210 and its descendants?
 ```{r,  eval=FALSE }
-code_comparison<-compare_codelists(codes_from_descendants,
-                  dementia_codes1)
+codeComparison<-compareCodelists(codesFromDescendants,
+                  dementiaCodes1)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-code_comparison<-readRDS(here("vignettes","intro_data_03.RData"))
+codeComparison<-readRDS(here("vignettes","introData03.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE } 
-kable(code_comparison %>% 
+kable(codeComparison %>% 
   group_by(codelist) %>% 
   tally())
 ```
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-datatable(code_comparison %>% 
+datatable(codeComparison %>% 
             filter(codelist=="Only codelist_2"),
           rownames=FALSE,
           options = list(
@@ -189,18 +189,18 @@ datatable(code_comparison %>%
 Perhaps we want to see what ICD10CM codes map to our candidate codelist. We can get these by running
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-icd_mappings<-readRDS(here("vignettes","intro_data_04.RData"))
+icdMappings<-readRDS(here("vignettes","introData04.RData"))
 ```
 
 ```{r,  eval=FALSE }
-icd_mappings<-show_mappings(candidate_codelist=dementia_codes4,
-                    source_vocabularies="ICD10CM",
+icdMappings<-showMappings(candidateCodelist=dementiaCodes4,
+                    sourceVocabularies="ICD10CM",
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(icd_mappings,
+datatable(icdMappings,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -210,18 +210,18 @@ datatable(icd_mappings,
 
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-read_mappings<-readRDS(here("vignettes","intro_data_05.RData"))
+readMappings<-readRDS(here("vignettes","introData05.RData"))
 ```
 
 ```{r,  eval=FALSE }
-read_mappings<-show_mappings(candidate_codelist=dementia_codes4,
-                    source_vocabularies="Read",
+readMappings<-showMappings(candidateCodelist=dementiaCodes4,
+                    sourceVocabularies="Read",
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(read_mappings,
+datatable(readMappings,
           rownames=FALSE,
           options = list(
   pageLength = 10,

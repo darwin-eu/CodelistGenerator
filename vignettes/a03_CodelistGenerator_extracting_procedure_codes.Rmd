@@ -57,7 +57,7 @@ db <- dbConnect(RPostgres::Postgres(),
                 password = password)
 
 # name of vocabulary schema
-vocabulary_database_schema<-"vocabulary"
+vocabularyDatabaseSchema<-"vocabulary"
 ```
 
 ## Codelist from "colonoscopy" and its descendants
@@ -72,15 +72,15 @@ library(kableExtra)
 ```
 
 ```{r, eval=FALSE}
-codes_from_descendants<-tbl(db, 
+codesFromDescendants<-tbl(db, 
   sql(paste0("SELECT * FROM ",
-     vocabulary_database_schema,
+     vocabularyDatabaseSchema,
      ".concept_ancestor"))) %>% 
   filter(ancestor_concept_id %in% c("4249893", "937652", "40480729")) %>% 
   select("descendant_concept_id") %>% 
   rename("concept_id"="descendant_concept_id") %>% 
   left_join(tbl(db, sql(paste0("SELECT * FROM ",
-     vocabulary_database_schema,
+     vocabularyDatabaseSchema,
      ".concept"))))%>%
   select("concept_id", "concept_name", 
          "domain_id", "vocabulary_id") %>% 
@@ -90,11 +90,11 @@ codes_from_descendants<-tbl(db,
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codes_from_descendants<-readRDS(here("vignettes","proc_data_01.RData"))
+codesFromDescendants<-readRDS(here("vignettes","procData01.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
-datatable(codes_from_descendants,
+datatable(codesFromDescendants,
           rownames=FALSE,
           options = list(pageLength = 10,
                          lengthMenu = c(10, 20,50)))
@@ -110,21 +110,21 @@ library(CodelistGenerator)
 
 Let's do a search for a single keyword of "colonoscopy" without any exclusions and not including descendants
 ```{r, eval=FALSE }
-colonoscopy_codes2<-get_candidate_codes(keywords="colonoscopy",
+colonoscopyCodes2<-getCandidateCodes(keywords="colonoscopy",
                     domains=c("Procedure","Measurement"),
                     exclude = NULL,
-                    include_descendants = FALSE,
+                    includeDescendants = FALSE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-colonoscopy_codes2<-readRDS(here("vignettes","proc_data_02.RData"))
+colonoscopyCodes2<-readRDS(here("vignettes","procData02.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(colonoscopy_codes2,
+datatable(colonoscopyCodes2,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -134,21 +134,21 @@ datatable(colonoscopy_codes2,
 
 What is the difference between this codelist and the one based on descendants?
 ```{r,  eval=TRUE }
-code_comparison<-compare_codelists(codes_from_descendants, 
-                  colonoscopy_codes2)
+codeComparison<-compareCodelists(codesFromDescendants, 
+                  colonoscopyCodes2)
 ```
 
 
 ```{r,  message=FALSE, warning=FALSE } 
-kable(code_comparison %>% 
+kable(codeComparison %>% 
   group_by(codelist) %>% 
   tally())
 ```
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-datatable(code_comparison %>% 
-            filter(codelist=="Only codelist_2"),
+datatable(codeComparison %>% 
+            filter(codelist=="Only codelist 2"),
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -159,8 +159,8 @@ datatable(code_comparison %>%
 
 But, what are the codes from specified codes and descendants but not picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-datatable(code_comparison %>% 
-            filter(codelist=="Only codelist_1"),
+datatable(codeComparison %>% 
+            filter(codelist=="Only codelist 1"),
           rownames=FALSE,
           options = list(
   pageLength = 10,

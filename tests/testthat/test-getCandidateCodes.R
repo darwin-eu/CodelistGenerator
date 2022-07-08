@@ -5,16 +5,16 @@ test_that("tests with mock db", {
   library(dplyr)
 
   # mock db
-  db <- generate_mock_vocab_db()
+  db <- generateMockVocabDb()
 
   # tests
   # test keywords search - exact
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = "Musculoskeletal disorder",
     domains = "Condition",
-    include_descendants = FALSE,
+    includeDescendants = FALSE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true((nrow(codes) == 1 &
     codes$concept_name[1] == "Musculoskeletal disorder"))
@@ -25,29 +25,29 @@ test_that("tests with mock db", {
   ) %in%
     names(codes)))
 
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = c(
       "knee osteoarthritis",
       "hip osteoarthritis"
     ),
     domains = "Condition",
-    include_descendants = FALSE,
+    includeDescendants = FALSE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true((nrow(codes) == 2 &
     codes$concept_name[1] == "Osteoarthritis of knee" &
     codes$concept_name[2] == "Osteoarthritis of hip"))
 
   # test keywords search - fuzzy
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = c("Arthritis"),
-    fuzzy_match = TRUE,
-    max_distance_cost = 0.2,
+    fuzzyMatch = TRUE,
+    maxDistanceCost = 0.2,
     domains = "Condition",
-    include_descendants = FALSE,
+    includeDescendants = FALSE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true(any(codes$concept_name %in% "Arthritis"))
   expect_true(any(codes$concept_name %in% "Osteoarthritis of knee"))
@@ -56,122 +56,122 @@ test_that("tests with mock db", {
   expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
   # test include descendants
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = "Musculoskeletal disorder",
     domains = "Condition",
-    include_descendants = TRUE,
+    includeDescendants = TRUE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true((nrow(codes) == 5 &
     all(codes$concept_id %in% c(1:5)) &
     all(!codes$concept_id %in% c(6, 7))))
 
   # test include ancestor
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = c("Arthritis"),
     domains = "Condition",
-    include_ancestor = TRUE,
+    includeAncestor = TRUE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true(any(codes$concept_name %in% "Musculoskeletal disorder"))
 
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = c("Osteoarthritis of knee"),
     domains = "Condition",
-    include_ancestor = TRUE,
+    includeAncestor = TRUE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
-  # nb include_ancestor should only include one level above
+  # nb includeAncestor should only include one level above
   expect_true(!any(codes$concept_name %in% "Musculoskeletal disorder"))
   expect_true(any(codes$concept_name %in% "Arthritis"))
 
-  # test standard_concept
-  codes <- get_candidate_codes(
+  # test standardConcept
+  codes <- getCandidateCodes(
     keywords = "Arthritis",
     domains = "Condition",
-    standard_concept = c("Standard", "Non-standard"),
-    include_descendants = TRUE,
-    search_synonyms = FALSE,
+    standardConcept = c("Standard", "Non-standard"),
+    includeDescendants = TRUE,
+    searchSynonyms = FALSE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true((nrow(codes) == 4 &
     all(codes$concept_id %in% c(3, 4, 5, 7)) &
     all(!codes$concept_id %in% c(1, 2, 6))))
 
-  # test search_synonyms
-  codes <- get_candidate_codes(
+  # test searchSynonyms
+  codes <- getCandidateCodes(
     keywords = "arthritis",
     domains = "Condition",
-    search_synonyms = TRUE,
+    searchSynonyms = TRUE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
   # test exclusion
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = "arthritis",
     exclude = "Osteoarthritis of hip",
     domains = "Condition",
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true(any(!codes$concept_name %in% "Osteoarthritis of hip"))
 
   # test verbose
-  expect_message(get_candidate_codes(
+  expect_message(getCandidateCodes(
     keywords = "arthritis",
     domains = "Condition",
     verbose = TRUE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   ))
 
   ## Edge cases
   # check empty candidate set
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = "asthmaX",
     domains = "Condition",
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_null(codes)
 
 
   # all options used with exact
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = "arthritis",
     domains = "Condition",
-    search_synonyms = TRUE,
-    search_source = TRUE,
-    fuzzy_match = FALSE,
+    searchSynonyms = TRUE,
+    searchSource = TRUE,
+    fuzzyMatch = FALSE,
     exclude = "Childhood asthma",
-    include_descendants = TRUE,
-    include_ancestor = TRUE,
+    includeDescendants = TRUE,
+    includeAncestor = TRUE,
     verbose = TRUE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true(nrow(codes) >= 1)
 
   # all options used with fuzzy
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = "Arthritis",
     exclude = "Osteoarthritis of hip",
     domains = "Condition",
-    search_synonyms = TRUE,
-    search_source = TRUE,
-    fuzzy_match = TRUE,
-    max_distance_cost = 0.1,
-    include_descendants = TRUE,
-    include_ancestor = TRUE,
+    searchSynonyms = TRUE,
+    searchSource = TRUE,
+    fuzzyMatch = TRUE,
+    maxDistanceCost = 0.1,
+    includeDescendants = TRUE,
+    includeAncestor = TRUE,
     verbose = TRUE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true(nrow(codes) >= 1)
 
@@ -180,22 +180,22 @@ test_that("tests with mock db", {
 
 
   ## Expected errors
-  expect_error(get_candidate_codes(
+  expect_error(getCandidateCodes(
     keywords = "a",
-    search_synonyms = TRUE,
-    fuzzy_match = TRUE,
+    searchSynonyms = TRUE,
+    fuzzyMatch = TRUE,
     exclude = NULL,
-    include_descendants = TRUE,
-    include_ancestor = FALSE,
+    includeDescendants = TRUE,
+    includeAncestor = FALSE,
     db = "chr",
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   ))
 
-  expect_error(get_candidate_codes(
+  expect_error(getCandidateCodes(
     keywords = "arthritis",
     domains = c("Condition", "Some other table"),
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   ))
 
 

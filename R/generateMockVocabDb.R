@@ -11,9 +11,9 @@
 #' library(DBI)
 #' library(RSQLite)
 #' library(CodelistGenerator)
-#' db <- generate_mock_vocab_db()
+#' db <- generateMockVocabDb()
 #' }
-generate_mock_vocab_db <- function() {
+generateMockVocabDb <- function() {
 
   # tables
   concept <- data.frame(
@@ -38,7 +38,7 @@ generate_mock_vocab_db <- function() {
     ),
     concept_code = NA
   )
-  concept_ancestor <- dplyr::bind_rows(
+  conceptAncestor <- dplyr::bind_rows(
     data.frame(
       ancestor_concept_id = 1,
       descendant_concept_id = 2,
@@ -76,11 +76,11 @@ generate_mock_vocab_db <- function() {
       max_levels_of_separation = 1
     )
   )
-  concept_synonym <- data.frame(
+  conceptSynonym <- data.frame(
     concept_id = 3,
     concept_synonym_name = "Osteoarthrosis"
   )
-  concept_relationship <- dplyr::bind_rows(
+  conceptRelationship <- dplyr::bind_rows(
     data.frame(
       concept_id_1 = 2,
       concept_id_2 = 6,
@@ -103,19 +103,19 @@ generate_mock_vocab_db <- function() {
   })
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept_ancestor",
-      concept_ancestor,
+      conceptAncestor,
       overwrite = TRUE
     )
   })
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept_synonym",
-      concept_synonym,
+      conceptSynonym,
       overwrite = TRUE
     )
   })
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept_relationship",
-      concept_relationship,
+      conceptRelationship,
       overwrite = TRUE
     )
   })

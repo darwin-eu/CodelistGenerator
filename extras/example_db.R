@@ -29,11 +29,11 @@ vocabulary_database_schema<-"omop21t2_cmbd"
 #                                         vocabulary_database_schema,
 #                                         ".concept")))
 
-dementia_codes<-get_candidate_codes(keywords="dementia",
-                                    search_source = TRUE,
+dementia_codes<-getCandidateCodes(keywords="dementia",
+                                    searchSource = TRUE,
                      domains="Condition",
                      db=db,
-                     vocabulary_database_schema =vocabulary_database_schema,
+                     vocabularyDatabaseSchema =vocabulary_database_schema,
                      verbose=TRUE)
 show_mappings(dementia_codes,
               source_vocabularies="ICD10CM",

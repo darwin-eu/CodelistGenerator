@@ -5,20 +5,20 @@ test_that("tests with mock db", {
   library(dplyr)
 
   # mock db
-  db <- generate_mock_vocab_db()
+  db <- generateMockVocabDb()
 
   # tests
-  codes <- get_candidate_codes(
+  codes <- getCandidateCodes(
     keywords = "Musculoskeletal disorder",
     domains = "Condition",
-    include_descendants = TRUE,
+    includeDescendants = TRUE,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
-  mappings <- show_mappings(
-    candidate_codelist = codes,
+  mappings <- showMappings(
+    candidateCodelist = codes,
     db = db,
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   )
   expect_true(
     any(mappings$standard_concept_name %in% "Osteoarthrosis")
@@ -45,16 +45,16 @@ test_that("tests with mock db", {
     names(mappings)))
 
   # expect error if not dbi connection
-  expect_error(show_mappings(
-    candidate_codelist = codes,
+  expect_error(showMappings(
+    candidateCodelist = codes,
     db = "a",
-    vocabulary_database_schema = "main"
+    vocabularyDatabaseSchema = "main"
   ))
-  # expect error if vocabulary_database_schema does not exist
-    expect_error(show_mappings(
-    candidate_codelist = codes,
+  # expect error if vocabularyDatabaseSchema does not exist
+    expect_error(showMappings(
+    candidateCodelist = codes,
     db = db,
-    vocabulary_database_schema = "a"
+    vocabularyDatabaseSchema = "a"
   ))
 
   DBI::dbDisconnect(db)

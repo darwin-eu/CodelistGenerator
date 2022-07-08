@@ -53,7 +53,7 @@ db <- dbConnect(RPostgres::Postgres(),
                 password = password)
 
 # name of vocabulary schema
-vocabulary_database_schema<-"vocabulary"
+vocabularyDatabaseSchema<-"vocabulary"
 ```
 
 ## Codelist from "metformin" and its descendants
@@ -68,15 +68,15 @@ library(kableExtra)
 ```
 
 ```{r, eval=FALSE}
-codes_from_descendants<-tbl(db,
+codesFromDescendants<-tbl(db,
   sql(paste0("SELECT * FROM ",
-     vocabulary_database_schema,
+     vocabularyDatabaseSchema,
      ".concept_ancestor"))) %>%
   filter(ancestor_concept_id %in% c("1503297")) %>%
   select("descendant_concept_id") %>%
   rename("concept_id"="descendant_concept_id") %>%
   inner_join(tbl(db, sql(paste0("SELECT * FROM ",
-     vocabulary_database_schema,
+     vocabularyDatabaseSchema,
      ".concept"))))%>%
   select("concept_id", "concept_name",
          "domain_id", "vocabulary_id") %>%
@@ -85,11 +85,11 @@ codes_from_descendants<-tbl(db,
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codes_from_descendants<-readRDS(here("vignettes","med_data_01.RData"))
+codesFromDescendants<-readRDS(here("vignettes","medData01.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
-datatable(codes_from_descendants,
+datatable(codesFromDescendants,
           rownames=FALSE,
           options = list(pageLength = 10,
                          lengthMenu = c(10, 20,50)))
@@ -105,20 +105,20 @@ library(CodelistGenerator)
 
 Let's do a search for a single keyword of "metformin", including descendants.
 ```{r, eval=FALSE }
-metformin_codes2<-get_candidate_codes(keywords="metformin",
+metforminCodes2<-getCandidateCodes(keywords="metformin",
                     domains=c("Drug"),
-                    include_descendants = TRUE,
+                    includeDescendants = TRUE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-metformin_codes2<-readRDS(here("vignettes","metformin_codes2.RData"))
+metforminCodes2<-readRDS(here("vignettes","metforminCodes2.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(metformin_codes2,
+datatable(metforminCodes2,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -128,21 +128,21 @@ datatable(metformin_codes2,
 
 What is the difference between this codelist and the one based on descendants?
 ```{r,  eval=TRUE }
-code_comparison<- compare_codelists(codes_from_descendants, metformin_codes2)
+codeComparison<- compareCodelists(codesFromDescendants, metforminCodes2)
 
 ```
 
 
 ```{r,  message=FALSE, warning=FALSE } 
-kable(code_comparison %>% 
+kable(codeComparison %>% 
   group_by(codelist) %>% 
   tally())
 ```
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-datatable(code_comparison %>% 
-            filter(codelist=="Only codelist_2"),
+datatable(codeComparison %>% 
+            filter(codelist=="Only codelist 2"),
           rownames=FALSE,
           options = list(
   pageLength = 10,

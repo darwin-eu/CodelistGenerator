@@ -58,35 +58,35 @@ db <- dbConnect(RPostgres::Postgres(),
                 password = password)
 
 # name of vocabulary schema
-vocabulary_database_schema<-"vocabulary"
+vocabularyDatabaseSchema<-"vocabulary"
 ```
 
 
 ## Search strategies
 ### Condition domain, without searching synonyms, without fuzzy match, with exclusions, without including descendants or ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oa_codes1<-readRDS(here("vignettes","options_data_01.RData"))
+oaCodes1<-readRDS(here("vignettes","optionsData01.RData"))
 ```
 
 To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via source codes, without fuzzy matching, and without including descendants or the direct ancestor of the included concepts.
 
 ```{r, eval=FALSE}
-oa_codes1<-get_candidate_codes(keywords="osteoarthritis",
+oaCodes1<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search_synonyms = FALSE,
-                    search_source=FALSE,
-                    fuzzy_match = FALSE,
+                    searchSynonyms = FALSE,
+                    searchSource=FALSE,
+                    fuzzyMatch = FALSE,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include_descendants = FALSE,
-                    include_ancestor = FALSE,
+                    includeDescendants = FALSE,
+                    includeAncestor = FALSE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 What is the candidate codelist?
 ```{r,  message=FALSE, warning=FALSE }  
-datatable(oa_codes1,
+datatable(oaCodes1,
           options = list(pageLength = 10,
                          lengthMenu = c(10, 20,250)))
 
@@ -95,31 +95,31 @@ datatable(oa_codes1,
 
 ### Including descendants
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oa_codes2<-readRDS(here("vignettes","options_data_02.RData"))
+oaCodes2<-readRDS(here("vignettes","optionsData02.RData"))
 ```
 
 Now we will also include the descendants of included concepts.
 ```{r, eval=FALSE}
-oa_codes2<-get_candidate_codes(keywords="osteoarthritis",
+oaCodes2<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search_synonyms = FALSE,
-                    search_source=FALSE,
-                    fuzzy_match = FALSE,
+                    searchSynonyms = FALSE,
+                    searchSource=FALSE,
+                    fuzzyMatch = FALSE,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include_descendants = TRUE,
-                    include_ancestor = FALSE,
+                    includeDescendants = TRUE,
+                    includeAncestor = FALSE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_2<-compare_codelists(oa_codes1, oa_codes2) %>% 
-  filter(codelist=="Only codelist_2") %>% 
+newCodes1To2<-compareCodelists(oaCodes1, oaCodes2) %>% 
+  filter(codelist=="Only codelist 2") %>% 
   select(-"codelist")
 
-datatable(new_codes_1_2,
+datatable(newCodes1To2,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -130,31 +130,31 @@ datatable(new_codes_1_2,
 
 ### Including observation domain
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oa_codes3<-readRDS(here("vignettes","options_data_03.RData"))
+oaCodes3<-readRDS(here("vignettes","optionsData03.RData"))
 ```
 
 Now we will search the observation domain as well as the condition domain.
 ```{r, eval=FALSE}
-oa_codes3<-get_candidate_codes(keywords="osteoarthritis",
+oaCodes3<-get_candidate_codes(keywords="osteoarthritis",
                     domains=c("Condition","Observation"),
-                    search_synonyms = FALSE,
-                    search_source=FALSE,
-                    fuzzy_match = FALSE,
+                    searchSynonyms = FALSE,
+                    searchSource=FALSE,
+                    fuzzyMatch = FALSE,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include_descendants = FALSE,
-                    include_ancestor = FALSE,
+                    includeDescendants = FALSE,
+                    includeAncestor = FALSE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_3<-compare_codelists(oa_codes1, oa_codes3) %>% 
-  filter(codelist=="Only codelist_2") %>% 
+newCodes1To3<-compareCodelists(oaCodes1, oaCodes3) %>% 
+  filter(codelist=="Only codelist 2") %>% 
   select(-"codelist")
 
-datatable(new_codes_1_3,
+datatable(newCodes1To3,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -164,31 +164,31 @@ datatable(new_codes_1_3,
 
 ### Search synonyms
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oa_codes4<-readRDS(here("vignettes","options_data_04.RData"))
+oaCodes4<-readRDS(here("vignettes","optionsData04.RData"))
 ```
 
 Now we will search the concept synonym table to identify concepts to include.
 ```{r, eval=FALSE}
-oa_codes4<-get_candidate_codes(keywords="osteoarthritis",
+oaCodes4<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search_synonyms = TRUE,
-                    search_source=FALSE,
-                    fuzzy_match = FALSE,
+                    searchSynonyms = TRUE,
+                    searchSource=FALSE,
+                    fuzzyMatch = FALSE,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include_descendants = FALSE,
-                    include_ancestor = FALSE,
+                    includeDescendants = FALSE,
+                    includeAncestor = FALSE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_4<-compare_codelists(oa_codes1, oa_codes4) %>% 
-  filter(codelist=="Only codelist_2") %>% 
+newCodes1To4<-compareCodelists(oaCodes1, oaCodes4) %>% 
+  filter(codelist=="Only codelist 2") %>% 
   select(-"codelist")
 
-datatable(new_codes_1_4,
+datatable(newCodes1To4,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -198,31 +198,31 @@ datatable(new_codes_1_4,
 
 ### Search via source
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oa_codes5<-readRDS(here("vignettes","options_data_04.RData"))
+oaCodes5<-readRDS(here("vignettes","optionsData04.RData"))
 ```
 
 Now we will search the concept synonym table to identify concepts to include.
 ```{r, eval=FALSE}
-oa_codes5<-get_candidate_codes(keywords="osteoarthritis",
+oaCodes5<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search_synonyms = FALSE,
-                    search_source=TRUE,
-                    fuzzy_match = FALSE,
+                    searchSynonyms = FALSE,
+                    searchSource=TRUE,
+                    fuzzyMatch = FALSE,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include_descendants = FALSE,
-                    include_ancestor = FALSE,
+                    includeDescendants = FALSE,
+                    includeAncestor = FALSE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_5<-compare_codelists(oa_codes1, oa_codes5) %>% 
-  filter(codelist=="Only codelist_2") %>% 
+newCodes1To5<-compareCodelists(oaCodes1, oaCodes5) %>% 
+  filter(codelist=="Only codelist 2") %>% 
   select(-"codelist")
 
-datatable(new_codes_1_5,
+datatable(newCodes1To5,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -232,32 +232,32 @@ datatable(new_codes_1_5,
 
 ### Using a fuzzy search
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oa_codes6<-readRDS(here("vignettes","options_data_05.RData"))
+oaCodes6<-readRDS(here("vignettes","optionsData05.RData"))
 ```
 
 Now we will use an approximate search. See https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/agrep for further details (as this is what is running under the hood). Note, using the defaults of 0.1 for for substitutions, deletions, and insertions.
 ```{r, eval=FALSE}
-oa_codes6<-get_candidate_codes(keywords="osteoarthritis",
+oaCodes6<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search_synonyms = FALSE,
-                    search_source=FALSE,
-                    fuzzy_match = TRUE,
-                    max_distance_cost = 0.1,
+                    searchSynonyms = FALSE,
+                    searchSource=FALSE,
+                    fuzzyMatch = TRUE,
+                    maxDistanceCost = 0.1,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include_descendants = FALSE,
-                    include_ancestor = FALSE,
+                    includeDescendants = FALSE,
+                    includeAncestor = FALSE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_6<-compare_codelists(oa_codes1, oa_codes6) %>% 
-  filter(codelist=="Only codelist_2") %>% 
+newCodes1To6<-compareCodelists(oaCodes1, oaCodes6) %>% 
+  filter(codelist=="Only codelist 2") %>% 
   select(-"codelist")
 
-datatable(new_codes_1_6,
+datatable(newCodes1To6,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -267,32 +267,32 @@ datatable(new_codes_1_6,
 
 ### Using a more generous fuzzy search
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oa_codes7<-readRDS(here("vignettes","options_data_06.RData"))
+oaCodes7<-readRDS(here("vignettes","optionsData06.RData"))
 ```
 
 Here we widen the approximate searching, increasing the maximum distance allowed for a match to 0.2 for substitutions, deletions, and insertions.
 ```{r, eval=FALSE}
-oa_codes7<-get_candidate_codes(keywords="osteoarthritis",
+oaCodes7<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search_synonyms = FALSE,
-                    search_source=FALSE,
-                    fuzzy_match = TRUE,
-                    max_distance_cost = 0.2,
+                    searchSynonyms = FALSE,
+                    searchSource=FALSE,
+                    fuzzyMatch = TRUE,
+                    maxDistanceCost = 0.2,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include_descendants = FALSE,
-                    include_ancestor = FALSE,
+                    includeDescendants = FALSE,
+                    includeAncestor = FALSE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_7<-compare_codelists(oa_codes1, oa_codes7) %>% 
-  filter(codelist=="Only codelist_2") %>% 
+newCodes1To7<-compareCodelists(oaCodes1, oaCodes7) %>% 
+  filter(codelist=="Only codelist 2") %>% 
   select(-"codelist")
 
-datatable(new_codes_1_7,
+datatable(newCodes1To7,
           rownames=FALSE,
           options = list(
   pageLength = 10,
@@ -302,32 +302,32 @@ datatable(new_codes_1_7,
 
 ### Include ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oa_codes8<-readRDS(here("vignettes","options_data_07.RData"))
+oaCodes8<-readRDS(here("vignettes","optionsData07.RData"))
 ```
 
 Now we include the direct ancestor of included terms.
 ```{r, eval=FALSE}
-oa_codes8<-get_candidate_codes(keywords="osteoarthritis",
+oaCodes8<-get_candidate_codes(keywords="osteoarthritis",
                     domains="Condition",
-                    search_synonyms = FALSE,
-                    search_source=FALSE,
-                    fuzzy_match = FALSE,
-                    max_distance_cost = 0.1,
+                    searchSynonyms = FALSE,
+                    searchSource=FALSE,
+                    fuzzyMatch = FALSE,
+                    maxDistanceCost = 0.1,
                     exclude = c("post-infection",
                                 "post-traumatic"),
-                    include_descendants = FALSE,
-                    include_ancestor = TRUE,
+                    includeDescendants = FALSE,
+                    includeAncestor = TRUE,
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 ```
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-new_codes_1_8<-compare_codelists(oa_codes1, oa_codes8) %>% 
-  filter(codelist=="Only codelist_2") %>% 
+newCodes1To8<-compareCodelists(oaCodes1, oaCodes8) %>% 
+  filter(codelist=="Only codelist 2") %>% 
   select(-"codelist")
 
-datatable(new_codes_1_8,
+datatable(newCodes1To8,
           rownames=FALSE,
           options = list(
   pageLength = 10,

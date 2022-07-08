@@ -56,7 +56,7 @@ db <- DBI::dbConnect(RPostgres::Postgres(),
                 password = password)
 
 # name of vocabulary schema
-vocabulary_database_schema<-Sys.getenv("vocabulary_schema")
+vocabularyDatabaseSchema<-Sys.getenv("vocabulary_schema")
 ```
 
 ## Example search
@@ -67,7 +67,7 @@ we can first check the version.
 ``` r
 dplyr::tbl(db, dplyr::sql(paste0(
     "SELECT * FROM ",
-    vocabulary_database_schema,
+    vocabularyDatabaseSchema,
     ".vocabulary"
     ))) %>%
     dplyr::rename_with(tolower) %>%
@@ -81,11 +81,11 @@ dplyr::tbl(db, dplyr::sql(paste0(
 We can then search for asthma like so
 
 ``` r
-asthma_1<-get_candidate_codes(keywords="asthma",
+asthma1<-getCandidateCodes(keywords="asthma",
                     domains = "Condition",
                     db=db,
-                    vocabulary_database_schema = vocabulary_database_schema)
-head(asthma_1, 10)
+                    vocabularyDatabaseSchema = vocabularyDatabaseSchema)
+head(asthma1, 10)
 ```
 
 <table>
@@ -412,12 +412,12 @@ Perhaps we want to exclude certain concepts as part of the search
 strategy, in which case this can be added like so
 
 ``` r
-asthma_2<-get_candidate_codes(keywords="asthma",
+asthma2<-getCandidateCodes(keywords="asthma",
                     domains = "Condition",
                     exclude = "Poisoning by antiasthmatic",
                     db=db,
-                    vocabulary_database_schema = vocabulary_database_schema)
-head(asthma_2, 10)
+                    vocabularyDatabaseSchema = vocabularyDatabaseSchema)
+head(asthma2, 10)
 ```
 
 <table>
@@ -743,11 +743,11 @@ SNOMED
 We can then also see source codes these are mapped from, for example
 
 ``` r
-asthma_icd_mappings<-show_mappings(candidate_codelist=asthma_2,
-                     source_vocabularies="ICD10CM",
+asthmaIcdMappings<-showMappings(candidateCodelist=asthma2,
+                     sourceVocabularies="ICD10CM",
                     db=db,
-                    vocabulary_database_schema =  vocabulary_database_schema)
-head(asthma_icd_mappings %>% 
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+head(asthmaIcdMappings %>% 
        select(standard_concept_name,
               standard_vocabulary_id,
               source_concept_name,

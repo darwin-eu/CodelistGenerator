@@ -11,30 +11,30 @@
 #' all combinations of those words should be identified
 #' positions (e.g. "osteoarthritis of knee") should be identified.
 #' @param domains  Character vector with one or more of the OMOP CDM domain.
-#' @param standard_concept  Character vector with one or more of "Standard",
+#' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
-#' @param search_synonyms Either TRUE or FALSE. If TRUE the code will also
+#' @param searchSynonyms Either TRUE or FALSE. If TRUE the code will also
 #' search via the concept synonym table.
-#' @param search_source Either TRUE or FALSE. If TRUE the code will also
+#' @param searchSource Either TRUE or FALSE. If TRUE the code will also
 #' search via source concepts.
-#' @param fuzzy_match Either TRUE or FALSE. If TRUE the fuzzy matching
+#' @param fuzzyMatch Either TRUE or FALSE. If TRUE the fuzzy matching
 #' will be used, with approximate matches identified.
-#' @param max_distance_cost, The
+#' @param maxDistanceCost, The
 #' maximum number/fraction of match cost (generalized Levenshtein distance)
 #' for fuzzy matching (see ??base::agrep for further details).
 #' @param exclude  Character vector of words
 #' to identify concepts to exclude.
-#' @param include_descendants Either TRUE or FALSE.
+#' @param includeDescendants Either TRUE or FALSE.
 #' If TRUE descendant concepts of identified concepts
 #' will be included in the candidate codelist.
-#' @param include_ancestor Either TRUE or FALSE.
+#' @param includeAncestor Either TRUE or FALSE.
 #' If TRUE the direct ancestor concepts of identified concepts
 #'  will be included in the candidate codelist.
 #' @param verbose Either TRUE or FALSE.
 #' If TRUE, progress will be reported.
 #' @param db Database connection via DBI::dbConnect()
-#' @param vocabulary_database_schema Name of database
+#' @param vocabularyDatabaseSchema Name of database
 #' schema with vocab tables
 #'
 #' @return tibble
@@ -46,26 +46,26 @@
 #' library(DBI)
 #' library(CodelistGenerator)
 #' db <- DBI::dbConnect(" Your database connection here " )
-#' vocabulary_database_schema <- " Your vocabulary schema here "
-#' get_candidate_codes(
+#' vocabularyDatabaseSchema <- " Your vocabulary schema here "
+#' getCandidateCodes(
 #'   keywords = "asthma",
 #'   db = db,
-#'   vocabulary_database_schema = vocabulary_database_schema
+#'   vocabularyDatabaseSchema = vocabularyDatabaseSchema
 #' )
 #' }
-get_candidate_codes <- function(keywords,
+getCandidateCodes <- function(keywords,
                                 domains = "Condition",
-                                standard_concept = "Standard",
-                                search_synonyms = FALSE,
-                                search_source = FALSE,
-                                fuzzy_match = FALSE,
-                                max_distance_cost = 0.1,
+                                standardConcept = "Standard",
+                                searchSynonyms = FALSE,
+                                searchSource = FALSE,
+                                fuzzyMatch = FALSE,
+                                maxDistanceCost = 0.1,
                                 exclude = NULL,
-                                include_descendants = TRUE,
-                                include_ancestor = FALSE,
+                                includeDescendants = TRUE,
+                                includeAncestor = FALSE,
                                 verbose = FALSE,
                                 db,
-                                vocabulary_database_schema) {
+                                vocabularyDatabaseSchema) {
   if (verbose == TRUE) {
     # to report time taken at the end
     start <- Sys.time()
@@ -75,149 +75,149 @@ get_candidate_codes <- function(keywords,
     message("Checking inputs")
   }
 
-  ## domains and standard_concept to sentence case
+  ## domains and standardConcept to sentence case
   domains <- stringr::str_to_title(domains)
-  standard_concept <- stringr::str_to_sentence(standard_concept)
+  standardConcept <- stringr::str_to_sentence(standardConcept)
 
   ## checks for standard types of user error
-  error_message <- checkmate::makeAssertCollection()
+  errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertVector(keywords,
-    add = error_message
+    add = errorMessage
   )
   checkmate::assertVector(domains,
-    add = error_message
+    add = errorMessage
   )
-  checkmate::assertVector(standard_concept,
-    add = error_message
+  checkmate::assertVector(standardConcept,
+    add = errorMessage
   )
-  standard_concept_check <- all(standard_concept %in%
+  standardConceptCheck <- all(standardConcept %in%
                     c("Standard",
                       "Classification",
                       "Non-standard"))
-  checkmate::assertTRUE(standard_concept_check, add = error_message)
+  checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
 
-  checkmate::assert_logical(search_synonyms, add = error_message)
-  checkmate::assert_logical(search_source, add = error_message)
-  checkmate::assert_logical(fuzzy_match,
-    add = error_message
+  checkmate::assert_logical(searchSynonyms, add = errorMessage)
+  checkmate::assert_logical(searchSource, add = errorMessage)
+  checkmate::assert_logical(fuzzyMatch,
+    add = errorMessage
   )
-  checkmate::assert_numeric(max_distance_cost,
-    add = error_message
+  checkmate::assert_numeric(maxDistanceCost,
+    add = errorMessage
   )
   checkmate::assertVector(exclude,
     null.ok = TRUE,
-    add = error_message
+    add = errorMessage
   )
-  checkmate::assert_logical(include_descendants,
-    add = error_message
+  checkmate::assert_logical(includeDescendants,
+    add = errorMessage
   )
-  checkmate::assert_logical(include_ancestor,
-    add = error_message
+  checkmate::assert_logical(includeAncestor,
+    add = errorMessage
   )
   checkmate::assert_logical(verbose,
-    add = error_message
+    add = errorMessage
   )
-  db_inherits_check <- inherits(db, "DBIConnection")
-  checkmate::assertTRUE(db_inherits_check,
-    add = error_message
+  dbInheritsCheck <- inherits(db, "DBIConnection")
+  checkmate::assertTRUE(dbInheritsCheck,
+    add = errorMessage
   )
-  if (!isTRUE(db_inherits_check)) {
-    error_message$push(
+  if (!isTRUE(dbInheritsCheck)) {
+    errorMessage$push(
       "- db must be a database connection via DBI::dbConnect()"
     )
   }
   # report initial assertions
-  checkmate::reportAssertions(collection = error_message)
+  checkmate::reportAssertions(collection = errorMessage)
 
   # connect to relevant vocabulary tables
   # will return informative error if not found
-  concept_db <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabulary_database_schema}.concept"
+  conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
+    "SELECT * FROM {vocabularyDatabaseSchema}.concept"
   )))
-  concept_ancestor_db <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabulary_database_schema}.concept_ancestor"
+  conceptAncestorDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
+    "SELECT * FROM {vocabularyDatabaseSchema}.concept_ancestor"
   )))
-  concept_synonym_db <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabulary_database_schema}.concept_synonym"
+  conceptSynonymDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
+    "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
   )))
-  concept_relationship_db <- dplyr::tbl(db, dplyr::sql(paste0(
+  conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(paste0(
     "SELECT * FROM ",
-    vocabulary_database_schema,
+    vocabularyDatabaseSchema,
     ".concept_relationship"
   )))
 
   # check variable names
   # concept table
-  concept_db_names <- c(
+  conceptDbNames <- c(
     "concept_id", "concept_name", "domain_id",
     "vocabulary_id", "standard_concept"
   )
-  concept_db_names_check <- all(concept_db_names %in%
-      names(concept_db %>%
+  conceptDbNamesCheck <- all(conceptDbNames %in%
+      names(conceptDb %>%
        utils::head(1) %>%
        dplyr::collect() %>%
        dplyr::rename_with(tolower)))
-  checkmate::assertTRUE(concept_db_names_check, add = error_message)
+  checkmate::assertTRUE(conceptDbNamesCheck, add = errorMessage)
 
-  # concept_ancestor table
-  concept_ancestor_db_names <- c(
+  # conceptAncestor table
+  conceptAncestorDbNames <- c(
     "ancestor_concept_id", "descendant_concept_id",
     "min_levels_of_separation", "max_levels_of_separation"
   )
-    c_ancestor_db_names_check <- all(
-      concept_ancestor_db_names %in%
-      names(concept_ancestor_db %>%
+    cAncestorDbNamesCheck <- all(
+      conceptAncestorDbNames %in%
+      names(conceptAncestorDb %>%
        utils::head(1) %>%
        dplyr::collect() %>%
        dplyr::rename_with(tolower)))
-  checkmate::assertTRUE(c_ancestor_db_names_check,
-                        add = error_message)
-  # concept_synonym table
-  concept_synonym_db_names <- c("concept_id",
+  checkmate::assertTRUE(cAncestorDbNamesCheck,
+                        add = errorMessage)
+  # conceptSynonym table
+  conceptSynonymDbNames <- c("concept_id",
                                 "concept_synonym_name")
-  concept_synonym_db_names_check <- all(
-      concept_synonym_db_names %in%
-      names(concept_synonym_db %>%
+  conceptSynonymDbNamesCheck <- all(
+      conceptSynonymDbNames %in%
+      names(conceptSynonymDb %>%
        utils::head(1) %>%
        dplyr::collect() %>%
        dplyr::rename_with(tolower)))
-  checkmate::assertTRUE(concept_synonym_db_names_check,
-                        add = error_message)
+  checkmate::assertTRUE(conceptSynonymDbNamesCheck,
+                        add = errorMessage)
 
-  # concept_relationship_db table
-  concept_relationship_db_names <- c(
+  # conceptRelationshipDb table
+  conceptRelationshipDbNames <- c(
     "concept_id_1", "concept_id_2",
     "relationship_id"
   )
-  concept_rel_db_names_check <- all(
-      concept_relationship_db_names %in%
-      names(concept_relationship_db %>%
+  conceptRelDbNamesCheck <- all(
+      conceptRelationshipDbNames %in%
+      names(conceptRelationshipDb %>%
        utils::head(1) %>%
        dplyr::collect() %>%
        dplyr::rename_with(tolower)))
-  checkmate::assertTRUE(concept_rel_db_names_check,
-                        add = error_message)
+  checkmate::assertTRUE(conceptRelDbNamesCheck,
+                        add = errorMessage)
   # # check domains in db
-  domains_in_db <- concept_db %>%
+  domainsInDb <- conceptDb %>%
     dplyr::select(.data$domain_id) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
     dplyr::pull()
   for (i in seq_along(domains)) {
-    domains_check <- domains[i] %in% domains_in_db
-    checkmate::assertTRUE(domains_check, add = error_message)
-    if (!isTRUE(domains_check)) {
-      error_message$push(
+    domainsCheck <- domains[i] %in% domainsInDb
+    checkmate::assertTRUE(domainsCheck, add = errorMessage)
+    if (!isTRUE(domainsCheck)) {
+      errorMessage$push(
         glue::glue("- domain_id {domains[i]} not found in concept table")
       )
     }
   }
 
   # report all assertions
-  checkmate::reportAssertions(collection = error_message)
+  checkmate::reportAssertions(collection = errorMessage)
 
   # standard_concept to format in concept table
-  concept_db <- concept_db %>%
+  conceptDb <- conceptDb %>%
     dplyr::mutate(
       standard_concept =
         dplyr::case_when(
@@ -228,49 +228,49 @@ get_candidate_codes <- function(keywords,
     ) %>%
     dplyr::compute()
   # new name for readibility
-  standard_concept_flags <- standard_concept
+  standardConceptFlags <- standardConcept
 
   # filter vocab tables to keep only relevant data
   if (verbose == TRUE) {
     message("Limiting to potential concepts of interest")
   }
-  concept <- concept_db %>%
+  concept <- conceptDb %>%
     dplyr::filter(.data$domain_id %in% domains) %>%
-    dplyr::filter(.data$standard_concept %in% standard_concept_flags) %>%
+    dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
     dplyr::collect() %>%
     dplyr::rename_with(tolower)
 
-  concept_ancestor_db <- concept_ancestor_db %>%
-    dplyr::left_join(concept_db %>%
+  conceptAncestorDb <- conceptAncestorDb %>%
+    dplyr::left_join(conceptDb %>%
       dplyr::rename("ancestor_concept_id" = "concept_id") %>%
       dplyr::select("ancestor_concept_id", "domain_id", "standard_concept"),
     by = "ancestor_concept_id"
     ) %>%
     dplyr::filter(.data$domain_id %in% domains) %>%
-    dplyr::filter(.data$standard_concept %in% standard_concept_flags) %>%
+    dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept")) %>%
     dplyr::compute()
 
-  concept_ancestor <- concept_ancestor_db %>%
-    dplyr::left_join(concept_db %>%
+  conceptAncestor <- conceptAncestorDb %>%
+    dplyr::left_join(conceptDb %>%
       dplyr::rename("descendant_concept_id" = "concept_id") %>%
       dplyr::select("descendant_concept_id", "domain_id", "standard_concept"),
     by = "descendant_concept_id"
     ) %>%
     dplyr::filter(.data$domain_id %in% domains) %>%
-    dplyr::filter(.data$standard_concept %in% standard_concept_flags) %>%
+    dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept")) %>%
     dplyr::collect() %>%
     dplyr::rename_with(tolower)
 
-  # will only collect concept_synonym later if needed
-  concept_synonym_db <- concept_synonym_db %>%
-    dplyr::left_join(concept_db %>%
+  # will only collect conceptSynonym later if needed
+  conceptSynonymDb <- conceptSynonymDb %>%
+    dplyr::left_join(conceptDb %>%
       dplyr::select("concept_id", "domain_id", "standard_concept"),
     by = "concept_id"
     ) %>%
     dplyr::filter(.data$domain_id %in% domains) %>%
-    dplyr::filter(.data$standard_concept %in% standard_concept_flags) %>%
+    dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept"))
 
   # Start finding candidate codes
@@ -284,9 +284,9 @@ get_candidate_codes <- function(keywords,
     }
     # Get standard, condition concepts which include one of the exclusion words
     # always use exact matching
-    exclude_codes <- get_exact_matches(
-      words = tidy_words(exclude),
-      concept_df = concept
+    excludeCodes <- getExactMatches(
+      words = tidyWords(exclude),
+      conceptDf = concept
     )
   }
 
@@ -300,30 +300,30 @@ get_candidate_codes <- function(keywords,
   }
 
   # 2a) on exact match
-  if (fuzzy_match == FALSE) {
-    candidate_codes <- get_exact_matches(
-      words = tidy_words(keywords),
-      concept_df = concept
+  if (fuzzyMatch == FALSE) {
+    candidateCodes <- getExactMatches(
+      words = tidyWords(keywords),
+      conceptDf = concept
     )
   }
 
   # 2b) or using fuzzy match
-  if (fuzzy_match == TRUE) {
-    candidate_codes <- get_fuzzy_matches(
-      words = tidy_words(keywords),
-      concept_df = concept,
-      md_cost = max_distance_cost
+  if (fuzzyMatch == TRUE) {
+    candidateCodes <- getFuzzyMatches(
+      words = tidyWords(keywords),
+      conceptDf = concept,
+      mdCost = maxDistanceCost
     )
 
-    candidate_codes <- candidate_codes %>%
+    candidateCodes <- candidateCodes %>%
       dplyr::distinct()
   }
 
   # run exclusion
   if (length(exclude) > 0) {
-    if (nrow(exclude_codes) > 0) {
-      candidate_codes <- candidate_codes %>%
-        dplyr::anti_join(exclude_codes %>%
+    if (nrow(excludeCodes) > 0) {
+      candidateCodes <- candidateCodes %>%
+        dplyr::anti_join(excludeCodes %>%
           dplyr::select("concept_id"),
         by = "concept_id"
         )
@@ -331,24 +331,24 @@ get_candidate_codes <- function(keywords,
   }
 
 
-  if (nrow(candidate_codes) == 0) {
-    candidate_codes
+  if (nrow(candidateCodes) == 0) {
+    candidateCodes
     message("-- No codes found for given keywords")
   } else {
 
     # 3) look for any standard, condition concepts with a synonym of the
     # codes found from the keywords
-    if (search_synonyms == TRUE & verbose == TRUE) {
+    if (searchSynonyms == TRUE & verbose == TRUE) {
       message("Getting concepts to include from exact matches of synonyms")
     }
 
-    if (search_synonyms == TRUE) {
-      concept_synonym <- concept_synonym_db %>%
+    if (searchSynonyms == TRUE) {
+      conceptSynonym <- conceptSynonymDb %>%
         dplyr::collect() %>%
         dplyr::rename_with(tolower)
 
-      synonyms <- concept_synonym %>%
-        dplyr::inner_join(candidate_codes %>%
+      synonyms <- conceptSynonym %>%
+        dplyr::inner_join(candidateCodes %>%
           dplyr::select("concept_id"),
           by = "concept_id") %>%
         dplyr::select("concept_synonym_name") %>%
@@ -359,34 +359,34 @@ get_candidate_codes <- function(keywords,
       # looking for these adds a lot of run time
       # while being highly unlikely to have a match
       synonyms <- synonyms[stringr::str_count(synonyms, "\\S+") <= 6]
-      synonyms <- unique(tidy_words(synonyms))
+      synonyms <- unique(tidyWords(synonyms))
       # more than one character
       synonyms <- synonyms[stringr::str_count(synonyms) > 1]
 
-      if (fuzzy_match == FALSE) {
-        synonym_codes <- get_exact_matches(
+      if (fuzzyMatch == FALSE) {
+        synonymCodes <- getExactMatches(
           words = synonyms,
-          concept_df = concept
+          conceptDf = concept
         )
       }
 
-      if (fuzzy_match == TRUE) {
-        synonym_codes <- get_fuzzy_matches(
-          words = tidy_words(synonyms),
-          concept_df = concept,
-          md_cost = max_distance_cost
+      if (fuzzyMatch == TRUE) {
+        synonymCodes <- getFuzzyMatches(
+          words = tidyWords(synonyms),
+          conceptDf = concept,
+          mdCost = maxDistanceCost
         )
       }
 
-      candidate_codes <- dplyr::bind_rows(candidate_codes, synonym_codes) %>%
+      candidateCodes <- dplyr::bind_rows(candidateCodes, synonymCodes) %>%
         dplyr::distinct()
     }
 
-    if (search_synonyms == TRUE) {
+    if (searchSynonyms == TRUE) {
       if (length(exclude) > 0) {
-        if (nrow(exclude_codes) > 0) {
-          candidate_codes <- candidate_codes %>%
-            dplyr::anti_join(exclude_codes %>% dplyr::select("concept_id"),
+        if (nrow(excludeCodes) > 0) {
+          candidateCodes <- candidateCodes %>%
+            dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
               by = "concept_id"
             )
         }
@@ -395,29 +395,29 @@ get_candidate_codes <- function(keywords,
 
 
     # 4) add any codes lower in the hierachy
-    if (include_descendants == TRUE & verbose == TRUE) {
+    if (includeDescendants == TRUE & verbose == TRUE) {
       message("Getting concepts to include from descendants")
     }
 
-    if (include_descendants == TRUE) {
-      candidate_code_descendants <- add_descendants(
-        working_candidate_codes = candidate_codes,
-        concept_ancestor_df = concept_ancestor,
-        concept_df = concept
+    if (includeDescendants == TRUE) {
+      candidateCodeDescendants <- addDescendants(
+        workingCandidateCodes = candidateCodes,
+        conceptAncestorDf = conceptAncestor,
+        conceptDf = concept
       )
 
-      candidate_codes <- dplyr::bind_rows(
-        candidate_codes,
-        candidate_code_descendants
+      candidateCodes <- dplyr::bind_rows(
+        candidateCodes,
+        candidateCodeDescendants
       ) %>%
         dplyr::distinct()
     }
 
-    if (include_descendants == TRUE) {
+    if (includeDescendants == TRUE) {
       if (length(exclude) > 0) {
-        if (nrow(exclude_codes) > 0) {
-          candidate_codes <- candidate_codes %>%
-            dplyr::anti_join(exclude_codes %>% dplyr::select("concept_id"),
+        if (nrow(excludeCodes) > 0) {
+          candidateCodes <- candidateCodes %>%
+            dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
               by = "concept_id"
             )
         }
@@ -425,30 +425,30 @@ get_candidate_codes <- function(keywords,
     }
 
     # 5) add any codes one level above in the hierachy
-    if (include_ancestor == TRUE & verbose == TRUE) {
+    if (includeAncestor == TRUE & verbose == TRUE) {
       message("Getting concepts to include from
                 direct ancestors of identified concepts")
     }
 
-    if (include_ancestor == TRUE) {
-      candidate_code_ancestor <- add_ancestor(
-        working_candidate_codes = candidate_codes,
-        concept_ancestor_df = concept_ancestor,
-        concept_df = concept
+    if (includeAncestor == TRUE) {
+      candidateCodeAncestor <- addAncestor(
+        workingCandidateCodes = candidateCodes,
+        conceptAncestorDf = conceptAncestor,
+        conceptDf = concept
       )
 
-      candidate_codes <- dplyr::bind_rows(
-        candidate_codes,
-        candidate_code_ancestor
+      candidateCodes <- dplyr::bind_rows(
+        candidateCodes,
+        candidateCodeAncestor
       ) %>%
         dplyr::distinct()
     }
 
-    if (include_ancestor == TRUE) {
+    if (includeAncestor == TRUE) {
       if (length(exclude) > 0) {
-        if (nrow(exclude_codes) > 0) {
-          candidate_codes <- candidate_codes %>%
-            dplyr::anti_join(exclude_codes %>% dplyr::select("concept_id"),
+        if (nrow(excludeCodes) > 0) {
+          candidateCodes <- candidateCodes %>%
+            dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
               by = "concept_id"
             )
         }
@@ -459,35 +459,35 @@ get_candidate_codes <- function(keywords,
     # nb do this last so as to not include descendants
     # which can blow up candiate codelist when tbere
     # are multiple mappins
-    if (search_source == TRUE & verbose == TRUE) {
+    if (searchSource == TRUE & verbose == TRUE) {
       message("Getting concepts to include from source concepts")
     }
 
-    if (search_source == TRUE) {
-      concept_ns <- concept_db %>%
+    if (searchSource == TRUE) {
+      conceptNs <- conceptDb %>%
         dplyr::filter(.data$domain_id %in% domains) %>%
         dplyr::filter(.data$standard_concept == "Non-standard") %>%
         dplyr::collect() %>%
         dplyr::rename_with(tolower)
 
-      if (fuzzy_match == FALSE) {
-        candidate_codes_ns <- get_exact_matches(
-          words = tidy_words(keywords),
-          concept_df = concept_ns
+      if (fuzzyMatch == FALSE) {
+        candidateCodesNs <- getExactMatches(
+          words = tidyWords(keywords),
+          conceptDf = conceptNs
         )
       }
 
-      if (fuzzy_match == TRUE) {
-        candidate_codes_ns <- get_fuzzy_matches(
-          words = tidy_words(keywords),
-          concept_df = concept_ns,
-          md_cost = max_distance_cost
+      if (fuzzyMatch == TRUE) {
+        candidateCodesNs <- getFuzzyMatches(
+          words = tidyWords(keywords),
+          conceptDf = conceptNs,
+          mdCost = maxDistanceCost
         )
       }
 
-      candidate_codes_ns <- candidate_codes_ns %>%
+      candidateCodesNs <- candidateCodesNs %>%
         dplyr::select("concept_id") %>%
-        dplyr::inner_join(concept_relationship_db %>%
+        dplyr::inner_join(conceptRelationshipDb %>%
           dplyr::filter(.data$relationship_id == "Mapped from") %>%
           dplyr::collect() %>%
           dplyr::rename_with(tolower),
@@ -499,20 +499,20 @@ get_candidate_codes <- function(keywords,
         dplyr::inner_join(concept,
           by = "concept_id"
         ) %>%
-        dplyr::mutate(concept_name = tidy_words(.data$concept_name))
+        dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
-      candidate_codes <- dplyr::bind_rows(
-        candidate_codes,
-        candidate_codes_ns
+      candidateCodes <- dplyr::bind_rows(
+        candidateCodes,
+        candidateCodesNs
       ) %>%
         dplyr::distinct()
     }
 
-    if (search_synonyms == TRUE) {
+    if (searchSynonyms == TRUE) {
       if (length(exclude) > 0) {
-        if (nrow(exclude_codes) > 0) {
-          candidate_codes <- candidate_codes %>%
-            dplyr::anti_join(exclude_codes %>% dplyr::select("concept_id"),
+        if (nrow(excludeCodes) > 0) {
+          candidateCodes <- candidateCodes %>%
+            dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
               by = "concept_id"
             )
         }
@@ -523,14 +523,14 @@ get_candidate_codes <- function(keywords,
 
     # 7) Finish up
     # get original names back
-    candidate_codes <- candidate_codes %>%
+    candidateCodes <- candidateCodes %>%
       dplyr::select(.data$concept_id) %>%
       dplyr::inner_join(concept,
         by = c("concept_id")
       ) %>%
       dplyr::distinct()
 
-    candidate_codes <- candidate_codes %>%
+    candidateCodes <- candidateCodes %>%
       dplyr::select(
         "concept_id", "concept_name",
         "domain_id", "vocabulary_id"
@@ -543,15 +543,15 @@ get_candidate_codes <- function(keywords,
       ))
     }
 
-    candidate_codes %>%
+    candidateCodes %>%
       dplyr::distinct() # return
   }
 }
 
 
-# helper functions for main get_candidate_codes function
-get_exact_matches <- function(words,
-                              concept_df) {
+# helper functions for main getCandidateCodes function
+getExactMatches <- function(words,
+                              conceptDf) {
 
   # because there may be a lot of synonyms, get these from a loop
   # (stringr::str_detect slows considerably
@@ -562,60 +562,60 @@ get_exact_matches <- function(words,
   # so that they don´t need to be next to each other
   # (e.g. to find "osteoarthritis of knee"))
 
-  concepts_found <- list()
+  conceptsFound <- list()
   for (i in seq_along(words)) {
-    working_exclude <- unlist(strsplit(words[i], " "))
-    working_concepts <- concept_df %>% # start with all
-      dplyr::mutate(concept_name = tidy_words(.data$concept_name))
+    workingExclude <- unlist(strsplit(words[i], " "))
+    workingConcepts <- conceptDf %>% # start with all
+      dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
-    concepts_found[[i]] <- working_concepts %>%
+    conceptsFound[[i]] <- workingConcepts %>%
       dplyr::filter(apply(sapply(
-        X = working_exclude,
-        FUN = grepl, working_concepts$concept_name
+        X = workingExclude,
+        FUN = grepl, workingConcepts$concept_name
       ),
       MARGIN = 1, FUN = all
       )) %>%
       dplyr::distinct()
   }
-  dplyr::bind_rows(concepts_found)
+  dplyr::bind_rows(conceptsFound)
 }
 
-get_fuzzy_matches <- function(words,
-                              concept_df,
-                              md_cost) {
-  concepts_found <- list()
+getFuzzyMatches <- function(words,
+                              conceptDf,
+                              mdCost) {
+  conceptsFound <- list()
   for (i in seq_along(words)) {
-    working_keywords <- unlist(strsplit(words[i], " "))
+    workingKeywords <- unlist(strsplit(words[i], " "))
     # more than one character
-    working_keywords <- working_keywords[
-                stringr::str_count(working_keywords) > 1]
-    working_concepts <- concept_df %>% # start with all
-      dplyr::mutate(concept_name = tidy_words(.data$concept_name))
-    for (j in seq_along(working_keywords)) {
+    workingKeywords <- workingKeywords[
+                stringr::str_count(workingKeywords) > 1]
+    workingConcepts <- conceptDf %>% # start with all
+      dplyr::mutate(concept_name = tidyWords(.data$concept_name))
+    for (j in seq_along(workingKeywords)) {
       # filter each term within the loop, one after the other
-      indx <- agrep(working_keywords[j], working_concepts$concept_name,
+      indx <- agrep(workingKeywords[j], workingConcepts$concept_name,
         max.distance = list(
-          cost = md_cost
+          cost = mdCost
         )
       )
-      working_concepts <- working_concepts[indx, ]
+      workingConcepts <- workingConcepts[indx, ]
     }
 
-    concepts_found[[i]] <- working_concepts
+    conceptsFound[[i]] <- workingConcepts
   }
 
-  dplyr::bind_rows(concepts_found) %>%
+  dplyr::bind_rows(conceptsFound) %>%
     dplyr::distinct()
 }
 
-add_descendants <- function(working_candidate_codes,
-                            concept_ancestor_df,
-                            concept_df) {
-  candidate_code_descendants <- working_candidate_codes %>%
+addDescendants <- function(workingCandidateCodes,
+                            conceptAncestorDf,
+                            conceptDf) {
+  candidateCodeDescendants <- workingCandidateCodes %>%
     dplyr::select("concept_id") %>%
     dplyr::rename("ancestor_concept_id" = "concept_id") %>%
     dplyr::distinct() %>%
-    dplyr::left_join(concept_ancestor_df %>%
+    dplyr::left_join(conceptAncestorDf %>%
       dplyr::filter("ancestor_concept_id" != "descendant_concept_id"),
     by = "ancestor_concept_id"
     ) %>%
@@ -623,40 +623,37 @@ add_descendants <- function(working_candidate_codes,
     dplyr::distinct() %>%
     dplyr::rename("concept_id" = "descendant_concept_id")
 
-  candidate_code_descendants <-
-    candidate_code_descendants %>%
-    dplyr::left_join(concept_df, by = "concept_id") %>%
-    dplyr::mutate(concept_name = tidy_words(.data$concept_name))
+  candidateCodeDescendants <-
+    candidateCodeDescendants %>%
+    dplyr::left_join(conceptDf, by = "concept_id") %>%
+    dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
-  candidate_code_descendants
+  candidateCodeDescendants
 }
 
-add_ancestor <- function(working_candidate_codes,
-                         concept_ancestor_df,
-                         concept_df) {
-  candidate_code_ancestor <- working_candidate_codes %>%
+addAncestor <- function(workingCandidateCodes,
+                         conceptAncestorDf,
+                         conceptDf) {
+  candidateCodeAncestor <- workingCandidateCodes %>%
     dplyr::select("concept_id") %>%
     dplyr::rename("descendant_concept_id" = "concept_id") %>%
-    dplyr::left_join(concept_ancestor_df,
+    dplyr::left_join(conceptAncestorDf,
       by = "descendant_concept_id"
     ) %>%
     dplyr::filter(.data$min_levels_of_separation == "1") %>%
     dplyr::select("ancestor_concept_id") %>%
     dplyr::rename("concept_id" = "ancestor_concept_id") %>%
-    dplyr::left_join(concept_df,
+    dplyr::left_join(conceptDf,
                      by = "concept_id") %>%
-    dplyr::mutate(concept_name = tidy_words(.data$concept_name))
+    dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
-  # keep if not already in candidate_codes
-  candidate_code_ancestor <- candidate_code_ancestor %>%
-    dplyr::anti_join(working_candidate_codes %>%
+  # keep if not already in candidateCodes
+  candidateCodeAncestor <- candidateCodeAncestor %>%
+    dplyr::anti_join(workingCandidateCodes %>%
       dplyr::select("concept_id"),
     by = "concept_id"
     ) %>%
-    dplyr::left_join(concept_df, by = "concept_id")
+    dplyr::left_join(conceptDf, by = "concept_id")
 
-  candidate_code_ancestor
+  candidateCodeAncestor
 }
-
-
-.datatable.aware <- TRUE
