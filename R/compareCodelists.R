@@ -1,7 +1,7 @@
 #' Compare two codelists
 #'
-#' @param codelist1 Output of get_candidate_codes
-#' @param codelist2 Output of get_candidate_codes
+#' @param codelist1 Output of getCandidateCodes
+#' @param codelist2 Output of getCandidateCodes
 #'
 #' @return tibble
 #' @export
@@ -12,12 +12,12 @@
 #' library(CodelistGenerator)
 #' db <- DBI::dbConnect(" Your database connection here ")
 #' vocabularyDatabaseSchema <- " Your vocabulary schema here "
-#' asthmaCodes <- get_candidate_codes(
+#' asthmaCodes <- getCandidateCodes(
 #'   keywords = "asthma",
 #'   db = db,
 #'   vocabularyDatabaseSchema = " Your vocabulary schema here "
 #' )
-#' persistantAsthmaCodes <- get_candidate_codes(
+#' persistantAsthmaCodes <- getCandidateCodes(
 #'   keywords = "Persistent asthma",
 #'   db = db,
 #'   vocabularyDatabaseSchema = " Your vocabulary schema here "

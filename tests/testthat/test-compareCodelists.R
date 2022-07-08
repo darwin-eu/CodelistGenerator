@@ -30,44 +30,42 @@ test_that("comparing two codelists", {
   )
 
   # tests
-   expect_true(all(c(
-     "concept_id",
-     "concept_name",
-     "domain_id",
-     "vocabulary_id",
-     "codelist"
-   ) %in%
-     names(codesCompared)))
+  expect_true(all(c(
+    "concept_id",
+    "concept_name",
+    "domain_id",
+    "vocabulary_id",
+    "codelist"
+  ) %in%
+    names(codesCompared)))
 
-   expect_true(codesCompared %>%
-     filter(concept_id==3) %>%
-     select(codelist) %>%
-     pull() == "Only codelist 1")
+  expect_true(codesCompared %>%
+    filter(concept_id == 3) %>%
+    select(codelist) %>%
+    pull() == "Only codelist 1")
 
-   expect_true(codesCompared %>%
-     filter(concept_id==5) %>%
-     select(codelist) %>%
-     pull() == "Only codelist 1")
+  expect_true(codesCompared %>%
+    filter(concept_id == 5) %>%
+    select(codelist) %>%
+    pull() == "Only codelist 1")
 
-   expect_true(codesCompared %>%
-     filter(concept_id==4) %>%
-     select(codelist) %>%
-     pull() == "Both")
+  expect_true(codesCompared %>%
+    filter(concept_id == 4) %>%
+    select(codelist) %>%
+    pull() == "Both")
 
-   expect_true(codesCompared %>%
-     filter(concept_id==2) %>%
-     select(codelist) %>%
-     pull() == "Only codelist 2")
+  expect_true(codesCompared %>%
+    filter(concept_id == 2) %>%
+    select(codelist) %>%
+    pull() == "Only codelist 2")
 
-   #expected errors
-   expect_error(compareCodelists(
+  # expected errors
+  expect_error(compareCodelists(
     codelist1 = codes1,
     codelist2 = "a"
   ))
-      expect_error(compareCodelists(
+  expect_error(compareCodelists(
     codelist1 = "a",
     codelist2 = codes2
   ))
-
-
 })

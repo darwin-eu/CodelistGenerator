@@ -7,9 +7,9 @@
 compareCodelists(codelist1, codelist2)
 }
 \arguments{
-\item{codelist1}{Output of get_candidate_codes}
+\item{codelist1}{Output of getCandidateCodes}
 
-\item{codelist2}{Output of get_candidate_codes}
+\item{codelist2}{Output of getCandidateCodes}
 }
 \value{
 tibble
@@ -22,20 +22,20 @@ Compare two codelists
 library(DBI)
 library(CodelistGenerator)
 db <- DBI::dbConnect(" Your database connection here ")
-vocabulary_database_schema <- " Your vocabulary schema here "
-asthma_codes <- get_candidate_codes(
+vocabularyDatabaseSchema <- " Your vocabulary schema here "
+asthmaCodes <- getCandidateCodes(
   keywords = "asthma",
   db = db,
-  vocabulary_database_schema = " Your vocabulary schema here "
+  vocabularyDatabaseSchema = " Your vocabulary schema here "
 )
-persistant_asthma_codes <- get_candidate_codes(
+persistantAsthmaCodes <- getCandidateCodes(
   keywords = "Persistent asthma",
   db = db,
-  vocabulary_database_schema = " Your vocabulary schema here "
+  vocabularyDatabaseSchema = " Your vocabulary schema here "
 )
-compare_codelists(
-  codelist1 = asthma_codes,
-  codelist2 = persistant_asthma_codes
+compareCodelists(
+  codelist1 = asthmaCodes,
+  codelist2 = persistantAsthmaCodes
 )
 }
 }
