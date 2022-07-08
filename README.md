@@ -42,14 +42,14 @@ library(CodelistGenerator)
 
 ``` r
 # example with postgres database connection details
-server_dbi<-Sys.getenv("server")
+serverDbi<-Sys.getenv("server")
 user<-Sys.getenv("user")
 password<- Sys.getenv("password")
 port<-Sys.getenv("port")
 host<-Sys.getenv("host")
 
 db <- DBI::dbConnect(RPostgres::Postgres(),
-                dbname = server_dbi,
+                dbname = serverDbi,
                 port = port,
                 host = host,
                 user = user,
