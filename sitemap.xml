@@ -34,13 +34,13 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/index.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compare_codelists.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/generate_mock_vocab_db.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/generateMockVocabDb.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/get_candidate_codes.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc>
@@ -49,6 +49,6 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/show_mappings.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/showMappings.html</loc>
   </url>
 </urlset>
