@@ -330,6 +330,7 @@ saveRDS(
 metforminCodes2<-getCandidateCodes(keywords="metformin",
                     domains=c("Drug"),
                     standardConcept=c("Standard", "Classification"),
+                    conceptClassId="Ingredient",
                     searchSynonyms = FALSE,
                     fuzzyMatch = FALSE,
                     exclude = NULL,
@@ -344,4 +345,28 @@ saveRDS(
 )
 
 
+getCandidateCodes(keywords="metformin",
+                    domains=c("Drug"),
+                    standardConcept=c("Standard", "Classification"),
+                    conceptClassId="Ingredient",
+                    searchSynonyms = FALSE,
+                    fuzzyMatch = FALSE,
+                    exclude = NULL,
+                    includeDescendants = TRUE,
+                    includeAncestor = FALSE,
+                    verbose = TRUE ,
+                    db=db,
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+getCandidateCodes(keywords="metformin",
+                    domains=c("Drug"),
+                    standardConcept=c("Standard", "Classification"),
+                    conceptClassId="Prescription Drug",
+                    searchSynonyms = FALSE,
+                    fuzzyMatch = FALSE,
+                    exclude = NULL,
+                    includeDescendants = TRUE,
+                    includeAncestor = FALSE,
+                    verbose = TRUE ,
+                    db=db,
+                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 

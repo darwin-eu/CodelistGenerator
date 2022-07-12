@@ -146,6 +146,8 @@ test_that("tests with mock db", {
   codes <- getCandidateCodes(
     keywords = "arthritis",
     domains = "Condition",
+    conceptClassId = "Clinical Finding",
+    standardConcept = "Standard",
     searchSynonyms = TRUE,
     searchSource = TRUE,
     fuzzyMatch = FALSE,
@@ -163,6 +165,8 @@ test_that("tests with mock db", {
     keywords = "Arthritis",
     exclude = "Osteoarthritis of hip",
     domains = "Condition",
+    conceptClassId = "Clinical Finding",
+    standardConcept = "Standard",
     searchSynonyms = TRUE,
     searchSource = TRUE,
     fuzzyMatch = TRUE,

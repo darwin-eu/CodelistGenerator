@@ -10,7 +10,9 @@
 #' Where more than one word is given (e.g. "knee osteoarthritis"),
 #' all combinations of those words should be identified
 #' positions (e.g. "osteoarthritis of knee") should be identified.
-#' @param domains  Character vector with one or more of the OMOP CDM domain.
+#' @param domains Character vector with one or more of the OMOP CDM domain.
+#' @param conceptClassId Character vector with one or more concept class
+#' of the Concept
 #' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
@@ -55,6 +57,7 @@
 #' }
 getCandidateCodes <- function(keywords,
                                 domains = "Condition",
+                                conceptClassId = NULL,
                                 standardConcept = "Standard",
                                 searchSynonyms = FALSE,
                                 searchSource = FALSE,
@@ -83,6 +86,10 @@ getCandidateCodes <- function(keywords,
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertVector(keywords,
     add = errorMessage
+  )
+  checkmate::assertVector(conceptClassId,
+    add = errorMessage,
+    null.ok = TRUE
   )
   checkmate::assertVector(domains,
     add = errorMessage
@@ -197,7 +204,7 @@ getCandidateCodes <- function(keywords,
        dplyr::rename_with(tolower)))
   checkmate::assertTRUE(conceptRelDbNamesCheck,
                         add = errorMessage)
-  # # check domains in db
+  # check domains in db
   domainsInDb <- conceptDb %>%
     dplyr::select(.data$domain_id) %>%
     dplyr::distinct() %>%
@@ -209,6 +216,22 @@ getCandidateCodes <- function(keywords,
     if (!isTRUE(domainsCheck)) {
       errorMessage$push(
         glue::glue("- domain_id {domains[i]} not found in concept table")
+      )
+    }
+  }
+
+    # check conceptClassId in db
+  conceptClassInDb <- conceptDb %>%
+    dplyr::select(.data$concept_class_id) %>%
+    dplyr::distinct() %>%
+    dplyr::collect() %>%
+    dplyr::pull()
+  for (i in seq_along(conceptClassId)) {
+    conceptClassCheck <- conceptClassId[i] %in% conceptClassInDb
+    checkmate::assertTRUE(conceptClassCheck, add = errorMessage)
+    if (!isTRUE(conceptClassCheck)) {
+      errorMessage$push(
+        glue::glue("- conceptClassId {conceptClassId[i]} not found in concept table")
       )
     }
   }
@@ -230,12 +253,35 @@ getCandidateCodes <- function(keywords,
   # new name for readibility
   standardConceptFlags <- standardConcept
 
-  # filter vocab tables to keep only relevant data
+# filter vocab tables to keep only relevant data
   if (verbose == TRUE) {
     message("Limiting to potential concepts of interest")
   }
+
+conceptDb <- conceptDb %>%
+    dplyr::filter(.data$domain_id %in% domains)
+if(!is.null(conceptClassId)){
+# first, check some combination exists
+# return error if not
+errorMessage <- checkmate::makeAssertCollection()
+combCheck<-conceptDb %>%
+  dplyr::group_by(domain_id,concept_class_id, standard_concept) %>%
+  dplyr::tally() %>%
+  dplyr::filter(.data$domain_id %in% domains) %>%
+  dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
+  dplyr::filter(.data$concept_class_id %in% conceptClassId)
+checkmate::assertTRUE(nrow(combCheck %>% collect())>0, add = errorMessage)
+if (!isTRUE(nrow(combCheck %>% collect())>0)) {
+      errorMessage$push(
+        glue::glue("- No combination of domains, standardConcept, and conceptClassId found in concept table")
+      )
+    }
+checkmate::reportAssertions(collection = errorMessage)
+ # now filter
+    conceptDb <- conceptDb %>%
+    dplyr::filter(.data$concept_class_id %in% conceptClassId)
+  }
   concept <- conceptDb %>%
-    dplyr::filter(.data$domain_id %in% domains) %>%
     dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
     dplyr::collect() %>%
     dplyr::rename_with(tolower)
@@ -426,8 +472,7 @@ getCandidateCodes <- function(keywords,
 
     # 5) add any codes one level above in the hierachy
     if (includeAncestor == TRUE & verbose == TRUE) {
-      message("Getting concepts to include from
-                direct ancestors of identified concepts")
+      message("Getting concepts to include from direct ancestors of identified concepts")
     }
 
     if (includeAncestor == TRUE) {
@@ -456,9 +501,9 @@ getCandidateCodes <- function(keywords,
     }
 
     # 6) add codes from source
-    # nb do this last so as to not include descendants
-    # which can blow up candiate codelist when tbere
-    # are multiple mappins
+    # nb we do this last so as to not include descendants
+    # which can blow up candiate codelist when there
+    # are multiple mappings
     if (searchSource == TRUE & verbose == TRUE) {
       message("Getting concepts to include from source concepts")
     }
@@ -533,7 +578,8 @@ getCandidateCodes <- function(keywords,
     candidateCodes <- candidateCodes %>%
       dplyr::select(
         "concept_id", "concept_name",
-        "domain_id", "vocabulary_id"
+        "domain_id", "concept_class_id",
+        "vocabulary_id"
       )
 
     if (verbose == TRUE) {

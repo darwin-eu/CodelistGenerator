@@ -24,7 +24,7 @@ db <- dbConnect(RPostgres::Postgres(),
                 host = host,
                 user = user,
                 password = password)
-vocabulary_database_schema<-"omop21t2_cmbd"
+vocabularyDatabaseSchema<-"omop21t2_cmbd"
 # tbl(db, sql(paste0("SELECT * FROM ",
 #                                         vocabulary_database_schema,
 #                                         ".concept")))
