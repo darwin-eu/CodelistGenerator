@@ -265,13 +265,15 @@ if(!is.null(conceptClassId)){
 # return error if not
 errorMessage <- checkmate::makeAssertCollection()
 combCheck<-conceptDb %>%
-  dplyr::group_by(domain_id,concept_class_id, standard_concept) %>%
+  dplyr::group_by(.data$domain_id,
+                  .data$concept_class_id,
+                  .data$standard_concept) %>%
   dplyr::tally() %>%
   dplyr::filter(.data$domain_id %in% domains) %>%
   dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
   dplyr::filter(.data$concept_class_id %in% conceptClassId)
-checkmate::assertTRUE(nrow(combCheck %>% collect())>0, add = errorMessage)
-if (!isTRUE(nrow(combCheck %>% collect())>0)) {
+checkmate::assertTRUE(nrow(combCheck %>% dplyr::collect())>0, add = errorMessage)
+if (!isTRUE(nrow(combCheck %>% dplyr::collect())>0)) {
       errorMessage$push(
         glue::glue("- No combination of domains, standardConcept, and conceptClassId found in concept table")
       )

@@ -7,6 +7,7 @@
 getCandidateCodes(
   keywords,
   domains = "Condition",
+  conceptClassId = NULL,
   standardConcept = "Standard",
   searchSynonyms = FALSE,
   searchSource = FALSE,
@@ -27,6 +28,9 @@ all combinations of those words should be identified
 positions (e.g. "osteoarthritis of knee") should be identified.}
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
+
+\item{conceptClassId}{Character vector with one or more concept class
+of the Concept}
 
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
