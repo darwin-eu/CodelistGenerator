@@ -47,7 +47,7 @@
 #' \dontrun{
 #' library(DBI)
 #' library(CodelistGenerator)
-#' db <- DBI::dbConnect(" Your database connection here " )
+#' db <- DBI::dbConnect(" Your database connection here ")
 #' vocabularyDatabaseSchema <- " Your vocabulary schema here "
 #' getCandidateCodes(
 #'   keywords = "asthma",
@@ -56,19 +56,19 @@
 #' )
 #' }
 getCandidateCodes <- function(keywords,
-                                domains = "Condition",
-                                conceptClassId = NULL,
-                                standardConcept = "Standard",
-                                searchSynonyms = FALSE,
-                                searchSource = FALSE,
-                                fuzzyMatch = FALSE,
-                                maxDistanceCost = 0.1,
-                                exclude = NULL,
-                                includeDescendants = TRUE,
-                                includeAncestor = FALSE,
-                                verbose = FALSE,
-                                db,
-                                vocabularyDatabaseSchema) {
+                              domains = "Condition",
+                              conceptClassId = NULL,
+                              standardConcept = "Standard",
+                              searchSynonyms = FALSE,
+                              searchSource = FALSE,
+                              fuzzyMatch = FALSE,
+                              maxDistanceCost = 0.1,
+                              exclude = NULL,
+                              includeDescendants = TRUE,
+                              includeAncestor = FALSE,
+                              verbose = FALSE,
+                              db,
+                              vocabularyDatabaseSchema) {
   if (verbose == TRUE) {
     # to report time taken at the end
     start <- Sys.time()
@@ -98,9 +98,11 @@ getCandidateCodes <- function(keywords,
     add = errorMessage
   )
   standardConceptCheck <- all(standardConcept %in%
-                    c("Standard",
-                      "Classification",
-                      "Non-standard"))
+    c(
+      "Standard",
+      "Classification",
+      "Non-standard"
+    ))
   checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
 
   checkmate::assert_logical(searchSynonyms, add = errorMessage)
@@ -160,10 +162,10 @@ getCandidateCodes <- function(keywords,
     "vocabulary_id", "standard_concept"
   )
   conceptDbNamesCheck <- all(conceptDbNames %in%
-      names(conceptDb %>%
-       utils::head(1) %>%
-       dplyr::collect() %>%
-       dplyr::rename_with(tolower)))
+    names(conceptDb %>%
+      utils::head(1) %>%
+      dplyr::collect() %>%
+      dplyr::rename_with(tolower)))
   checkmate::assertTRUE(conceptDbNamesCheck, add = errorMessage)
 
   # conceptAncestor table
@@ -171,25 +173,31 @@ getCandidateCodes <- function(keywords,
     "ancestor_concept_id", "descendant_concept_id",
     "min_levels_of_separation", "max_levels_of_separation"
   )
-    cAncestorDbNamesCheck <- all(
-      conceptAncestorDbNames %in%
+  cAncestorDbNamesCheck <- all(
+    conceptAncestorDbNames %in%
       names(conceptAncestorDb %>%
-       utils::head(1) %>%
-       dplyr::collect() %>%
-       dplyr::rename_with(tolower)))
+        utils::head(1) %>%
+        dplyr::collect() %>%
+        dplyr::rename_with(tolower))
+  )
   checkmate::assertTRUE(cAncestorDbNamesCheck,
-                        add = errorMessage)
+    add = errorMessage
+  )
   # conceptSynonym table
-  conceptSynonymDbNames <- c("concept_id",
-                                "concept_synonym_name")
+  conceptSynonymDbNames <- c(
+    "concept_id",
+    "concept_synonym_name"
+  )
   conceptSynonymDbNamesCheck <- all(
-      conceptSynonymDbNames %in%
+    conceptSynonymDbNames %in%
       names(conceptSynonymDb %>%
-       utils::head(1) %>%
-       dplyr::collect() %>%
-       dplyr::rename_with(tolower)))
+        utils::head(1) %>%
+        dplyr::collect() %>%
+        dplyr::rename_with(tolower))
+  )
   checkmate::assertTRUE(conceptSynonymDbNamesCheck,
-                        add = errorMessage)
+    add = errorMessage
+  )
 
   # conceptRelationshipDb table
   conceptRelationshipDbNames <- c(
@@ -197,13 +205,15 @@ getCandidateCodes <- function(keywords,
     "relationship_id"
   )
   conceptRelDbNamesCheck <- all(
-      conceptRelationshipDbNames %in%
+    conceptRelationshipDbNames %in%
       names(conceptRelationshipDb %>%
-       utils::head(1) %>%
-       dplyr::collect() %>%
-       dplyr::rename_with(tolower)))
+        utils::head(1) %>%
+        dplyr::collect() %>%
+        dplyr::rename_with(tolower))
+  )
   checkmate::assertTRUE(conceptRelDbNamesCheck,
-                        add = errorMessage)
+    add = errorMessage
+  )
   # check domains in db
   domainsInDb <- conceptDb %>%
     dplyr::select(.data$domain_id) %>%
@@ -220,7 +230,7 @@ getCandidateCodes <- function(keywords,
     }
   }
 
-    # check conceptClassId in db
+  # check conceptClassId in db
   conceptClassInDb <- conceptDb %>%
     dplyr::select(.data$concept_class_id) %>%
     dplyr::distinct() %>%
@@ -253,35 +263,37 @@ getCandidateCodes <- function(keywords,
   # new name for readibility
   standardConceptFlags <- standardConcept
 
-# filter vocab tables to keep only relevant data
+  # filter vocab tables to keep only relevant data
   if (verbose == TRUE) {
     message("Limiting to potential concepts of interest")
   }
 
-conceptDb <- conceptDb %>%
+  conceptDb <- conceptDb %>%
     dplyr::filter(.data$domain_id %in% domains)
-if(!is.null(conceptClassId)){
-# first, check some combination exists
-# return error if not
-errorMessage <- checkmate::makeAssertCollection()
-combCheck<-conceptDb %>%
-  dplyr::group_by(.data$domain_id,
-                  .data$concept_class_id,
-                  .data$standard_concept) %>%
-  dplyr::tally() %>%
-  dplyr::filter(.data$domain_id %in% domains) %>%
-  dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
-  dplyr::filter(.data$concept_class_id %in% conceptClassId)
-checkmate::assertTRUE(nrow(combCheck %>% dplyr::collect())>0, add = errorMessage)
-if (!isTRUE(nrow(combCheck %>% dplyr::collect())>0)) {
+  if (!is.null(conceptClassId)) {
+    # first, check some combination exists
+    # return error if not
+    errorMessage <- checkmate::makeAssertCollection()
+    combCheck <- conceptDb %>%
+      dplyr::group_by(
+        .data$domain_id,
+        .data$concept_class_id,
+        .data$standard_concept
+      ) %>%
+      dplyr::tally() %>%
+      dplyr::filter(.data$domain_id %in% domains) %>%
+      dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
+      dplyr::filter(.data$concept_class_id %in% conceptClassId)
+    checkmate::assertTRUE(nrow(combCheck %>% dplyr::collect()) > 0, add = errorMessage)
+    if (!isTRUE(nrow(combCheck %>% dplyr::collect()) > 0)) {
       errorMessage$push(
         glue::glue("- No combination of domains, standardConcept, and conceptClassId found in concept table")
       )
     }
-checkmate::reportAssertions(collection = errorMessage)
- # now filter
+    checkmate::reportAssertions(collection = errorMessage)
+    # now filter
     conceptDb <- conceptDb %>%
-    dplyr::filter(.data$concept_class_id %in% conceptClassId)
+      dplyr::filter(.data$concept_class_id %in% conceptClassId)
   }
   concept <- conceptDb %>%
     dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
@@ -398,7 +410,8 @@ checkmate::reportAssertions(collection = errorMessage)
       synonyms <- conceptSynonym %>%
         dplyr::inner_join(candidateCodes %>%
           dplyr::select("concept_id"),
-          by = "concept_id") %>%
+        by = "concept_id"
+        ) %>%
         dplyr::select("concept_synonym_name") %>%
         dplyr::distinct() %>%
         dplyr::pull()
@@ -599,7 +612,7 @@ checkmate::reportAssertions(collection = errorMessage)
 
 # helper functions for main getCandidateCodes function
 getExactMatches <- function(words,
-                              conceptDf) {
+                            conceptDf) {
 
   # because there may be a lot of synonyms, get these from a loop
   # (stringr::str_detect slows considerably
@@ -629,14 +642,15 @@ getExactMatches <- function(words,
 }
 
 getFuzzyMatches <- function(words,
-                              conceptDf,
-                              mdCost) {
+                            conceptDf,
+                            mdCost) {
   conceptsFound <- list()
   for (i in seq_along(words)) {
     workingKeywords <- unlist(strsplit(words[i], " "))
     # more than one character
     workingKeywords <- workingKeywords[
-                stringr::str_count(workingKeywords) > 1]
+      stringr::str_count(workingKeywords) > 1
+    ]
     workingConcepts <- conceptDf %>% # start with all
       dplyr::mutate(concept_name = tidyWords(.data$concept_name))
     for (j in seq_along(workingKeywords)) {
@@ -657,8 +671,8 @@ getFuzzyMatches <- function(words,
 }
 
 addDescendants <- function(workingCandidateCodes,
-                            conceptAncestorDf,
-                            conceptDf) {
+                           conceptAncestorDf,
+                           conceptDf) {
   candidateCodeDescendants <- workingCandidateCodes %>%
     dplyr::select("concept_id") %>%
     dplyr::rename("ancestor_concept_id" = "concept_id") %>%
@@ -680,8 +694,8 @@ addDescendants <- function(workingCandidateCodes,
 }
 
 addAncestor <- function(workingCandidateCodes,
-                         conceptAncestorDf,
-                         conceptDf) {
+                        conceptAncestorDf,
+                        conceptDf) {
   candidateCodeAncestor <- workingCandidateCodes %>%
     dplyr::select("concept_id") %>%
     dplyr::rename("descendant_concept_id" = "concept_id") %>%
@@ -692,7 +706,8 @@ addAncestor <- function(workingCandidateCodes,
     dplyr::select("ancestor_concept_id") %>%
     dplyr::rename("concept_id" = "ancestor_concept_id") %>%
     dplyr::left_join(conceptDf,
-                     by = "concept_id") %>%
+      by = "concept_id"
+    ) %>%
     dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
   # keep if not already in candidateCodes
