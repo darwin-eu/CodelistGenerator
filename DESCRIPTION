@@ -11,6 +11,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports:
     checkmate (>= 2.0.0),
+    dbplyr (>= 2.2.1),
     dplyr (>= 1.0.0),
     stringr (>= 1.4.0),
     magrittr (>= 2.0.0),
@@ -19,7 +20,6 @@ Imports:
     glue
 Suggests: 
     covr,
-    dbplyr (2.2.1),
     knitr,
     readr (>= 2.1.0),
     RSQLite (>= 2.2.0),
