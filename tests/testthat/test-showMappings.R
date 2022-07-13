@@ -17,6 +17,7 @@ test_that("tests with mock db", {
   )
   mappings <- showMappings(
     candidateCodelist = codes,
+    sourceVocabularies="READ",
     db = db,
     vocabularyDatabaseSchema = "main"
   )
@@ -47,15 +48,41 @@ test_that("tests with mock db", {
   # expect error if not dbi connection
   expect_error(showMappings(
     candidateCodelist = codes,
+    sourceVocabularies="READ",
     db = "a",
     vocabularyDatabaseSchema = "main"
   ))
   # expect error if vocabularyDatabaseSchema does not exist
     expect_error(showMappings(
     candidateCodelist = codes,
+    sourceVocabularies="READ",
     db = db,
     vocabularyDatabaseSchema = "a"
   ))
+
+    # expect error if sourceVocabularies does not exist
+    # expect works
+      mappings <- showMappings(
+    candidateCodelist = codes,
+    sourceVocabularies="READ",
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+    # expect error
+    expect_error(showMappings(
+    candidateCodelist = codes,
+    sourceVocabularies="READX",
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  ))
+      expect_error(showMappings(
+    candidateCodelist = codes,
+    sourceVocabularies=c("Read","READX"),
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  ))
+
+
 
   DBI::dbDisconnect(db)
 })

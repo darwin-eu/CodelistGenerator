@@ -12,12 +12,13 @@
 #' \dontrun{
 #' library(DBI)
 #' library(CodelistGenerator)
-#' db <- DBI::dbConnect(" Your database connection here " )
+#' db <- DBI::dbConnect(" Your database connection here ")
 #' vocabularyDatabaseSchema <- " Your vocabulary schema here "
 #' asthma_codes <- get_candidate_codes(
 #'   keywords = "asthma",
 #'   db = db,
-#'   vocabularyDatabaseSchema = " Your vocabulary schema here ")
+#'   vocabularyDatabaseSchema = " Your vocabulary schema here "
+#' )
 #' showMappings(
 #'   candidateCodelist = asthma_codes,
 #'   db = db,
@@ -25,17 +26,17 @@
 #' )
 #' }
 showMappings <- function(candidateCodelist,
-                          sourceVocabularies = c(
-                            "ATC", "ICD10CM", "ICD10PCS",
-                            "ICD9CM", "ICD9Proc",
-                            "LOINC", "OPCS4", "Read",
-                            "RxNorm", "RxNorm Extension",
-                            "SNOMED"
-                          ),
-                          db,
-                          vocabularyDatabaseSchema) {
-  errorMessage <- checkmate::makeAssertCollection()
+                         sourceVocabularies = c(
+                           "ATC", "ICD10CM", "ICD10PCS",
+                           "ICD9CM", "ICD9Proc",
+                           "LOINC", "OPCS4", "Read",
+                           "RxNorm", "RxNorm Extension",
+                           "SNOMED"
+                         ),
+                         db,
+                         vocabularyDatabaseSchema) {
 
+  errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertVector(sourceVocabularies, add = errorMessage)
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
   dbInherits <- inherits(db, "DBIConnection")
@@ -56,8 +57,34 @@ showMappings <- function(candidateCodelist,
   )))
   # lowercase names
   conceptDb <- dplyr::rename_with(conceptDb, tolower)
-  conceptRelationshipDb <- dplyr::rename_with(conceptRelationshipDb,
-                                                tolower)
+  conceptRelationshipDb <- dplyr::rename_with(
+    conceptRelationshipDb,
+    tolower
+  )
+
+  # vocabs to lower case
+  sourceVocabularies<-stringr::str_to_upper(sourceVocabularies)
+  conceptDb<-conceptDb %>%
+  mutate(vocabulary_id=stringr::str_to_upper(.data$vocabulary_id))
+
+  # check sourceVocabularies exist
+  errorMessage <- checkmate::makeAssertCollection()
+  sourceVocabulariesInDb <- conceptDb %>%
+    dplyr::select(.data$vocabulary_id) %>%
+    dplyr::distinct() %>%
+    dplyr::collect() %>%
+    dplyr::pull()
+  for (i in seq_along(sourceVocabularies)) {
+    sourceVocabulariesCheck <- sourceVocabularies[i] %in% sourceVocabulariesInDb
+    checkmate::assertTRUE(sourceVocabulariesCheck, add = errorMessage)
+    if (!isTRUE(sourceVocabulariesCheck)) {
+      errorMessage$push(
+        glue::glue("- Vocabulary {sourceVocabularies[i]} not found in concept table")
+      )
+    }
+  }
+  checkmate::reportAssertions(collection = errorMessage)
+
 
   mappedCodes <- conceptDb %>%
     dplyr::inner_join(conceptRelationshipDb %>%
@@ -72,9 +99,11 @@ showMappings <- function(candidateCodelist,
     dplyr::collect()
 
   mappedCodes <- mappedCodes %>%
-    dplyr::select("concept_id_1", "concept_id",
-                  "concept_name", "concept_code",
-                  "vocabulary_id")
+    dplyr::select(
+      "concept_id_1", "concept_id",
+      "concept_name", "concept_code",
+      "vocabulary_id"
+    )
 
   mappedCodes <- mappedCodes %>%
     dplyr::select("concept_id_1") %>%
@@ -82,13 +111,15 @@ showMappings <- function(candidateCodelist,
     dplyr::left_join(conceptDb %>%
       dplyr::filter(.data$concept_id %in% !!mappedCodes$concept_id_1) %>%
       dplyr::collect(),
-      by = c("concept_id")) %>%
+    by = c("concept_id")
+    ) %>%
     dplyr::select("concept_id", "concept_name", "vocabulary_id") %>%
     dplyr::rename("standard_vocabulary_id" = "vocabulary_id") %>%
     dplyr::rename("concept_id_1" = "concept_id") %>%
     dplyr::rename("standard_concept_name" = "concept_name") %>%
     dplyr::full_join(mappedCodes,
-                     by = "concept_id_1") %>%
+      by = "concept_id_1"
+    ) %>%
     dplyr::rename("standard_concept_id" = "concept_id_1") %>%
     dplyr::rename("source_concept_id" = "concept_id") %>%
     dplyr::rename("source_concept_code" = "concept_code") %>%
