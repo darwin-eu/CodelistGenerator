@@ -79,8 +79,11 @@ getCandidateCodes <- function(keywords,
   }
 
   ## domains and standardConcept to sentence case
-  domains <- stringr::str_to_title(domains)
+  domains <- stringr::str_to_lower(domains)
   standardConcept <- stringr::str_to_sentence(standardConcept)
+  if(!is.null(conceptClassId)){
+  conceptClassId<- stringr::str_to_lower(conceptClassId)
+  }
 
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()
@@ -216,6 +219,7 @@ getCandidateCodes <- function(keywords,
   )
   # check domains in db
   domainsInDb <- conceptDb %>%
+    dplyr::mutate(domain_id=stringr::str_to_lower(.data$domain_id)) %>%
     dplyr::select(.data$domain_id) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -232,6 +236,7 @@ getCandidateCodes <- function(keywords,
 
   # check conceptClassId in db
   conceptClassInDb <- conceptDb %>%
+    dplyr::mutate(concept_class_id=stringr::str_to_lower(.data$concept_class_id)) %>%
     dplyr::select(.data$concept_class_id) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -263,23 +268,45 @@ getCandidateCodes <- function(keywords,
   # new name for readibility
   standardConceptFlags <- standardConcept
 
+  # check standardConceptFlags are in concept table
+    errorMessage <- checkmate::makeAssertCollection()
+    standardConceptInDb <- conceptDb %>%
+    dplyr::select(.data$standard_concept) %>%
+    dplyr::distinct() %>%
+    dplyr::collect() %>%
+    dplyr::pull()
+  for (i in seq_along(standardConceptFlags)) {
+    standardConceptCheck <- standardConceptFlags[i] %in% standardConceptInDb
+    checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
+    if (!isTRUE(standardConceptCheck)) {
+      errorMessage$push(
+        glue::glue("- standardConcept {standardConcept[i]} not found in concept table")
+      )
+    }
+  }
+ checkmate::reportAssertions(collection = errorMessage)
+
+
   # filter vocab tables to keep only relevant data
   if (verbose == TRUE) {
     message("Limiting to potential concepts of interest")
   }
 
   conceptDb <- conceptDb %>%
+    dplyr::mutate(concept_class_id=stringr::str_to_lower(.data$concept_class_id)) %>%
+    dplyr::mutate(domain_id=stringr::str_to_lower(.data$domain_id)) %>%
     dplyr::filter(.data$domain_id %in% domains)
   if (!is.null(conceptClassId)) {
     # first, check some combination exists
     # return error if not
     errorMessage <- checkmate::makeAssertCollection()
     combCheck <- conceptDb %>%
+      dplyr::mutate(concept_class_id=stringr::str_to_lower(.data$concept_class_id)) %>%
       dplyr::group_by(
         .data$domain_id,
         .data$concept_class_id,
         .data$standard_concept
-      ) %>%
+        ) %>%
       dplyr::tally() %>%
       dplyr::filter(.data$domain_id %in% domains) %>%
       dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
@@ -389,6 +416,10 @@ getCandidateCodes <- function(keywords,
         )
     }
   }
+
+
+
+
 
 
   if (nrow(candidateCodes) == 0) {
@@ -530,14 +561,14 @@ getCandidateCodes <- function(keywords,
         dplyr::collect() %>%
         dplyr::rename_with(tolower)
 
-      if (fuzzyMatch == FALSE) {
+      if (fuzzyMatch == FALSE & nrow(conceptNs)>0) {
         candidateCodesNs <- getExactMatches(
           words = tidyWords(keywords),
           conceptDf = conceptNs
         )
       }
 
-      if (fuzzyMatch == TRUE) {
+      if (fuzzyMatch == TRUE & nrow(conceptNs)>0) {
         candidateCodesNs <- getFuzzyMatches(
           words = tidyWords(keywords),
           conceptDf = conceptNs,
@@ -545,6 +576,7 @@ getCandidateCodes <- function(keywords,
         )
       }
 
+      if (nrow(conceptNs)>0) {
       candidateCodesNs <- candidateCodesNs %>%
         dplyr::select("concept_id") %>%
         dplyr::inner_join(conceptRelationshipDb %>%
@@ -566,9 +598,12 @@ getCandidateCodes <- function(keywords,
         candidateCodesNs
       ) %>%
         dplyr::distinct()
+      }
+
+
     }
 
-    if (searchSynonyms == TRUE) {
+    if (searchSource == TRUE) {
       if (length(exclude) > 0) {
         if (nrow(excludeCodes) > 0) {
           candidateCodes <- candidateCodes %>%

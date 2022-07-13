@@ -122,7 +122,29 @@ test_that("tests with mock db", {
   )
   expect_true(any(!codes$concept_name %in% "Osteoarthritis of hip"))
 
-  # test verbose
+  # test source
+codes <- getCandidateCodes(
+    keywords = c("Musculoskeletal","Degenerative arthropathy"),
+    searchSource = TRUE,
+    includeDescendants = FALSE,
+    domains = "Condition",
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
+
+codes <- getCandidateCodes(
+    keywords = c("Musculoskeletal","Degenerative arthropathy"),
+    searchSource = TRUE,
+    fuzzyMatch=TRUE,
+    includeDescendants = FALSE,
+    domains = "Condition",
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
+
+# test verbose
   expect_message(getCandidateCodes(
     keywords = "arthritis",
     domains = "Condition",
@@ -198,6 +220,40 @@ test_that("tests with mock db", {
   expect_error(getCandidateCodes(
     keywords = "arthritis",
     domains = c("Condition", "Some other table"),
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  ))
+
+  expect_error(getCandidateCodes(
+    keywords = "arthritis",
+    domains = "Condition",
+    conceptClassId = "Something that doesn´t exist",
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  ))
+
+   expect_error(getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    standardConcept = "Something that doesn´t exist",
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  ))
+
+   # expect error - no combination of standardConcept and conceptClassId
+   expect_error(getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    standardConcept = "Non-standard",
+    conceptClassId = "Clinical Finding",
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  ))
+
+expect_error(getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    standardConcept="Classification", #not in our mock db
+    includeDescendants = FALSE,
     db = db,
     vocabularyDatabaseSchema = "main"
   ))

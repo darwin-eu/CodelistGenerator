@@ -36,7 +36,10 @@ generateMockVocabDb <- function() {
       rep("S", 5),
       rep(NA, 2)
     ),
-    concept_class_id = "Clinical Finding",
+    concept_class_id =c(
+      rep("Clinical Finding", 5),
+      rep("Diagnosis", 2)
+    ) ,
     concept_code = NA
   )
   conceptAncestor <- dplyr::bind_rows(

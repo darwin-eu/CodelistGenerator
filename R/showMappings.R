@@ -65,7 +65,7 @@ showMappings <- function(candidateCodelist,
   # vocabs to lower case
   sourceVocabularies<-stringr::str_to_upper(sourceVocabularies)
   conceptDb<-conceptDb %>%
-  mutate(vocabulary_id=stringr::str_to_upper(.data$vocabulary_id))
+  dplyr::mutate(vocabulary_id=stringr::str_to_upper(.data$vocabulary_id))
 
   # check sourceVocabularies exist
   errorMessage <- checkmate::makeAssertCollection()

@@ -80,7 +80,7 @@ using the OMOP CDM.
 \dontrun{
 library(DBI)
 library(CodelistGenerator)
-db <- DBI::dbConnect(" Your database connection here " )
+db <- DBI::dbConnect(" Your database connection here ")
 vocabularyDatabaseSchema <- " Your vocabulary schema here "
 getCandidateCodes(
   keywords = "asthma",

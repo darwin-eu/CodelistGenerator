@@ -31,12 +31,13 @@ Show mappings from source vocabularies to standard
 \dontrun{
 library(DBI)
 library(CodelistGenerator)
-db <- DBI::dbConnect(" Your database connection here " )
+db <- DBI::dbConnect(" Your database connection here ")
 vocabularyDatabaseSchema <- " Your vocabulary schema here "
 asthma_codes <- get_candidate_codes(
   keywords = "asthma",
   db = db,
-  vocabularyDatabaseSchema = " Your vocabulary schema here ")
+  vocabularyDatabaseSchema = " Your vocabulary schema here "
+)
 showMappings(
   candidateCodelist = asthma_codes,
   db = db,
