@@ -62,7 +62,7 @@ showMappings <- function(candidateCodelist,
     tolower
   )
 
-  # vocabs to lower case
+  # vocabs to upper case
   sourceVocabularies<-stringr::str_to_upper(sourceVocabularies)
   conceptDb<-conceptDb %>%
   dplyr::mutate(vocabulary_id=stringr::str_to_upper(.data$vocabulary_id))
