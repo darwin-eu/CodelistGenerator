@@ -261,3 +261,29 @@ expect_error(getCandidateCodes(
 
   DBI::dbDisconnect(db)
 })
+
+
+# test_that("tests with synthetic db", {
+#   library(DBI)
+#   library(odbc)
+#   library(dbplyr)
+#   library(dplyr)
+# db <-DBI::dbConnect(odbc::odbc(),
+#                       Driver   = "ODBC Driver 11 for SQL Server",
+#                       Server   = Sys.getenv("darwinDbDatabaseServer"),
+#                       Database = Sys.getenv("darwinDbDatabase"),
+#                       UID      = Sys.getenv("darwinDbUser"),
+#                       PWD      = Sys.getenv("darwinDbPassword"),
+#                       Port     = Sys.getenv("darwinDbDatabasePort"))
+#
+# codes<-getCandidateCodes(
+#     keywords = "Musculoskeletal disorder",
+#     domains = "Condition",
+#     includeDescendants = FALSE,
+#     db = db,
+#     vocabularyDatabaseSchema = Sys.getenv("darwinDbCdmSchema")
+#   )
+# expect_true(nrow(codes)>1)
+#
+# dbDisconnect(db)
+# })
