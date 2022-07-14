@@ -47,3 +47,11 @@ getCandidateCodes(keywords="dementia",
                      vocabularyDatabaseSchema =vocabularyDatabaseSchema,
                      verbose=TRUE)
 })
+
+# bench doesn't seem to work - no results returned
+# bnch <-bench::mark(  getCandidateCodes(keywords="dementia",
+#                      domains="Condition",
+#                      db=db,
+#                      vocabularyDatabaseSchema =vocabularyDatabaseSchema,
+#                      verbose=TRUE))
+# bnch
