@@ -422,10 +422,7 @@ getCandidateCodes <- function(keywords,
 
 
 
-  if (nrow(candidateCodes) == 0) {
-    candidateCodes
-    message("-- No codes found for given keywords")
-  } else {
+ if (nrow(candidateCodes) > 0) {
 
     # 3) look for any standard, condition concepts with a synonym of the
     # codes found from the keywords
@@ -546,6 +543,9 @@ getCandidateCodes <- function(keywords,
       }
     }
 
+ }
+
+
     # 6) add codes from source
     # nb we do this last so as to not include descendants
     # which can blow up candiate codelist when there
@@ -615,6 +615,10 @@ getCandidateCodes <- function(keywords,
     }
 
 
+  if (nrow(candidateCodes) == 0) {
+    candidateCodes
+    message("-- No codes found for given keywords")
+  } else {
 
     # 7) Finish up
     # get original names back

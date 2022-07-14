@@ -134,7 +134,7 @@ codes <- getCandidateCodes(
 expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
 codes <- getCandidateCodes(
-    keywords = c("Musculoskeletal","Degenerative arthropathy"),
+    keywords = c("Degenerative arthropathy"),
     searchSource = TRUE,
     fuzzyMatch=TRUE,
     includeDescendants = FALSE,
