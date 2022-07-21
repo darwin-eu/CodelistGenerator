@@ -28,12 +28,6 @@ jobs:
           extra-packages: pkgdown
           needs: website
 
-      - name: Install dependencies
-        run: |
-          install.packages('remotes')
-          remotes::install_deps(dependencies = TRUE)
-          install.packages(c("pkgdown","preferably"), type = "binary")
-
       - name: Deploy package
         run: |
           git config --local user.name "$GITHUB_ACTOR"
