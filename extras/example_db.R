@@ -2,6 +2,7 @@
 library(readr)
 library(DBI)
 library(RSQLite)
+library(odbc)
 library(here)
 library(dplyr)
 library(dbplyr)
@@ -12,28 +13,21 @@ devtools::load_all()
 
 
 # usethis::edit_r_environ()
-server_dbi<-Sys.getenv("SERVER_DBI_FEB22")
-user<-Sys.getenv("DB_USER_FEB22")
-password<- Sys.getenv("DB_PASSWORD_FEB22")
-port<-Sys.getenv("DB_PORT_FEB22")
-host<-Sys.getenv("DB_HOST_FEB22")
 
-db <- dbConnect(RPostgres::Postgres(),
-                dbname = server_dbi,
-                port = port,
-                host = host,
-                user = user,
-                password = password)
-vocabularyDatabaseSchema<-"omop21t2_cmbd"
-# tbl(db, sql(paste0("SELECT * FROM ",
-#                                         vocabulary_database_schema,
-#                                         ".concept")))
+db <-DBI::dbConnect(odbc::odbc(),
+                      Driver   = "ODBC Driver 11 for SQL Server",
+                      Server   = Sys.getenv("darwinDbDatabaseServer"),
+                      Database = Sys.getenv("darwinDbDatabase"),
+                      UID      = Sys.getenv("darwinDbUser"),
+                      PWD      = Sys.getenv("darwinDbPassword"),
+                      Port     = Sys.getenv("darwinDbDatabasePort"))
+vocabularyDatabaseSchema<-Sys.getenv("darwinDbCdmSchema")
 
 dementia_codes<-getCandidateCodes(keywords="dementia",
                                     searchSource = TRUE,
                      domains="Condition",
                      db=db,
-                     vocabularyDatabaseSchema =vocabulary_database_schema,
+                     vocabularyDatabaseSchema =vocabularyDatabaseSchema,
                      verbose=TRUE)
 show_mappings(dementia_codes,
               source_vocabularies="ICD10CM",

@@ -24,6 +24,9 @@ tidyWords <- function(words) {
   checkmate::assertVector(words, add = errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
 
+  # to avoid invalid UTF-8 error
+  Encoding(words) <- "latin1"
+
   # some generic formatting
   workingWords <- trimws(words)
   workingWords <- stringr::str_replace_all(workingWords, "-", " ")
