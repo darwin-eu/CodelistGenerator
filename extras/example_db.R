@@ -23,6 +23,16 @@ db <-DBI::dbConnect(odbc::odbc(),
                       Port     = Sys.getenv("darwinDbDatabasePort"))
 vocabularyDatabaseSchema<-Sys.getenv("darwinDbCdmSchema")
 
+
+# import local
+importVocab(db=db,
+                  vocabularyDatabaseSchema=vocabularyDatabaseSchema,
+                  dirOut=here::here("extras", "SQLite"),
+                  errorIfExists =TRUE,
+                  verbose=TRUE)
+
+
+
 dementia_codes<-getCandidateCodes(keywords="dementia",
                                     searchSource = TRUE,
                      domains="Condition",

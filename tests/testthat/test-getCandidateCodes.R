@@ -262,6 +262,22 @@ expect_error(getCandidateCodes(
   DBI::dbDisconnect(db)
 })
 
+test_that("tests with duckdb", {
+# use duckdb instead of SQLite
+# where there is no vocabulary schema name
+  # mock db
+  db <- generateMockVocabDb(dbType = "duckdb")
+
+  # tests
+  # test keywords search - exact
+  codes <- getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    domains = "Condition",
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = NULL
+  )
+})
 
 # test_that("tests with synthetic db", {
 #   library(DBI)

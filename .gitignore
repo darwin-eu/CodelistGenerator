@@ -8,3 +8,6 @@ docs
 postgresql-42.2.18.jar
 /doc/
 /Meta/
+extras/arrow_vocab/*
+extras/SQLite/vocab.sqlite
+tests/testthat/vocab.sqlite

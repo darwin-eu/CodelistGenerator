@@ -96,10 +96,10 @@ getCandidateCodes <- function(keywords,
   }
 
   ## domains and standardConcept to sentence case
-  domains <- stringr::str_to_lower(domains)
+  domains <- tolower(domains)
   standardConcept <- stringr::str_to_sentence(standardConcept)
   if(!is.null(conceptClassId)){
-  conceptClassId<- stringr::str_to_lower(conceptClassId)
+  conceptClassId<- tolower(conceptClassId)
   }
 
   ## checks for standard types of user error
@@ -160,6 +160,7 @@ getCandidateCodes <- function(keywords,
 
   # connect to relevant vocabulary tables
   # will return informative error if not found
+  if (!is.null(vocabularyDatabaseSchema)) {
   conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
     "SELECT * FROM {vocabularyDatabaseSchema}.concept"
   )))
@@ -174,6 +175,14 @@ getCandidateCodes <- function(keywords,
     vocabularyDatabaseSchema,
     ".concept_relationship"
   )))
+  } else {
+    conceptDb <- dplyr::tbl(db, "concept")
+    conceptAncestorDb <- dplyr::tbl(db, "concept_ancestor")
+    conceptSynonymDb <- dplyr::tbl(db, "concept_synonym")
+    conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
+  }
+
+
 
   # check variable names
   # concept table
@@ -236,7 +245,7 @@ getCandidateCodes <- function(keywords,
   )
   # check domains in db
   domainsInDb <- conceptDb %>%
-    dplyr::mutate(domain_id=stringr::str_to_lower(.data$domain_id)) %>%
+    dplyr::mutate(domain_id=tolower(.data$domain_id)) %>%
     dplyr::select(.data$domain_id) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -253,7 +262,7 @@ getCandidateCodes <- function(keywords,
 
   # check conceptClassId in db
   conceptClassInDb <- conceptDb %>%
-    dplyr::mutate(concept_class_id=stringr::str_to_lower(.data$concept_class_id)) %>%
+    dplyr::mutate(concept_class_id=tolower(.data$concept_class_id)) %>%
     dplyr::select(.data$concept_class_id) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -310,15 +319,15 @@ getCandidateCodes <- function(keywords,
   }
 
   conceptDb <- conceptDb %>%
-    dplyr::mutate(concept_class_id=stringr::str_to_lower(.data$concept_class_id)) %>%
-    dplyr::mutate(domain_id=stringr::str_to_lower(.data$domain_id)) %>%
+    dplyr::mutate(concept_class_id=tolower(.data$concept_class_id)) %>%
+    dplyr::mutate(domain_id=tolower(.data$domain_id)) %>%
     dplyr::filter(.data$domain_id %in% domains)
   if (!is.null(conceptClassId)) {
     # first, check some combination exists
     # return error if not
     errorMessage <- checkmate::makeAssertCollection()
     combCheck <- conceptDb %>%
-      dplyr::mutate(concept_class_id=stringr::str_to_lower(.data$concept_class_id)) %>%
+      dplyr::mutate(concept_class_id=tolower(.data$concept_class_id)) %>%
       dplyr::group_by(
         .data$domain_id,
         .data$concept_class_id,

@@ -17,6 +17,8 @@
 
 #' Generate example vocabulary database
 #'
+#' @param dbType Character vector with type of in memory database.
+#' Either 'SQL lite' or 'duckdb'
 #' @return DBIConnection to SQLite database
 #' with mock vocabulary
 #' @export
@@ -28,7 +30,13 @@
 #' library(CodelistGenerator)
 #' db <- generateMockVocabDb()
 #' }
-generateMockVocabDb <- function() {
+generateMockVocabDb <- function(dbType="SQLite") {
+
+  errorMessage <- checkmate::makeAssertCollection()
+  expect_true(dbType %in% c("SQLite", "duckdb"))
+  expect_true(length(dbType)==1)
+  checkmate::reportAssertions(collection = errorMessage)
+
 
   # tables
   concept <- data.frame(
@@ -111,9 +119,16 @@ generateMockVocabDb <- function() {
       relationship_id = "Mapped from"
     )
   )
+  vocabulary<-data.frame(vocabVersion="current")
 
-  # into table
+  # into in-memory databse
+  if(dbType=="SQLite"){
   db <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+  }
+   if(dbType=="duckdb"){
+  db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
+   }
+
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept",
       concept,
@@ -135,6 +150,12 @@ generateMockVocabDb <- function() {
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept_relationship",
       conceptRelationship,
+      overwrite = TRUE
+    )
+  })
+  DBI::dbWithTransaction(db, {
+    DBI::dbWriteTable(db, "vocabulary",
+      vocabulary,
       overwrite = TRUE
     )
   })
