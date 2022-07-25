@@ -260,10 +260,9 @@ expect_error(getCandidateCodes(
 
 
   DBI::dbDisconnect(db)
-})
 
-test_that("tests with duckdb", {
-# use duckdb instead of SQLite
+
+  # use duckdb instead of SQLite
 # where there is no vocabulary schema name
   # mock db
   db <- generateMockVocabDb(dbType = "duckdb")
@@ -277,6 +276,8 @@ test_that("tests with duckdb", {
     db = db,
     vocabularyDatabaseSchema = NULL
   )
+    DBI::dbDisconnect(db)
+
 })
 
 # test_that("tests with synthetic db", {

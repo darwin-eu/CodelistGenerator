@@ -23,6 +23,7 @@ Suggests:
     knitr,
     readr (>= 2.1.0),
     RSQLite (>= 2.2.0),
+    duckdb,
     DT,
     rmarkdown,
     here (>= 1.0.0),

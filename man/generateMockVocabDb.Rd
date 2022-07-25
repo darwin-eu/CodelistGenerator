@@ -4,7 +4,11 @@
 \alias{generateMockVocabDb}
 \title{Generate example vocabulary database}
 \usage{
-generateMockVocabDb()
+generateMockVocabDb(dbType = "SQLite")
+}
+\arguments{
+\item{dbType}{Character vector with type of in memory database.
+Either 'SQL lite' or 'duckdb'}
 }
 \value{
 DBIConnection to SQLite database
