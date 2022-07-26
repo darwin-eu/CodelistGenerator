@@ -64,7 +64,7 @@ using the OMOP CDM.</p>
 <span>  conceptClassId <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  standardConcept <span class="op">=</span> <span class="st">"Standard"</span>,</span>
 <span>  searchSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  searchSource <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  fuzzyMatch <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  maxDistanceCost <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  exclude <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -105,9 +105,9 @@ for the standard_concept field in the concept table of the cdm.</p></dd>
 search via the concept synonym table.</p></dd>
 
 
-<dt>searchSource</dt>
+<dt>searchNonStandard</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also
-search via source concepts.</p></dd>
+search via non-standard concepts.</p></dd>
 
 
 <dt>fuzzyMatch</dt>
