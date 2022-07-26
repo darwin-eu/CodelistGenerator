@@ -433,6 +433,9 @@ getCandidateCodes <- function(keywords,
       dplyr::distinct()
   }
 
+  candidateCodes <- candidateCodes %>%
+      dplyr::mutate(found_from="From initial search")
+
   # run exclusion
   if (length(exclude) > 0) {
     if (nrow(excludeCodes) > 0) {
@@ -494,7 +497,9 @@ getCandidateCodes <- function(keywords,
         )
       }
 
-      candidateCodes <- dplyr::bind_rows(candidateCodes, synonymCodes) %>%
+      candidateCodes <- dplyr::bind_rows(candidateCodes,
+                                         synonymCodes%>%
+      dplyr::mutate(found_from="From synonyms")) %>%
         dplyr::distinct()
     }
 
@@ -524,7 +529,8 @@ getCandidateCodes <- function(keywords,
 
       candidateCodes <- dplyr::bind_rows(
         candidateCodes,
-        candidateCodeDescendants
+        candidateCodeDescendants%>%
+      dplyr::mutate(found_from="From descendants")
       ) %>%
         dplyr::distinct()
     }
@@ -554,7 +560,8 @@ getCandidateCodes <- function(keywords,
 
       candidateCodes <- dplyr::bind_rows(
         candidateCodes,
-        candidateCodeAncestor
+        candidateCodeAncestor %>%
+      dplyr::mutate(found_from="From ancestor")
       ) %>%
         dplyr::distinct()
     }
@@ -621,7 +628,8 @@ getCandidateCodes <- function(keywords,
 
       candidateCodes <- dplyr::bind_rows(
         candidateCodes,
-        candidateCodesNs
+        candidateCodesNs %>%
+      dplyr::mutate(found_from="From source")
       ) %>%
         dplyr::distinct()
     }
@@ -647,7 +655,7 @@ getCandidateCodes <- function(keywords,
     # 7) Finish up
     # get original names back
     candidateCodes <- candidateCodes %>%
-      dplyr::select(.data$concept_id) %>%
+      dplyr::select(.data$concept_id, .data$found_from) %>%
       dplyr::inner_join(concept,
         by = c("concept_id")
       ) %>%
@@ -657,7 +665,7 @@ getCandidateCodes <- function(keywords,
       dplyr::select(
         "concept_id", "concept_name",
         "domain_id", "concept_class_id",
-        "vocabulary_id"
+        "vocabulary_id", "found_from"
       )
 
     if (verbose == TRUE) {
@@ -667,8 +675,18 @@ getCandidateCodes <- function(keywords,
       ))
     }
 
-    candidateCodes %>%
-      dplyr::distinct() # return
+    candidateCodes<-candidateCodes %>%
+      dplyr::distinct()
+
+    # remove duplicates (found in different ways)
+    # keep first time it was found
+    candidateCodes<-candidateCodes %>%
+      dplyr::group_by(.data$concept_id) %>%
+      dplyr::mutate(seq=1:length(.data$concept_id)) %>%
+      dplyr::filter(seq==1) %>%
+      dplyr::select(-"seq")
+
+    return(candidateCodes)
   }
 }
 
@@ -781,5 +799,5 @@ addAncestor <- function(workingCandidateCodes,
     ) %>%
     dplyr::left_join(conceptDf, by = "concept_id")
 
-  candidateCodeAncestor
+  return(candidateCodeAncestor)
 }
