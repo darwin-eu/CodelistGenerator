@@ -49,3 +49,6 @@ devtools::document() #  Use roxygen to document a package.
 source(here::here("extras", "precomputeVignetteData.R"))
 devtools::build_vignettes()
 
+# 11) check website locally
+# you can check the website locally before pushing by running
+pkgdown::build_site()

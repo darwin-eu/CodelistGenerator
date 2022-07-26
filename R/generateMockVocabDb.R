@@ -33,8 +33,8 @@
 generateMockVocabDb <- function(dbType="SQLite") {
 
   errorMessage <- checkmate::makeAssertCollection()
-  expect_true(dbType %in% c("SQLite", "duckdb"))
-  expect_true(length(dbType)==1)
+  checkmate::assertTRUE(dbType %in% c("SQLite", "duckdb"))
+  checkmate::assertTRUE(length(dbType)==1)
   checkmate::reportAssertions(collection = errorMessage)
 
 

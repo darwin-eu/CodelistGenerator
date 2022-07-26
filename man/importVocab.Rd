@@ -34,3 +34,18 @@ SQLite database
 \description{
 Import vocabulary tables
 }
+\examples{
+\dontrun{
+library(DBI)
+library(RSQLite)
+library(CodelistGenerator)
+library(here)
+db <- generateMockVocabDb()
+dOut<-here()
+
+importVocab(db=db,
+            vocabularyDatabaseSchema="main",
+            dirOut=dOut)
+}
+
+}
