@@ -85,13 +85,13 @@
 <p><img src="mock_db_fig2.png"><!-- --></p>
 <p>To find “Musculoskeletal disorder” we can search for that like so</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -132,13 +132,13 @@ SNOMED
 </table>
 <p>Note, we would also identify it based on a partial match</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="st">"Musculoskeletal"</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="st">"Musculoskeletal"</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -185,12 +185,12 @@ SNOMED
 <p>To include descendants of an identified code, we can set includeDescendants to TRUE</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -303,15 +303,17 @@ SNOMED
 </h2>
 <p>We can also search for multiple keywords at the same time, and would have picked these all up with the following search</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Musculoskeletal disorder"</span>,</span>
-<span>                 <span class="st">"arthritis"</span>,</span>
-<span>                 <span class="st">"arthrosis"</span><span class="op">)</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Musculoskeletal disorder"</span>,</span>
+<span>    <span class="st">"arthritis"</span>,</span>
+<span>    <span class="st">"arthrosis"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -427,13 +429,13 @@ SNOMED
 <p><img src="mock_db_fig5.png"><!-- --></p>
 <p>To include the ancestors one level above the identified concepts we can set includeAncestor to TRUE</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="st">"Osteoarthritis of knee"</span>,</span>
-<span>    includeAncestor <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="st">"Osteoarthritis of knee"</span>,</span>
+<span>  includeAncestor <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -498,13 +500,13 @@ SNOMED
 <p><img src="mock_db_fig4.png"><!-- --></p>
 <p>We can also find concepts with multiple words even if they are in a different order. For example, a search for “Knee osteoarthritis” will pick up “Osteoarthritis of knee”.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="st">"Knee osteoarthritis"</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="st">"Knee osteoarthritis"</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -550,13 +552,13 @@ SNOMED
 <p><img src="mock_db_fig5.png"><!-- --></p>
 <p>We can also exclude specific terms</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
-<span>    exclude <span class="op">=</span> <span class="st">"Hip osteoarthritis"</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
+<span>  exclude <span class="op">=</span> <span class="st">"Hip osteoarthritis"</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -621,13 +623,13 @@ SNOMED
 <p><img src="mock_db_fig6.png"><!-- --></p>
 <p>We can also pick up codes based on their synonyms. In this case “Arthritis” (which gets identified first) has a synonym of “Osteoarthrosis”, and based on this synonym we can also include the “Osteoarthrosis” concept.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    searchSynonyms <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  searchSynonyms <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -726,14 +728,14 @@ SNOMED
 <p><img src="mock_db_fig6.png"><!-- --></p>
 <p>We could have also picked up “Osteoarthrosis” by doing fuzzy matching which allows for some differences in spelling.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    fuzzyMatch <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    maxDistanceCost <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  fuzzyMatch <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  maxDistanceCost <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -831,13 +833,13 @@ SNOMED
 </h2>
 <p>Or we could have also picked up “Osteoarthrosis” by searching via source.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"arthritis"</span>,<span class="st">"arthropathy"</span><span class="op">)</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    searchSource <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"arthritis"</span>, <span class="st">"arthropathy"</span><span class="op">)</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  searchSource <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -936,16 +938,18 @@ SNOMED
 <p><img src="mock_db_fig8.png"><!-- --></p>
 <p>We can also include non-standard codes in our results like so</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>    keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Musculoskeletal disorder"</span>,</span>
-<span>                 <span class="st">"arthritis"</span>,</span>
-<span>                 <span class="st">"arthropathy"</span>,</span>
-<span>                 <span class="st">"arthrosis"</span><span class="op">)</span>,</span>
-<span>    domains<span class="op">=</span><span class="st">"Condition"</span>,</span>
-<span>    standardConcept<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Standard"</span>, <span class="st">"Non-standard"</span><span class="op">)</span>,</span>
-<span>    db <span class="op">=</span> <span class="va">db</span>,</span>
-<span>    vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
-<span>  <span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Musculoskeletal disorder"</span>,</span>
+<span>    <span class="st">"arthritis"</span>,</span>
+<span>    <span class="st">"arthropathy"</span>,</span>
+<span>    <span class="st">"arthrosis"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>  standardConcept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Standard"</span>, <span class="st">"Non-standard"</span><span class="op">)</span>,</span>
+<span>  db <span class="op">=</span> <span class="va">db</span>,</span>
+<span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="st">"main"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
