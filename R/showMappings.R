@@ -15,10 +15,10 @@
 # limitations under the License.
 
 
-#' Show mappings from source vocabularies to standard
+#' Show mappings from non-standard vocabularies to standard
 #'
 #' @param candidateCodelist Dataframe
-#' @param sourceVocabularies Character vector
+#' @param nonStandardVocabularies Character vector
 #' @param db Database connection via DBI::dbConnect()
 #' @param vocabularyDatabaseSchema Name of database schema with vocab tables
 #'
@@ -43,7 +43,7 @@
 #' )
 #' }
 showMappings <- function(candidateCodelist,
-                         sourceVocabularies = c(
+                         nonStandardVocabularies = c(
                            "ATC", "ICD10CM", "ICD10PCS",
                            "ICD9CM", "ICD9Proc",
                            "LOINC", "OPCS4", "Read",
@@ -53,7 +53,7 @@ showMappings <- function(candidateCodelist,
                          db,
                          vocabularyDatabaseSchema) {
   errorMessage <- checkmate::makeAssertCollection()
-  checkmate::assertVector(sourceVocabularies, add = errorMessage)
+  checkmate::assertVector(nonStandardVocabularies, add = errorMessage)
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
   dbInherits <- inherits(db, "DBIConnection")
   if (!isTRUE(dbInherits)) {
@@ -79,23 +79,23 @@ showMappings <- function(candidateCodelist,
   )
 
   # vocabs to upper case
-  sourceVocabularies <- stringr::str_to_upper(sourceVocabularies)
+  nonStandardVocabularies <- stringr::str_to_upper(nonStandardVocabularies)
   conceptDb <- conceptDb %>%
     dplyr::mutate(vocabulary_id = stringr::str_to_upper(.data$vocabulary_id))
 
-  # check sourceVocabularies exist
+  # check nonStandardVocabularies exist
   errorMessage <- checkmate::makeAssertCollection()
-  sourceVocabulariesInDb <- conceptDb %>%
+  nonStandardVocabulariesInDb <- conceptDb %>%
     dplyr::select(.data$vocabulary_id) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
     dplyr::pull()
-  for (i in seq_along(sourceVocabularies)) {
-    sourceVocabulariesCheck <- sourceVocabularies[i] %in% sourceVocabulariesInDb
-    checkmate::assertTRUE(sourceVocabulariesCheck, add = errorMessage)
-    if (!isTRUE(sourceVocabulariesCheck)) {
+  for (i in seq_along(nonStandardVocabularies)) {
+    nonStandardVocabulariesCheck <- nonStandardVocabularies[i] %in% nonStandardVocabulariesInDb
+    checkmate::assertTRUE(nonStandardVocabulariesCheck, add = errorMessage)
+    if (!isTRUE(nonStandardVocabulariesCheck)) {
       errorMessage$push(
-        glue::glue("- Vocabulary {sourceVocabularies[i]} not found in concept table")
+        glue::glue("- Vocabulary {nonStandardVocabularies[i]} not found in concept table")
       )
     }
   }
@@ -110,7 +110,7 @@ showMappings <- function(candidateCodelist,
       dplyr::rename("concept_id" = "concept_id_2"),
     by = c("concept_id")
     ) %>%
-    dplyr::filter(.data$vocabulary_id %in% sourceVocabularies) %>%
+    dplyr::filter(.data$vocabulary_id %in% nonStandardVocabularies) %>%
     dplyr::distinct() %>%
     dplyr::collect()
 
@@ -137,10 +137,10 @@ showMappings <- function(candidateCodelist,
       by = "concept_id_1"
     ) %>%
     dplyr::rename("standard_concept_id" = "concept_id_1") %>%
-    dplyr::rename("source_concept_id" = "concept_id") %>%
-    dplyr::rename("source_concept_code" = "concept_code") %>%
-    dplyr::rename("source_concept_name" = "concept_name") %>%
-    dplyr::rename("source_vocabulary_id" = "vocabulary_id")
+    dplyr::rename("non_standard_concept_id" = "concept_id") %>%
+    dplyr::rename("non_standard_concept_code" = "concept_code") %>%
+    dplyr::rename("non_standard_concept_name" = "concept_name") %>%
+    dplyr::rename("non_standard_vocabulary_id" = "vocabulary_id")
 
   mappedCodes %>%
     dplyr::distinct()

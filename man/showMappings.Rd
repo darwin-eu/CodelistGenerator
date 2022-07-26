@@ -2,12 +2,12 @@
 % Please edit documentation in R/showMappings.R
 \name{showMappings}
 \alias{showMappings}
-\title{Show mappings from source vocabularies to standard}
+\title{Show mappings from non-standard vocabularies to standard}
 \usage{
 showMappings(
   candidateCodelist,
-  sourceVocabularies = c("ATC", "ICD10CM", "ICD10PCS", "ICD9CM", "ICD9Proc", "LOINC",
-    "OPCS4", "Read", "RxNorm", "RxNorm Extension", "SNOMED"),
+  nonStandardVocabularies = c("ATC", "ICD10CM", "ICD10PCS", "ICD9CM", "ICD9Proc",
+    "LOINC", "OPCS4", "Read", "RxNorm", "RxNorm Extension", "SNOMED"),
   db,
   vocabularyDatabaseSchema
 )
@@ -15,7 +15,7 @@ showMappings(
 \arguments{
 \item{candidateCodelist}{Dataframe}
 
-\item{sourceVocabularies}{Character vector}
+\item{nonStandardVocabularies}{Character vector}
 
 \item{db}{Database connection via DBI::dbConnect()}
 
@@ -25,7 +25,7 @@ showMappings(
 tibble
 }
 \description{
-Show mappings from source vocabularies to standard
+Show mappings from non-standard vocabularies to standard
 }
 \examples{
 \dontrun{

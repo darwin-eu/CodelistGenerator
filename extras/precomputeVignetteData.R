@@ -79,7 +79,7 @@ saveRDS(
 
 icdMappings <- showMappings(
   candidateCodelist = dementiaCodes1,
-  sourceVocabularies = "ICD10CM",
+  nonStandardVocabularies = "ICD10CM",
   db = db,
   vocabularyDatabaseSchema = vocabularyDatabaseSchema
 )
@@ -90,7 +90,7 @@ saveRDS(
 
 readMappings <- showMappings(
   candidateCodelist = dementiaCodes1,
-  sourceVocabularies = "Read",
+  nonStandardVocabularies = "Read",
   db = db,
   vocabularyDatabaseSchema = vocabularyDatabaseSchema
 )
@@ -186,7 +186,7 @@ saveRDS(
 oaCodes5 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSource = TRUE,
+  searchNonStandard = TRUE,
   exclude = c(
     "post-infection",
     "post-traumatic"

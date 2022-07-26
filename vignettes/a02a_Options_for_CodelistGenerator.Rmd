@@ -199,14 +199,14 @@ codes <- getCandidateCodes(
 kable(codes)
 ```
 
-## Search via source
-Or we could have also picked up "Osteoarthrosis" by searching via source.
+## Search via non-standard
+Or we could have also picked up "Osteoarthrosis" by searching via non-standard.
 
 ```{r}
 codes <- getCandidateCodes(
   keywords = c("arthritis", "arthropathy"),
   domains = "Condition",
-  searchSource = TRUE,
+  searchNonStandard = TRUE,
   db = db,
   vocabularyDatabaseSchema = "main"
 )

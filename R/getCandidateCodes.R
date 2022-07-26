@@ -35,8 +35,8 @@
 #' for the standard_concept field in the concept table of the cdm.
 #' @param searchSynonyms Either TRUE or FALSE. If TRUE the code will also
 #' search via the concept synonym table.
-#' @param searchSource Either TRUE or FALSE. If TRUE the code will also
-#' search via source concepts.
+#' @param searchNonStandard Either TRUE or FALSE. If TRUE the code will also
+#' search via non-standard concepts.
 #' @param fuzzyMatch Either TRUE or FALSE. If TRUE the fuzzy matching
 #' will be used, with approximate matches identified.
 #' @param maxDistanceCost, The
@@ -77,7 +77,7 @@ getCandidateCodes <- function(keywords,
                               conceptClassId = NULL,
                               standardConcept = "Standard",
                               searchSynonyms = FALSE,
-                              searchSource = FALSE,
+                              searchNonStandard = FALSE,
                               fuzzyMatch = FALSE,
                               maxDistanceCost = 0.1,
                               exclude = NULL,
@@ -126,7 +126,7 @@ getCandidateCodes <- function(keywords,
   checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
 
   checkmate::assert_logical(searchSynonyms, add = errorMessage)
-  checkmate::assert_logical(searchSource, add = errorMessage)
+  checkmate::assert_logical(searchNonStandard, add = errorMessage)
   checkmate::assert_logical(fuzzyMatch,
     add = errorMessage
   )
@@ -338,7 +338,8 @@ getCandidateCodes <- function(keywords,
       dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
       dplyr::filter(.data$concept_class_id %in% conceptClassId)
     checkmate::assertTRUE(nrow(combCheck %>% dplyr::collect()) > 0,
-                          add = errorMessage)
+      add = errorMessage
+    )
     if (!isTRUE(nrow(combCheck %>% dplyr::collect()) > 0)) {
       errorMessage$push(
         glue::glue("- No combination of domains, standardConcept, and conceptClassId found in concept table")
@@ -434,7 +435,7 @@ getCandidateCodes <- function(keywords,
   }
 
   candidateCodes <- candidateCodes %>%
-      dplyr::mutate(found_from="From initial search")
+    dplyr::mutate(found_from = "From initial search")
 
   # run exclusion
   if (length(exclude) > 0) {
@@ -497,9 +498,11 @@ getCandidateCodes <- function(keywords,
         )
       }
 
-      candidateCodes <- dplyr::bind_rows(candidateCodes,
-                                         synonymCodes%>%
-      dplyr::mutate(found_from="From synonyms")) %>%
+      candidateCodes <- dplyr::bind_rows(
+        candidateCodes,
+        synonymCodes %>%
+          dplyr::mutate(found_from = "From synonyms")
+      ) %>%
         dplyr::distinct()
     }
 
@@ -529,8 +532,8 @@ getCandidateCodes <- function(keywords,
 
       candidateCodes <- dplyr::bind_rows(
         candidateCodes,
-        candidateCodeDescendants%>%
-      dplyr::mutate(found_from="From descendants")
+        candidateCodeDescendants %>%
+          dplyr::mutate(found_from = "From descendants")
       ) %>%
         dplyr::distinct()
     }
@@ -561,7 +564,7 @@ getCandidateCodes <- function(keywords,
       candidateCodes <- dplyr::bind_rows(
         candidateCodes,
         candidateCodeAncestor %>%
-      dplyr::mutate(found_from="From ancestor")
+          dplyr::mutate(found_from = "From ancestor")
       ) %>%
         dplyr::distinct()
     }
@@ -579,15 +582,15 @@ getCandidateCodes <- function(keywords,
   }
 
 
-  # 6) add codes from source
+  # 6) add codes from non-standard
   # nb we do this last so as to not include descendants
   # which can blow up candiate codelist when there
   # are multiple mappings
-  if (searchSource == TRUE & verbose == TRUE) {
-    message("Getting concepts to include from source concepts")
+  if (searchNonStandard == TRUE & verbose == TRUE) {
+    message("Getting concepts to include from non-standard concepts")
   }
 
-  if (searchSource == TRUE) {
+  if (searchNonStandard == TRUE) {
     conceptNs <- conceptDb %>%
       dplyr::filter(.data$domain_id %in% domains) %>%
       dplyr::filter(.data$standard_concept == "Non-standard") %>%
@@ -629,13 +632,13 @@ getCandidateCodes <- function(keywords,
       candidateCodes <- dplyr::bind_rows(
         candidateCodes,
         candidateCodesNs %>%
-      dplyr::mutate(found_from="From source")
+          dplyr::mutate(found_from = "From non-standard")
       ) %>%
         dplyr::distinct()
     }
   }
 
-  if (searchSource == TRUE) {
+  if (searchNonStandard == TRUE) {
     if (length(exclude) > 0) {
       if (nrow(excludeCodes) > 0) {
         candidateCodes <- candidateCodes %>%
@@ -675,15 +678,15 @@ getCandidateCodes <- function(keywords,
       ))
     }
 
-    candidateCodes<-candidateCodes %>%
+    candidateCodes <- candidateCodes %>%
       dplyr::distinct()
 
     # remove duplicates (found in different ways)
     # keep first time it was found
-    candidateCodes<-candidateCodes %>%
+    candidateCodes <- candidateCodes %>%
       dplyr::group_by(.data$concept_id) %>%
-      dplyr::mutate(seq=1:length(.data$concept_id)) %>%
-      dplyr::filter(seq==1) %>%
+      dplyr::mutate(seq = dplyr::row_number(.data$concept_id)) %>%
+      dplyr::filter(seq == 1) %>%
       dplyr::select(-"seq")
 
     return(candidateCodes)

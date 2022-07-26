@@ -114,7 +114,19 @@ domain\_id
 
 <th style="text-align:left;">
 
+concept\_class\_id
+
+</th>
+
+<th style="text-align:left;">
+
 vocabulary\_id
+
+</th>
+
+<th style="text-align:left;">
+
+found\_from
 
 </th>
 
@@ -140,13 +152,25 @@ Intrinsic asthma without status asthmaticus
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -168,13 +192,25 @@ Asthmatic pulmonary eosinophilia
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -196,13 +232,25 @@ Chronic asthmatic bronchitis
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -224,13 +272,25 @@ Exacerbation of asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -252,13 +312,25 @@ IgE-mediated allergic asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -280,13 +352,25 @@ Cough variant asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -308,13 +392,25 @@ Poisoning by antiasthmatic
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -336,13 +432,25 @@ Asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -364,13 +472,25 @@ Exercise-induced asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -392,13 +512,25 @@ Inhaled steroid-dependent asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -446,7 +578,19 @@ domain\_id
 
 <th style="text-align:left;">
 
+concept\_class\_id
+
+</th>
+
+<th style="text-align:left;">
+
 vocabulary\_id
+
+</th>
+
+<th style="text-align:left;">
+
+found\_from
 
 </th>
 
@@ -472,13 +616,25 @@ Intrinsic asthma without status asthmaticus
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -500,13 +656,25 @@ Asthmatic pulmonary eosinophilia
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -528,13 +696,25 @@ Chronic asthmatic bronchitis
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -556,13 +736,25 @@ Exacerbation of asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -584,13 +776,25 @@ IgE-mediated allergic asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -612,13 +816,25 @@ Cough variant asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -640,13 +856,25 @@ Asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -668,13 +896,25 @@ Exercise-induced asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -696,13 +936,25 @@ Inhaled steroid-dependent asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
 <td style="text-align:left;">
 
 SNOMED
+
+</td>
+
+<td style="text-align:left;">
+
+From initial search
 
 </td>
 
@@ -724,7 +976,13 @@ Persistent asthma
 
 <td style="text-align:left;">
 
-Condition
+condition
+
+</td>
+
+<td style="text-align:left;">
+
+clinical finding
 
 </td>
 
@@ -734,24 +992,31 @@ SNOMED
 
 </td>
 
+<td style="text-align:left;">
+
+From initial search
+
+</td>
+
 </tr>
 
 </tbody>
 
 </table>
 
-We can then also see source codes these are mapped from, for example
+We can then also see non-standard codes these are mapped from, for
+example
 
 ``` r
 asthmaIcdMappings<-showMappings(candidateCodelist=asthma2,
-                     sourceVocabularies="ICD10CM",
+                     nonStandardVocabularies="ICD10CM",
                     db=db,
                     vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 head(asthmaIcdMappings %>% 
        select(standard_concept_name,
               standard_vocabulary_id,
-              source_concept_name,
-              source_vocabulary_id),
+              non_standard_concept_name,
+              non_standard_vocabulary_id),
      10)
 ```
 
@@ -775,13 +1040,13 @@ standard\_vocabulary\_id
 
 <th style="text-align:left;">
 
-source\_concept\_name
+non\_standard\_concept\_name
 
 </th>
 
 <th style="text-align:left;">
 
-source\_vocabulary\_id
+non\_standard\_vocabulary\_id
 
 </th>
 

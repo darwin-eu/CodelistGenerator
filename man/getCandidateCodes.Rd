@@ -10,7 +10,7 @@ getCandidateCodes(
   conceptClassId = NULL,
   standardConcept = "Standard",
   searchSynonyms = FALSE,
-  searchSource = FALSE,
+  searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
   exclude = NULL,
@@ -39,8 +39,8 @@ for the standard_concept field in the concept table of the cdm.}
 \item{searchSynonyms}{Either TRUE or FALSE. If TRUE the code will also
 search via the concept synonym table.}
 
-\item{searchSource}{Either TRUE or FALSE. If TRUE the code will also
-search via source concepts.}
+\item{searchNonStandard}{Either TRUE or FALSE. If TRUE the code will also
+search via non-standard concepts.}
 
 \item{fuzzyMatch}{Either TRUE or FALSE. If TRUE the fuzzy matching
 will be used, with approximate matches identified.}

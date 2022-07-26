@@ -17,7 +17,7 @@ test_that("tests with mock db", {
   )
   mappings <- showMappings(
     candidateCodelist = codes,
-    sourceVocabularies = "READ",
+    nonStandardVocabularies = "READ",
     db = db,
     vocabularyDatabaseSchema = "main"
   )
@@ -25,59 +25,59 @@ test_that("tests with mock db", {
     any(mappings$standard_concept_name %in% "Osteoarthrosis")
   )
   expect_true(
-    any(mappings$source_concept_name %in% "Degenerative arthropathy")
+    any(mappings$non_standard_concept_name %in% "Degenerative arthropathy")
   )
   expect_true(
     any(mappings$standard_concept_name %in% "Osteoarthritis of knee")
   )
   expect_true(
-    any(mappings$source_concept_name %in% "Knee osteoarthritis")
+    any(mappings$non_standard_concept_name %in% "Knee osteoarthritis")
   )
 
   expect_true(all(c(
     "standard_concept_id",
     "standard_concept_name",
     "standard_vocabulary_id",
-    "source_concept_id",
-    "source_concept_name",
-    "source_concept_code",
-    "source_vocabulary_id"
+    "non_standard_concept_id",
+    "non_standard_concept_name",
+    "non_standard_concept_code",
+    "non_standard_vocabulary_id"
   ) %in%
     names(mappings)))
 
   # expect error if not dbi connection
   expect_error(showMappings(
     candidateCodelist = codes,
-    sourceVocabularies = "READ",
+    nonStandardVocabularies = "READ",
     db = "a",
     vocabularyDatabaseSchema = "main"
   ))
   # expect error if vocabularyDatabaseSchema does not exist
   expect_error(showMappings(
     candidateCodelist = codes,
-    sourceVocabularies = "READ",
+    nonStandardVocabularies = "READ",
     db = db,
     vocabularyDatabaseSchema = "a"
   ))
 
-  # expect error if sourceVocabularies does not exist
+  # expect error if nonStandardVocabularies does not exist
   # expect works
   mappings <- showMappings(
     candidateCodelist = codes,
-    sourceVocabularies = "READ",
+    nonStandardVocabularies = "READ",
     db = db,
     vocabularyDatabaseSchema = "main"
   )
   # expect error
   expect_error(showMappings(
     candidateCodelist = codes,
-    sourceVocabularies = "READX",
+    nonStandardVocabularies = "READX",
     db = db,
     vocabularyDatabaseSchema = "main"
   ))
   expect_error(showMappings(
     candidateCodelist = codes,
-    sourceVocabularies = c("Read", "READX"),
+    nonStandardVocabularies = c("Read", "READX"),
     db = db,
     vocabularyDatabaseSchema = "main"
   ))

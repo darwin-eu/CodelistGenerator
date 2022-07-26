@@ -213,7 +213,7 @@ options = list(
 )
 ```
 
-## Review mappings from source vocabularies
+## Review mappings from non-standard vocabularies
 Perhaps we want to see what ICD10CM codes map to our candidate codelist. We can get these by running
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
@@ -223,7 +223,7 @@ icdMappings <- readRDS(here("vignettes", "introData04.RData"))
 ```{r,  eval=FALSE }
 icdMappings <- showMappings(
   candidateCodelist = dementiaCodes4,
-  sourceVocabularies = "ICD10CM",
+  nonStandardVocabularies = "ICD10CM",
   db = db,
   vocabularyDatabaseSchema = vocabularyDatabaseSchema
 )
@@ -247,7 +247,7 @@ readMappings <- readRDS(here("vignettes", "introData05.RData"))
 ```{r,  eval=FALSE }
 readMappings <- showMappings(
   candidateCodelist = dementiaCodes4,
-  sourceVocabularies = "Read",
+  nonStandardVocabularies = "Read",
   db = db,
   vocabularyDatabaseSchema = vocabularyDatabaseSchema
 )

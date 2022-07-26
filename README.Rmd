@@ -137,30 +137,30 @@ asthma2<-getCandidateCodes(keywords="asthma",
 kable(head(asthma2, 10))
 ```
 
-We can then also see source codes these are mapped from, for example
+We can then also see non-standard codes these are mapped from, for example
 ```{r,  message=FALSE, warning=FALSE, eval=FALSE}
 asthmaIcdMappings<-showMappings(candidateCodelist=asthma2,
-                     sourceVocabularies="ICD10CM",
+                     nonStandardVocabularies="ICD10CM",
                     db=db,
                     vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 head(asthmaIcdMappings %>% 
        select(standard_concept_name,
               standard_vocabulary_id,
-              source_concept_name,
-              source_vocabulary_id),
+              non_standard_concept_name,
+              non_standard_vocabulary_id),
      10)
 ```
 
 ```{r,  message=FALSE, warning=FALSE, echo=FALSE}
 asthmaIcdMappings<-showMappings(candidateCodelist=asthma2,
-                     sourceVocabularies="ICD10CM",
+                     nonStandardVocabularies="ICD10CM",
                     db=db,
                     vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
 kable(head(asthmaIcdMappings %>% 
        select(standard_concept_name,
               standard_vocabulary_id,
-              source_concept_name,
-              source_vocabulary_id),
+              non_standard_concept_name,
+              non_standard_vocabulary_id),
      10))
 ```
 

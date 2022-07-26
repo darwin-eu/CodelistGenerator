@@ -122,10 +122,10 @@ test_that("tests with mock db", {
   )
   expect_true(any(!codes$concept_name %in% "Osteoarthritis of hip"))
 
-  # test source
+  # test non-standard
   codes <- getCandidateCodes(
     keywords = c("Musculoskeletal", "Degenerative arthropathy"),
-    searchSource = TRUE,
+    searchNonStandard = TRUE,
     includeDescendants = FALSE,
     domains = "Condition",
     db = db,
@@ -135,7 +135,7 @@ test_that("tests with mock db", {
 
   codes <- getCandidateCodes(
     keywords = c("Degenerative arthropathy"),
-    searchSource = TRUE,
+    searchNonStandard = TRUE,
     fuzzyMatch = TRUE,
     includeDescendants = FALSE,
     domains = "Condition",
@@ -171,7 +171,7 @@ test_that("tests with mock db", {
     conceptClassId = "Clinical Finding",
     standardConcept = "Standard",
     searchSynonyms = TRUE,
-    searchSource = TRUE,
+    searchNonStandard = TRUE,
     fuzzyMatch = FALSE,
     exclude = "Childhood asthma",
     includeDescendants = TRUE,
@@ -190,7 +190,7 @@ test_that("tests with mock db", {
     conceptClassId = "Clinical Finding",
     standardConcept = "Standard",
     searchSynonyms = TRUE,
-    searchSource = TRUE,
+    searchNonStandard = TRUE,
     fuzzyMatch = TRUE,
     maxDistanceCost = 0.1,
     includeDescendants = TRUE,

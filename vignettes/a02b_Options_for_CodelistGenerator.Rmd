@@ -69,14 +69,14 @@ vocabularyDatabaseSchema <- "vocabulary"
 oaCodes1 <- readRDS(here("vignettes", "optionsData01.RData"))
 ```
 
-To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via source codes, without fuzzy matching, and without including descendants or the direct ancestor of the included concepts.
+To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, without fuzzy matching, and without including descendants or the direct ancestor of the included concepts.
 
 ```{r, eval=FALSE}
 oaCodes1 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchSynonyms = FALSE,
-  searchSource = FALSE,
+  searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
@@ -111,7 +111,7 @@ oaCodes2 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchSynonyms = FALSE,
-  searchSource = FALSE,
+  searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
@@ -150,7 +150,7 @@ oaCodes3 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
   searchSynonyms = FALSE,
-  searchSource = FALSE,
+  searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
@@ -189,7 +189,7 @@ oaCodes4 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchSynonyms = TRUE,
-  searchSource = FALSE,
+  searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
@@ -217,7 +217,7 @@ datatable(newCodes1To4,
 )
 ```
 
-### Search via source
+### Search via non-standard
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oaCodes5 <- readRDS(here("vignettes", "optionsData04.RData"))
 ```
@@ -228,7 +228,7 @@ oaCodes5 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchSynonyms = FALSE,
-  searchSource = TRUE,
+  searchNonStandard = TRUE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
@@ -267,7 +267,7 @@ oaCodes6 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchSynonyms = FALSE,
-  searchSource = FALSE,
+  searchNonStandard = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.1,
   exclude = c(
@@ -307,7 +307,7 @@ oaCodes7 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchSynonyms = FALSE,
-  searchSource = FALSE,
+  searchNonStandard = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.2,
   exclude = c(
@@ -347,7 +347,7 @@ oaCodes8 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchSynonyms = FALSE,
-  searchSource = FALSE,
+  searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
   exclude = c(
