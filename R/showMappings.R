@@ -52,7 +52,6 @@ showMappings <- function(candidateCodelist,
                          ),
                          db,
                          vocabularyDatabaseSchema) {
-
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertVector(sourceVocabularies, add = errorMessage)
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
@@ -80,9 +79,9 @@ showMappings <- function(candidateCodelist,
   )
 
   # vocabs to upper case
-  sourceVocabularies<-stringr::str_to_upper(sourceVocabularies)
-  conceptDb<-conceptDb %>%
-  dplyr::mutate(vocabulary_id=stringr::str_to_upper(.data$vocabulary_id))
+  sourceVocabularies <- stringr::str_to_upper(sourceVocabularies)
+  conceptDb <- conceptDb %>%
+    dplyr::mutate(vocabulary_id = stringr::str_to_upper(.data$vocabulary_id))
 
   # check sourceVocabularies exist
   errorMessage <- checkmate::makeAssertCollection()

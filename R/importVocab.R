@@ -38,22 +38,23 @@
 #' library(CodelistGenerator)
 #' library(here)
 #' db <- generateMockVocabDb()
-#' dOut<-here()
+#' dOut <- here()
 #'
-#' importVocab(db=db,
-#'             vocabularyDatabaseSchema="main",
-#'             dirOut=dOut)
+#' importVocab(
+#'   db = db,
+#'   vocabularyDatabaseSchema = "main",
+#'   dirOut = dOut
+#' )
 #' }
 #'
 importVocab <- function(db,
                         vocabularyDatabaseSchema,
                         dirOut,
-                        errorIfExists=TRUE,
-                        verbose=FALSE){
-
- if (verbose == TRUE) {
+                        errorIfExists = TRUE,
+                        verbose = FALSE) {
+  if (verbose == TRUE) {
     start <- Sys.time()
- }
+  }
 
 
   if (verbose == TRUE) {
@@ -68,7 +69,7 @@ importVocab <- function(db,
   checkmate::assertVector(vocabularyDatabaseSchema,
     add = errorMessage
   )
-  dirOutCheck<-file.exists(dirOut)
+  dirOutCheck <- file.exists(dirOut)
   checkmate::assertTRUE(dirOutCheck,
     add = errorMessage
   )
@@ -77,99 +78,105 @@ importVocab <- function(db,
   )
   checkmate::reportAssertions(collection = errorMessage)
 
-# throw error if db already exists
-  if(errorIfExists==TRUE){
+  # throw error if db already exists
+  if (errorIfExists == TRUE) {
     errorMessage <- checkmate::makeAssertCollection()
-    dbPresenceCheck<-!file.exists(paste0(dirOut,"/vocab.sqlite"))
+    dbPresenceCheck <- !file.exists(paste0(dirOut, "/vocab.sqlite"))
     checkmate::assertTRUE(dbPresenceCheck,
-    add = errorMessage
-  )
+      add = errorMessage
+    )
     if (!isTRUE(dbPresenceCheck)) {
-    errorMessage$push(
-      "- local database already exists"
-    )
-    errorMessage$push(
-      "- to overwrite existing local database set errorIfExists=FALSE"
-    )
-  }
-  checkmate::reportAssertions(collection = errorMessage)
+      errorMessage$push(
+        "- local database already exists"
+      )
+      errorMessage$push(
+        "- to overwrite existing local database set errorIfExists=FALSE"
+      )
+    }
+    checkmate::reportAssertions(collection = errorMessage)
   }
 
-  if(errorIfExists!=TRUE){
-  if(file.exists(paste0(dirOut,"/vocab.sqlite"))==TRUE){
-    unlink(paste0(dirOut,"/vocab.sqlite"))
-  }}
+  if (errorIfExists != TRUE) {
+    if (file.exists(paste0(dirOut, "/vocab.sqlite")) == TRUE) {
+      unlink(paste0(dirOut, "/vocab.sqlite"))
+    }
+  }
 
   # start
-  conn <- dbConnect(RSQLite::SQLite(),
-                paste0(dirOut,"/vocab.sqlite"))
+  conn <- DBI::dbConnect(
+    RSQLite::SQLite(),
+    paste0(dirOut, "/vocab.sqlite")
+  )
 
- if (verbose == TRUE) {
-      message("Getting concept table")
+  if (verbose == TRUE) {
   }
-concept <- dplyr::tbl(db, dplyr::sql(glue::glue(
+  concept <- dplyr::tbl(db, dplyr::sql(glue::glue(
     "SELECT * FROM {vocabularyDatabaseSchema}.concept"
   ))) %>%
-  collect()
-dbWriteTable(conn, "concept", concept, overwrite = TRUE)
-rm(concept)
+    dplyr::collect()
+  DBI::dbWriteTable(conn, "concept", concept, overwrite = TRUE)
+  rm(concept)
 
- if (verbose == TRUE) {
-      message("Getting concept relationship table")
+  if (verbose == TRUE) {
+    message("Getting concept relationship table")
   }
-conceptRelationship <- dplyr::tbl(db, dplyr::sql(glue::glue(
+  conceptRelationship <- dplyr::tbl(db, dplyr::sql(glue::glue(
     "SELECT * FROM {vocabularyDatabaseSchema}.concept_relationship"
   ))) %>%
-  collect()
-dbWriteTable(conn, "concept_relationship", conceptRelationship, overwrite = TRUE)
-rm(conceptRelationship)
+    dplyr::collect()
+  DBI::dbWriteTable(conn, "concept_relationship", conceptRelationship, overwrite = TRUE)
+  rm(conceptRelationship)
 
- if (verbose == TRUE) {
-      message("Getting concept ancestor table")
+  if (verbose == TRUE) {
+    message("Getting concept ancestor table")
   }
-conceptAncestor <- dplyr::tbl(db, dplyr::sql(glue::glue(
+  conceptAncestor <- dplyr::tbl(db, dplyr::sql(glue::glue(
     "SELECT * FROM {vocabularyDatabaseSchema}.concept_ancestor"
   ))) %>%
-  collect()
-dbWriteTable(conn, "concept_ancestor", conceptAncestor, overwrite = TRUE)
-rm(conceptAncestor)
+    dplyr::collect()
+  DBI::dbWriteTable(conn, "concept_ancestor", conceptAncestor, overwrite = TRUE)
+  rm(conceptAncestor)
 
- if (verbose == TRUE) {
-      message("Getting concept synonym table")
+  if (verbose == TRUE) {
+    message("Getting concept synonym table")
   }
-conceptSynonym <- dplyr::tbl(db, dplyr::sql(glue::glue(
+  conceptSynonym <- dplyr::tbl(db, dplyr::sql(glue::glue(
     "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
   ))) %>%
-  collect()
-dbWriteTable(conn, "concept_synonym", conceptSynonym, overwrite = TRUE)
-rm(conceptSynonym)
+    dplyr::collect()
+  DBI::dbWriteTable(conn, "concept_synonym", conceptSynonym, overwrite = TRUE)
+  rm(conceptSynonym)
 
- if (verbose == TRUE) {
-      message("Getting vocabulary table")
+  if (verbose == TRUE) {
+    message("Getting vocabulary table")
   }
-vocabulary <- dplyr::tbl(db, dplyr::sql(glue::glue(
+  vocabulary <- dplyr::tbl(db, dplyr::sql(glue::glue(
     "SELECT * FROM {vocabularyDatabaseSchema}.vocabulary"
   ))) %>%
-  collect()
-dbWriteTable(conn, "vocabulary", vocabulary, overwrite = TRUE)
-rm(vocabulary)
+    dplyr::collect()
+  DBI::dbWriteTable(conn, "vocabulary", vocabulary, overwrite = TRUE)
+  rm(vocabulary)
 
- if (verbose == TRUE) {
-      message("Adding indexes")
+  if (verbose == TRUE) {
+    message("Adding indexes")
   }
-dbExecute(conn, "CREATE UNIQUE INDEX idx_concept_concept_id ON concept (concept_id)")
-dbExecute(conn, "CREATE INDEX idx_concept_relationship_id_1 ON concept_relationship (concept_id_1, concept_id_2)")
-dbExecute(conn, "CREATE INDEX idx_concept_ancestor_id_1 ON concept_ancestor (ancestor_concept_id)")
-dbExecute(conn, "CREATE INDEX idx_concept_ancestor_id_2 ON concept_ancestor (descendant_concept_id)")
-dbExecute(conn, "CREATE INDEX idx_concept_synonym_id ON concept_synonym (concept_id)")
+  DBI::dbExecute(conn,
+   "CREATE UNIQUE INDEX idx_concept_concept_id ON concept (concept_id)")
+  DBI::dbExecute(conn,
+   "CREATE INDEX idx_concept_relationship_id_1 ON concept_relationship (concept_id_1, concept_id_2)")
+  DBI::dbExecute(conn,
+   "CREATE INDEX idx_concept_ancestor_id_1 ON concept_ancestor (ancestor_concept_id)")
+  DBI::dbExecute(conn,
+   "CREATE INDEX idx_concept_ancestor_id_2 ON concept_ancestor (descendant_concept_id)")
+  DBI::dbExecute(conn,
+   "CREATE INDEX idx_concept_synonym_id ON concept_synonym (concept_id)")
 
-dbDisconnect(conn)
+  DBI::dbDisconnect(conn)
 
-if (verbose == TRUE) {
-      duration <- abs(as.numeric(Sys.time() - start, units = "secs"))
-      message(glue::glue(
-        "Time: {floor(duration/60)} minutes and {duration %% 60 %/% 1} seconds"
-      ))
-    }
-
+  if (verbose == TRUE) {
+    duration <- abs(as.numeric(Sys.time() - start, units = "secs"))
+    message(glue::glue(
+      "Time: {floor(duration/60)} minutes and {duration %% 60 %/% 1} seconds"
+    ))
+  }
 }

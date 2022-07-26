@@ -98,8 +98,8 @@ getCandidateCodes <- function(keywords,
   ## domains and standardConcept to sentence case
   domains <- tolower(domains)
   standardConcept <- stringr::str_to_sentence(standardConcept)
-  if(!is.null(conceptClassId)){
-  conceptClassId<- tolower(conceptClassId)
+  if (!is.null(conceptClassId)) {
+    conceptClassId <- tolower(conceptClassId)
   }
 
   ## checks for standard types of user error
@@ -161,20 +161,20 @@ getCandidateCodes <- function(keywords,
   # connect to relevant vocabulary tables
   # will return informative error if not found
   if (!is.null(vocabularyDatabaseSchema)) {
-  conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabularyDatabaseSchema}.concept"
-  )))
-  conceptAncestorDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabularyDatabaseSchema}.concept_ancestor"
-  )))
-  conceptSynonymDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
-  )))
-  conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".concept_relationship"
-  )))
+    conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
+      "SELECT * FROM {vocabularyDatabaseSchema}.concept"
+    )))
+    conceptAncestorDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
+      "SELECT * FROM {vocabularyDatabaseSchema}.concept_ancestor"
+    )))
+    conceptSynonymDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
+      "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
+    )))
+    conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(paste0(
+      "SELECT * FROM ",
+      vocabularyDatabaseSchema,
+      ".concept_relationship"
+    )))
   } else {
     conceptDb <- dplyr::tbl(db, "concept")
     conceptAncestorDb <- dplyr::tbl(db, "concept_ancestor")
@@ -245,7 +245,7 @@ getCandidateCodes <- function(keywords,
   )
   # check domains in db
   domainsInDb <- conceptDb %>%
-    dplyr::mutate(domain_id=tolower(.data$domain_id)) %>%
+    dplyr::mutate(domain_id = tolower(.data$domain_id)) %>%
     dplyr::select(.data$domain_id) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -262,7 +262,7 @@ getCandidateCodes <- function(keywords,
 
   # check conceptClassId in db
   conceptClassInDb <- conceptDb %>%
-    dplyr::mutate(concept_class_id=tolower(.data$concept_class_id)) %>%
+    dplyr::mutate(concept_class_id = tolower(.data$concept_class_id)) %>%
     dplyr::select(.data$concept_class_id) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -272,7 +272,7 @@ getCandidateCodes <- function(keywords,
     checkmate::assertTRUE(conceptClassCheck, add = errorMessage)
     if (!isTRUE(conceptClassCheck)) {
       errorMessage$push(
-        glue::glue("- conceptClassId {conceptClassId[i]} not found in concept table")
+        glue::glue("- conceptClassId {conceptClassId[i]} not in concept table")
       )
     }
   }
@@ -295,8 +295,8 @@ getCandidateCodes <- function(keywords,
   standardConceptFlags <- standardConcept
 
   # check standardConceptFlags are in concept table
-    errorMessage <- checkmate::makeAssertCollection()
-    standardConceptInDb <- conceptDb %>%
+  errorMessage <- checkmate::makeAssertCollection()
+  standardConceptInDb <- conceptDb %>%
     dplyr::select(.data$standard_concept) %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -306,11 +306,11 @@ getCandidateCodes <- function(keywords,
     checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
     if (!isTRUE(standardConceptCheck)) {
       errorMessage$push(
-        glue::glue("- standardConcept {standardConcept[i]} not found in concept table")
+        glue::glue("- standardConcept {standardConcept[i]} not in concept table")
       )
     }
   }
- checkmate::reportAssertions(collection = errorMessage)
+  checkmate::reportAssertions(collection = errorMessage)
 
 
   # filter vocab tables to keep only relevant data
@@ -319,25 +319,26 @@ getCandidateCodes <- function(keywords,
   }
 
   conceptDb <- conceptDb %>%
-    dplyr::mutate(concept_class_id=tolower(.data$concept_class_id)) %>%
-    dplyr::mutate(domain_id=tolower(.data$domain_id)) %>%
+    dplyr::mutate(concept_class_id = tolower(.data$concept_class_id)) %>%
+    dplyr::mutate(domain_id = tolower(.data$domain_id)) %>%
     dplyr::filter(.data$domain_id %in% domains)
   if (!is.null(conceptClassId)) {
     # first, check some combination exists
     # return error if not
     errorMessage <- checkmate::makeAssertCollection()
     combCheck <- conceptDb %>%
-      dplyr::mutate(concept_class_id=tolower(.data$concept_class_id)) %>%
+      dplyr::mutate(concept_class_id = tolower(.data$concept_class_id)) %>%
       dplyr::group_by(
         .data$domain_id,
         .data$concept_class_id,
         .data$standard_concept
-        ) %>%
+      ) %>%
       dplyr::tally() %>%
       dplyr::filter(.data$domain_id %in% domains) %>%
       dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
       dplyr::filter(.data$concept_class_id %in% conceptClassId)
-    checkmate::assertTRUE(nrow(combCheck %>% dplyr::collect()) > 0, add = errorMessage)
+    checkmate::assertTRUE(nrow(combCheck %>% dplyr::collect()) > 0,
+                          add = errorMessage)
     if (!isTRUE(nrow(combCheck %>% dplyr::collect()) > 0)) {
       errorMessage$push(
         glue::glue("- No combination of domains, standardConcept, and conceptClassId found in concept table")
@@ -448,7 +449,7 @@ getCandidateCodes <- function(keywords,
 
 
 
- if (nrow(candidateCodes) > 0) {
+  if (nrow(candidateCodes) > 0) {
 
     # 3) look for any standard, condition concepts with a synonym of the
     # codes found from the keywords
@@ -568,41 +569,40 @@ getCandidateCodes <- function(keywords,
         }
       }
     }
+  }
 
- }
 
+  # 6) add codes from source
+  # nb we do this last so as to not include descendants
+  # which can blow up candiate codelist when there
+  # are multiple mappings
+  if (searchSource == TRUE & verbose == TRUE) {
+    message("Getting concepts to include from source concepts")
+  }
 
-    # 6) add codes from source
-    # nb we do this last so as to not include descendants
-    # which can blow up candiate codelist when there
-    # are multiple mappings
-    if (searchSource == TRUE & verbose == TRUE) {
-      message("Getting concepts to include from source concepts")
+  if (searchSource == TRUE) {
+    conceptNs <- conceptDb %>%
+      dplyr::filter(.data$domain_id %in% domains) %>%
+      dplyr::filter(.data$standard_concept == "Non-standard") %>%
+      dplyr::collect() %>%
+      dplyr::rename_with(tolower)
+
+    if (fuzzyMatch == FALSE & nrow(conceptNs) > 0) {
+      candidateCodesNs <- getExactMatches(
+        words = tidyWords(keywords),
+        conceptDf = conceptNs
+      )
     }
 
-    if (searchSource == TRUE) {
-      conceptNs <- conceptDb %>%
-        dplyr::filter(.data$domain_id %in% domains) %>%
-        dplyr::filter(.data$standard_concept == "Non-standard") %>%
-        dplyr::collect() %>%
-        dplyr::rename_with(tolower)
+    if (fuzzyMatch == TRUE & nrow(conceptNs) > 0) {
+      candidateCodesNs <- getFuzzyMatches(
+        words = tidyWords(keywords),
+        conceptDf = conceptNs,
+        mdCost = maxDistanceCost
+      )
+    }
 
-      if (fuzzyMatch == FALSE & nrow(conceptNs)>0) {
-        candidateCodesNs <- getExactMatches(
-          words = tidyWords(keywords),
-          conceptDf = conceptNs
-        )
-      }
-
-      if (fuzzyMatch == TRUE & nrow(conceptNs)>0) {
-        candidateCodesNs <- getFuzzyMatches(
-          words = tidyWords(keywords),
-          conceptDf = conceptNs,
-          mdCost = maxDistanceCost
-        )
-      }
-
-      if (nrow(conceptNs)>0) {
+    if (nrow(conceptNs) > 0) {
       candidateCodesNs <- candidateCodesNs %>%
         dplyr::select("concept_id") %>%
         dplyr::inner_join(conceptRelationshipDb %>%
@@ -624,21 +624,19 @@ getCandidateCodes <- function(keywords,
         candidateCodesNs
       ) %>%
         dplyr::distinct()
-      }
-
-
     }
+  }
 
-    if (searchSource == TRUE) {
-      if (length(exclude) > 0) {
-        if (nrow(excludeCodes) > 0) {
-          candidateCodes <- candidateCodes %>%
-            dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
-              by = "concept_id"
-            )
-        }
+  if (searchSource == TRUE) {
+    if (length(exclude) > 0) {
+      if (nrow(excludeCodes) > 0) {
+        candidateCodes <- candidateCodes %>%
+          dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
+            by = "concept_id"
+          )
       }
     }
+  }
 
 
   if (nrow(candidateCodes) == 0) {

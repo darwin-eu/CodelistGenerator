@@ -30,11 +30,10 @@
 #' library(CodelistGenerator)
 #' db <- generateMockVocabDb()
 #' }
-generateMockVocabDb <- function(dbType="SQLite") {
-
+generateMockVocabDb <- function(dbType = "SQLite") {
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertTRUE(dbType %in% c("SQLite", "duckdb"))
-  checkmate::assertTRUE(length(dbType)==1)
+  checkmate::assertTRUE(length(dbType) == 1)
   checkmate::reportAssertions(collection = errorMessage)
 
 
@@ -59,10 +58,10 @@ generateMockVocabDb <- function(dbType="SQLite") {
       rep("S", 5),
       rep(NA, 2)
     ),
-    concept_class_id =c(
+    concept_class_id = c(
       rep("Clinical Finding", 5),
       rep("Diagnosis", 2)
-    ) ,
+    ),
     concept_code = NA
   )
   conceptAncestor <- dplyr::bind_rows(
@@ -119,15 +118,15 @@ generateMockVocabDb <- function(dbType="SQLite") {
       relationship_id = "Mapped from"
     )
   )
-  vocabulary<-data.frame(vocabVersion="current")
+  vocabulary <- data.frame(vocabVersion = "current")
 
   # into in-memory databse
-  if(dbType=="SQLite"){
-  db <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+  if (dbType == "SQLite") {
+    db <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
   }
-   if(dbType=="duckdb"){
-  db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
-   }
+  if (dbType == "duckdb") {
+    db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
+  }
 
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept",

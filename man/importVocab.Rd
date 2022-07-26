@@ -41,11 +41,13 @@ library(RSQLite)
 library(CodelistGenerator)
 library(here)
 db <- generateMockVocabDb()
-dOut<-here()
+dOut <- here()
 
-importVocab(db=db,
-            vocabularyDatabaseSchema="main",
-            dirOut=dOut)
+importVocab(
+  db = db,
+  vocabularyDatabaseSchema = "main",
+  dirOut = dOut
+)
 }
 
 }

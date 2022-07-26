@@ -18,13 +18,13 @@ knitr::opts_chunk$set(
 
 ## Mock vocabulary database
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-  library(DBI)
-  library(RSQLite)
-  library(dplyr)
-  library(dbplyr)
-  library(here)
-  library(kableExtra)
-  library(CodelistGenerator)
+library(DBI)
+library(RSQLite)
+library(dplyr)
+library(dbplyr)
+library(here)
+library(kableExtra)
+library(CodelistGenerator)
 ```
 
 Let´s say we have a mock vocabulary database with these hypothetical concepts and relationships.
@@ -34,7 +34,7 @@ knitr::include_graphics("mock_db_fig1.png")
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE, results='hide'}
-db<-generateMockVocabDb()
+db <- generateMockVocabDb()
 ```
 
 ## Search for exact keyword match 
@@ -44,26 +44,26 @@ knitr::include_graphics("mock_db_fig2.png")
 
 To find "Musculoskeletal disorder" we can search for that like so 
 ```{r}
-codes<-getCandidateCodes(
-    keywords = "Musculoskeletal disorder",
-    domains="Condition",
-    includeDescendants = FALSE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = "Musculoskeletal disorder",
+  domains = "Condition",
+  includeDescendants = FALSE,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
 
 Note, we would also identify it based on a partial match
 ```{r}
-codes<-getCandidateCodes(
-    keywords = "Musculoskeletal",
-    domains="Condition",
-    includeDescendants = FALSE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = "Musculoskeletal",
+  domains = "Condition",
+  includeDescendants = FALSE,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -76,26 +76,28 @@ knitr::include_graphics("mock_db_fig7.png")
 To include descendants of an identified code, we can set includeDescendants to TRUE
 ```{r}
 kable(getCandidateCodes(
-    keywords = "Musculoskeletal disorder",
-    domains="Condition",
-    includeDescendants = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  ))
+  keywords = "Musculoskeletal disorder",
+  domains = "Condition",
+  includeDescendants = TRUE,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+))
 ```
 
 ## Multiple search terms 
 We can also search for multiple keywords at the same time, and would have picked these all up with the following search
 ```{r}
-codes<-getCandidateCodes(
-    keywords = c("Musculoskeletal disorder",
-                 "arthritis",
-                 "arthrosis"),
-    domains="Condition",
-    includeDescendants = FALSE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = c(
+    "Musculoskeletal disorder",
+    "arthritis",
+    "arthrosis"
+  ),
+  domains = "Condition",
+  includeDescendants = FALSE,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -108,13 +110,13 @@ knitr::include_graphics("mock_db_fig5.png")
 To include the ancestors one level above the identified concepts we can set includeAncestor to TRUE
 
 ```{r}
-codes<-getCandidateCodes(
-    keywords = "Osteoarthritis of knee",
-    includeAncestor = TRUE,
-    domains="Condition",
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = "Osteoarthritis of knee",
+  includeAncestor = TRUE,
+  domains = "Condition",
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -127,13 +129,13 @@ knitr::include_graphics("mock_db_fig4.png")
 We can also find concepts with multiple words even if they are in a different order. For example, a search for "Knee osteoarthritis" will pick up "Osteoarthritis of knee".
 
 ```{r}
-codes<-getCandidateCodes(
-    keywords = "Knee osteoarthritis",
-    domains="Condition",
-    includeDescendants = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = "Knee osteoarthritis",
+  domains = "Condition",
+  includeDescendants = TRUE,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -147,13 +149,13 @@ knitr::include_graphics("mock_db_fig5.png")
 We can also exclude specific terms 
 
 ```{r}
-codes<-getCandidateCodes(
-    keywords = "arthritis",
-    exclude = "Hip osteoarthritis",
-    domains="Condition",
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = "arthritis",
+  exclude = "Hip osteoarthritis",
+  domains = "Condition",
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -166,13 +168,13 @@ knitr::include_graphics("mock_db_fig6.png")
 We can also pick up codes based on their synonyms. In this case "Arthritis" (which gets identified first) has a synonym of "Osteoarthrosis", and based on this synonym we can also include the "Osteoarthrosis" concept.
 
 ```{r}
-codes<-getCandidateCodes(
-    keywords = "arthritis",
-    domains="Condition",
-    searchSynonyms = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = "arthritis",
+  domains = "Condition",
+  searchSynonyms = TRUE,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -185,14 +187,14 @@ knitr::include_graphics("mock_db_fig6.png")
 We could have also picked up "Osteoarthrosis" by doing fuzzy matching which allows for some differences in spelling.
 
 ```{r}
-codes<-getCandidateCodes(
-    keywords = "arthritis",
-    domains="Condition",
-    fuzzyMatch = TRUE,
-    maxDistanceCost = 0.2,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = "arthritis",
+  domains = "Condition",
+  fuzzyMatch = TRUE,
+  maxDistanceCost = 0.2,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -201,13 +203,13 @@ kable(codes)
 Or we could have also picked up "Osteoarthrosis" by searching via source.
 
 ```{r}
-codes<-getCandidateCodes(
-    keywords = c("arthritis","arthropathy"),
-    domains="Condition",
-    searchSource = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = c("arthritis", "arthropathy"),
+  domains = "Condition",
+  searchSource = TRUE,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -221,16 +223,18 @@ knitr::include_graphics("mock_db_fig8.png")
 We can also include non-standard codes in our results like so
 
 ```{r}
-codes<-getCandidateCodes(
-    keywords = c("Musculoskeletal disorder",
-                 "arthritis",
-                 "arthropathy",
-                 "arthrosis"),
-    domains="Condition",
-    standardConcept= c("Standard", "Non-standard"),
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
+codes <- getCandidateCodes(
+  keywords = c(
+    "Musculoskeletal disorder",
+    "arthritis",
+    "arthropathy",
+    "arthrosis"
+  ),
+  domains = "Condition",
+  standardConcept = c("Standard", "Non-standard"),
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
 
 kable(codes)
 ```
@@ -239,6 +243,3 @@ kable(codes)
 ```{r}
 dbDisconnect(db)
 ```
-
-
-

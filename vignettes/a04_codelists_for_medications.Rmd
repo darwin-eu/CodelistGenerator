@@ -39,21 +39,22 @@ library(RPostgres)
 
 ```{r, eval=FALSE}
 # postgres database connection details
-server_dbi<-Sys.getenv("server")
-user<-Sys.getenv("user")
-password<- Sys.getenv("password")
-port<-Sys.getenv("port")
-host<-Sys.getenv("host")
+serverDbi <- Sys.getenv("server")
+user <- Sys.getenv("user")
+password <- Sys.getenv("password")
+port <- Sys.getenv("port")
+host <- Sys.getenv("host")
 
 db <- dbConnect(RPostgres::Postgres(),
-                dbname = server_dbi,
-                port = port,
-                host = host,
-                user = user,
-                password = password)
+  dbname = serverDbi,
+  port = port,
+  host = host,
+  user = user,
+  password = password
+)
 
 # name of vocabulary schema
-vocabularyDatabaseSchema<-"vocabulary"
+vocabularyDatabaseSchema <- "vocabulary"
 ```
 
 ## Codelist from "metformin" and its descendants
@@ -68,32 +69,41 @@ library(kableExtra)
 ```
 
 ```{r, eval=FALSE}
-codesFromDescendants<-tbl(db,
-  sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept_ancestor"))) %>%
+codesFromDescendants <- tbl(
+  db,
+  sql(paste0(
+    "SELECT * FROM ",
+    vocabularyDatabaseSchema,
+    ".concept_ancestor"
+  ))
+) %>%
   filter(ancestor_concept_id %in% c("1503297")) %>%
   select("descendant_concept_id") %>%
-  rename("concept_id"="descendant_concept_id") %>%
-  inner_join(tbl(db, sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept"))))%>%
-  select("concept_id", "concept_name",
-         "domain_id", "vocabulary_id") %>%
+  rename("concept_id" = "descendant_concept_id") %>%
+  inner_join(tbl(db, sql(paste0(
+    "SELECT * FROM ",
+    vocabularyDatabaseSchema,
+    ".concept"
+  )))) %>%
+  select(
+    "concept_id", "concept_name",
+    "domain_id", "vocabulary_id"
+  ) %>%
   collect()
-
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codesFromDescendants<-readRDS(here("vignettes","medData01.RData"))
+codesFromDescendants <- readRDS(here("vignettes", "medData01.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
 datatable(codesFromDescendants,
-          rownames=FALSE,
-          options = list(pageLength = 10,
-                         lengthMenu = c(10, 20,50)))
-
+  rownames = FALSE,
+  options = list(
+    pageLength = 10,
+    lengthMenu = c(10, 20, 50)
+  )
+)
 ```
 
 ## Generating a candidate codelist using Codelist Generator
@@ -105,47 +115,49 @@ library(CodelistGenerator)
 
 Let's do a search for a single keyword of "metformin", including descendants.
 ```{r, eval=FALSE }
-metforminCodes2<-getCandidateCodes(keywords="metformin",
-                    domains=c("Drug"),
-                    includeDescendants = TRUE,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
-
+metforminCodes2 <- getCandidateCodes(
+  keywords = "metformin",
+  domains = c("Drug"),
+  includeDescendants = TRUE,
+  db = db,
+  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-metforminCodes2<-readRDS(here("vignettes","metforminCodes2.RData"))
+metforminCodes2 <- readRDS(here("vignettes", "metforminCodes2.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
 datatable(metforminCodes2,
-          rownames=FALSE,
-          options = list(
-  pageLength = 10,
-  lengthMenu = c(10, 20,50)
-))
+  rownames = FALSE,
+  options = list(
+    pageLength = 10,
+    lengthMenu = c(10, 20, 50)
+  )
+)
 ```
 
 What is the difference between this codelist and the one based on descendants?
 ```{r,  eval=TRUE }
-codeComparison<- compareCodelists(codesFromDescendants, metforminCodes2)
-
+codeComparison <- compareCodelists(codesFromDescendants, metforminCodes2)
 ```
 
 
 ```{r,  message=FALSE, warning=FALSE } 
-kable(codeComparison %>% 
-  group_by(codelist) %>% 
+kable(codeComparison %>%
+  group_by(codelist) %>%
   tally())
 ```
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-datatable(codeComparison %>% 
-            filter(codelist=="Only codelist 2"),
-          rownames=FALSE,
-          options = list(
+datatable(codeComparison %>%
+  filter(codelist == "Only codelist 2"),
+rownames = FALSE,
+options = list(
   pageLength = 10,
-  lengthMenu = c(10, 20,50)
-))
+  lengthMenu = c(10, 20, 50)
+)
+)
 ```

@@ -123,28 +123,28 @@ test_that("tests with mock db", {
   expect_true(any(!codes$concept_name %in% "Osteoarthritis of hip"))
 
   # test source
-codes <- getCandidateCodes(
-    keywords = c("Musculoskeletal","Degenerative arthropathy"),
+  codes <- getCandidateCodes(
+    keywords = c("Musculoskeletal", "Degenerative arthropathy"),
     searchSource = TRUE,
     includeDescendants = FALSE,
     domains = "Condition",
     db = db,
     vocabularyDatabaseSchema = "main"
   )
-expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
+  expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
-codes <- getCandidateCodes(
+  codes <- getCandidateCodes(
     keywords = c("Degenerative arthropathy"),
     searchSource = TRUE,
-    fuzzyMatch=TRUE,
+    fuzzyMatch = TRUE,
     includeDescendants = FALSE,
     domains = "Condition",
     db = db,
     vocabularyDatabaseSchema = "main"
   )
-expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
+  expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
-# test verbose
+  # test verbose
   expect_message(getCandidateCodes(
     keywords = "arthritis",
     domains = "Condition",
@@ -232,7 +232,7 @@ expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
     vocabularyDatabaseSchema = "main"
   ))
 
-   expect_error(getCandidateCodes(
+  expect_error(getCandidateCodes(
     keywords = "Musculoskeletal disorder",
     standardConcept = "Something that doesn´t exist",
     includeDescendants = FALSE,
@@ -240,8 +240,8 @@ expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
     vocabularyDatabaseSchema = "main"
   ))
 
-   # expect error - no combination of standardConcept and conceptClassId
-   expect_error(getCandidateCodes(
+  # expect error - no combination of standardConcept and conceptClassId
+  expect_error(getCandidateCodes(
     keywords = "Musculoskeletal disorder",
     standardConcept = "Non-standard",
     conceptClassId = "Clinical Finding",
@@ -250,9 +250,9 @@ expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
     vocabularyDatabaseSchema = "main"
   ))
 
-expect_error(getCandidateCodes(
+  expect_error(getCandidateCodes(
     keywords = "Musculoskeletal disorder",
-    standardConcept="Classification", #not in our mock db
+    standardConcept = "Classification", # not in our mock db
     includeDescendants = FALSE,
     db = db,
     vocabularyDatabaseSchema = "main"
@@ -263,7 +263,7 @@ expect_error(getCandidateCodes(
 
 
   # use duckdb instead of SQLite
-# where there is no vocabulary schema name
+  # where there is no vocabulary schema name
   # mock db
   db <- generateMockVocabDb(dbType = "duckdb")
 
@@ -276,8 +276,7 @@ expect_error(getCandidateCodes(
     db = db,
     vocabularyDatabaseSchema = NULL
   )
-    DBI::dbDisconnect(db)
-
+  DBI::dbDisconnect(db)
 })
 
 # test_that("tests with synthetic db", {
