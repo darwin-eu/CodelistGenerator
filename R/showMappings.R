@@ -110,7 +110,7 @@ showMappings <- function(candidateCodelist,
       dplyr::rename("concept_id" = "concept_id_2"),
     by = c("concept_id")
     ) %>%
-    dplyr::filter(.data$vocabulary_id %in% nonStandardVocabularies) %>%
+    dplyr::filter(.data$vocabulary_id %in% .env$nonStandardVocabularies) %>%
     dplyr::distinct() %>%
     dplyr::collect()
 

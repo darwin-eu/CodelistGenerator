@@ -321,7 +321,7 @@ getCandidateCodes <- function(keywords,
   conceptDb <- conceptDb %>%
     dplyr::mutate(concept_class_id = tolower(.data$concept_class_id)) %>%
     dplyr::mutate(domain_id = tolower(.data$domain_id)) %>%
-    dplyr::filter(.data$domain_id %in% domains)
+    dplyr::filter(.data$domain_id %in% .env$domains)
   if (!is.null(conceptClassId)) {
     # first, check some combination exists
     # return error if not
@@ -334,9 +334,9 @@ getCandidateCodes <- function(keywords,
         .data$standard_concept
       ) %>%
       dplyr::tally() %>%
-      dplyr::filter(.data$domain_id %in% domains) %>%
-      dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
-      dplyr::filter(.data$concept_class_id %in% conceptClassId)
+      dplyr::filter(.data$domain_id %in% .env$domains) %>%
+      dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
+      dplyr::filter(.data$concept_class_id %in% .env$conceptClassId)
     checkmate::assertTRUE(nrow(combCheck %>% dplyr::collect()) > 0,
       add = errorMessage
     )
@@ -348,10 +348,10 @@ getCandidateCodes <- function(keywords,
     checkmate::reportAssertions(collection = errorMessage)
     # now filter
     conceptDb <- conceptDb %>%
-      dplyr::filter(.data$concept_class_id %in% conceptClassId)
+      dplyr::filter(.data$concept_class_id %in% .env$conceptClassId)
   }
   concept <- conceptDb %>%
-    dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
+    dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
     dplyr::collect() %>%
     dplyr::rename_with(tolower)
 
@@ -361,8 +361,8 @@ getCandidateCodes <- function(keywords,
       dplyr::select("ancestor_concept_id", "domain_id", "standard_concept"),
     by = "ancestor_concept_id"
     ) %>%
-    dplyr::filter(.data$domain_id %in% domains) %>%
-    dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
+    dplyr::filter(.data$domain_id %in% .env$domains) %>%
+    dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept")) %>%
     dplyr::compute()
 
@@ -372,8 +372,8 @@ getCandidateCodes <- function(keywords,
       dplyr::select("descendant_concept_id", "domain_id", "standard_concept"),
     by = "descendant_concept_id"
     ) %>%
-    dplyr::filter(.data$domain_id %in% domains) %>%
-    dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
+    dplyr::filter(.data$domain_id %in% .env$domains) %>%
+    dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept")) %>%
     dplyr::collect() %>%
     dplyr::rename_with(tolower)
@@ -384,8 +384,8 @@ getCandidateCodes <- function(keywords,
       dplyr::select("concept_id", "domain_id", "standard_concept"),
     by = "concept_id"
     ) %>%
-    dplyr::filter(.data$domain_id %in% domains) %>%
-    dplyr::filter(.data$standard_concept %in% standardConceptFlags) %>%
+    dplyr::filter(.data$domain_id %in% .env$domains) %>%
+    dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept"))
 
   # Start finding candidate codes
@@ -592,7 +592,7 @@ getCandidateCodes <- function(keywords,
 
   if (searchNonStandard == TRUE) {
     conceptNs <- conceptDb %>%
-      dplyr::filter(.data$domain_id %in% domains) %>%
+      dplyr::filter(.data$domain_id %in% .env$domains) %>%
       dplyr::filter(.data$standard_concept == "Non-standard") %>%
       dplyr::collect() %>%
       dplyr::rename_with(tolower)
