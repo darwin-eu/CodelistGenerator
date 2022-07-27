@@ -91,6 +91,21 @@ getCandidateCodes <- function(keywords,
     start <- Sys.time()
   }
 
+    if (verbose == TRUE) {
+  message(glue::glue("Search strategy"))
+  message(glue::glue("-- keywords: {toString(keywords)}"))
+  message(glue::glue("-- domains: {toString(domains)}"))
+  message(glue::glue("-- conceptClassId: {toString(conceptClassId)}"))
+  message(glue::glue("-- standardConcept: {toString(standardConcept)}"))
+  message(glue::glue("-- searchSynonyms: {toString(searchSynonyms)}"))
+  message(glue::glue("-- searchNonStandard: {toString(searchNonStandard)}"))
+  message(glue::glue("-- fuzzyMatch: {toString(fuzzyMatch)}"))
+  message(glue::glue("-- maxDistanceCost: {toString(maxDistanceCost)}"))
+  message(glue::glue("-- exclude: {toString(exclude)}"))
+  message(glue::glue("-- includeDescendants: {toString(includeDescendants)}"))
+  message(glue::glue("-- includeAncestor: {toString(includeAncestor)}"))
+    }
+
   if (verbose == TRUE) {
     message("Checking inputs")
   }
