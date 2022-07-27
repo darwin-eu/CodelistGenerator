@@ -3,4 +3,6 @@ template:
   bootstrap: 5
   bootswatch: flatly
 
-
+navbar:
+  structure:
+    right: [github]
