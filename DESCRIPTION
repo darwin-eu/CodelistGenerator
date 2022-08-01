@@ -17,6 +17,7 @@ Imports:
     magrittr (>= 2.0.0),
     rlang (>= 1.0.0),
     DBI (>= 1.1.0),
+    arrow,
     glue
 Suggests: 
     covr,

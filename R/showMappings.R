@@ -18,9 +18,14 @@
 #' Show mappings from non-standard vocabularies to standard
 #'
 #' @param candidateCodelist Dataframe
-#' @param nonStandardVocabularies Character vector
 #' @param db Database connection via DBI::dbConnect()
-#' @param vocabularyDatabaseSchema Name of database schema with vocab tables
+#' @param vocabularyDatabaseSchema Name of database
+#' schema with vocab tables
+#' @param arrowDirectory Path to folder containing output of
+#' Codelist_generator::importVocab() - five parquet files: 'concept',
+#' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
+#' 'vocabulary. Required if db is NULL
+#' @param nonStandardVocabularies Character vector
 #'
 #' @return tibble
 #' @export
@@ -43,34 +48,49 @@
 #' )
 #' }
 showMappings <- function(candidateCodelist,
+                         db= NULL,
+                         vocabularyDatabaseSchema = NULL,
+                         arrowDirectory=NULL,
                          nonStandardVocabularies = c(
                            "ATC", "ICD10CM", "ICD10PCS",
                            "ICD9CM", "ICD9Proc",
                            "LOINC", "OPCS4", "Read",
                            "RxNorm", "RxNorm Extension",
                            "SNOMED"
-                         ),
-                         db,
-                         vocabularyDatabaseSchema) {
+                         )) {
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertVector(nonStandardVocabularies, add = errorMessage)
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
+  if(!is.null(db)){
   dbInherits <- inherits(db, "DBIConnection")
   if (!isTRUE(dbInherits)) {
     errorMessage$push("db must be a database connection via DBI::dbConnect()")
-  }
+  }}
   checkmate::reportAssertions(collection = errorMessage)
 
-  conceptDb <- dplyr::tbl(db, dplyr::sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".concept"
-  )))
-  conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".concept_relationship"
-  )))
+    if(is.null(arrowDirectory)){
+    if (!is.null(vocabularyDatabaseSchema)) {
+    conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
+      "SELECT * FROM {vocabularyDatabaseSchema}.concept"
+    )))
+    conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(paste0(
+      "SELECT * FROM ",
+      vocabularyDatabaseSchema,
+      ".concept_relationship"
+    )))
+    } else {
+    conceptDb <- dplyr::tbl(db, "concept")
+    conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
+    }}
+    if(!is.null(arrowDirectory)){
+    conceptDb <- arrow::read_parquet(paste0(arrowDirectory,
+                       "/concept.parquet"),
+                                   as_data_frame = FALSE)
+    conceptRelationshipDb <-  arrow::read_parquet(paste0(arrowDirectory,
+                       "/concept_relationship.parquet"),
+                                   as_data_frame = FALSE)
+  }
+
   # lowercase names
   conceptDb <- dplyr::rename_with(conceptDb, tolower)
   conceptRelationshipDb <- dplyr::rename_with(
@@ -79,9 +99,9 @@ showMappings <- function(candidateCodelist,
   )
 
   # vocabs to upper case
-  nonStandardVocabularies <- stringr::str_to_upper(nonStandardVocabularies)
+  nonStandardVocabularies <- toupper(nonStandardVocabularies)
   conceptDb <- conceptDb %>%
-    dplyr::mutate(vocabulary_id = stringr::str_to_upper(.data$vocabulary_id))
+    dplyr::mutate(vocabulary_id = toupper(.data$vocabulary_id))
 
   # check nonStandardVocabularies exist
   errorMessage <- checkmate::makeAssertCollection()
@@ -142,6 +162,9 @@ showMappings <- function(candidateCodelist,
     dplyr::rename("non_standard_concept_name" = "concept_name") %>%
     dplyr::rename("non_standard_vocabulary_id" = "vocabulary_id")
 
-  mappedCodes %>%
-    dplyr::distinct()
+  mappedCodes<-mappedCodes %>%
+    dplyr::distinct() %>%
+    dplyr::arrange(.data$standard_concept_id)
+
+  return(mappedCodes)
 }

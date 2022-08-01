@@ -1,9 +1,9 @@
 test_that("import vocab check", {
   library(DBI)
-  library(RSQLite)
+  library(arrow)
   library(dplyr)
   db <- generateMockVocabDb()
-  dOut <- getwd()
+  dOut <- tempdir()
   importVocab(
     db = db,
     vocabularyDatabaseSchema = "main",

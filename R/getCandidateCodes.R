@@ -27,6 +27,16 @@
 #' Where more than one word is given (e.g. "knee osteoarthritis"),
 #' all combinations of those words should be identified
 #' positions (e.g. "osteoarthritis of knee") should be identified.
+#' @param db Database connection via DBI::dbConnect(). Required if
+#' arrowDirectory is NULL
+#' @param vocabularyDatabaseSchema Name of database
+#' schema with vocab tables
+#' @param arrowDirectory Path to folder containing output of
+#' Codelist_generator::importVocab() - five parquet files: 'concept',
+#' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
+#' 'vocabulary. Required if db is NULL
+#' @param exclude  Character vector of words
+#' to identify concepts to exclude.
 #' @param domains Character vector with one or more of the OMOP CDM domain.
 #' @param conceptClassId Character vector with one or more concept class
 #' of the Concept
@@ -42,8 +52,6 @@
 #' @param maxDistanceCost, The
 #' maximum number/fraction of match cost (generalized Levenshtein distance)
 #' for fuzzy matching (see ??base::agrep for further details).
-#' @param exclude  Character vector of words
-#' to identify concepts to exclude.
 #' @param includeDescendants Either TRUE or FALSE.
 #' If TRUE descendant concepts of identified concepts
 #' will be included in the candidate codelist.
@@ -52,9 +60,7 @@
 #'  will be included in the candidate codelist.
 #' @param verbose Either TRUE or FALSE.
 #' If TRUE, progress will be reported.
-#' @param db Database connection via DBI::dbConnect()
-#' @param vocabularyDatabaseSchema Name of database
-#' schema with vocab tables
+
 #'
 #' @return tibble
 #' @importFrom rlang .data
@@ -73,6 +79,10 @@
 #' )
 #' }
 getCandidateCodes <- function(keywords,
+                              db=NULL,
+                              vocabularyDatabaseSchema=NULL,
+                              arrowDirectory=NULL,
+                              exclude = NULL,
                               domains = "Condition",
                               conceptClassId = NULL,
                               standardConcept = "Standard",
@@ -80,12 +90,10 @@ getCandidateCodes <- function(keywords,
                               searchNonStandard = FALSE,
                               fuzzyMatch = FALSE,
                               maxDistanceCost = 0.1,
-                              exclude = NULL,
                               includeDescendants = TRUE,
                               includeAncestor = FALSE,
-                              verbose = FALSE,
-                              db,
-                              vocabularyDatabaseSchema) {
+                              verbose = FALSE) {
+
   if (verbose == TRUE) {
     # to report time taken at the end
     start <- Sys.time()
@@ -161,6 +169,7 @@ getCandidateCodes <- function(keywords,
   checkmate::assert_logical(verbose,
     add = errorMessage
   )
+  if(!is.null(db)){
   dbInheritsCheck <- inherits(db, "DBIConnection")
   checkmate::assertTRUE(dbInheritsCheck,
     add = errorMessage
@@ -169,12 +178,13 @@ getCandidateCodes <- function(keywords,
     errorMessage$push(
       "- db must be a database connection via DBI::dbConnect()"
     )
-  }
+  }}
   # report initial assertions
   checkmate::reportAssertions(collection = errorMessage)
 
   # connect to relevant vocabulary tables
   # will return informative error if not found
+  if(is.null(arrowDirectory)){
   if (!is.null(vocabularyDatabaseSchema)) {
     conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
       "SELECT * FROM {vocabularyDatabaseSchema}.concept"
@@ -195,8 +205,21 @@ getCandidateCodes <- function(keywords,
     conceptAncestorDb <- dplyr::tbl(db, "concept_ancestor")
     conceptSynonymDb <- dplyr::tbl(db, "concept_synonym")
     conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
+  }}
+  if(!is.null(arrowDirectory)){
+    conceptDb <- arrow::read_parquet(paste0(arrowDirectory,
+                       "/concept.parquet"),
+                                   as_data_frame = FALSE)
+    conceptAncestorDb <-  arrow::read_parquet(paste0(arrowDirectory,
+                        "/concept_ancestor.parquet"),
+                                   as_data_frame = FALSE)
+    conceptSynonymDb <-  arrow::read_parquet(paste0(arrowDirectory,
+                        "/concept_synonym.parquet"),
+                                   as_data_frame = FALSE)
+    conceptRelationshipDb <-  arrow::read_parquet(paste0(arrowDirectory,
+                       "/concept_relationship.parquet"),
+                                   as_data_frame = FALSE)
   }
-
 
 
   # check variable names
@@ -298,13 +321,14 @@ getCandidateCodes <- function(keywords,
   # standard_concept to format in concept table
   conceptDb <- conceptDb %>%
     dplyr::mutate(
-      standard_concept =
-        dplyr::case_when(
-          is.na(standard_concept) ~ "Non-standard",
-          standard_concept == "C" ~ "Classification",
-          standard_concept == "S" ~ "Standard"
-        )
-    ) %>%
+      standard_concept = ifelse(is.na(.data$standard_concept),
+                              "Non-standard",  .data$standard_concept)) %>%
+    dplyr::mutate(
+      standard_concept = ifelse(.data$standard_concept == "C" ,
+                              "Classification",  .data$standard_concept)) %>%
+    dplyr::mutate(
+      standard_concept = ifelse(.data$standard_concept == "S" ,
+                              "Standard",  .data$standard_concept)) %>%
     dplyr::compute()
   # new name for readibility
   standardConceptFlags <- standardConcept

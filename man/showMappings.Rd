@@ -6,20 +6,27 @@
 \usage{
 showMappings(
   candidateCodelist,
+  db = NULL,
+  vocabularyDatabaseSchema = NULL,
+  arrowDirectory = NULL,
   nonStandardVocabularies = c("ATC", "ICD10CM", "ICD10PCS", "ICD9CM", "ICD9Proc",
-    "LOINC", "OPCS4", "Read", "RxNorm", "RxNorm Extension", "SNOMED"),
-  db,
-  vocabularyDatabaseSchema
+    "LOINC", "OPCS4", "Read", "RxNorm", "RxNorm Extension", "SNOMED")
 )
 }
 \arguments{
 \item{candidateCodelist}{Dataframe}
 
-\item{nonStandardVocabularies}{Character vector}
-
 \item{db}{Database connection via DBI::dbConnect()}
 
-\item{vocabularyDatabaseSchema}{Name of database schema with vocab tables}
+\item{vocabularyDatabaseSchema}{Name of database
+schema with vocab tables}
+
+\item{arrowDirectory}{Path to folder containing output of
+Codelist_generator::importVocab() - five parquet files: 'concept',
+'concept_ancestor', 'concept_relationship', 'concept_synonym', and
+'vocabulary. Required if db is NULL}
+
+\item{nonStandardVocabularies}{Character vector}
 }
 \value{
 tibble

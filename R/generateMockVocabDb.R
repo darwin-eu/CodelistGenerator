@@ -62,7 +62,7 @@ generateMockVocabDb <- function(dbType = "SQLite") {
       rep("Clinical Finding", 5),
       rep("Diagnosis", 2)
     ),
-    concept_code = NA
+    concept_code = "1234"
   )
   conceptAncestor <- dplyr::bind_rows(
     data.frame(
@@ -118,7 +118,11 @@ generateMockVocabDb <- function(dbType = "SQLite") {
       relationship_id = "Mapped from"
     )
   )
-  vocabulary <- data.frame(vocabVersion = "current")
+  vocabulary <- data.frame(vocabulary_id = "SNOMED",
+                           vocabulary_name = "SNOMED",
+                           vocabulary_reference = "1",
+                           vocabulary_version= "1",
+                           vocabulary_concept_id=1)
 
   # into in-memory databse
   if (dbType == "SQLite") {

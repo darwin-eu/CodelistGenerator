@@ -13,65 +13,32 @@ devtools::load_all()
 
 
 # usethis::edit_r_environ()
-
-db <-DBI::dbConnect(odbc::odbc(),
-                      Driver   = "ODBC Driver 11 for SQL Server",
-                      Server   = Sys.getenv("darwinDbDatabaseServer"),
-                      Database = Sys.getenv("darwinDbDatabase"),
-                      UID      = Sys.getenv("darwinDbUser"),
-                      PWD      = Sys.getenv("darwinDbPassword"),
-                      Port     = Sys.getenv("darwinDbDatabasePort"))
-vocabularyDatabaseSchema<-Sys.getenv("darwinDbCdmSchema")
-
+db<-DBI::dbConnect(RSQLite::SQLite(),
+                   Sys.getenv("VocabSQlitePath"))
+vocabularyDatabaseSchema<-"main"
 
 # import local
-importVocab(db=db,
-                  vocabularyDatabaseSchema=vocabularyDatabaseSchema,
-                  dirOut=here::here("extras", "SQLite"),
-                  errorIfExists =TRUE,
-                  verbose=TRUE)
-
-
-
-dementia_codes<-getCandidateCodes(keywords="dementia",
-                                    searchSource = TRUE,
+library(arrow)
+importVocab(db,
+            vocabularyDatabaseSchema = vocabularyDatabaseSchema,
+            dirOut=Sys.getenv("VocabArrowPath"),
+            errorIfExists = FALSE,
+            verbose = TRUE)
+# using db
+dementia_db<-getCandidateCodes(keywords="dementia",
                      domains="Condition",
                      db=db,
-                     vocabularyDatabaseSchema =vocabularyDatabaseSchema,
+                     vocabularyDatabaseSchema = vocabularyDatabaseSchema,
                      verbose=TRUE)
-show_mappings(dementia_codes,
-              source_vocabularies="ICD10CM",
+showMappings(dementia_db,
+              nonStandardVocabularies="ICD10CM",
               db=db,
-              vocabulary_database_schema =vocabulary_database_schema)
-profvis::profvis({
-colonoscopy_codes<-get_candidate_codes(keywords="colonoscopy",
-                     domains="Procedure",
-                     include_descendants=TRUE,
-                     include_ancestor=TRUE,
-                     db=db,
-                     vocabulary_database_schema =vocabulary_database_schema )
-})
-
-# metformin_codes<-get_candidate_codes(keywords="metformin",
-#                      domains="Drug",
-#                      db=db,
-#                      vocabulary_database_schema =vocabulary_database_schema,
-#                      verbose = TRUE)
-
-
-## test Adam´s DatabaseConnector
-# devtools::install_github("ablack3/DatabaseConnector", ref="dbplyr")
-# library(DatabaseConnector)
-# server<-Sys.getenv("SERVER_FEB22")
-# connectionDetails <-DatabaseConnector::downloadJdbcDrivers("postgresql", here::here())
-# connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "postgresql",
-#                                                                 server =server,
-#                                                                 user = user,
-#                                                                 password = password,
-#                                                                 port = port ,
-#                                                                 pathToDriver = here::here())
-# db<-connect(connectionDetails)
-# dementia_codes<-get_candidate_codes(keywords="dementia",
-#                      domains="Condition",
-#                      db=db,
-#                      vocabulary_database_schema =vocabulary_database_schema )
+              vocabularyDatabaseSchema = vocabularyDatabaseSchema)
+# using imported
+dementia_arrow<-getCandidateCodes(keywords="dementia",
+                    domains="Condition",
+                     arrowDirectory = Sys.getenv("VocabArrowPath"),
+                    verbose = TRUE)
+showMappings(dementia_arrow,
+              nonStandardVocabularies="ICD10CM",
+              arrowDirectory = Sys.getenv("VocabArrowPath"))

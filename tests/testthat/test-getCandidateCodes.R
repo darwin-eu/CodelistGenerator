@@ -279,6 +279,36 @@ test_that("tests with mock db", {
   DBI::dbDisconnect(db)
 })
 
+test_that("tests with mock arrow", {
+  library(DBI)
+  library(arrow)
+  library(dbplyr)
+  library(dplyr)
+
+  # mock db
+  db <- generateMockVocabDb()
+
+  dOut <- tempdir()
+  importVocab(
+    db = db,
+    vocabularyDatabaseSchema = "main",
+    dirOut = dOut,
+    errorIfExists = FALSE,
+    verbose = TRUE
+  )
+
+    codes <- getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    domains = "Condition",
+    includeDescendants = FALSE,
+    arrowDirectory=dOut
+  )
+  expect_true((nrow(codes) == 1 &
+    codes$concept_name[1] == "Musculoskeletal disorder"))
+
+
+})
+
 # test_that("tests with synthetic db", {
 #   library(DBI)
 #   library(odbc)

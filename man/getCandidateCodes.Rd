@@ -6,6 +6,10 @@
 \usage{
 getCandidateCodes(
   keywords,
+  db = NULL,
+  vocabularyDatabaseSchema = NULL,
+  arrowDirectory = NULL,
+  exclude = NULL,
   domains = "Condition",
   conceptClassId = NULL,
   standardConcept = "Standard",
@@ -13,12 +17,9 @@ getCandidateCodes(
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
-  exclude = NULL,
   includeDescendants = TRUE,
   includeAncestor = FALSE,
-  verbose = FALSE,
-  db,
-  vocabularyDatabaseSchema
+  verbose = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,20 @@ getCandidateCodes(
 Where more than one word is given (e.g. "knee osteoarthritis"),
 all combinations of those words should be identified
 positions (e.g. "osteoarthritis of knee") should be identified.}
+
+\item{db}{Database connection via DBI::dbConnect(). Required if
+arrowDirectory is NULL}
+
+\item{vocabularyDatabaseSchema}{Name of database
+schema with vocab tables}
+
+\item{arrowDirectory}{Path to folder containing output of
+Codelist_generator::importVocab() - five parquet files: 'concept',
+'concept_ancestor', 'concept_relationship', 'concept_synonym', and
+'vocabulary. Required if db is NULL}
+
+\item{exclude}{Character vector of words
+to identify concepts to exclude.}
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
@@ -49,9 +64,6 @@ will be used, with approximate matches identified.}
 maximum number/fraction of match cost (generalized Levenshtein distance)
 for fuzzy matching (see ??base::agrep for further details).}
 
-\item{exclude}{Character vector of words
-to identify concepts to exclude.}
-
 \item{includeDescendants}{Either TRUE or FALSE.
 If TRUE descendant concepts of identified concepts
 will be included in the candidate codelist.}
@@ -62,11 +74,6 @@ will be included in the candidate codelist.}
 
 \item{verbose}{Either TRUE or FALSE.
 If TRUE, progress will be reported.}
-
-\item{db}{Database connection via DBI::dbConnect()}
-
-\item{vocabularyDatabaseSchema}{Name of database
-schema with vocab tables}
 }
 \value{
 tibble

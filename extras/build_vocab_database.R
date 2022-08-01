@@ -25,7 +25,7 @@ vocabulary <- read_delim(paste0(vocab.folder, "/VOCABULARY.csv"), "\t",
   escape_double = FALSE, trim_ws = TRUE
 )
 
-db <- dbConnect(RSQLite::SQLite(), paste0(Sys.getenv("omop_cdm_vocab_path"),".sqlite"))
+db <- dbConnect(RSQLite::SQLite(), paste0(Sys.getenv("omop_cdm_vocab_path"),"/vocab.sqlite"))
 dbWriteTable(db, "concept", concept, overwrite = TRUE)
 dbWriteTable(db, "concept_relationship", concept_relationship, overwrite = TRUE)
 dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite = TRUE)

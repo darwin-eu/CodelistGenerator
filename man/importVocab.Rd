@@ -18,7 +18,7 @@ importVocab(
 \item{vocabularyDatabaseSchema}{Name of database
 schema with vocab tables}
 
-\item{dirOut}{Directory where output database will
+\item{dirOut}{Directory where output files will
 be saved}
 
 \item{errorIfExists}{Either TRUE or FALSE.
@@ -29,7 +29,7 @@ If FALSE, output database overwritten if it exists.}
 If TRUE, progress will be reported.}
 }
 \value{
-SQLite database
+Apache arrow parquet files
 }
 \description{
 Import vocabulary tables
@@ -37,13 +37,13 @@ Import vocabulary tables
 \examples{
 \dontrun{
 library(DBI)
-library(RSQLite)
+library(Arrow)
 library(CodelistGenerator)
 library(here)
 db <- generateMockVocabDb()
 dOut <- here()
 
-importVocab(
+importVocabAsArrow(
   db = db,
   vocabularyDatabaseSchema = "main",
   dirOut = dOut
