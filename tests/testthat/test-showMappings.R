@@ -1,4 +1,4 @@
-test_that("tests with mock db", {
+test_that("tests with mock db sqlite", {
   library(DBI)
   library(RSQLite)
   library(dbplyr)
@@ -85,4 +85,87 @@ test_that("tests with mock db", {
 
 
   DBI::dbDisconnect(db)
+})
+
+test_that("tests with mock db duckdb", {
+  library(DBI)
+  library(duckdb)
+  library(dbplyr)
+  library(dplyr)
+
+  # mock db
+  db <- generateMockVocabDb(dbType = "duckdb")
+
+  # tests
+  codes <- getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    domains = "Condition",
+    includeDescendants = TRUE,
+    db = db,
+    vocabularyDatabaseSchema = NULL
+  )
+  mappings <- showMappings(
+    candidateCodelist = codes,
+    nonStandardVocabularies = "READ",
+    db = db,
+    vocabularyDatabaseSchema = NULL
+  )
+  expect_true(
+    any(mappings$standard_concept_name %in% "Osteoarthrosis")
+  )
+  expect_true(
+    any(mappings$non_standard_concept_name %in% "Degenerative arthropathy")
+  )
+  expect_true(
+    any(mappings$standard_concept_name %in% "Osteoarthritis of knee")
+  )
+  expect_true(
+    any(mappings$non_standard_concept_name %in% "Knee osteoarthritis")
+  )
+
+
+  DBI::dbDisconnect(db)
+})
+
+
+test_that("tests with mock arrow", {
+  library(DBI)
+  library(arrow)
+  library(dbplyr)
+  library(dplyr)
+
+  # mock db
+  db <- generateMockVocabDb()
+  dOut <- tempdir()
+    importVocab(
+    db = db,
+    vocabularyDatabaseSchema = "main",
+    dirOut = dOut,
+    errorIfExists = FALSE,
+    verbose = TRUE
+  )
+  codes <- getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    domains = "Condition",
+    includeDescendants = TRUE,
+    arrowDirectory=dOut
+  )
+  mappings <- showMappings(
+    candidateCodelist = codes,
+    nonStandardVocabularies = "READ",
+    arrowDirectory=dOut
+  )
+  expect_true(
+    any(mappings$standard_concept_name %in% "Osteoarthrosis")
+  )
+  expect_true(
+    any(mappings$non_standard_concept_name %in% "Degenerative arthropathy")
+  )
+  expect_true(
+    any(mappings$standard_concept_name %in% "Osteoarthritis of knee")
+  )
+  expect_true(
+    any(mappings$non_standard_concept_name %in% "Knee osteoarthritis")
+  )
+
 })
