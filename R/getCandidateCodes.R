@@ -1,7 +1,5 @@
 # Copyright 2022 DARWIN EU (C)
 #
-# This file is part of IncidencePrevalence
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -15,7 +13,6 @@
 # limitations under the License.
 
 
-
 #' Generate candidate codelist for the OMOP CDM
 #'
 #' @description
@@ -23,19 +20,12 @@
 #' can be considered for creating a phenotype
 #' using the OMOP CDM.
 #'
+#' @param vocabDm A dm object containing references to vocab tables created using `vocab_dm`
 #' @param keywords Character vector of words to search for.
 #' Where more than one word is given (e.g. "knee osteoarthritis"),
 #' all combinations of those words should be identified
 #' positions (e.g. "osteoarthritis of knee") should be identified.
-#' @param db Database connection via DBI::dbConnect(). Required if
-#' arrowDirectory is NULL
-#' @param vocabularyDatabaseSchema Name of database
-#' schema with vocab tables
-#' @param arrowDirectory Path to folder containing output of
-#' Codelist_generator::importVocab() - five parquet files: 'concept',
-#' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
-#' 'vocabulary. Required if db is NULL
-#' @param exclude  Character vector of words
+#' @param exclude Character vector of words
 #' to identify concepts to exclude.
 #' @param domains Character vector with one or more of the OMOP CDM domain.
 #' @param conceptClassId Character vector with one or more concept class
@@ -78,10 +68,8 @@
 #'   vocabularyDatabaseSchema = vocabularyDatabaseSchema
 #' )
 #' }
-getCandidateCodes <- function(keywords,
-                              db=NULL,
-                              vocabularyDatabaseSchema=NULL,
-                              arrowDirectory=NULL,
+getCandidateCodes <- function(vocabDm,
+                              keywords,
                               exclude = NULL,
                               domains = "Condition",
                               conceptClassId = NULL,
@@ -97,81 +85,48 @@ getCandidateCodes <- function(keywords,
   if (verbose == TRUE) {
     # to report time taken at the end
     start <- Sys.time()
-  }
-
-    if (verbose == TRUE) {
-  message(glue::glue("Search strategy"))
-  message(glue::glue("-- keywords: {toString(keywords)}"))
-  message(glue::glue("-- domains: {toString(domains)}"))
-  message(glue::glue("-- conceptClassId: {toString(conceptClassId)}"))
-  message(glue::glue("-- standardConcept: {toString(standardConcept)}"))
-  message(glue::glue("-- searchSynonyms: {toString(searchSynonyms)}"))
-  message(glue::glue("-- searchNonStandard: {toString(searchNonStandard)}"))
-  message(glue::glue("-- fuzzyMatch: {toString(fuzzyMatch)}"))
-  message(glue::glue("-- maxDistanceCost: {toString(maxDistanceCost)}"))
-  message(glue::glue("-- exclude: {toString(exclude)}"))
-  message(glue::glue("-- includeDescendants: {toString(includeDescendants)}"))
-  message(glue::glue("-- includeAncestor: {toString(includeAncestor)}"))
-    }
-
-  if (verbose == TRUE) {
+    args <- rlang::fn_fmls_syms()
+    m <- purrr::map2_chr(names(args), args, ~glue::glue("-- {.x}: {toString(eval(.y))}"))
+    message(paste(m, collapse = "\n"))
     message("Checking inputs")
   }
 
+  # NOTE: I think we should be strict about input format for options
   ## domains and standardConcept to sentence case
-  domains <- tolower(domains)
-  standardConcept <- stringr::str_to_sentence(standardConcept)
-  if (!is.null(conceptClassId)) {
-    conceptClassId <- tolower(conceptClassId)
-  }
+  # domains <- tolower(domains)
+  # standardConcept <- stringr::str_to_sentence(standardConcept)
+  # if (!is.null(conceptClassId)) {
+  #   conceptClassId <- tolower(conceptClassId)
+  # }
 
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()
-  checkmate::assertVector(keywords,
-    add = errorMessage
-  )
-  checkmate::assertVector(conceptClassId,
+  checkmate::assertCharacter(keywords, add = errorMessage)
+  # NOTE: Perhaps use assertChoice here. There are lots of concept classes though.
+  checkmate::assertCharacter(conceptClassId,
     add = errorMessage,
     null.ok = TRUE
   )
-  checkmate::assertVector(domains,
+  checkmate::assertSubset(domains,
+    choices = c("Condition", "Measurement", "Procedure", "Observation", "Device", "Drug"),
     add = errorMessage
   )
-  checkmate::assertVector(standardConcept,
-    add = errorMessage
-  )
-  standardConceptCheck <- all(standardConcept %in%
-    c(
-      "Standard",
-      "Classification",
-      "Non-standard"
-    ))
+  checkmate::assertChoice(standardConcept,
+    choices = c("Standard", "Classification", "Non-standard"),
+    add = errorMessage)
   checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
-
   checkmate::assert_logical(searchSynonyms, add = errorMessage)
   checkmate::assert_logical(searchNonStandard, add = errorMessage)
-  checkmate::assert_logical(fuzzyMatch,
-    add = errorMessage
-  )
-  checkmate::assert_numeric(maxDistanceCost,
-    add = errorMessage
-  )
-  checkmate::assertVector(exclude,
-    null.ok = TRUE,
-    add = errorMessage
-  )
-  checkmate::assert_logical(includeDescendants,
-    add = errorMessage
-  )
-  checkmate::assert_logical(includeAncestor,
-    add = errorMessage
-  )
-  checkmate::assert_logical(verbose,
-    add = errorMessage
-  )
-  if(!is.null(db)){
-  dbInheritsCheck <- inherits(db, "DBIConnection")
-  checkmate::assertTRUE(dbInheritsCheck,
+  checkmate::assert_logical(fuzzyMatch, add = errorMessage)
+  checkmate::assert_numeric(maxDistanceCost, add = errorMessage)
+  checkmate::assertCharacter(exclude, null.ok = TRUE, add = errorMessage)
+  checkmate::assert_logical(includeDescendants, add = errorMessage)
+  checkmate::assert_logical(includeAncestor, add = errorMessage)
+  checkmate::assert_logical(verbose, add = errorMessage)
+
+  if(!is.null(db)) {
+    dbInheritsCheck <- inherits(db, "DBIConnection")
+    checkmate::assertTRUE(dbInheritsCheck,
     add = errorMessage
   )
   if (!isTRUE(dbInheritsCheck)) {
@@ -486,11 +441,6 @@ getCandidateCodes <- function(keywords,
         )
     }
   }
-
-
-
-
-
 
   if (nrow(candidateCodes) > 0) {
 
@@ -842,4 +792,25 @@ addAncestor <- function(workingCandidateCodes,
     dplyr::left_join(conceptDf, by = "concept_id")
 
   return(candidateCodeAncestor)
+}
+
+
+#' Helper function to prepare words for search
+#' @param words A character vector.
+#' @noRd
+formatWords <- function(words) {
+  checkmate::assertCharacter(words)
+
+  # to avoid invalid UTF-8 error
+  # TODO why is this needed? What if we want to include UTF8 characters?
+  Encoding(words) <- "latin1"
+
+  # some generic formatting
+  trimws(words) %>%
+    stringr::str_replace_all(workingWords, "-", " ") %>%
+    stringr::str_remove_all(workingWords, "[[:punct:]]") %>%
+    stringr::str_remove_all(workingWords, "[^[\\da-zA-Z ]]") %>%
+    stringr::str_remove_all(workingWords, "[^\x01-\x7F]+") %>%
+    stringr::str_to_lower(workingWords) %>%
+    trimws(workingWords)
 }
