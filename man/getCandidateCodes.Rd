@@ -5,10 +5,8 @@
 \title{Generate candidate codelist for the OMOP CDM}
 \usage{
 getCandidateCodes(
+  vocref,
   keywords,
-  db = NULL,
-  vocabularyDatabaseSchema = NULL,
-  arrowDirectory = NULL,
   exclude = NULL,
   domains = "Condition",
   conceptClassId = NULL,
@@ -23,29 +21,19 @@ getCandidateCodes(
 )
 }
 \arguments{
+\item{vocref}{A "VocabReference" object containing references to vocab tables
+created using \code{vocabRefFromDatabase} or \code{vocabRefFromFiles}}
+
 \item{keywords}{Character vector of words to search for.
 Where more than one word is given (e.g. "knee osteoarthritis"),
 all combinations of those words should be identified
 positions (e.g. "osteoarthritis of knee") should be identified.}
 
-\item{db}{Database connection via DBI::dbConnect(). Required if
-arrowDirectory is NULL}
-
-\item{vocabularyDatabaseSchema}{Name of database
-schema with vocab tables}
-
-\item{arrowDirectory}{Path to folder containing output of
-Codelist_generator::importVocab() - five parquet files: 'concept',
-'concept_ancestor', 'concept_relationship', 'concept_synonym', and
-'vocabulary. Required if db is NULL}
-
-\item{exclude}{Character vector of words
-to identify concepts to exclude.}
+\item{exclude}{Character vector of words to identify concepts to exclude.}
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
-\item{conceptClassId}{Character vector with one or more concept class
-of the Concept}
+\item{conceptClassId}{Character vector with one or more concept class of the Concept}
 
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
@@ -60,8 +48,7 @@ search via non-standard concepts.}
 \item{fuzzyMatch}{Either TRUE or FALSE. If TRUE the fuzzy matching
 will be used, with approximate matches identified.}
 
-\item{maxDistanceCost, }{The
-maximum number/fraction of match cost (generalized Levenshtein distance)
+\item{maxDistanceCost}{The maximum number/fraction of match cost (generalized Levenshtein distance)
 for fuzzy matching (see ??base::agrep for further details).}
 
 \item{includeDescendants}{Either TRUE or FALSE.
@@ -72,8 +59,7 @@ will be included in the candidate codelist.}
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.}
 
-\item{verbose}{Either TRUE or FALSE.
-If TRUE, progress will be reported.}
+\item{verbose}{Either TRUE or FALSE. If TRUE, progress will be reported.}
 }
 \value{
 tibble
@@ -85,14 +71,28 @@ using the OMOP CDM.
 }
 \examples{
 \dontrun{
-library(DBI)
 library(CodelistGenerator)
-db <- DBI::dbConnect(" Your database connection here ")
-vocabularyDatabaseSchema <- " Your vocabulary schema here "
-getCandidateCodes(
-  keywords = "asthma",
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
-)
+con <- DBI::dbConnect(RPostgres::Postgres(),
+                       dbname = "cdm",
+                       host = "localhost",
+                       user = "postgres",
+                       password = Sys.getenv("PASSWORD"))
+
+vocab <- vocabRefFromDatabase(con, schema = "synthea1k")
+
+getCandidateCodes(vocab, keywords = "asthma")
+
+#' library(CodelistGenerator)
+con <- DBI::dbConnect(RPostgres::Postgres(),
+                       dbname = "cdm",
+                       host = "localhost",
+                       user = "postgres",
+                       password = Sys.getenv("PASSWORD"))
+
+downloadVocab(con, "vocabSchema", dirOut = here::here("vocab"))
+
+vocab <- vocabRefFromFiles(here::here("vocab"))
+
+getCandidateCodes(vocab, keywords = "asthma")
 }
 }
