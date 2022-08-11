@@ -20,16 +20,15 @@
 #' can be considered for creating a phenotype
 #' using the OMOP CDM.
 #'
-#' @param vocabDm A dm object containing references to vocab tables created using `vocab_dm`
+#' @param vocref A "VocabReference" object containing references to vocab tables
+#' created using `vocabRefFromDatabase` or `vocabRefFromFiles`
 #' @param keywords Character vector of words to search for.
 #' Where more than one word is given (e.g. "knee osteoarthritis"),
 #' all combinations of those words should be identified
 #' positions (e.g. "osteoarthritis of knee") should be identified.
-#' @param exclude Character vector of words
-#' to identify concepts to exclude.
+#' @param exclude Character vector of words to identify concepts to exclude.
 #' @param domains Character vector with one or more of the OMOP CDM domain.
-#' @param conceptClassId Character vector with one or more concept class
-#' of the Concept
+#' @param conceptClassId Character vector with one or more concept class of the Concept
 #' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
@@ -39,18 +38,15 @@
 #' search via non-standard concepts.
 #' @param fuzzyMatch Either TRUE or FALSE. If TRUE the fuzzy matching
 #' will be used, with approximate matches identified.
-#' @param maxDistanceCost, The
-#' maximum number/fraction of match cost (generalized Levenshtein distance)
+#' @param maxDistanceCost The maximum number/fraction of match cost (generalized Levenshtein distance)
 #' for fuzzy matching (see ??base::agrep for further details).
 #' @param includeDescendants Either TRUE or FALSE.
 #' If TRUE descendant concepts of identified concepts
 #' will be included in the candidate codelist.
 #' @param includeAncestor Either TRUE or FALSE.
 #' If TRUE the direct ancestor concepts of identified concepts
-#'  will be included in the candidate codelist.
-#' @param verbose Either TRUE or FALSE.
-#' If TRUE, progress will be reported.
-
+#' will be included in the candidate codelist.
+#' @param verbose Either TRUE or FALSE. If TRUE, progress will be reported.
 #'
 #' @return tibble
 #' @importFrom rlang .data
@@ -58,17 +54,31 @@
 #'
 #' @examples
 #' \dontrun{
-#' library(DBI)
 #' library(CodelistGenerator)
-#' db <- DBI::dbConnect(" Your database connection here ")
-#' vocabularyDatabaseSchema <- " Your vocabulary schema here "
-#' getCandidateCodes(
-#'   keywords = "asthma",
-#'   db = db,
-#'   vocabularyDatabaseSchema = vocabularyDatabaseSchema
-#' )
+#' con <- DBI::dbConnect(RPostgres::Postgres(),
+#'                        dbname = "cdm",
+#'                        host = "localhost",
+#'                        user = "postgres",
+#'                        password = Sys.getenv("PASSWORD"))
+#'
+#' vocab <- vocabRefFromDatabase(con, schema = "synthea1k")
+#'
+#' getCandidateCodes(vocab, keywords = "asthma")
+#'
+#' #' library(CodelistGenerator)
+#' con <- DBI::dbConnect(RPostgres::Postgres(),
+#'                        dbname = "cdm",
+#'                        host = "localhost",
+#'                        user = "postgres",
+#'                        password = Sys.getenv("PASSWORD"))
+#'
+#' downloadVocab(con, "vocabSchema", dirOut = here::here("vocab"))
+#'
+#' vocab <- vocabRefFromFiles(here::here("vocab"))
+#'
+#' getCandidateCodes(vocab, keywords = "asthma")
 #' }
-getCandidateCodes <- function(vocabDm,
+getCandidateCodes <- function(vocref,
                               keywords,
                               exclude = NULL,
                               domains = "Condition",
@@ -91,22 +101,20 @@ getCandidateCodes <- function(vocabDm,
     message("Checking inputs")
   }
 
-  # NOTE: I think we should be strict about input format for options
-  ## domains and standardConcept to sentence case
-  # domains <- tolower(domains)
-  # standardConcept <- stringr::str_to_sentence(standardConcept)
-  # if (!is.null(conceptClassId)) {
-  #   conceptClassId <- tolower(conceptClassId)
-  # }
+  # TODO Discuss how strict should we be about input format for options?
+  # Should we just be case insensitive (i.e. everything is mapped to lower case)?
 
-  ## checks for standard types of user error
+  ## domains and standardConcept to sentence case
+  domains <- tolower(domains)
+  # standardConcept <- stringr::str_to_sentence(standardConcept)
+
+  if (!is.null(conceptClassId)) {
+    conceptClassId <- tolower(conceptClassId)
+  }
+
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertCharacter(keywords, add = errorMessage)
-  # NOTE: Perhaps use assertChoice here. There are lots of concept classes though.
-  checkmate::assertCharacter(conceptClassId,
-    add = errorMessage,
-    null.ok = TRUE
-  )
+  checkmate::assertCharacter(conceptClassId, add = errorMessage, null.ok = TRUE)
   checkmate::assertSubset(domains,
     choices = c("Condition", "Measurement", "Procedure", "Observation", "Device", "Drug"),
     add = errorMessage
@@ -115,195 +123,52 @@ getCandidateCodes <- function(vocabDm,
     choices = c("Standard", "Classification", "Non-standard"),
     add = errorMessage)
   checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
-  checkmate::assert_logical(searchSynonyms, add = errorMessage)
-  checkmate::assert_logical(searchNonStandard, add = errorMessage)
-  checkmate::assert_logical(fuzzyMatch, add = errorMessage)
+  checkmate::assertLogical(searchSynonyms, add = errorMessage)
+  checkmate::assertLogical(searchNonStandard, add = errorMessage)
+  checkmate::assertLogical(fuzzyMatch, add = errorMessage)
   checkmate::assert_numeric(maxDistanceCost, add = errorMessage)
   checkmate::assertCharacter(exclude, null.ok = TRUE, add = errorMessage)
-  checkmate::assert_logical(includeDescendants, add = errorMessage)
-  checkmate::assert_logical(includeAncestor, add = errorMessage)
-  checkmate::assert_logical(verbose, add = errorMessage)
+  checkmate::assertLogical(includeDescendants, add = errorMessage)
+  checkmate::assertLogical(includeAncestor, add = errorMessage)
+  checkmate::assertLogical(verbose, add = errorMessage)
+  checkmate::assertClass(vocabReference, "VocabReference", add = errorMessage)
 
-  if(!is.null(db)) {
-    dbInheritsCheck <- inherits(db, "DBIConnection")
-    checkmate::assertTRUE(dbInheritsCheck,
-    add = errorMessage
-  )
-  if (!isTRUE(dbInheritsCheck)) {
-    errorMessage$push(
-      "- db must be a database connection via DBI::dbConnect()"
-    )
-  }}
-  # report initial assertions
   checkmate::reportAssertions(collection = errorMessage)
 
-  # connect to relevant vocabulary tables
-  # will return informative error if not found
-  if(is.null(arrowDirectory)){
-  if (!is.null(vocabularyDatabaseSchema)) {
-    conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-      "SELECT * FROM {vocabularyDatabaseSchema}.concept"
-    )))
-    conceptAncestorDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-      "SELECT * FROM {vocabularyDatabaseSchema}.concept_ancestor"
-    )))
-    conceptSynonymDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-      "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
-    )))
-    conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(paste0(
-      "SELECT * FROM ",
-      vocabularyDatabaseSchema,
-      ".concept_relationship"
-    )))
-  } else {
-    conceptDb <- dplyr::tbl(db, "concept")
-    conceptAncestorDb <- dplyr::tbl(db, "concept_ancestor")
-    conceptSynonymDb <- dplyr::tbl(db, "concept_synonym")
-    conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
-  }}
-  if(!is.null(arrowDirectory)){
-    conceptDb <- arrow::read_parquet(paste0(arrowDirectory,
-                       "/concept.parquet"),
-                                   as_data_frame = FALSE)
-    conceptAncestorDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                        "/concept_ancestor.parquet"),
-                                   as_data_frame = FALSE)
-    conceptSynonymDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                        "/concept_synonym.parquet"),
-                                   as_data_frame = FALSE)
-    conceptRelationshipDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                       "/concept_relationship.parquet"),
-                                   as_data_frame = FALSE)
-  }
+  # check domains in Concept table
+  local({
+    inConceptTable <- vocref$concept %>%
+      dplyr::distinct(.data$domain_id) %>%
+      dplyr::pull() %>%
+      tolower()
 
+    # TODO discuss how to handle upper/lower cases
+    # TODO discuss when to trigger an error vs warning vs message
 
-  # check variable names
-  # concept table
-  conceptDbNames <- c(
-    "concept_id", "concept_name", "domain_id",
-    "vocabulary_id", "standard_concept"
-  )
-  conceptDbNamesCheck <- all(conceptDbNames %in%
-    names(conceptDb %>%
-      utils::head(1) %>%
-      dplyr::collect() %>%
-      dplyr::rename_with(tolower)))
-  checkmate::assertTRUE(conceptDbNamesCheck, add = errorMessage)
-
-  # conceptAncestor table
-  conceptAncestorDbNames <- c(
-    "ancestor_concept_id", "descendant_concept_id",
-    "min_levels_of_separation", "max_levels_of_separation"
-  )
-  cAncestorDbNamesCheck <- all(
-    conceptAncestorDbNames %in%
-      names(conceptAncestorDb %>%
-        utils::head(1) %>%
-        dplyr::collect() %>%
-        dplyr::rename_with(tolower))
-  )
-  checkmate::assertTRUE(cAncestorDbNamesCheck,
-    add = errorMessage
-  )
-  # conceptSynonym table
-  conceptSynonymDbNames <- c(
-    "concept_id",
-    "concept_synonym_name"
-  )
-  conceptSynonymDbNamesCheck <- all(
-    conceptSynonymDbNames %in%
-      names(conceptSynonymDb %>%
-        utils::head(1) %>%
-        dplyr::collect() %>%
-        dplyr::rename_with(tolower))
-  )
-  checkmate::assertTRUE(conceptSynonymDbNamesCheck,
-    add = errorMessage
-  )
-
-  # conceptRelationshipDb table
-  conceptRelationshipDbNames <- c(
-    "concept_id_1", "concept_id_2",
-    "relationship_id"
-  )
-  conceptRelDbNamesCheck <- all(
-    conceptRelationshipDbNames %in%
-      names(conceptRelationshipDb %>%
-        utils::head(1) %>%
-        dplyr::collect() %>%
-        dplyr::rename_with(tolower))
-  )
-  checkmate::assertTRUE(conceptRelDbNamesCheck,
-    add = errorMessage
-  )
-  # check domains in db
-  domainsInDb <- conceptDb %>%
-    dplyr::mutate(domain_id = tolower(.data$domain_id)) %>%
-    dplyr::select(.data$domain_id) %>%
-    dplyr::distinct() %>%
-    dplyr::collect() %>%
-    dplyr::pull()
-  for (i in seq_along(domains)) {
-    domainsCheck <- domains[i] %in% domainsInDb
-    checkmate::assertTRUE(domainsCheck, add = errorMessage)
-    if (!isTRUE(domainsCheck)) {
-      errorMessage$push(
-        glue::glue("- domain_id {domains[i]} not found in concept table")
-      )
+    notInConceptTable <- dplyr::setdiff(domains, inConceptTable)
+    if (length(notInConceptTable) > 0) {
+      s <- ifelse(length(notInConceptTable) > 1, "s", "")
+      d <- paste(notInConceptTable, collapse = ', ')
+      errorMessage$push(glue::glue("domain_id{s} {d} not found in concept table"))
     }
-  }
+  })
 
-  # check conceptClassId in db
-  conceptClassInDb <- conceptDb %>%
-    dplyr::mutate(concept_class_id = tolower(.data$concept_class_id)) %>%
-    dplyr::select(.data$concept_class_id) %>%
-    dplyr::distinct() %>%
-    dplyr::collect() %>%
-    dplyr::pull()
-  for (i in seq_along(conceptClassId)) {
-    conceptClassCheck <- conceptClassId[i] %in% conceptClassInDb
-    checkmate::assertTRUE(conceptClassCheck, add = errorMessage)
-    if (!isTRUE(conceptClassCheck)) {
-      errorMessage$push(
-        glue::glue("- conceptClassId {conceptClassId[i]} not in concept table")
-      )
+  # check conceptClassId in Concept table
+  # This is almost the same as the code above and could be made into a function
+  local({
+    inConceptTable <-  vocref$concept %>%
+      dplyr::distinct(.data$concept_class_id) %>%
+      dplyr::pull() %>%
+      tolower()
+
+    notInConceptTable <- dplyr::setdiff(conceptClassId, inConceptTable)
+    if (length(notInConceptTable) > 0) {
+      s <- ifelse(length(notInConceptTable) > 1, "s", "")
+      d <- paste(notInConceptTable, collapse = ', ')
+      errorMessage$push(glue::glue("concept_class_id{s} {d} not found in concept table"))
     }
-  }
+  })
 
-  # report all assertions
-  checkmate::reportAssertions(collection = errorMessage)
-
-  # standard_concept to format in concept table
-  conceptDb <- conceptDb %>%
-    dplyr::mutate(
-      standard_concept = ifelse(is.na(.data$standard_concept),
-                              "Non-standard",  .data$standard_concept)) %>%
-    dplyr::mutate(
-      standard_concept = ifelse(.data$standard_concept == "C" ,
-                              "Classification",  .data$standard_concept)) %>%
-    dplyr::mutate(
-      standard_concept = ifelse(.data$standard_concept == "S" ,
-                              "Standard",  .data$standard_concept)) %>%
-    dplyr::compute()
-  # new name for readibility
-  standardConceptFlags <- standardConcept
-
-  # check standardConceptFlags are in concept table
-  errorMessage <- checkmate::makeAssertCollection()
-  standardConceptInDb <- conceptDb %>%
-    dplyr::select(.data$standard_concept) %>%
-    dplyr::distinct() %>%
-    dplyr::collect() %>%
-    dplyr::pull()
-  for (i in seq_along(standardConceptFlags)) {
-    standardConceptCheck <- standardConceptFlags[i] %in% standardConceptInDb
-    checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
-    if (!isTRUE(standardConceptCheck)) {
-      errorMessage$push(
-        glue::glue("- standardConcept {standardConcept[i]} not in concept table")
-      )
-    }
-  }
   checkmate::reportAssertions(collection = errorMessage)
 
 
@@ -316,6 +181,7 @@ getCandidateCodes <- function(vocabDm,
     dplyr::mutate(concept_class_id = tolower(.data$concept_class_id)) %>%
     dplyr::mutate(domain_id = tolower(.data$domain_id)) %>%
     dplyr::filter(.data$domain_id %in% .env$domains)
+
   if (!is.null(conceptClassId)) {
     # first, check some combination exists
     # return error if not
