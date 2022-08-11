@@ -21,7 +21,7 @@
 #' connection and save them as parquet files in the specified folder.
 #'
 #' @param conn Database connection via DBI::dbConnect()
-#' @param vocabularyDatabaseSchema Name of database schema containing vocab tables
+#' @param schema Name of database schema containing vocab tables
 #' @param dirOut Directory where output files will be saved
 #' @param errorIfExist Either TRUE or FALSE.
 #' If TRUE, an error will be thrown if vocab parquet files already exist.
@@ -40,13 +40,13 @@
 #'
 #' downloadVocab(
 #'   conn = conn,
-#'   vocabularyDatabaseSchema = "main",
+#'   schema = "main",
 #'   dirOut = dOut
 #' )
 #' }
 #'
 downloadVocab <- function(conn,
-                          vocabularyDatabaseSchema,
+                          schema,
                           dirOut,
                           errorIfExists = TRUE,
                           verbose = FALSE) {
@@ -55,17 +55,19 @@ downloadVocab <- function(conn,
     message("Checking inputs")
   }
 
+  #TODO add a progress bar and download in batches? Downloads take a while.
+
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertTRUE(inherits(conn, "DBIConnection"), add = errorMessage)
-  checkmate::assertCharacter(vocabularyDatabaseSchema, len = 1, add = errorMessage)
+  checkmate::assertCharacter(schema, len = 1, add = errorMessage)
   checkmate::assertTRUE(file.exists(dirOut), add = errorMessage)
   checkmate::assert_logical(errorIfExists, add = errorMessage)
   checkmate::assert_logical(verbose, add = errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
 
   # handle case where files already exist
-  vocabTables <- c("concept", "concept_ancestor", "concept_synonym", "concept_relationship", "vocabulary")
-  vocabPaths <- file.path(dirOut, paste0(vocabTables, ".parquet"))
+  vocabTableNames <- c("concept", "concept_ancestor", "concept_synonym", "concept_relationship", "vocabulary")
+  vocabPaths <- file.path(dirOut, paste0(vocabTableNames, ".parquet"))
 
   if (any(purrr::map_lgl(vocabPaths, file.exists))) {
     if (errorIfExists) {
@@ -86,7 +88,7 @@ downloadVocab <- function(conn,
       standard_concept,
       concept_class_id,
       concept_code
-    FROM {vocabularyDatabaseSchema}.concept"))
+    FROM {schema}.concept"))
 
   concept <- arrow::arrow_table(concept,
                                 schema = arrow::schema(concept_id = double(),
@@ -107,7 +109,7 @@ downloadVocab <- function(conn,
       concept_id_1,
       concept_id_2,
       relationship_id
-    FROM {vocabularyDatabaseSchema}.concept_relationship"))
+    FROM {schema}.concept_relationship"))
 
   conceptRelationship <- arrow::arrow_table(conceptRelationship,
                                             schema = arrow::schema(concept_id_1 = double(),
@@ -125,7 +127,7 @@ downloadVocab <- function(conn,
       descendant_concept_id,
       min_levels_of_separation,
       max_levels_of_separation
-    FROM {vocabularyDatabaseSchema}.concept_ancestor"))
+    FROM {schema}.concept_ancestor"))
 
   conceptAncestor <- arrow::arrow_table(conceptAncestor,
                                         schema = arrow::schema(ancestor_concept_id = double(),
@@ -138,9 +140,9 @@ downloadVocab <- function(conn,
 
   if (verbose) message("Downloading concept_synonym table")
 
-  conceptSynonym <- DBI::dbGetQuery(glue::glue("
+  conceptSynonym <- DBI::dbGetQuery(conn, glue::glue("
     SELECT concept_id, concept_synonym_name
-    FROM {vocabularyDatabaseSchema}.concept_synonym"))
+    FROM {schema}.concept_synonym"))
 
   conceptSynonym <- arrow::arrow_table(conceptSynonym,
                                        schema = arrow::schema(concept_id = double(),
@@ -158,7 +160,7 @@ downloadVocab <- function(conn,
       vocabulary_reference,
       vocabulary_version,
       vocabulary_concept_id
-    FROM {vocabularyDatabaseSchema}.vocabulary"))
+    FROM {schema}.vocabulary"))
 
   vocabulary <- arrow::arrow_table(vocabulary,
                                    schema = arrow::schema(vocabulary_id = arrow::string(),
