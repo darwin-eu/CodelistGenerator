@@ -75,7 +75,7 @@ To start we will search for "osteoarthritis", while excluding "post-infection" a
 oaCodes1 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -110,7 +110,7 @@ Now we will also include the descendants of included concepts.
 oaCodes2 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -149,7 +149,7 @@ Now we will search the observation domain as well as the condition domain.
 oaCodes3 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -188,7 +188,7 @@ Now we will search the concept synonym table to identify concepts to include.
 oaCodes4 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = TRUE,
+  searchViaSynonyms = TRUE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -227,7 +227,7 @@ Now we will search the concept synonym table to identify concepts to include.
 oaCodes5 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = TRUE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -266,7 +266,7 @@ Now we will use an approximate search. See https://www.rdocumentation.org/packag
 oaCodes6 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.1,
@@ -306,7 +306,7 @@ Here we widen the approximate searching, increasing the maximum distance allowed
 oaCodes7 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.2,
@@ -346,7 +346,7 @@ Now we include the direct ancestor of included terms.
 oaCodes8 <- get_candidate_codes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,

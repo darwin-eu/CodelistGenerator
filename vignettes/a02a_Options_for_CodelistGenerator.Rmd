@@ -171,7 +171,7 @@ We can also pick up codes based on their synonyms. In this case "Arthritis" (whi
 codes <- getCandidateCodes(
   keywords = "arthritis",
   domains = "Condition",
-  searchSynonyms = TRUE,
+  searchViaSynonyms = TRUE,
   db = db,
   vocabularyDatabaseSchema = "main"
 )

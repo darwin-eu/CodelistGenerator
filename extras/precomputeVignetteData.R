@@ -57,7 +57,7 @@ saveRDS(
 dementiaCodes1 <- getCandidateCodes(
   keywords = "dementia",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   exclude = NULL,
   includeDescendants = TRUE,
@@ -104,7 +104,7 @@ saveRDS(
 oaCodes1 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
@@ -124,7 +124,7 @@ saveRDS(
 oaCodes2 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
@@ -144,7 +144,7 @@ saveRDS(
 oaCodes3 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
   exclude = c(
@@ -165,7 +165,7 @@ saveRDS(
 oaCodes4 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = TRUE,
+  searchViaSynonyms = TRUE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
   exclude = c(
@@ -207,7 +207,7 @@ saveRDS(
 oaCodes6 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.1,
   exclude = c(
@@ -228,7 +228,7 @@ saveRDS(
 oaCodes7 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.2,
   exclude = c(
@@ -249,7 +249,7 @@ saveRDS(
 oaCodes8 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.2,
   exclude = c(
@@ -290,7 +290,7 @@ saveRDS(
 
 colonoscopyCodes2<-getCandidateCodes(keywords="colonoscopy",
                     domains=c("Procedure", "Measurement"),
-                    searchSynonyms = FALSE,
+                    searchViaSynonyms = FALSE,
                     fuzzyMatch = FALSE,
                     exclude = NULL,
                     includeDescendants = FALSE,
@@ -331,7 +331,7 @@ metforminCodes2<-getCandidateCodes(keywords="metformin",
                     domains=c("Drug"),
                     standardConcept=c("Standard", "Classification"),
                     conceptClassId="Ingredient",
-                    searchSynonyms = FALSE,
+                    searchViaSynonyms = FALSE,
                     fuzzyMatch = FALSE,
                     exclude = NULL,
                     includeDescendants = TRUE,
@@ -349,7 +349,7 @@ getCandidateCodes(keywords="metformin",
                     domains=c("Drug"),
                     standardConcept=c("Standard", "Classification"),
                     conceptClassId="Ingredient",
-                    searchSynonyms = FALSE,
+                    searchViaSynonyms = FALSE,
                     fuzzyMatch = FALSE,
                     exclude = NULL,
                     includeDescendants = TRUE,
@@ -361,7 +361,7 @@ getCandidateCodes(keywords="metformin",
                     domains=c("Drug"),
                     standardConcept=c("Standard", "Classification"),
                     conceptClassId="Prescription Drug",
-                    searchSynonyms = FALSE,
+                    searchViaSynonyms = FALSE,
                     fuzzyMatch = FALSE,
                     exclude = NULL,
                     includeDescendants = TRUE,

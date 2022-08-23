@@ -13,7 +13,7 @@ getCandidateCodes(
   domains = "Condition",
   conceptClassId = NULL,
   standardConcept = "Standard",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
@@ -51,7 +51,7 @@ of the Concept}
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.}
 
-\item{searchSynonyms}{Either TRUE or FALSE. If TRUE the code will also
+\item{searchViaSynonyms}{Either TRUE or FALSE. If TRUE the code will also
 search via the concept synonym table.}
 
 \item{searchNonStandard}{Either TRUE or FALSE. If TRUE the code will also

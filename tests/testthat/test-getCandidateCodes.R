@@ -94,7 +94,7 @@ test_that("tests with mock db", {
     domains = "Condition",
     standardConcept = c("Standard", "Non-standard"),
     includeDescendants = TRUE,
-    searchSynonyms = FALSE,
+    searchViaSynonyms = FALSE,
     db = db,
     vocabularyDatabaseSchema = "main"
   )
@@ -102,11 +102,11 @@ test_that("tests with mock db", {
     all(codes$concept_id %in% c(3, 4, 5, 7)) &
     all(!codes$concept_id %in% c(1, 2, 6))))
 
-  # test searchSynonyms
+  # test searchViaSynonyms
   codes <- getCandidateCodes(
     keywords = "arthritis",
     domains = "Condition",
-    searchSynonyms = TRUE,
+    searchViaSynonyms = TRUE,
     db = db,
     vocabularyDatabaseSchema = "main"
   )
@@ -170,7 +170,7 @@ test_that("tests with mock db", {
     domains = "Condition",
     conceptClassId = "Clinical Finding",
     standardConcept = "Standard",
-    searchSynonyms = TRUE,
+    searchViaSynonyms = TRUE,
     searchNonStandard = TRUE,
     fuzzyMatch = FALSE,
     exclude = "Childhood asthma",
@@ -189,7 +189,7 @@ test_that("tests with mock db", {
     domains = "Condition",
     conceptClassId = "Clinical Finding",
     standardConcept = "Standard",
-    searchSynonyms = TRUE,
+    searchViaSynonyms = TRUE,
     searchNonStandard = TRUE,
     fuzzyMatch = TRUE,
     maxDistanceCost = 0.1,
@@ -208,7 +208,7 @@ test_that("tests with mock db", {
   ## Expected errors
   expect_error(getCandidateCodes(
     keywords = "a",
-    searchSynonyms = TRUE,
+    searchViaSynonyms = TRUE,
     fuzzyMatch = TRUE,
     exclude = NULL,
     includeDescendants = TRUE,

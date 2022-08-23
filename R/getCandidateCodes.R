@@ -43,7 +43,7 @@
 #' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
-#' @param searchSynonyms Either TRUE or FALSE. If TRUE the code will also
+#' @param searchViaSynonyms Either TRUE or FALSE. If TRUE the code will also
 #' search via the concept synonym table.
 #' @param searchNonStandard Either TRUE or FALSE. If TRUE the code will also
 #' search via non-standard concepts.
@@ -86,7 +86,7 @@ getCandidateCodes <- function(keywords,
                               domains = "Condition",
                               conceptClassId = NULL,
                               standardConcept = "Standard",
-                              searchSynonyms = FALSE,
+                              searchViaSynonyms = FALSE,
                               searchNonStandard = FALSE,
                               fuzzyMatch = FALSE,
                               maxDistanceCost = 0.1,
@@ -105,7 +105,7 @@ getCandidateCodes <- function(keywords,
   message(glue::glue("-- domains: {toString(domains)}"))
   message(glue::glue("-- conceptClassId: {toString(conceptClassId)}"))
   message(glue::glue("-- standardConcept: {toString(standardConcept)}"))
-  message(glue::glue("-- searchSynonyms: {toString(searchSynonyms)}"))
+  message(glue::glue("-- searchViaSynonyms: {toString(searchViaSynonyms)}"))
   message(glue::glue("-- searchNonStandard: {toString(searchNonStandard)}"))
   message(glue::glue("-- fuzzyMatch: {toString(fuzzyMatch)}"))
   message(glue::glue("-- maxDistanceCost: {toString(maxDistanceCost)}"))
@@ -148,7 +148,7 @@ getCandidateCodes <- function(keywords,
     ))
   checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
 
-  checkmate::assert_logical(searchSynonyms, add = errorMessage)
+  checkmate::assert_logical(searchViaSynonyms, add = errorMessage)
   checkmate::assert_logical(searchNonStandard, add = errorMessage)
   checkmate::assert_logical(fuzzyMatch,
     add = errorMessage
@@ -494,11 +494,11 @@ getCandidateCodes <- function(keywords,
 
     # 3) look for any standard, condition concepts with a synonym of the
     # codes found from the keywords
-    if (searchSynonyms == TRUE & verbose == TRUE) {
+    if (searchViaSynonyms == TRUE & verbose == TRUE) {
       message("Getting concepts to include from exact matches of synonyms")
     }
 
-    if (searchSynonyms == TRUE) {
+    if (searchViaSynonyms == TRUE) {
       conceptSynonym <- conceptSynonymDb %>%
         dplyr::collect() %>%
         dplyr::rename_with(tolower)
@@ -543,7 +543,7 @@ getCandidateCodes <- function(keywords,
         dplyr::distinct()
     }
 
-    if (searchSynonyms == TRUE) {
+    if (searchViaSynonyms == TRUE) {
       if (length(exclude) > 0) {
         if (nrow(excludeCodes) > 0) {
           candidateCodes <- candidateCodes %>%
