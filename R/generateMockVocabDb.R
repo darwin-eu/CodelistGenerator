@@ -102,9 +102,15 @@ generateMockVocabDb <- function(dbType = "SQLite") {
       max_levels_of_separation = 1
     )
   )
-  conceptSynonym <- data.frame(
+  conceptSynonym <- dplyr::bind_rows(
+    data.frame(
+    concept_id = 2,
+    concept_synonym_name = "Arthritis"
+  ),
+  data.frame(
     concept_id = 3,
     concept_synonym_name = "Osteoarthrosis"
+  )
   )
   conceptRelationship <- dplyr::bind_rows(
     data.frame(

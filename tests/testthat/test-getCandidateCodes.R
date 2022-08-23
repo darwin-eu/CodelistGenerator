@@ -102,6 +102,17 @@ test_that("tests with mock db", {
     all(codes$concept_id %in% c(3, 4, 5, 7)) &
     all(!codes$concept_id %in% c(1, 2, 6))))
 
+
+  # test searchInSynonyms
+  codes <- getCandidateCodes(
+    keywords = "osteoarthrosis",
+    domains = "Condition",
+    searchInSynonyms = TRUE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true(any(codes$concept_name %in% "Arthritis"))
+
   # test searchViaSynonyms
   codes <- getCandidateCodes(
     keywords = "arthritis",

@@ -13,6 +13,7 @@ getCandidateCodes(
   domains = "Condition",
   conceptClassId = NULL,
   standardConcept = "Standard",
+  searchInSynonyms = FALSE,
   searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
@@ -50,6 +51,10 @@ of the Concept}
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.}
+
+\item{searchInSynonyms}{Either TRUE or FALSE. If TRUE the code will also
+search using both the primary name in the concept table and synonyms from
+the concept synonym table.}
 
 \item{searchViaSynonyms}{Either TRUE or FALSE. If TRUE the code will also
 search via the concept synonym table.}

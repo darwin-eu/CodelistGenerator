@@ -43,6 +43,9 @@
 #' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
+#' @param searchInSynonyms Either TRUE or FALSE. If TRUE the code will also
+#' search using both the primary name in the concept table and synonyms from
+#' the concept synonym table.
 #' @param searchViaSynonyms Either TRUE or FALSE. If TRUE the code will also
 #' search via the concept synonym table.
 #' @param searchNonStandard Either TRUE or FALSE. If TRUE the code will also
@@ -86,6 +89,7 @@ getCandidateCodes <- function(keywords,
                               domains = "Condition",
                               conceptClassId = NULL,
                               standardConcept = "Standard",
+                              searchInSynonyms = FALSE,
                               searchViaSynonyms = FALSE,
                               searchNonStandard = FALSE,
                               fuzzyMatch = FALSE,
@@ -105,6 +109,7 @@ getCandidateCodes <- function(keywords,
   message(glue::glue("-- domains: {toString(domains)}"))
   message(glue::glue("-- conceptClassId: {toString(conceptClassId)}"))
   message(glue::glue("-- standardConcept: {toString(standardConcept)}"))
+  message(glue::glue("-- searchInSynonyms: {toString(searchInSynonyms)}"))
   message(glue::glue("-- searchViaSynonyms: {toString(searchViaSynonyms)}"))
   message(glue::glue("-- searchNonStandard: {toString(searchNonStandard)}"))
   message(glue::glue("-- fuzzyMatch: {toString(fuzzyMatch)}"))
@@ -425,9 +430,16 @@ getCandidateCodes <- function(keywords,
     dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept"))
 
+if (searchInSynonyms == TRUE |
+    searchViaSynonyms == TRUE) {
+      conceptSynonym <- conceptSynonymDb %>%
+        dplyr::collect() %>%
+        dplyr::rename_with(tolower)
+  }
+
   # Start finding candidate codes
   # 1) first, get codes to exclude
-  # and anti_join throughought to make sure these don't appear
+  # and anti_join throughout to make sure these don't appear
   # exact matches only for codes to exclude (no fuzzy option)
 
   if (length(exclude) > 0) {
@@ -486,23 +498,52 @@ getCandidateCodes <- function(keywords,
   }
 
 
+  # 3) also search in synonyms if option set to true
+  # left join back to concept from concept table
+  if(searchInSynonyms == TRUE){
+  if (fuzzyMatch == FALSE) {
+    candidateCodesInSynonyms <- getExactMatches(
+      words = tidyWords(keywords),
+      conceptDf = conceptSynonym %>%
+        dplyr::rename("concept_name"="concept_synonym_name")
+    ) %>%
+      dplyr::select("concept_id") %>%
+      dplyr::distinct() %>%
+      dplyr::left_join(concept,
+                by="concept_id")
+  }
 
+    if (fuzzyMatch == TRUE) {
+      candidateCodesInSynonyms <- getFuzzyMatches(
+        words = tidyWords(keywords),
+        conceptDf = conceptSynonym %>%
+          dplyr::rename("concept_name"="concept_synonym_name"),
+        mdCost = maxDistanceCost
+      ) %>%
+        dplyr::select("concept_id") %>%
+        dplyr::distinct() %>%
+        dplyr::left_join(concept,
+                  by="concept_id")
+    }
 
+  candidateCodes <- dplyr::bind_rows(
+    candidateCodes,
+    candidateCodesInSynonyms %>%
+      dplyr::mutate(found_from = "In synonyms")
+  ) %>%
+    dplyr::distinct()
+  }
 
 
   if (nrow(candidateCodes) > 0) {
 
-    # 3) look for any standard, condition concepts with a synonym of the
+    # 4) look for any standard, condition concepts with a synonym of the
     # codes found from the keywords
     if (searchViaSynonyms == TRUE & verbose == TRUE) {
       message("Getting concepts to include from exact matches of synonyms")
     }
 
     if (searchViaSynonyms == TRUE) {
-      conceptSynonym <- conceptSynonymDb %>%
-        dplyr::collect() %>%
-        dplyr::rename_with(tolower)
-
       synonyms <- conceptSynonym %>%
         dplyr::inner_join(candidateCodes %>%
           dplyr::select("concept_id"),
@@ -538,7 +579,7 @@ getCandidateCodes <- function(keywords,
       candidateCodes <- dplyr::bind_rows(
         candidateCodes,
         synonymCodes %>%
-          dplyr::mutate(found_from = "From synonyms")
+          dplyr::mutate(found_from = "Via synonyms")
       ) %>%
         dplyr::distinct()
     }
@@ -555,7 +596,7 @@ getCandidateCodes <- function(keywords,
     }
 
 
-    # 4) add any codes lower in the hierachy
+    # 5) add any codes lower in the hierachy
     if (includeDescendants == TRUE & verbose == TRUE) {
       message("Getting concepts to include from descendants")
     }
@@ -586,7 +627,7 @@ getCandidateCodes <- function(keywords,
       }
     }
 
-    # 5) add any codes one level above in the hierachy
+    # 6) add any codes one level above in the hierachy
     if (includeAncestor == TRUE & verbose == TRUE) {
       message("Getting concepts to include from direct ancestors of identified concepts")
     }
@@ -619,7 +660,7 @@ getCandidateCodes <- function(keywords,
   }
 
 
-  # 6) add codes from non-standard
+  # 7) add codes from non-standard
   # nb we do this last so as to not include descendants
   # which can blow up candiate codelist when there
   # are multiple mappings
@@ -692,7 +733,7 @@ getCandidateCodes <- function(keywords,
     message("-- No codes found for given keywords")
   } else {
 
-    # 7) Finish up
+    # 8) Finish up
     # get original names back
     candidateCodes <- candidateCodes %>%
       dplyr::select(.data$concept_id, .data$found_from) %>%
