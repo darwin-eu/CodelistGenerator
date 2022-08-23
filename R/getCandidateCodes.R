@@ -195,10 +195,8 @@ getCandidateCodes <- function(keywords,
     conceptSynonymDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
       "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
     )))
-    conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(paste0(
-      "SELECT * FROM ",
-      vocabularyDatabaseSchema,
-      ".concept_relationship"
+    conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
+      "SELECT * FROM {vocabularyDatabaseSchema}.concept_relationship"
     )))
   } else {
     conceptDb <- dplyr::tbl(db, "concept")
@@ -207,17 +205,17 @@ getCandidateCodes <- function(keywords,
     conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
   }}
   if(!is.null(arrowDirectory)){
-    conceptDb <- arrow::read_parquet(paste0(arrowDirectory,
-                       "/concept.parquet"),
+    conceptDb <- arrow::read_parquet(glue::glue(
+      "{arrowDirectory}/concept.parquet"),
                                    as_data_frame = FALSE)
-    conceptAncestorDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                        "/concept_ancestor.parquet"),
+    conceptAncestorDb <-  arrow::read_parquet(glue::glue(
+      "{arrowDirectory}/concept_ancestor.parquet"),
                                    as_data_frame = FALSE)
-    conceptSynonymDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                        "/concept_synonym.parquet"),
+    conceptSynonymDb <-  arrow::read_parquet(glue::glue(
+      "{arrowDirectory}/concept_synonym.parquet"),
                                    as_data_frame = FALSE)
-    conceptRelationshipDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                       "/concept_relationship.parquet"),
+    conceptRelationshipDb <-  arrow::read_parquet(glue::glue(
+      "{arrowDirectory}/concept_relationship.parquet"),
                                    as_data_frame = FALSE)
   }
 

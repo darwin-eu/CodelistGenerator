@@ -79,13 +79,13 @@ compareCodelists <- function(codelist1,
   # in both codelists
   unique$codelist <- dplyr::if_else(is.na(
     match(
-      paste0(unique$concept_id, unique$concept_name),
-      paste0(duplicates$concept_id, duplicates$concept_name)
+      glue::glue("{unique$concept_id};{unique$concept_name}"),
+      glue::glue("{duplicates$concept_id};{duplicates$concept_name}")
     )
   ), dplyr::if_else(is.na(
     match(
-      paste0(unique$concept_id, unique$concept_name),
-      paste0(codelist1$concept_id, codelist1$concept_name)
+      glue::glue("{unique$concept_id};{unique$concept_name}"),
+      glue::glue("{codelist1$concept_id};{codelist1$concept_name}")
     )
   ),
   "Only codelist 2",
