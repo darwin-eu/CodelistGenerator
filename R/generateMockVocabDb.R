@@ -124,11 +124,17 @@ generateMockVocabDb <- function(dbType = "SQLite") {
       relationship_id = "Mapped from"
     )
   )
-  vocabulary <- data.frame(vocabulary_id = "SNOMED",
+  vocabulary <- dplyr::bind_rows(
+    data.frame(vocabulary_id = "SNOMED",
                            vocabulary_name = "SNOMED",
                            vocabulary_reference = "1",
                            vocabulary_version= "1",
-                           vocabulary_concept_id=1)
+                           vocabulary_concept_id=1),
+    data.frame(vocabulary_id = "None",
+               vocabulary_name = "OMOP Standardized Vocabularies",
+               vocabulary_reference = "Omop generated",
+               vocabulary_version= "v5.0 22-JUN-22",
+               vocabulary_concept_id=44819096))
 
   # into in-memory databse
   if (dbType == "SQLite") {

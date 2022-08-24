@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+library(CodelistGenerator)
 library(here)
 library(readr)
 library(DBI)
@@ -29,19 +30,24 @@ library(kableExtra)
 library(CodelistGenerator)
 ```
 
+```{r, eval=FALSE}
+library(CodelistGenerator)
+library(dplyr)
+library(dbplyr)
+library(stringr)
+library(DT)
+library(kableExtra)
+library(readr)
+library(DBI)
+library(RSQLite)
+library(here)
+```
 
 ## Creating a codelist for dementia
 For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain.
 
 ## Getting the OMOP CDM vocabularies
 If you do not have ready access to a database with data in the OMOP CDM format (which will necessarily contain the vocabulary tables), you will first need to obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, we can make a vocabulary only database like so:
-
-```{r, eval=FALSE}
-library(readr)
-library(DBI)
-library(RSQLite)
-library(here)
-```
 
 ```{r, eval=FALSE}
 # path to directory of unzipped files
@@ -83,16 +89,8 @@ The structure of each of these tables is described in detail at: https://ohdsi.g
 ## Check version of the vocabularies
 It is important to note that the results from CodelistGenerator will be specific to a particular version of the OMOP CDM vocabularies. We can see the version of the vocabulary being used like so
 ```{r, eval=FALSE}
-dplyr::tbl(db, dplyr::sql(paste0(
-  "SELECT * FROM ",
-  vocabularyDatabaseSchema,
-  ".vocabulary"
-))) %>%
-  dplyr::rename_with(tolower) %>%
-  dplyr::filter(.data$vocabulary_id == "None") %>%
-  dplyr::select("vocabulary_version") %>%
-  dplyr::collect() %>%
-  dplyr::pull()
+getVocabVersion(db=db,
+                vocabularyDatabaseSchema=vocabularyDatabaseSchema)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
@@ -103,13 +101,7 @@ vocabVersion
 
 ## Codelist from "Dementia" (4182210) and its descendants
 The simplest approach to identifying potential codes is to take a high-level code and include all its descendants. 
-```{r, eval=FALSE}
-library(dplyr)
-library(dbplyr)
-library(stringr)
-library(DT)
-library(kableExtra)
-```
+
 
 ```{r, eval=FALSE}
 codesFromDescendants <- tbl(
@@ -153,10 +145,6 @@ This looks to pick up most relevant codes. But, this approach misses codes that 
 
 ## Generating a candidate codelist using Codelist Generator
 To try and include all such terms that could be included we can use CodelistGenerator.
-
-```{r, eval=FALSE }
-library(CodelistGenerator)
-```
 
 First, let's do a simple search for a single keyword of "dementia", including descendants of the identified codes.
 ```{r, eval=FALSE }

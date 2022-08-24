@@ -18,14 +18,7 @@ arrowDirectory <- Sys.getenv("VocabArrowPath")
 
 
 # intro vignette ----
-vocabVersion <- arrow::read_parquet(paste0(arrowDirectory,
-                                           "/vocabulary.parquet"),
-                                    as_data_frame = FALSE) %>%
-  dplyr::rename_with(tolower) %>%
-  dplyr::filter(.data$vocabulary_id == "None") %>%
-  dplyr::select("vocabulary_version") %>%
-  dplyr::collect() %>%
-  dplyr::pull()
+vocabVersion <- getVocabVersion(arrowDirectory = arrowDirectory)
 
 saveRDS(
   vocabVersion,
