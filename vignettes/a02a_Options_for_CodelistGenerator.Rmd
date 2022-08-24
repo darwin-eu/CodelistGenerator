@@ -165,7 +165,7 @@ kable(codes)
 knitr::include_graphics("mock_db_fig6.png")
 ```
 
-We can also pick up codes based on their synonyms. In this case "Osteoarthrosis" has a synonym of "Arthritis" and so a search of both the primary name of a concept and any of its associated synonyms would pick up this synonym and it would be included.
+We can also pick up codes based on their synonyms. In this case "Arthritis" has a synonym of "Osteoarthrosis" and so a search of both the primary name of a concept and any of its associated synonyms would pick up this synonym and it would be included.
 
 ```{r}
 codes <- getCandidateCodes(
