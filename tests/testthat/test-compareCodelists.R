@@ -33,8 +33,6 @@ test_that("comparing two codelists", {
   expect_true(all(c(
     "concept_id",
     "concept_name",
-    "domain_id",
-    "vocabulary_id",
     "codelist"
   ) %in%
     names(codesCompared)))
