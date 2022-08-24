@@ -534,6 +534,17 @@ if (searchInSynonyms == TRUE |
     dplyr::distinct()
   }
 
+  # run exclusion
+  if (length(exclude) > 0) {
+    if (nrow(excludeCodes) > 0) {
+      candidateCodes <- candidateCodes %>%
+        dplyr::anti_join(excludeCodes %>%
+                           dplyr::select("concept_id"),
+                         by = "concept_id"
+        )
+    }
+  }
+
 
   if (nrow(candidateCodes) > 0) {
 
