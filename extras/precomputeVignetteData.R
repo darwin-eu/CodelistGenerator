@@ -13,42 +13,40 @@ library(DT)
 library(kableExtra)
 devtools::load_all()
 
-db<-dbConnect(RSQLite::SQLite(), paste0(Sys.getenv("omop_cdm_vocab_path"),".sqlite"))
-vocabularyDatabaseSchema <- "main"
+arrowDirectory <- Sys.getenv("VocabArrowPath")
 
 
 
 # intro vignette ----
-vocabVersion <- dplyr::tbl(db, dplyr::sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".vocabulary"
-    ))) %>%
-    dplyr::rename_with(tolower) %>%
-    dplyr::filter(.data$vocabulary_id == "None") %>%
-    dplyr::select("vocabulary_version") %>%
-    dplyr::collect() %>%
-    dplyr::pull()
+vocabVersion <- arrow::read_parquet(paste0(arrowDirectory,
+                                           "/vocabulary.parquet"),
+                                    as_data_frame = FALSE) %>%
+  dplyr::rename_with(tolower) %>%
+  dplyr::filter(.data$vocabulary_id == "None") %>%
+  dplyr::select("vocabulary_version") %>%
+  dplyr::collect() %>%
+  dplyr::pull()
+
 saveRDS(
   vocabVersion,
   here("vignettes", "introVocab.RData")
 )
 
-codesFromDescendants <- tbl(db, sql(paste0(
-  "SELECT * FROM ",
-  vocabularyDatabaseSchema,
-  ".concept_ancestor"
-))) %>%
-  filter(ancestor_concept_id == "4182210") %>%
+
+codesFromDescendants <- arrow::read_parquet(paste0(arrowDirectory,
+                                                   "/concept_ancestor.parquet"),
+                                            as_data_frame = FALSE)%>%
+  filter(.data$ancestor_concept_id == 4182210) %>%
   select("descendant_concept_id") %>%
   rename("concept_id" = "descendant_concept_id") %>%
-  left_join(tbl(db, sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".concept"
-  )))) %>%
+  select("concept_id")   %>%
+  left_join(arrow::read_parquet(paste0(arrowDirectory,
+                                       "/concept.parquet"),
+                                as_data_frame = FALSE),
+            by="concept_id")  %>%
   select("concept_id", "concept_name", "domain_id", "vocabulary_id") %>%
   collect()
+
 saveRDS(
   codesFromDescendants,
   here("vignettes", "introData01.RData")
@@ -62,8 +60,8 @@ dementiaCodes1 <- getCandidateCodes(
   exclude = NULL,
   includeDescendants = TRUE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath"),
+  verbose=TRUE
 )
 saveRDS(
   dementiaCodes1,
@@ -80,8 +78,7 @@ saveRDS(
 icdMappings <- showMappings(
   candidateCodelist = dementiaCodes1,
   nonStandardVocabularies = "ICD10CM",
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   icdMappings,
@@ -91,8 +88,7 @@ saveRDS(
 readMappings <- showMappings(
   candidateCodelist = dementiaCodes1,
   nonStandardVocabularies = "Read",
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   readMappings,
@@ -112,8 +108,7 @@ oaCodes1 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   oaCodes1,
@@ -132,8 +127,7 @@ oaCodes2 <- getCandidateCodes(
   ),
   includeDescendants = TRUE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   oaCodes2,
@@ -153,8 +147,7 @@ oaCodes3 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   oaCodes3,
@@ -165,6 +158,7 @@ saveRDS(
 oaCodes4 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
+  searchInSynonyms = TRUE,
   searchViaSynonyms = TRUE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
@@ -174,8 +168,7 @@ oaCodes4 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   oaCodes4,
@@ -193,8 +186,7 @@ oaCodes5 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   oaCodes5,
@@ -216,8 +208,7 @@ oaCodes6 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   oaCodes6,
@@ -237,8 +228,7 @@ oaCodes7 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   oaCodes7,
@@ -258,8 +248,7 @@ oaCodes8 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  arrowDirectory = Sys.getenv("VocabArrowPath")
 )
 saveRDS(
   oaCodes8,
@@ -296,8 +285,7 @@ colonoscopyCodes2<-getCandidateCodes(keywords="colonoscopy",
                     includeDescendants = FALSE,
                     includeAncestor = FALSE,
                     verbose = TRUE ,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+                    arrowDirectory = Sys.getenv("VocabArrowPath"))
 saveRDS(
   colonoscopyCodes2,
   here("vignettes", "procData02.RData")
@@ -337,8 +325,7 @@ metforminCodes2<-getCandidateCodes(keywords="metformin",
                     includeDescendants = TRUE,
                     includeAncestor = FALSE,
                     verbose = TRUE ,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+                    arrowDirectory = Sys.getenv("VocabArrowPath"))
 saveRDS(
   metforminCodes2,
   here("vignettes", "metforminCodes2.RData")
@@ -355,8 +342,7 @@ getCandidateCodes(keywords="metformin",
                     includeDescendants = TRUE,
                     includeAncestor = FALSE,
                     verbose = TRUE ,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+                  arrowDirectory = Sys.getenv("VocabArrowPath"))
 getCandidateCodes(keywords="metformin",
                     domains=c("Drug"),
                     standardConcept=c("Standard", "Classification"),
@@ -367,6 +353,5 @@ getCandidateCodes(keywords="metformin",
                     includeDescendants = TRUE,
                     includeAncestor = FALSE,
                     verbose = TRUE ,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+                  arrowDirectory = Sys.getenv("VocabArrowPath"))
 

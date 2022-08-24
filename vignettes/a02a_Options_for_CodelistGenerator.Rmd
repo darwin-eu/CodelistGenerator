@@ -160,12 +160,26 @@ codes <- getCandidateCodes(
 kable(codes)
 ```
 
-## Search via synonyms
+## Search using synonyms
 ```{r, echo=FALSE}
 knitr::include_graphics("mock_db_fig6.png")
 ```
 
-We can also pick up codes based on their synonyms. In this case "Arthritis" (which gets identified first) has a synonym of "Osteoarthrosis", and based on this synonym we can also include the "Osteoarthrosis" concept.
+We can also pick up codes based on their synonyms. In this case "Osteoarthrosis" has a synonym of "Arthritis" and so a search of both the primary name of a concept and any of its associated synonyms would pick up this synonym and it would be included.
+
+```{r}
+codes <- getCandidateCodes(
+  keywords = "osteoarthrosis",
+  domains = "Condition",
+  searchInSynonyms = TRUE,
+  db = db,
+  vocabularyDatabaseSchema = "main"
+)
+
+kable(codes)
+```
+
+Or, in this case, we can get the same result by searching via synonyms. In this case when using searchViaSynonyms=TRUE, "Arthritis" (which gets identified first) has a synonym of "Osteoarthrosis", and based on this synonym we can also include the "Osteoarthrosis" concept.
 
 ```{r}
 codes <- getCandidateCodes(
