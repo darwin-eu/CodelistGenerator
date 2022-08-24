@@ -69,7 +69,8 @@ compareCodelists <- function(codelist1,
   checkmate::reportAssertions(collection = errorMessage)
 
 
-  all <- dplyr::bind_rows(codelist1, codelist2)
+  all <- dplyr::bind_rows(codelist1, codelist2) %>%
+    dplyr::select(-"found_from")
   duplicates <- all[duplicated(all), ]
   unique <- unique(all)
 
@@ -91,6 +92,19 @@ compareCodelists <- function(codelist1,
   "Only codelist 2",
   "Only codelist 1"),
   "Both")
+
+  unique <- unique %>%
+    dplyr::left_join(codelist1 %>%
+                dplyr::select("concept_id",
+                       "found_from") %>%
+                dplyr::rename("found_from_codelist1"="found_from"),
+              by="concept_id")%>%
+    dplyr::left_join(codelist2 %>%
+                dplyr::select("concept_id",
+                       "found_from") %>%
+                dplyr::rename("found_from_codelist2"="found_from"),
+              by="concept_id") %>%
+    dplyr::ungroup()
 
   return(unique)
 }
