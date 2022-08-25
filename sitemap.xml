@@ -52,12 +52,12 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getMappings.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/showMappings.html</loc>
   </url>
 </urlset>
