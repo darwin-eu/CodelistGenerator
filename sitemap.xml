@@ -43,13 +43,13 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/downloadVocab.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/generateMockVocabDb.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/importVocab.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc>
