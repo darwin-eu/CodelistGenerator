@@ -46,9 +46,6 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/downloadVocab.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/generateMockVocabDb.html</loc>
-  </url>
-  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc>
   </url>
   <url>
@@ -56,6 +53,9 @@
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/mockVocab.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc>
