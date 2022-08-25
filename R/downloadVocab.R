@@ -15,7 +15,7 @@
 # limitations under the License.
 
 
-#' Import vocabulary tables
+#' Download vocabulary tables
 #'
 #' @param db Database connection via DBI::dbConnect()
 #' @param vocabularyDatabaseSchema Name of database
@@ -40,14 +40,14 @@
 #' db <- generateMockVocabDb()
 #' dOut <- here()
 #'
-#' importVocabAsArrow(
+#' downloadVocab(
 #'   db = db,
 #'   vocabularyDatabaseSchema = "main",
 #'   dirOut = dOut
 #' )
 #' }
 #'
-importVocab <- function(db,
+downloadVocab <- function(db,
                                vocabularyDatabaseSchema,
                                dirOut,
                                errorIfExists = TRUE,

@@ -2,9 +2,9 @@
 
 export("%>%")
 export(compareCodelists)
+export(downloadVocab)
 export(generateMockVocabDb)
 export(getCandidateCodes)
-export(importVocab)
 export(showMappings)
 importFrom(magrittr,"%>%")
 importFrom(rlang,.data)

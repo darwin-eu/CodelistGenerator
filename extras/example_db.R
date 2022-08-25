@@ -19,7 +19,7 @@ vocabularyDatabaseSchema<-"main"
 
 # import local
 library(arrow)
-importVocab(db,
+downloadVocab(db,
             vocabularyDatabaseSchema = vocabularyDatabaseSchema,
             dirOut=Sys.getenv("VocabArrowPath"),
             errorIfExists = FALSE,
