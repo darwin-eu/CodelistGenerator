@@ -5,7 +5,7 @@ test_that("tests with mock db sqlite", {
   library(dplyr)
 
   # mock db
-  db <- generateMockVocabDb()
+  db <- mockVocab()
 
   # tests
   codes <- getCandidateCodes(
@@ -94,7 +94,7 @@ test_that("tests with mock db duckdb", {
   library(dplyr)
 
   # mock db
-  db <- generateMockVocabDb(dbType = "duckdb")
+  db <- mockVocab(dbType = "duckdb")
 
   # tests
   codes <- getCandidateCodes(
@@ -135,7 +135,7 @@ test_that("tests with mock arrow", {
   library(dplyr)
 
   # mock db
-  db <- generateMockVocabDb()
+  db <- mockVocab()
   dOut <- tempdir()
     downloadVocab(
     db = db,

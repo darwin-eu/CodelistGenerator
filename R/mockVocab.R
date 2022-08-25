@@ -28,9 +28,9 @@
 #' library(DBI)
 #' library(RSQLite)
 #' library(CodelistGenerator)
-#' db <- generateMockVocabDb()
+#' db <- mockVocab()
 #' }
-generateMockVocabDb <- function(dbType = "SQLite") {
+mockVocab <- function(dbType = "SQLite") {
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertTRUE(dbType %in% c("SQLite", "duckdb"))
   checkmate::assertTRUE(length(dbType) == 1)

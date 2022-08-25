@@ -34,7 +34,7 @@ knitr::include_graphics("mock_db_fig1.png")
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE, results='hide'}
-db <- generateMockVocabDb()
+db <- mockVocab()
 ```
 
 ## Search for exact keyword match 

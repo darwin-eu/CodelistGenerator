@@ -2,7 +2,7 @@ test_that("import vocab check", {
   library(DBI)
   library(arrow)
   library(dplyr)
-  db <- generateMockVocabDb()
+  db <- mockVocab()
   dOut <- tempdir()
   downloadVocab(
     db = db,

@@ -6,7 +6,7 @@ test_that("tests with mock db", {
   library(dplyr)
 
   # mock db - sqlite
-  db <- generateMockVocabDb(dbType="SQLite")
+  db <- mockVocab(dbType="SQLite")
   version <- getVocabVersion(db=db,
                   vocabularyDatabaseSchema = "main")
 
@@ -15,7 +15,7 @@ test_that("tests with mock db", {
   dbDisconnect(db)
 
   # mock db - duckdb
-  db <- generateMockVocabDb(dbType="duckdb")
+  db <- mockVocab(dbType="duckdb")
   version <- getVocabVersion(db=db,
                              vocabularyDatabaseSchema = NULL)
 
@@ -24,7 +24,7 @@ test_that("tests with mock db", {
   dbDisconnect(db)
 
   # with arrow
-  db <- generateMockVocabDb()
+  db <- mockVocab()
   dOut <- tempdir()
   downloadVocab(
     db = db,

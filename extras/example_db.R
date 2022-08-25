@@ -30,7 +30,7 @@ dementia_db<-getCandidateCodes(keywords="dementia",
                      db=db,
                      vocabularyDatabaseSchema = vocabularyDatabaseSchema,
                      verbose=TRUE)
-showMappings(dementia_db,
+getMappings(dementia_db,
               nonStandardVocabularies="ICD10CM",
               db=db,
               vocabularyDatabaseSchema = vocabularyDatabaseSchema)
@@ -39,6 +39,6 @@ dementia_arrow<-getCandidateCodes(keywords="dementia",
                     domains="Condition",
                      arrowDirectory = Sys.getenv("VocabArrowPath"),
                     verbose = TRUE)
-showMappings(dementia_arrow,
+getMappings(dementia_arrow,
               nonStandardVocabularies="ICD10CM",
               arrowDirectory = Sys.getenv("VocabArrowPath"))

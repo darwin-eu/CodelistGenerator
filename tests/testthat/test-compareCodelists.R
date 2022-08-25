@@ -5,7 +5,7 @@ test_that("comparing two codelists", {
   library(dplyr)
 
   # mock db
-  db <- generateMockVocabDb()
+  db <- mockVocab()
 
   # tests
   codes1 <- getCandidateCodes(
@@ -77,7 +77,7 @@ test_that("comparing two codelists", {
   library(dplyr)
 
   # mock db
-  db <- generateMockVocabDb()
+  db <- mockVocab()
 
   # tests
   codes1 <- getCandidateCodes(

@@ -5,7 +5,7 @@ test_that("tests with mock db", {
   library(dplyr)
 
   # mock db
-  db <- generateMockVocabDb()
+  db <- mockVocab()
 
   # tests
   # test keywords search - exact
@@ -278,7 +278,7 @@ test_that("tests with mock db", {
   # use duckdb instead of SQLite
   # where there is no vocabulary schema name
   # mock db
-  db <- generateMockVocabDb(dbType = "duckdb")
+  db <- mockVocab(dbType = "duckdb")
 
   # tests
   # test keywords search - exact
@@ -299,7 +299,7 @@ test_that("tests with mock arrow", {
   library(dplyr)
 
   # mock db
-  db <- generateMockVocabDb()
+  db <- mockVocab()
 
   dOut <- tempdir()
   downloadVocab(
