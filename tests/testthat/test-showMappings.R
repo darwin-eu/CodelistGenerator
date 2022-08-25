@@ -137,7 +137,7 @@ test_that("tests with mock arrow", {
   # mock db
   db <- generateMockVocabDb()
   dOut <- tempdir()
-    importVocab(
+    downloadVocab(
     db = db,
     vocabularyDatabaseSchema = "main",
     dirOut = dOut,

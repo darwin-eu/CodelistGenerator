@@ -8,7 +8,7 @@
 # use_r("show_mappings")
 # usethis::use_r("compare_codelists")
 # usethis::use_r("generate_mock_db")
-# usethis::use_r("importVocab")
+# usethis::use_r("downloadVocab")
 
 # usethis::use_package("checkmate")
 # usethis::use_package("dplyr")
@@ -23,7 +23,7 @@
 # usethis::use_test("get_candidate_codes")
 # usethis::use_test("generate_mock_db")
 # usethis::use_test("compare_codelists")
-# usethis::use_test("importVocab")
+# usethis::use_test("downloadVocab")
 
 # Coverage
 # usethis::use_coverage()

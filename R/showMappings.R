@@ -22,7 +22,7 @@
 #' @param vocabularyDatabaseSchema Name of database
 #' schema with vocab tables
 #' @param arrowDirectory Path to folder containing output of
-#' Codelist_generator::importVocab() - five parquet files: 'concept',
+#' Codelist_generator::downloadVocab() - five parquet files: 'concept',
 #' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
 #' 'vocabulary. Required if db is NULL
 #' @param nonStandardVocabularies Character vector

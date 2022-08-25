@@ -4,7 +4,7 @@ test_that("import vocab check", {
   library(dplyr)
   db <- generateMockVocabDb()
   dOut <- tempdir()
-  importVocab(
+  downloadVocab(
     db = db,
     vocabularyDatabaseSchema = "main",
     dirOut = dOut,
@@ -12,7 +12,7 @@ test_that("import vocab check", {
     verbose = TRUE
   )
   # check overwrite by running again
-  importVocab(
+  downloadVocab(
     db = db,
     vocabularyDatabaseSchema = "main",
     dirOut = dOut,
@@ -20,7 +20,7 @@ test_that("import vocab check", {
   )
   # error as exists
   expect_error(
-    importVocab(
+    downloadVocab(
       db = db,
       vocabularyDatabaseSchema = "main",
       dirOut = dOut,
