@@ -68,7 +68,7 @@ saveRDS(
   here("vignettes", "introData03.RData")
 )
 
-icdMappings <- showMappings(
+icdMappings <- getMappings(
   candidateCodelist = dementiaCodes1,
   nonStandardVocabularies = "ICD10CM",
   arrowDirectory = Sys.getenv("VocabArrowPath")
@@ -78,7 +78,7 @@ saveRDS(
   here("vignettes", "introData04.RData")
 )
 
-readMappings <- showMappings(
+readMappings <- getMappings(
   candidateCodelist = dementiaCodes1,
   nonStandardVocabularies = "Read",
   arrowDirectory = Sys.getenv("VocabArrowPath")

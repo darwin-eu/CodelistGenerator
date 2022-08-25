@@ -15,7 +15,7 @@ test_that("tests with mock db sqlite", {
     db = db,
     vocabularyDatabaseSchema = "main"
   )
-  mappings <- showMappings(
+  mappings <- getMappings(
     candidateCodelist = codes,
     nonStandardVocabularies = "READ",
     db = db,
@@ -46,14 +46,14 @@ test_that("tests with mock db sqlite", {
     names(mappings)))
 
   # expect error if not dbi connection
-  expect_error(showMappings(
+  expect_error(getMappings(
     candidateCodelist = codes,
     nonStandardVocabularies = "READ",
     db = "a",
     vocabularyDatabaseSchema = "main"
   ))
   # expect error if vocabularyDatabaseSchema does not exist
-  expect_error(showMappings(
+  expect_error(getMappings(
     candidateCodelist = codes,
     nonStandardVocabularies = "READ",
     db = db,
@@ -62,20 +62,20 @@ test_that("tests with mock db sqlite", {
 
   # expect error if nonStandardVocabularies does not exist
   # expect works
-  mappings <- showMappings(
+  mappings <- getMappings(
     candidateCodelist = codes,
     nonStandardVocabularies = "READ",
     db = db,
     vocabularyDatabaseSchema = "main"
   )
   # expect error
-  expect_error(showMappings(
+  expect_error(getMappings(
     candidateCodelist = codes,
     nonStandardVocabularies = "READX",
     db = db,
     vocabularyDatabaseSchema = "main"
   ))
-  expect_error(showMappings(
+  expect_error(getMappings(
     candidateCodelist = codes,
     nonStandardVocabularies = c("Read", "READX"),
     db = db,
@@ -104,7 +104,7 @@ test_that("tests with mock db duckdb", {
     db = db,
     vocabularyDatabaseSchema = NULL
   )
-  mappings <- showMappings(
+  mappings <- getMappings(
     candidateCodelist = codes,
     nonStandardVocabularies = "READ",
     db = db,
@@ -150,7 +150,7 @@ test_that("tests with mock arrow", {
     includeDescendants = TRUE,
     arrowDirectory=dOut
   )
-  mappings <- showMappings(
+  mappings <- getMappings(
     candidateCodelist = codes,
     nonStandardVocabularies = "READ",
     arrowDirectory=dOut

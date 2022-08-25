@@ -209,7 +209,7 @@ icdMappings <- readRDS(here("vignettes", "introData04.RData"))
 ```
 
 ```{r,  eval=FALSE }
-icdMappings <- showMappings(
+icdMappings <- getMappings(
   candidateCodelist = dementiaCodes4,
   nonStandardVocabularies = "ICD10CM",
   db = db,
@@ -233,7 +233,7 @@ readMappings <- readRDS(here("vignettes", "introData05.RData"))
 ```
 
 ```{r,  eval=FALSE }
-readMappings <- showMappings(
+readMappings <- getMappings(
   candidateCodelist = dementiaCodes4,
   nonStandardVocabularies = "Read",
   db = db,

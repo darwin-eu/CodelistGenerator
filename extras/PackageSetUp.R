@@ -5,7 +5,7 @@
 # usethis::use_pipe()
 # use_r("tidy_words")
 # use_r("get_candidate_codes")
-# use_r("show_mappings")
+# use_r("getMappings")
 # usethis::use_r("compare_codelists")
 # usethis::use_r("generate_mock_db")
 # usethis::use_r("downloadVocab")
@@ -19,7 +19,7 @@
 
 # use_testthat()
 # use_test("tidy_words")
-# usethis::use_test("show_mappings")
+# usethis::use_test("getMappings")
 # usethis::use_test("get_candidate_codes")
 # usethis::use_test("generate_mock_db")
 # usethis::use_test("compare_codelists")

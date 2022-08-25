@@ -1,6 +1,5 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
 [![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
@@ -89,455 +88,230 @@ head(asthma1, 10)
 ```
 
 <table>
-
 <thead>
-
 <tr>
-
 <th style="text-align:right;">
-
-concept\_id
-
+concept_id
 </th>
-
 <th style="text-align:left;">
-
-concept\_name
-
+concept_name
 </th>
-
 <th style="text-align:left;">
-
-domain\_id
-
+domain_id
 </th>
-
 <th style="text-align:left;">
-
-concept\_class\_id
-
+concept_class_id
 </th>
-
 <th style="text-align:left;">
-
-vocabulary\_id
-
+vocabulary_id
 </th>
-
 <th style="text-align:left;">
-
-found\_from
-
+found_from
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:right;">
-
 252658
-
 </td>
-
 <td style="text-align:left;">
-
 Intrinsic asthma without status asthmaticus
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 252942
-
 </td>
-
 <td style="text-align:left;">
-
 Asthmatic pulmonary eosinophilia
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 256448
-
 </td>
-
 <td style="text-align:left;">
-
 Chronic asthmatic bronchitis
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 257581
-
 </td>
-
 <td style="text-align:left;">
-
 Exacerbation of asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 312950
-
 </td>
-
 <td style="text-align:left;">
-
 IgE-mediated allergic asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 313236
-
 </td>
-
 <td style="text-align:left;">
-
 Cough variant asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 316577
-
 </td>
-
 <td style="text-align:left;">
-
 Poisoning by antiasthmatic
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 317009
-
 </td>
-
 <td style="text-align:left;">
-
 Asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 443801
-
 </td>
-
 <td style="text-align:left;">
-
 Exercise-induced asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 761844
-
 </td>
-
 <td style="text-align:left;">
-
 Inhaled steroid-dependent asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 Perhaps we want to exclude certain concepts as part of the search
@@ -553,462 +327,237 @@ head(asthma2, 10)
 ```
 
 <table>
-
 <thead>
-
 <tr>
-
 <th style="text-align:right;">
-
-concept\_id
-
+concept_id
 </th>
-
 <th style="text-align:left;">
-
-concept\_name
-
+concept_name
 </th>
-
 <th style="text-align:left;">
-
-domain\_id
-
+domain_id
 </th>
-
 <th style="text-align:left;">
-
-concept\_class\_id
-
+concept_class_id
 </th>
-
 <th style="text-align:left;">
-
-vocabulary\_id
-
+vocabulary_id
 </th>
-
 <th style="text-align:left;">
-
-found\_from
-
+found_from
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:right;">
-
 252658
-
 </td>
-
 <td style="text-align:left;">
-
 Intrinsic asthma without status asthmaticus
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 252942
-
 </td>
-
 <td style="text-align:left;">
-
 Asthmatic pulmonary eosinophilia
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 256448
-
 </td>
-
 <td style="text-align:left;">
-
 Chronic asthmatic bronchitis
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 257581
-
 </td>
-
 <td style="text-align:left;">
-
 Exacerbation of asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 312950
-
 </td>
-
 <td style="text-align:left;">
-
 IgE-mediated allergic asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 313236
-
 </td>
-
 <td style="text-align:left;">
-
 Cough variant asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 317009
-
 </td>
-
 <td style="text-align:left;">
-
 Asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 443801
-
 </td>
-
 <td style="text-align:left;">
-
 Exercise-induced asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 761844
-
 </td>
-
 <td style="text-align:left;">
-
 Inhaled steroid-dependent asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:right;">
-
 764677
-
 </td>
-
 <td style="text-align:left;">
-
 Persistent asthma
-
 </td>
-
 <td style="text-align:left;">
-
 condition
-
 </td>
-
 <td style="text-align:left;">
-
 clinical finding
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 From initial search
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 We can then also see non-standard codes these are mapped from, for
 example
 
 ``` r
-asthmaIcdMappings<-showMappings(candidateCodelist=asthma2,
+asthmaIcdMappings<-getMappings(candidateCodelist=asthma2,
                      nonStandardVocabularies="ICD10CM",
                     db=db,
                     vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
@@ -1021,321 +570,162 @@ head(asthmaIcdMappings %>%
 ```
 
 <table>
-
 <thead>
-
 <tr>
-
 <th style="text-align:left;">
-
-standard\_concept\_name
-
+standard_concept_name
 </th>
-
 <th style="text-align:left;">
-
-standard\_vocabulary\_id
-
+standard_vocabulary_id
 </th>
-
 <th style="text-align:left;">
-
-non\_standard\_concept\_name
-
+non_standard_concept_name
 </th>
-
 <th style="text-align:left;">
-
-non\_standard\_vocabulary\_id
-
+non_standard_vocabulary_id
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td style="text-align:left;">
-
-Eosinophilic asthma
-
+Allergic bronchopulmonary aspergillosis
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
-Pulmonary eosinophilia, not elsewhere classified
-
+Allergic bronchopulmonary aspergillosis
 </td>
-
 <td style="text-align:left;">
-
 ICD10CM
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
-Eosinophilic asthma
-
+Cough variant asthma
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
-Eosinophilic asthma
-
+Cough variant asthma
 </td>
-
 <td style="text-align:left;">
-
 ICD10CM
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
-Eosinophilic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Other pulmonary eosinophilia, not elsewhere classified
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Eosinophilic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Pulmonary eosinophilia, not elsewhere classified
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Cryptogenic pulmonary eosinophilia
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Chronic eosinophilic pneumonia
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Simple pulmonary eosinophilia
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Acute eosinophilic pneumonia
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
 Asthma
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 Asthma
-
 </td>
-
 <td style="text-align:left;">
-
 ICD10CM
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Asthma
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 Other and unspecified asthma
-
 </td>
-
 <td style="text-align:left;">
-
 ICD10CM
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Asthma
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 Unspecified asthma
-
 </td>
-
 <td style="text-align:left;">
-
 ICD10CM
-
 </td>
-
 </tr>
-
 <tr>
-
 <td style="text-align:left;">
-
 Asthma
-
 </td>
-
 <td style="text-align:left;">
-
 SNOMED
-
 </td>
-
 <td style="text-align:left;">
-
 Other asthma
-
 </td>
-
 <td style="text-align:left;">
-
 ICD10CM
-
 </td>
-
 </tr>
-
+<tr>
+<td style="text-align:left;">
+Asthma
+</td>
+<td style="text-align:left;">
+SNOMED
+</td>
+<td style="text-align:left;">
+Other asthma
+</td>
+<td style="text-align:left;">
+ICD10CM
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cryptogenic pulmonary eosinophilia
+</td>
+<td style="text-align:left;">
+SNOMED
+</td>
+<td style="text-align:left;">
+Chronic eosinophilic pneumonia
+</td>
+<td style="text-align:left;">
+ICD10CM
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Exacerbation of intermittent asthma
+</td>
+<td style="text-align:left;">
+SNOMED
+</td>
+<td style="text-align:left;">
+Mild intermittent asthma with (acute) exacerbation
+</td>
+<td style="text-align:left;">
+ICD10CM
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Moderate persistent asthma
+</td>
+<td style="text-align:left;">
+SNOMED
+</td>
+<td style="text-align:left;">
+Moderate persistent asthma
+</td>
+<td style="text-align:left;">
+ICD10CM
+</td>
+</tr>
 </tbody>
-
 </table>

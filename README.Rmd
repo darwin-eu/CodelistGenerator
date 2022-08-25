@@ -139,7 +139,7 @@ kable(head(asthma2, 10))
 
 We can then also see non-standard codes these are mapped from, for example
 ```{r,  message=FALSE, warning=FALSE, eval=FALSE}
-asthmaIcdMappings<-showMappings(candidateCodelist=asthma2,
+asthmaIcdMappings<-getMappings(candidateCodelist=asthma2,
                      nonStandardVocabularies="ICD10CM",
                     db=db,
                     vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
@@ -152,7 +152,7 @@ head(asthmaIcdMappings %>%
 ```
 
 ```{r,  message=FALSE, warning=FALSE, echo=FALSE}
-asthmaIcdMappings<-showMappings(candidateCodelist=asthma2,
+asthmaIcdMappings<-getMappings(candidateCodelist=asthma2,
                      nonStandardVocabularies="ICD10CM",
                     db=db,
                     vocabularyDatabaseSchema =  vocabularyDatabaseSchema)

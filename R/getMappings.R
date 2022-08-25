@@ -41,13 +41,13 @@
 #'   db = db,
 #'   vocabularyDatabaseSchema = " Your vocabulary schema here "
 #' )
-#' showMappings(
+#' getMappings(
 #'   candidateCodelist = asthma_codes,
 #'   db = db,
 #'   vocabularyDatabaseSchema = " Your vocabulary schema here "
 #' )
 #' }
-showMappings <- function(candidateCodelist,
+getMappings <- function(candidateCodelist,
                          db= NULL,
                          vocabularyDatabaseSchema = NULL,
                          arrowDirectory=NULL,
