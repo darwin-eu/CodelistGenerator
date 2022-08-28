@@ -172,8 +172,7 @@ test_that("tests with mock db", {
     db = db,
     vocabularyDatabaseSchema = "main"
   )
-  expect_null(codes)
-
+  expect_true(nrow(codes)==0)
 
   # all options used with exact
   codes <- getCandidateCodes(

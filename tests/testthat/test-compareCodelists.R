@@ -68,9 +68,7 @@ test_that("comparing two codelists", {
   ))
 })
 
-
-
-test_that("comparing two codelists", {
+test_that("comparing two codelists- same codes found but in differnt ways", {
   library(DBI)
   library(RSQLite)
   library(dbplyr)

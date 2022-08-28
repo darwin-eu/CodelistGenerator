@@ -5,10 +5,10 @@
 \title{Generate candidate codelist for the OMOP CDM}
 \usage{
 getCandidateCodes(
-  keywords,
   db = NULL,
   vocabularyDatabaseSchema = NULL,
   arrowDirectory = NULL,
+  keywords,
   exclude = NULL,
   domains = "Condition",
   conceptClassId = NULL,
@@ -16,19 +16,14 @@ getCandidateCodes(
   searchInSynonyms = FALSE,
   searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
-  maxDistanceCost = 0.1,
   includeDescendants = TRUE,
   includeAncestor = FALSE,
+  fuzzyMatch = FALSE,
+  maxDistanceCost = 0.1,
   verbose = FALSE
 )
 }
 \arguments{
-\item{keywords}{Character vector of words to search for.
-Where more than one word is given (e.g. "knee osteoarthritis"),
-all combinations of those words should be identified
-positions (e.g. "osteoarthritis of knee") should be identified.}
-
 \item{db}{Database connection via DBI::dbConnect(). Required if
 arrowDirectory is NULL}
 
@@ -39,6 +34,11 @@ schema with vocab tables}
 Codelist_generator::downloadVocab() - five parquet files: 'concept',
 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
 'vocabulary. Required if db is NULL}
+
+\item{keywords}{Character vector of words to search for.
+Where more than one word is given (e.g. "knee osteoarthritis"),
+all combinations of those words should be identified
+positions (e.g. "osteoarthritis of knee") should be identified.}
 
 \item{exclude}{Character vector of words
 to identify concepts to exclude.}
@@ -62,13 +62,6 @@ search via the concept synonym table.}
 \item{searchNonStandard}{Either TRUE or FALSE. If TRUE the code will also
 search via non-standard concepts.}
 
-\item{fuzzyMatch}{Either TRUE or FALSE. If TRUE the fuzzy matching
-will be used, with approximate matches identified.}
-
-\item{maxDistanceCost, }{The
-maximum number/fraction of match cost (generalized Levenshtein distance)
-for fuzzy matching (see ??base::agrep for further details).}
-
 \item{includeDescendants}{Either TRUE or FALSE.
 If TRUE descendant concepts of identified concepts
 will be included in the candidate codelist.}
@@ -76,6 +69,13 @@ will be included in the candidate codelist.}
 \item{includeAncestor}{Either TRUE or FALSE.
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.}
+
+\item{fuzzyMatch}{Either TRUE or FALSE. If TRUE the fuzzy matching
+will be used, with approximate matches identified.}
+
+\item{maxDistanceCost, }{The
+maximum number/fraction of match cost (generalized Levenshtein distance)
+for fuzzy matching (see ??base::agrep for further details).}
 
 \item{verbose}{Either TRUE or FALSE.
 If TRUE, progress will be reported.}
