@@ -59,10 +59,10 @@ using the OMOP CDM.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getCandidateCodes</span><span class="op">(</span></span>
-<span>  <span class="va">keywords</span>,</span>
 <span>  db <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  vocabularyDatabaseSchema <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  arrowDirectory <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">keywords</span>,</span>
 <span>  exclude <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  conceptClassId <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -70,24 +70,17 @@ using the OMOP CDM.</p>
 <span>  searchInSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchViaSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  fuzzyMatch <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  maxDistanceCost <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fuzzyMatch <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  maxDistanceCost <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>keywords</dt>
-<dd><p>Character vector of words to search for.
-Where more than one word is given (e.g. "knee osteoarthritis"),
-all combinations of those words should be identified
-positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
-
-
-<dt>db</dt>
+    <dl><dt>db</dt>
 <dd><p>Database connection via DBI::dbConnect(). Required if
 arrowDirectory is NULL</p></dd>
 
@@ -102,6 +95,13 @@ schema with vocab tables</p></dd>
 Codelist_generator::downloadVocab() - five parquet files: 'concept',
 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
 'vocabulary. Required if db is NULL</p></dd>
+
+
+<dt>keywords</dt>
+<dd><p>Character vector of words to search for.
+Where more than one word is given (e.g. "knee osteoarthritis"),
+all combinations of those words should be identified
+positions (e.g. "osteoarthritis of knee") should be identified.</p></dd>
 
 
 <dt>exclude</dt>
@@ -140,17 +140,6 @@ search via the concept synonym table.</p></dd>
 search via non-standard concepts.</p></dd>
 
 
-<dt>fuzzyMatch</dt>
-<dd><p>Either TRUE or FALSE. If TRUE the fuzzy matching
-will be used, with approximate matches identified.</p></dd>
-
-
-<dt>maxDistanceCost, </dt>
-<dd><p>The
-maximum number/fraction of match cost (generalized Levenshtein distance)
-for fuzzy matching (see ??base::agrep for further details).</p></dd>
-
-
 <dt>includeDescendants</dt>
 <dd><p>Either TRUE or FALSE.
 If TRUE descendant concepts of identified concepts
@@ -161,6 +150,17 @@ will be included in the candidate codelist.</p></dd>
 <dd><p>Either TRUE or FALSE.
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.</p></dd>
+
+
+<dt>fuzzyMatch</dt>
+<dd><p>Either TRUE or FALSE. If TRUE the fuzzy matching
+will be used, with approximate matches identified.</p></dd>
+
+
+<dt>maxDistanceCost, </dt>
+<dd><p>The
+maximum number/fraction of match cost (generalized Levenshtein distance)
+for fuzzy matching (see ??base::agrep for further details).</p></dd>
 
 
 <dt>verbose</dt>
