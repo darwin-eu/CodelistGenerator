@@ -39,7 +39,7 @@ mockVocab <- function(dbType = "SQLite") {
 
   # tables
   concept <- data.frame(
-    concept_id = 1:7,
+    concept_id = 1:8,
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
@@ -47,20 +47,24 @@ mockVocab <- function(dbType = "SQLite") {
       "Osteoarthritis of knee",
       "Osteoarthritis of hip",
       "Degenerative arthropathy",
-      "Knee osteoarthritis"
+      "Knee osteoarthritis",
+      "H/O osteoarthritis"
     ),
-    domain_id = "Condition",
+    domain_id = c(rep("Condition",7), "Observation"),
     vocabulary_id = c(
       rep("SNOMED", 5),
-      rep("Read", 2)
+      rep("Read", 2),
+      "LOINC"
     ),
     standard_concept = c(
       rep("S", 5),
-      rep(NA, 2)
+      rep(NA, 2),
+      "S"
     ),
     concept_class_id = c(
       rep("Clinical Finding", 5),
-      rep("Diagnosis", 2)
+      rep("Diagnosis", 2),
+      "Observation"
     ),
     concept_code = "1234"
   )

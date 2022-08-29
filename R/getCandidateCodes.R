@@ -153,6 +153,18 @@ getCandidateCodes <- function(db = NULL,
     null.ok = TRUE
   )
   checkmate::assertVector(standardConcept, add = errorMessage)
+  standardConceptCheck <- all(tolower(standardConcept) %in%
+    c(
+      "standard",
+      "classification",
+      "non-standard"
+    ))
+  if (!isTRUE(standardConceptCheck)) {
+    errorMessage$push(
+      "- standardConcept should be one or more of Standard, Non-stanadard, or Classification"
+    )
+  }
+  checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
   checkmate::assert_logical(searchInSynonyms, add = errorMessage)
   checkmate::assert_logical(searchViaSynonyms, add = errorMessage)
   checkmate::assert_logical(searchNonStandard, add = errorMessage)
@@ -201,12 +213,18 @@ getCandidateCodes <- function(db = NULL,
     return(result)
   })
 
+  # drop any empty tibbles
+  searchResults <- searchResults[lapply(searchResults, nrow) > 0]
+
   # put the results from each domain together
   searchResults <- dplyr::bind_rows(searchResults,
     .id = NULL
   ) %>%
     dplyr::distinct()
 
+  if (nrow(searchResults) == 0) {
+    message(glue::glue("-- No codes found for given search strategy"))
+  }
 
   # return results
   if (verbose == TRUE) {

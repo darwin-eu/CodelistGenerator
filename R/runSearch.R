@@ -77,15 +77,7 @@ runSearch <- function(keywords,
   # new name for clarity
   standardConceptFlags <- standardConcept
 
-  # check user inputs match what is in vocab tables
-  errorMessage <- checkmate::makeAssertCollection()
-  standardConceptCheck <- all(standardConcept %in%
-                                c(
-                                  "standard",
-                                  "classification",
-                                  "non-standard"
-                                ))
-  checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
+  # message if user inputs are not in vocab tables
 
   # filter vocab tables to keep only relevant data
   if (verbose == TRUE) {
@@ -95,29 +87,6 @@ runSearch <- function(keywords,
   conceptDb <- conceptDb %>%
     dplyr::filter(.data$domain_id %in% .env$domains)
   if (!is.null(conceptClassId)) {
-    # first, check some combination exists
-    # return error if not
-    errorMessage <- checkmate::makeAssertCollection()
-    combCheck <- conceptDb %>%
-      dplyr::mutate(concept_class_id = tolower(.data$concept_class_id)) %>%
-      dplyr::group_by(
-        .data$domain_id,
-        .data$concept_class_id,
-        .data$standard_concept
-      ) %>%
-      dplyr::tally() %>%
-      dplyr::filter(.data$domain_id %in% .env$domains) %>%
-      dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
-      dplyr::filter(.data$concept_class_id %in% .env$conceptClassId)
-    checkmate::assertTRUE(nrow(combCheck %>% dplyr::collect()) > 0,
-                          add = errorMessage
-    )
-    if (!isTRUE(nrow(combCheck %>% dplyr::collect()) > 0)) {
-      errorMessage$push(
-        glue::glue("- No combination of domains, standardConcept, and conceptClassId found in concept table")
-      )
-    }
-    checkmate::reportAssertions(collection = errorMessage)
     # now filter
     conceptDb <- conceptDb %>%
       dplyr::filter(.data$concept_class_id %in% .env$conceptClassId)
@@ -172,18 +141,16 @@ runSearch <- function(keywords,
 
   candidateCodesList <- list()
 
-  for(i in 1:length(domains)){
 
-    workdingDomain <- domains[[i]]
-
-    workingConcept <- concept %>% dplyr::filter(.data$domain_id==.env$workdingDomain)
+    workingConcept <- concept %>%
+      dplyr::filter(.data$domain_id==.env$domains)
 
     if(exists("conceptSynonym")==TRUE){
       workingconceptSynonym <- conceptSynonym %>%
         dplyr::left_join(concept %>%
                            dplyr::select("concept_id", "domain_id"),
                   by="concept_id") %>%
-        dplyr::filter(.data$domain_id==.env$workdingDomain) %>%
+        dplyr::filter(.data$domain_id==.env$domains) %>%
         dplyr::select(!"domain_id")}
 
 
@@ -357,9 +324,9 @@ runSearch <- function(keywords,
 
     }
 
-    candidateCodesList[[workdingDomain]] <- candidateCodes
+    candidateCodesList[[domains]] <- candidateCodes
 
-  }
+
 
   candidateCodes <- dplyr::bind_rows(candidateCodesList)
 
@@ -498,7 +465,6 @@ runSearch <- function(keywords,
 
   if (nrow(candidateCodes) == 0) {
     candidateCodes
-    message(glue::glue("-- {domains}: No codes found for given keywords"))
   } else {
 
     # 8) Finish up
@@ -573,16 +539,15 @@ getExactMatches <- function(words,
     workingConcepts <- conceptDf %>% # start with all
       dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
-    conceptsFound[[i]] <- workingConcepts %>%
-      dplyr::filter(apply(sapply(
-        X = workingExclude,
-        FUN = grepl, workingConcepts$concept_name
-      ),
-      MARGIN = 1, FUN = all
-      )) %>%
-      dplyr::distinct()
+    for(j in seq_along(workingExclude)){
+    workingConcepts <- workingConcepts %>%
+        dplyr::filter(stringr::str_detect(.data$concept_name,
+                 .env$workingExclude[j]))
+    }
+    conceptsFound[[i]] <- workingConcepts
   }
-  dplyr::bind_rows(conceptsFound)
+
+  return(dplyr::bind_rows(conceptsFound))
 }
 
 getFuzzyMatches <- function(words,

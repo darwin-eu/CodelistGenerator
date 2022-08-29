@@ -215,9 +215,73 @@ test_that("tests with mock db", {
 
 
 
+  ## Edge cases
+  # keywords that don´t exist
+  codes <- getCandidateCodes(
+    keywords = c("Musculoskeletal disorder","XXXXX"),
+    standardConcept = c("Standard"),
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true("1" %in% codes$concept_id)
+
+  codes <- getCandidateCodes(
+    keywords = "XXXXX",
+    standardConcept = c("Standard"),
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true(nrow(codes)==0)
+
+  # conceptClassId that doesn´t exist
+  codes <- getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    conceptClassId = c("clinical finding", "Something that doesn´t exist"),
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true("1" %in% codes$concept_id)
+
+  codes <- getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    conceptClassId = "Something that doesn´t exist",
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true(nrow(codes)==0)
+
+  # domain that doesn´t exist
+  codes <- getCandidateCodes(
+    keywords = "arthritis",
+    domains = c("Condition", "Some other table"),
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true(nrow(codes)>0)
+
+  codes <- getCandidateCodes(
+    keywords = "arthritis",
+    domains = c("Some other table"),
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true(nrow(codes)==0)
 
 
   ## Expected errors
+  #keyword should be a character
+  expect_error(getCandidateCodes(
+    keywords = 35,
+    standardConcept = c("Standard"),
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  ))
+
   expect_error(getCandidateCodes(
     keywords = "a",
     searchViaSynonyms = TRUE,
@@ -229,17 +293,11 @@ test_that("tests with mock db", {
     vocabularyDatabaseSchema = "main"
   ))
 
+  # standardConcept that doesn´t exist
   expect_error(getCandidateCodes(
-    keywords = "arthritis",
-    domains = c("Condition", "Some other table"),
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  ))
-
-  expect_error(getCandidateCodes(
-    keywords = "arthritis",
-    domains = "Condition",
-    conceptClassId = "Something that doesn´t exist",
+    keywords = "Musculoskeletal disorder",
+    standardConcept = c("Standard", "Something that doesn´t exist"),
+    includeDescendants = FALSE,
     db = db,
     vocabularyDatabaseSchema = "main"
   ))
@@ -247,24 +305,6 @@ test_that("tests with mock db", {
   expect_error(getCandidateCodes(
     keywords = "Musculoskeletal disorder",
     standardConcept = "Something that doesn´t exist",
-    includeDescendants = FALSE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  ))
-
-  # expect error - no combination of standardConcept and conceptClassId
-  expect_error(getCandidateCodes(
-    keywords = "Musculoskeletal disorder",
-    standardConcept = "Non-standard",
-    conceptClassId = "Clinical Finding",
-    includeDescendants = FALSE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  ))
-
-  expect_error(getCandidateCodes(
-    keywords = "Musculoskeletal disorder",
-    standardConcept = "Classification", # not in our mock db
     includeDescendants = FALSE,
     db = db,
     vocabularyDatabaseSchema = "main"
@@ -320,6 +360,43 @@ test_that("tests with mock arrow", {
 
 
 })
+
+test_that("tests with mock db - multiple domains", {
+  library(DBI)
+  library(RSQLite)
+  library(dbplyr)
+  library(dplyr)
+
+  # mock db
+  db <- mockVocab()
+
+  # tests
+  # test keywords search - exact
+  codes <- getCandidateCodes(
+    keywords = "arthritis",
+    domains = c("Condition","Observation"),
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true((nrow(codes) == 4 &
+                 all(codes$concept_id %in% c(3:5, 8)) &
+                 all(!codes$concept_id %in% c(1,2,6, 7))))
+
+  codes <- getCandidateCodes(
+    keywords = "H/O osteoarthritis",
+    domains = c("Condition","Observation"),
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true(all(nrow(codes) == 1 &
+                 codes$concept_id == 8))
+
+  DBI::dbDisconnect(db)
+
+})
+
 
 # test_that("tests with synthetic db", {
 #   library(DBI)
