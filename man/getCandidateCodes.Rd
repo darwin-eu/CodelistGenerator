@@ -12,6 +12,7 @@ getCandidateCodes(
   exclude = NULL,
   domains = "Condition",
   conceptClassId = NULL,
+  vocabularyId = NULL,
   standardConcept = "Standard",
   searchInSynonyms = FALSE,
   searchViaSynonyms = FALSE,
@@ -46,6 +47,9 @@ to identify concepts to exclude.}
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
 \item{conceptClassId}{Character vector with one or more concept class
+of the Concept}
+
+\item{vocabularyId}{Character vector with one or more vocabulary
 of the Concept}
 
 \item{standardConcept}{Character vector with one or more of "Standard",

@@ -155,6 +155,30 @@ test_that("tests with mock db", {
   )
   expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
+  #test vocabularyId
+ codes<- getCandidateCodes(
+    keywords = c("arthritis"),
+    standardConcept =c("standard", "non-standard"),
+    vocabularyId = "SNOMED",
+    searchNonStandard = TRUE,
+    domains = "Condition",
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+ expect_true(all(codes$vocabulary_id %in% "SNOMED"))
+
+ codes<- getCandidateCodes(
+   keywords = c("arthritis"),
+   standardConcept =c("standard", "non-standard"),
+   vocabularyId = "Read",
+   searchNonStandard = TRUE,
+   domains = "Condition",
+   db = db,
+   vocabularyDatabaseSchema = "main"
+ )
+ expect_true(all(codes$vocabulary_id %in% "Read"))
+
+
   # test verbose
   expect_message(getCandidateCodes(
     keywords = "arthritis",
@@ -163,16 +187,6 @@ test_that("tests with mock db", {
     db = db,
     vocabularyDatabaseSchema = "main"
   ))
-
-  ## Edge cases
-  # check empty candidate set
-  codes <- getCandidateCodes(
-    keywords = "asthmaX",
-    domains = "Condition",
-    db = db,
-    vocabularyDatabaseSchema = "main"
-  )
-  expect_true(nrow(codes)==0)
 
   # all options used with exact
   codes <- getCandidateCodes(
@@ -216,6 +230,15 @@ test_that("tests with mock db", {
 
 
   ## Edge cases
+  # check empty candidate set
+  codes <- getCandidateCodes(
+    keywords = "asthmaX",
+    domains = "Condition",
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true(nrow(codes)==0)
+
   # keywords that don´t exist
   codes <- getCandidateCodes(
     keywords = c("Musculoskeletal disorder","XXXXX"),
@@ -248,6 +271,25 @@ test_that("tests with mock db", {
   codes <- getCandidateCodes(
     keywords = "Musculoskeletal disorder",
     conceptClassId = "Something that doesn´t exist",
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true(nrow(codes)==0)
+
+  # vocabularyID that doesn´t exist
+  codes <- getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    vocabularyId = c("SNOMED", "Something that doesn´t exist"),
+    includeDescendants = FALSE,
+    db = db,
+    vocabularyDatabaseSchema = "main"
+  )
+  expect_true("1" %in% codes$concept_id)
+
+  codes <- getCandidateCodes(
+    keywords = "Musculoskeletal disorder",
+    vocabularyId = c("Something that doesn´t exist"),
     includeDescendants = FALSE,
     db = db,
     vocabularyDatabaseSchema = "main"

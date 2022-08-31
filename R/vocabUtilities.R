@@ -70,6 +70,39 @@ getDomains <- function(db = NULL,
 
 }
 
+getVocabularies <- function(db = NULL,
+                       vocabularyDatabaseSchema=NULL,
+                       arrowDirectory=NULL){
+
+  # link to vocab table
+  if(!is.null(db)){
+    if(!is.null(vocabularyDatabaseSchema)){
+      conceptDb <-  dplyr::tbl(db, dplyr::sql(paste0(
+        "SELECT * FROM ",
+        vocabularyDatabaseSchema,
+        ".concept"
+      )))
+    }
+    if(is.null(vocabularyDatabaseSchema)){
+      conceptDb <- dplyr::tbl(db, "concept")
+    }
+  }
+
+  if(!is.null(arrowDirectory)){
+    conceptDb <-  arrow::read_parquet(paste0(arrowDirectory,
+                                             "/concept.parquet"),
+                                      as_data_frame = FALSE)
+  }
+
+  vocabs <- conceptDb %>%
+    dplyr::select("vocab_id") %>%
+    dplyr::distinct() %>%
+    dplyr::collect() %>%
+    dplyr::pull()
+
+  return(vocabs)
+
+}
 
 getconceptClassId <- function(db = NULL,
                        vocabularyDatabaseSchema=NULL,

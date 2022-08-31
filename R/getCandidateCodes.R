@@ -40,6 +40,8 @@
 #' @param domains Character vector with one or more of the OMOP CDM domain.
 #' @param conceptClassId Character vector with one or more concept class
 #' of the Concept
+#' @param vocabularyId Character vector with one or more vocabulary
+#' of the Concept
 #' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
@@ -88,6 +90,7 @@ getCandidateCodes <- function(db = NULL,
                               exclude = NULL,
                               domains = "Condition",
                               conceptClassId = NULL,
+                              vocabularyId = NULL,
                               standardConcept = "Standard",
                               searchInSynonyms = FALSE,
                               searchViaSynonyms = FALSE,
@@ -106,6 +109,7 @@ getCandidateCodes <- function(db = NULL,
     message(glue::glue("-- keywords: {toString(keywords)}"))
     message(glue::glue("-- domains: {toString(domains)}"))
     message(glue::glue("-- conceptClassId: {toString(conceptClassId)}"))
+    message(glue::glue("-- vocabularyId: {toString(vocabularyId)}"))
     message(glue::glue("-- standardConcept: {toString(standardConcept)}"))
     message(glue::glue("-- searchInSynonyms: {toString(searchInSynonyms)}"))
     message(glue::glue("-- searchViaSynonyms: {toString(searchViaSynonyms)}"))
@@ -151,6 +155,10 @@ getCandidateCodes <- function(db = NULL,
   checkmate::assertVector(conceptClassId,
     add = errorMessage,
     null.ok = TRUE
+  )
+  checkmate::assertVector(vocabularyId,
+                          add = errorMessage,
+                          null.ok = TRUE
   )
   checkmate::assertVector(standardConcept, add = errorMessage)
   standardConceptCheck <- all(tolower(standardConcept) %in%
@@ -199,6 +207,7 @@ getCandidateCodes <- function(db = NULL,
       exclude,
       domains = x$domain,
       conceptClassId,
+      vocabularyId,
       standardConcept,
       searchInSynonyms,
       searchViaSynonyms,
