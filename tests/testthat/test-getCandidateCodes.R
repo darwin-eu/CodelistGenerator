@@ -165,7 +165,7 @@ test_that("tests with mock db", {
     db = db,
     vocabularyDatabaseSchema = "main"
   )
- expect_true(all(codes$vocabulary_id %in% "SNOMED"))
+ expect_true(all(codes$vocabulary_id %in% "snomed"))
 
  codes<- getCandidateCodes(
    keywords = c("arthritis"),
@@ -176,7 +176,7 @@ test_that("tests with mock db", {
    db = db,
    vocabularyDatabaseSchema = "main"
  )
- expect_true(all(codes$vocabulary_id %in% "Read"))
+ expect_true(all(codes$vocabulary_id %in% "read"))
 
 
   # test verbose
