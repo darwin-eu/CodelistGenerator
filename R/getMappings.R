@@ -18,9 +18,7 @@
 #' Show mappings from non-standard vocabularies to standard
 #'
 #' @param candidateCodelist Dataframe
-#' @param db Database connection via DBI::dbConnect()
-#' @param vocabularyDatabaseSchema Name of database
-#' schema with vocab tables
+#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
 #' @param arrowDirectory Path to folder containing output of
 #' Codelist_generator::downloadVocab() - five parquet files: 'concept',
 #' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
@@ -48,8 +46,7 @@
 #' )
 #' }
 getMappings <- function(candidateCodelist,
-                         db= NULL,
-                         vocabularyDatabaseSchema = NULL,
+                         cdm=NULL,
                          arrowDirectory=NULL,
                          nonStandardVocabularies = c(
                            "ATC", "ICD10CM", "ICD10PCS",
@@ -61,25 +58,12 @@ getMappings <- function(candidateCodelist,
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertVector(nonStandardVocabularies, add = errorMessage)
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
-  if(!is.null(db)){
-  dbInherits <- inherits(db, "DBIConnection")
-  if (!isTRUE(dbInherits)) {
-    errorMessage$push("db must be a database connection via DBI::dbConnect()")
-  }}
   checkmate::reportAssertions(collection = errorMessage)
 
     if(is.null(arrowDirectory)){
-    if (!is.null(vocabularyDatabaseSchema)) {
-    conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-      "SELECT * FROM {vocabularyDatabaseSchema}.concept"
-    )))
-    conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-      "SELECT * FROM  {vocabularyDatabaseSchema}.concept_relationship"
-    )))
-    } else {
-    conceptDb <- dplyr::tbl(db, "concept")
-    conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
-    }}
+    conceptDb <- cdm$concept
+    conceptRelationshipDb <- cdm$concept_relationship
+   }
     if(!is.null(arrowDirectory)){
     conceptDb <- arrow::read_parquet(glue::glue(
                "{arrowDirectory}/concept.parquet"),

@@ -5,8 +5,7 @@
 \title{Generate candidate codelist for the OMOP CDM}
 \usage{
 getCandidateCodes(
-  db = NULL,
-  vocabularyDatabaseSchema = NULL,
+  cdm = NULL,
   arrowDirectory = NULL,
   keywords,
   exclude = NULL,
@@ -25,11 +24,7 @@ getCandidateCodes(
 )
 }
 \arguments{
-\item{db}{Database connection via DBI::dbConnect(). Required if
-arrowDirectory is NULL}
-
-\item{vocabularyDatabaseSchema}{Name of database
-schema with vocab tables}
+\item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
 
 \item{arrowDirectory}{Path to folder containing output of
 Codelist_generator::downloadVocab() - five parquet files: 'concept',

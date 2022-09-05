@@ -25,6 +25,7 @@ library(dbplyr)
 library(here)
 library(kableExtra)
 library(CodelistGenerator)
+library(CDMConnector)
 ```
 
 Let´s say we have a mock vocabulary database with these hypothetical concepts and relationships.
@@ -35,6 +36,13 @@ knitr::include_graphics("mock_db_fig1.png")
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE, results='hide'}
 db <- mockVocab()
+
+  cdm <- cdm_from_con(con = db,cdm_schema = "main",
+                      select = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
 ```
 
 ## Search for exact keyword match 
@@ -45,11 +53,10 @@ knitr::include_graphics("mock_db_fig2.png")
 To find "Musculoskeletal disorder" we can search for that like so 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = "Musculoskeletal disorder",
   domains = "Condition",
   includeDescendants = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = "main"
 )
 
 kable(codes)
@@ -58,11 +65,10 @@ kable(codes)
 Note, we would also identify it based on a partial match
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = "Musculoskeletal",
   domains = "Condition",
-  includeDescendants = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  includeDescendants = FALSE
 )
 
 kable(codes)
@@ -76,11 +82,10 @@ knitr::include_graphics("mock_db_fig7.png")
 To include descendants of an identified code, we can set includeDescendants to TRUE
 ```{r}
 kable(getCandidateCodes(
+  cdm=cdm,
   keywords = "Musculoskeletal disorder",
   domains = "Condition",
-  includeDescendants = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  includeDescendants = TRUE
 ))
 ```
 
@@ -88,15 +93,14 @@ kable(getCandidateCodes(
 We can also search for multiple keywords at the same time, and would have picked these all up with the following search
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = c(
     "Musculoskeletal disorder",
     "arthritis",
     "arthrosis"
   ),
   domains = "Condition",
-  includeDescendants = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  includeDescendants = FALSE
 )
 
 kable(codes)
@@ -111,11 +115,10 @@ To include the ancestors one level above the identified concepts we can set incl
 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = "Osteoarthritis of knee",
   includeAncestor = TRUE,
-  domains = "Condition",
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  domains = "Condition"
 )
 
 kable(codes)
@@ -130,11 +133,10 @@ We can also find concepts with multiple words even if they are in a different or
 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = "Knee osteoarthritis",
   domains = "Condition",
-  includeDescendants = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  includeDescendants = TRUE
 )
 
 kable(codes)
@@ -150,11 +152,10 @@ We can also exclude specific terms
 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = "arthritis",
   exclude = "Hip osteoarthritis",
-  domains = "Condition",
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  domains = "Condition"
 )
 
 kable(codes)
@@ -169,11 +170,10 @@ We can also pick up codes based on their synonyms. In this case "Arthritis" has 
 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = "osteoarthrosis",
   domains = "Condition",
-  searchInSynonyms = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  searchInSynonyms = TRUE
 )
 
 kable(codes)
@@ -183,11 +183,10 @@ Or, in this case, we can get the same result by searching via synonyms. In this 
 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = "arthritis",
   domains = "Condition",
-  searchViaSynonyms = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  searchViaSynonyms = TRUE
 )
 
 kable(codes)
@@ -202,12 +201,11 @@ We could have also picked up "Osteoarthrosis" by doing fuzzy matching which allo
 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = "arthritis",
   domains = "Condition",
   fuzzyMatch = TRUE,
-  maxDistanceCost = 0.2,
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  maxDistanceCost = 0.2
 )
 
 kable(codes)
@@ -218,11 +216,10 @@ Or we could have also picked up "Osteoarthrosis" by searching via non-standard.
 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = c("arthritis", "arthropathy"),
   domains = "Condition",
-  searchNonStandard = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  searchNonStandard = TRUE
 )
 
 kable(codes)
@@ -238,6 +235,7 @@ We can also include non-standard codes in our results like so
 
 ```{r}
 codes <- getCandidateCodes(
+  cdm=cdm,
   keywords = c(
     "Musculoskeletal disorder",
     "arthritis",
@@ -245,9 +243,7 @@ codes <- getCandidateCodes(
     "arthrosis"
   ),
   domains = "Condition",
-  standardConcept = c("Standard", "Non-standard"),
-  db = db,
-  vocabularyDatabaseSchema = "main"
+  standardConcept = c("Standard", "Non-standard")
 )
 
 kable(codes)

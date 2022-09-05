@@ -23,10 +23,7 @@
 #' can be considered for creating a phenotype
 #' using the OMOP CDM.
 #'
-#' @param db Database connection via DBI::dbConnect(). Required if
-#' arrowDirectory is NULL
-#' @param vocabularyDatabaseSchema Name of database
-#' schema with vocab tables
+#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
 #' @param arrowDirectory Path to folder containing output of
 #' Codelist_generator::downloadVocab() - five parquet files: 'concept',
 #' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
@@ -83,8 +80,7 @@
 #'   vocabularyDatabaseSchema = vocabularyDatabaseSchema
 #' )
 #' }
-getCandidateCodes <- function(db = NULL,
-                              vocabularyDatabaseSchema = NULL,
+getCandidateCodes <- function(cdm = NULL,
                               arrowDirectory = NULL,
                               keywords,
                               exclude = NULL,
@@ -126,21 +122,6 @@ getCandidateCodes <- function(db = NULL,
 
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()
-  if (!is.null(db)) {
-    dbInheritsCheck <- inherits(db, "DBIConnection")
-    checkmate::assertTRUE(dbInheritsCheck,
-      add = errorMessage
-    )
-    if (!isTRUE(dbInheritsCheck)) {
-      errorMessage$push(
-        "- db must be a database connection via DBI::dbConnect()"
-      )
-    }
-  }
-  checkmate::assertCharacter(vocabularyDatabaseSchema,
-    add = errorMessage,
-    null.ok = TRUE
-  )
   if (!is.null(arrowDirectory)) {
     checkmate::assertTRUE(file.exists(arrowDirectory),
       add = errorMessage
@@ -201,8 +182,7 @@ getCandidateCodes <- function(db = NULL,
 
   searchResults <- lapply(searchSpecs, function(x) {
     result <- runSearch(keywords,
-      db,
-      vocabularyDatabaseSchema,
+      cdm,
       arrowDirectory,
       exclude,
       domains = x$domain,

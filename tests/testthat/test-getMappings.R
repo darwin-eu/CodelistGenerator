@@ -3,23 +3,26 @@ test_that("tests with mock db sqlite", {
   library(RSQLite)
   library(dbplyr)
   library(dplyr)
+  library(CDMConnector)
 
   # mock db
   db <- mockVocab()
+  cdm <- cdm_from_con(con = db,cdm_schema = "main",
+                      select = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
 
   # tests
-  codes <- getCandidateCodes(
+  codes <- getCandidateCodes(cdm=cdm,
     keywords = "Musculoskeletal disorder",
     domains = "Condition",
-    includeDescendants = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    includeDescendants = TRUE
   )
-  mappings <- getMappings(
+  mappings <- getMappings(cdm=cdm,
     candidateCodelist = codes,
-    nonStandardVocabularies = "READ",
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    nonStandardVocabularies = "READ"
   )
   expect_true(
     any(mappings$standard_concept_name %in% "Osteoarthrosis")
@@ -45,44 +48,27 @@ test_that("tests with mock db sqlite", {
   ) %in%
     names(mappings)))
 
-  # expect error if not dbi connection
-  expect_error(getMappings(
+  # expect error if not a cdm reference
+  expect_error(getMappings(cdm="Not a cdm",
     candidateCodelist = codes,
-    nonStandardVocabularies = "READ",
-    db = "a",
-    vocabularyDatabaseSchema = "main"
-  ))
-  # expect error if vocabularyDatabaseSchema does not exist
-  expect_error(getMappings(
-    candidateCodelist = codes,
-    nonStandardVocabularies = "READ",
-    db = db,
-    vocabularyDatabaseSchema = "a"
+    nonStandardVocabularies = "READ"
   ))
 
   # expect error if nonStandardVocabularies does not exist
   # expect works
-  mappings <- getMappings(
+  mappings <- getMappings(cdm=cdm,
     candidateCodelist = codes,
-    nonStandardVocabularies = "READ",
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    nonStandardVocabularies = "READ"
   )
   # expect error
-  expect_error(getMappings(
+  expect_error(getMappings(cdm=cdm,
     candidateCodelist = codes,
-    nonStandardVocabularies = "READX",
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    nonStandardVocabularies = "READX"
   ))
-  expect_error(getMappings(
+  expect_error(getMappings(cdm=cdm,
     candidateCodelist = codes,
-    nonStandardVocabularies = c("Read", "READX"),
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    nonStandardVocabularies = c("Read", "READX")
   ))
-
-
 
   DBI::dbDisconnect(db)
 })
@@ -92,23 +78,25 @@ test_that("tests with mock db duckdb", {
   library(duckdb)
   library(dbplyr)
   library(dplyr)
+  library(CDMConnector)
 
   # mock db
-  db <- mockVocab(dbType = "duckdb")
-
+  db <- mockVocab()
+  cdm <- cdm_from_con(con = db,
+                      select = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
   # tests
-  codes <- getCandidateCodes(
+  codes <- getCandidateCodes(cdm=cdm,
     keywords = "Musculoskeletal disorder",
     domains = "Condition",
-    includeDescendants = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = NULL
+    includeDescendants = TRUE
   )
-  mappings <- getMappings(
+  mappings <- getMappings(cdm=cdm,
     candidateCodelist = codes,
-    nonStandardVocabularies = "READ",
-    db = db,
-    vocabularyDatabaseSchema = NULL
+    nonStandardVocabularies = "READ"
   )
   expect_true(
     any(mappings$standard_concept_name %in% "Osteoarthrosis")
@@ -126,7 +114,6 @@ test_that("tests with mock db duckdb", {
 
   DBI::dbDisconnect(db)
 })
-
 
 test_that("tests with mock arrow", {
   library(DBI)
@@ -150,7 +137,7 @@ test_that("tests with mock arrow", {
     errorIfExists = FALSE,
     verbose = TRUE
   )
-  codes <- getCandidateCodes(
+  codes <- getCandidateCodes(cdm=cdm,
     keywords = "Musculoskeletal disorder",
     domains = "Condition",
     includeDescendants = TRUE,

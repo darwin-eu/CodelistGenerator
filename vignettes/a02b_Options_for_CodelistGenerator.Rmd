@@ -30,6 +30,7 @@ library(stringr)
 library(DT)
 library(kableExtra)
 library(CodelistGenerator)
+library(CDMConnector)
 ```
 
 

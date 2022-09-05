@@ -6,8 +6,7 @@
 \usage{
 getMappings(
   candidateCodelist,
-  db = NULL,
-  vocabularyDatabaseSchema = NULL,
+  cdm = NULL,
   arrowDirectory = NULL,
   nonStandardVocabularies = c("ATC", "ICD10CM", "ICD10PCS", "ICD9CM", "ICD9Proc",
     "LOINC", "OPCS4", "Read", "RxNorm", "RxNorm Extension", "SNOMED")
@@ -16,10 +15,7 @@ getMappings(
 \arguments{
 \item{candidateCodelist}{Dataframe}
 
-\item{db}{Database connection via DBI::dbConnect()}
-
-\item{vocabularyDatabaseSchema}{Name of database
-schema with vocab tables}
+\item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
 
 \item{arrowDirectory}{Path to folder containing output of
 Codelist_generator::downloadVocab() - five parquet files: 'concept',

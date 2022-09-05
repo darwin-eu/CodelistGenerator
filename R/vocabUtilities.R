@@ -1,21 +1,11 @@
 
 
-getVocabVersion <- function(db = NULL,
-                            vocabularyDatabaseSchema=NULL,
+getVocabVersion <- function(cdm=NULL,
                             arrowDirectory=NULL){
 
 # link to vocab table
-if(!is.null(db)){
-if(!is.null(vocabularyDatabaseSchema)){
-    vocabDb <-  dplyr::tbl(db, dplyr::sql(paste0(
-      "SELECT * FROM ",
-      vocabularyDatabaseSchema,
-      ".vocabulary"
-    )))
-}
-  if(is.null(vocabularyDatabaseSchema)){
-    vocabDb <- dplyr::tbl(db, "vocabulary")
-  }
+if(!is.null(cdm)){
+    vocabDb <- cdm$vocabulary
 }
 
 if(!is.null(arrowDirectory)){
@@ -36,22 +26,12 @@ return(version)
 
 }
 
-getDomains <- function(db = NULL,
-                       vocabularyDatabaseSchema=NULL,
+getDomains <- function(cdm=NULL,
                        arrowDirectory=NULL){
 
   # link to vocab table
-  if(!is.null(db)){
-    if(!is.null(vocabularyDatabaseSchema)){
-      conceptDb <-  dplyr::tbl(db, dplyr::sql(paste0(
-        "SELECT * FROM ",
-        vocabularyDatabaseSchema,
-        ".concept"
-      )))
-    }
-    if(is.null(vocabularyDatabaseSchema)){
-      conceptDb <- dplyr::tbl(db, "concept")
-    }
+  if(!is.null(cdm)){
+      conceptDb <- cdm$concept
   }
 
   if(!is.null(arrowDirectory)){
@@ -70,22 +50,12 @@ getDomains <- function(db = NULL,
 
 }
 
-getVocabularies <- function(db = NULL,
-                       vocabularyDatabaseSchema=NULL,
-                       arrowDirectory=NULL){
+getVocabularies <- function(cdm=NULL,
+                            arrowDirectory=NULL){
 
   # link to vocab table
-  if(!is.null(db)){
-    if(!is.null(vocabularyDatabaseSchema)){
-      conceptDb <-  dplyr::tbl(db, dplyr::sql(paste0(
-        "SELECT * FROM ",
-        vocabularyDatabaseSchema,
-        ".concept"
-      )))
-    }
-    if(is.null(vocabularyDatabaseSchema)){
-      conceptDb <- dplyr::tbl(db, "concept")
-    }
+  if(!is.null(cdm)){
+      conceptDb <- cdm$concept
   }
 
   if(!is.null(arrowDirectory)){
@@ -104,23 +74,13 @@ getVocabularies <- function(db = NULL,
 
 }
 
-getconceptClassId <- function(db = NULL,
-                       vocabularyDatabaseSchema=NULL,
+getconceptClassId <- function(cdm=NULL,
                        arrowDirectory=NULL,
                        domain = NULL){
 
   # link to vocab table
-  if(!is.null(db)){
-    if(!is.null(vocabularyDatabaseSchema)){
-      conceptDb <-  dplyr::tbl(db, dplyr::sql(paste0(
-        "SELECT * FROM ",
-        vocabularyDatabaseSchema,
-        ".concept"
-      )))
-    }
-    if(is.null(vocabularyDatabaseSchema)){
-      conceptDb <- dplyr::tbl(db, "concept")
-    }
+  if(!is.null(cdm)){
+      conceptDb <- cdm$concept
   }
 
   if(!is.null(arrowDirectory)){

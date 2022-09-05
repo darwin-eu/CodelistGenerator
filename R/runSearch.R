@@ -1,6 +1,5 @@
 runSearch <- function(keywords,
-                      db = NULL,
-                      vocabularyDatabaseSchema = NULL,
+                      cdm = NULL,
                       arrowDirectory = NULL,
                       exclude = NULL,
                       domains = "Condition",
@@ -19,25 +18,10 @@ runSearch <- function(keywords,
   # connect to relevant vocabulary tables
   # will return informative error if not found
   if (is.null(arrowDirectory)) {
-    if (!is.null(vocabularyDatabaseSchema)) {
-      conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-        "SELECT * FROM {vocabularyDatabaseSchema}.concept"
-      )))
-      conceptAncestorDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-        "SELECT * FROM {vocabularyDatabaseSchema}.concept_ancestor"
-      )))
-      conceptSynonymDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-        "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
-      )))
-      conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-        "SELECT * FROM {vocabularyDatabaseSchema}.concept_relationship"
-      )))
-    } else {
-      conceptDb <- dplyr::tbl(db, "concept")
-      conceptAncestorDb <- dplyr::tbl(db, "concept_ancestor")
-      conceptSynonymDb <- dplyr::tbl(db, "concept_synonym")
-      conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
-    }
+      conceptDb <- cdm$concept
+      conceptAncestorDb <- cdm$concept_ancestor
+      conceptSynonymDb <- cdm$concept_synonym
+      conceptRelationshipDb <- cdm$concept_relationship
   }
   if (!is.null(arrowDirectory)) {
     conceptDb <- arrow::read_parquet(glue::glue(

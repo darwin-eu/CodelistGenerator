@@ -38,7 +38,7 @@ library(DBI)
 library(dplyr)
 library(dbplyr)
 library(CodelistGenerator)
-
+library(CDMConnector)
 # Note that you will also need another library, like RPostgres, to make your database connection
 ```
 
@@ -70,6 +70,7 @@ library(dplyr)
 library(dbplyr)
 library(CodelistGenerator)
 library(kableExtra)
+library(CDMConnector)
 
 # usethis::edit_r_environ()
 serverDbi<-Sys.getenv("serverDbi_FEB22")

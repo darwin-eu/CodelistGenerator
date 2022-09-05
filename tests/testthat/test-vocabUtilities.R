@@ -8,23 +8,25 @@ test_that("tests with mock db", {
 
   # mock db - sqlite
   db <- mockVocab(dbType="SQLite")
-  version <- getVocabVersion(db=db,
-                  vocabularyDatabaseSchema = "main")
+  cdm <- cdm_from_con(con = db,cdm_schema = "main",
+                      select = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
 
+  version <- getVocabVersion(cdm=cdm)
   expect_true(length(version)==1)
   expect_true(is.character(version))
 
-  domains<-getDomains(db=db,
-             vocabularyDatabaseSchema = "main")
+  domains<-getDomains(cdm=cdm)
   expect_true(all(c("Condition", "Observation") %in% domains))
   expect_true(is.character(domains))
 
-  concept_classes <- getconceptClassId(db = db,
-                                      vocabularyDatabaseSchema = "main")
+  concept_classes <- getconceptClassId(cdm=cdm)
   expect_true(is.character(concept_classes))
 
-  concept_classes <- getconceptClassId(db = db,
-                    vocabularyDatabaseSchema = "main",
+  concept_classes <- getconceptClassId(cdm=cdm,
                     domain = "Condition")
   expect_true(is.character(concept_classes))
 
@@ -32,19 +34,24 @@ test_that("tests with mock db", {
 
   # mock db - duckdb
   db <- mockVocab(dbType="duckdb")
-  version <- getVocabVersion(db=db,
-                             vocabularyDatabaseSchema = NULL)
+  cdm <- cdm_from_con(con = db,
+                      select = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
+  version <- getVocabVersion(cdm=cdm)
 
   expect_true(length(version)==1)
   expect_true(is.character(version))
 
-  domains<-getDomains(db=db)
+  domains<-getDomains(cdm=cdm)
   expect_true(all(c("Condition", "Observation") %in% domains))
   expect_true(is.character(domains))
 
-  concept_classes <- getconceptClassId(db = db)
+  concept_classes <- getconceptClassId(cdm = cdm)
   expect_true(is.character(concept_classes))
-  concept_classes <- getconceptClassId(db = db,
+  concept_classes <- getconceptClassId(cdm = cdm,
                                        domain = "Condition")
   expect_true(is.character(concept_classes))
 
