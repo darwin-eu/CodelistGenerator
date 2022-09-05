@@ -19,6 +19,10 @@ test_that("tests with mock db", {
   expect_true(length(version)==1)
   expect_true(is.character(version))
 
+  vocabs <- getVocabularies(cdm=cdm)
+  expect_true(length(vocabs)>=1)
+  expect_true(is.character(vocabs))
+
   domains<-getDomains(cdm=cdm)
   expect_true(all(c("Condition", "Observation") %in% domains))
   expect_true(is.character(domains))
@@ -48,6 +52,10 @@ test_that("tests with mock db", {
   domains<-getDomains(cdm=cdm)
   expect_true(all(c("Condition", "Observation") %in% domains))
   expect_true(is.character(domains))
+
+  vocabs <- getVocabularies(cdm=cdm)
+  expect_true(length(vocabs)>=1)
+  expect_true(is.character(vocabs))
 
   concept_classes <- getconceptClassId(cdm = cdm)
   expect_true(is.character(concept_classes))
@@ -79,6 +87,10 @@ test_that("tests with mock db", {
   domains<-getDomains(arrowDirectory = dOut)
   expect_true(all(c("Condition", "Observation") %in% domains))
   expect_true(is.character(domains))
+
+  vocabs <- getVocabularies(arrowDirectory = dOut)
+  expect_true(length(vocabs)>=1)
+  expect_true(is.character(vocabs))
 
   concept_classes <- getconceptClassId(arrowDirectory = dOut)
   expect_true(is.character(concept_classes))

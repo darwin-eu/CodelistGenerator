@@ -65,7 +65,7 @@ getVocabularies <- function(cdm=NULL,
   }
 
   vocabs <- conceptDb %>%
-    dplyr::select("vocab_id") %>%
+    dplyr::select("vocabulary_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
     dplyr::pull()
