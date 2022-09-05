@@ -4,6 +4,7 @@ test_that("tests with mock db", {
   library(RSQLite)
   library(dbplyr)
   library(dplyr)
+  library(CDMConnector)
 
   # mock db - sqlite
   db <- mockVocab(dbType="SQLite")
@@ -51,10 +52,15 @@ test_that("tests with mock db", {
 
   # with arrow
   db <- mockVocab()
+  cdm <- cdm_from_con(con = db,cdm_schema = NULL,
+                      select = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
   dOut <- tempdir()
   downloadVocab(
-    db = db,
-    vocabularyDatabaseSchema = "main",
+    cdm = cdm,
     dirOut = dOut,
     errorIfExists = FALSE,
     verbose = TRUE

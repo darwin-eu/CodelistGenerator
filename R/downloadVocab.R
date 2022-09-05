@@ -17,9 +17,7 @@
 
 #' Download vocabulary tables
 #'
-#' @param db Database connection via DBI::dbConnect()
-#' @param vocabularyDatabaseSchema Name of database
-#' schema with vocab tables
+#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
 #' @param dirOut Directory where output files will
 #' be saved
 #' @param errorIfExists Either TRUE or FALSE.
@@ -47,8 +45,7 @@
 #' )
 #' }
 #'
-downloadVocab <- function(db,
-                               vocabularyDatabaseSchema,
+downloadVocab <- function(cdm,
                                dirOut,
                                errorIfExists = TRUE,
                                verbose = FALSE) {
@@ -57,12 +54,13 @@ downloadVocab <- function(db,
     message("Checking inputs")
   }
 
+  # create directory if doesn't exist
+  if(!file.exists(dirOut)){
+  dir.create(dirOut)
+  }
+
   errorMessage <- checkmate::makeAssertCollection()
-  dbInheritsCheck <- inherits(db, "DBIConnection")
-  checkmate::assertTRUE(dbInheritsCheck,
-    add = errorMessage
-  )
-  checkmate::assertVector(vocabularyDatabaseSchema,
+  checkmate::assertTRUE(!is.null(cdm),
     add = errorMessage
   )
   dirOutCheck <- file.exists(dirOut)
@@ -118,14 +116,13 @@ downloadVocab <- function(db,
   if (verbose == TRUE) {
    message("Getting concept table")
   }
-  concept <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabularyDatabaseSchema}.concept"
-  ))) %>%
+  concept <- cdm$concept %>%
     dplyr::select(dplyr::all_of(c(
       "concept_id", "concept_name",
       "domain_id", "vocabulary_id", "standard_concept",
       "concept_class_id","concept_code"))) %>%
     dplyr::collect()
+
   concept <- arrow::arrow_table(concept,
               schema=arrow::schema(
   concept_id = double(),
@@ -141,9 +138,7 @@ downloadVocab <- function(db,
   if (verbose == TRUE) {
     message("Getting concept relationship table")
   }
-  conceptRelationship <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabularyDatabaseSchema}.concept_relationship"
-  ))) %>%
+  conceptRelationship <- cdm$concept_relationship %>%
     dplyr::select(dplyr::all_of(c(
       "concept_id_1", "concept_id_2",
       "relationship_id"))) %>%
@@ -159,9 +154,7 @@ downloadVocab <- function(db,
   if (verbose == TRUE) {
     message("Getting concept ancestor table")
   }
-  conceptAncestor <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabularyDatabaseSchema}.concept_ancestor"
-  ))) %>%
+  conceptAncestor <- cdm$concept_ancestor %>%
     dplyr::select(dplyr::all_of(c(
       "ancestor_concept_id", "descendant_concept_id",
       "min_levels_of_separation",
@@ -179,9 +172,7 @@ downloadVocab <- function(db,
   if (verbose == TRUE) {
     message("Getting concept synonym table")
   }
-  conceptSynonym <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
-  ))) %>%
+  conceptSynonym <- cdm$concept_synonym %>%
     dplyr::select(dplyr::all_of(c(
       "concept_id",
       "concept_synonym_name"))) %>%
@@ -196,9 +187,7 @@ downloadVocab <- function(db,
   if (verbose == TRUE) {
     message("Getting vocabulary table")
   }
-  vocabulary <- dplyr::tbl(db, dplyr::sql(glue::glue(
-    "SELECT * FROM {vocabularyDatabaseSchema}.vocabulary"
-  ))) %>%
+  vocabulary <- cdm$vocabulary %>%
     dplyr::select(dplyr::all_of(c(
       "vocabulary_id", "vocabulary_name" ,
       "vocabulary_reference" , "vocabulary_version",

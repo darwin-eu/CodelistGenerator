@@ -4,19 +4,10 @@
 \alias{downloadVocab}
 \title{Download vocabulary tables}
 \usage{
-downloadVocab(
-  db,
-  vocabularyDatabaseSchema,
-  dirOut,
-  errorIfExists = TRUE,
-  verbose = FALSE
-)
+downloadVocab(cdm, dirOut, errorIfExists = TRUE, verbose = FALSE)
 }
 \arguments{
-\item{db}{Database connection via DBI::dbConnect()}
-
-\item{vocabularyDatabaseSchema}{Name of database
-schema with vocab tables}
+\item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
 
 \item{dirOut}{Directory where output files will
 be saved}

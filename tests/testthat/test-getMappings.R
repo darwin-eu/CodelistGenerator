@@ -133,13 +133,19 @@ test_that("tests with mock arrow", {
   library(arrow)
   library(dbplyr)
   library(dplyr)
+  library(CDMConnector)
 
   # mock db
   db <- mockVocab()
+  cdm <- cdm_from_con(con = db,cdm_schema = NULL,
+                      select = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
   dOut <- tempdir()
     downloadVocab(
-    db = db,
-    vocabularyDatabaseSchema = "main",
+    cdm = cdm,
     dirOut = dOut,
     errorIfExists = FALSE,
     verbose = TRUE
