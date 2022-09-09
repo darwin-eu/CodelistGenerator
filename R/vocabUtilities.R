@@ -1,18 +1,9 @@
 
 
-getVocabVersion <- function(cdm=NULL,
-                            arrowDirectory=NULL){
+getVocabVersion <- function(cdm){
 
 # link to vocab table
-if(!is.null(cdm)){
-    vocabDb <- cdm$vocabulary
-}
-
-if(!is.null(arrowDirectory)){
-vocabDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                           "/vocabulary.parquet"),
-                    as_data_frame = FALSE)
-}
+vocabDb <- cdm$vocabulary
 
 # get overall version
 version <- vocabDb %>%
@@ -26,19 +17,10 @@ return(version)
 
 }
 
-getDomains <- function(cdm=NULL,
-                       arrowDirectory=NULL){
+getDomains <- function(cdm){
 
   # link to vocab table
-  if(!is.null(cdm)){
-      conceptDb <- cdm$concept
-  }
-
-  if(!is.null(arrowDirectory)){
-    conceptDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                                           "/concept.parquet"),
-                                    as_data_frame = FALSE)
-  }
+    conceptDb <- cdm$concept
 
   domains <- conceptDb %>%
     dplyr::select("domain_id") %>%
@@ -50,19 +32,10 @@ getDomains <- function(cdm=NULL,
 
 }
 
-getVocabularies <- function(cdm=NULL,
-                            arrowDirectory=NULL){
+getVocabularies <- function(cdm){
 
   # link to vocab table
-  if(!is.null(cdm)){
       conceptDb <- cdm$concept
-  }
-
-  if(!is.null(arrowDirectory)){
-    conceptDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                                             "/concept.parquet"),
-                                      as_data_frame = FALSE)
-  }
 
   vocabs <- conceptDb %>%
     dplyr::select("vocabulary_id") %>%
@@ -79,15 +52,7 @@ getconceptClassId <- function(cdm=NULL,
                        domain = NULL){
 
   # link to vocab table
-  if(!is.null(cdm)){
       conceptDb <- cdm$concept
-  }
-
-  if(!is.null(arrowDirectory)){
-    conceptDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                                             "/concept.parquet"),
-                                      as_data_frame = FALSE)
-  }
 
   if(!is.null(domain)){
   conceptDb <- conceptDb %>%

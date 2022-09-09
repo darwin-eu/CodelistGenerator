@@ -8,7 +8,7 @@ test_that("comparing two codelists", {
   # mock db
   db <- mockVocab()
   cdm <- cdm_from_con(con = db,cdm_schema = "main",
-                      select = tidyselect::all_of(c("concept",
+                      cdm_tables = tidyselect::all_of(c("concept",
                                                     "concept_relationship",
                                                     "concept_ancestor",
                                                     "concept_synonym",
@@ -81,7 +81,7 @@ test_that("comparing two codelists- same codes found but in differnt ways", {
   # mock db
   db <- mockVocab()
   cdm <- cdm_from_con(con = db,cdm_schema = "main",
-                      select = tidyselect::all_of(c("concept",
+                      cdm_tables = tidyselect::all_of(c("concept",
                                                     "concept_relationship",
                                                     "concept_ancestor",
                                                     "concept_synonym",

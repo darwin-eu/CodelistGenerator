@@ -7,7 +7,7 @@ test_that("import vocab check", {
 
   db <- mockVocab()
   cdm <- cdm_from_con(con = db,cdm_schema = NULL,
-                      select = tidyselect::all_of(c("concept",
+                      cdm_tables = tidyselect::all_of(c("concept",
                                                     "concept_relationship",
                                                     "concept_ancestor",
                                                     "concept_synonym",

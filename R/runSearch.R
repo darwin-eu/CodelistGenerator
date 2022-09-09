@@ -1,6 +1,5 @@
 runSearch <- function(keywords,
                       cdm = NULL,
-                      arrowDirectory = NULL,
                       exclude = NULL,
                       domains = "Condition",
                       conceptClassId = NULL,
@@ -17,34 +16,11 @@ runSearch <- function(keywords,
 
   # connect to relevant vocabulary tables
   # will return informative error if not found
-  if (is.null(arrowDirectory)) {
-      conceptDb <- cdm$concept
-      conceptAncestorDb <- cdm$concept_ancestor
-      conceptSynonymDb <- cdm$concept_synonym
-      conceptRelationshipDb <- cdm$concept_relationship
-  }
-  if (!is.null(arrowDirectory)) {
-    conceptDb <- arrow::read_parquet(glue::glue(
-      "{arrowDirectory}/concept.parquet"
-    ),
-    as_data_frame = FALSE
-    )
-    conceptAncestorDb <- arrow::read_parquet(glue::glue(
-      "{arrowDirectory}/concept_ancestor.parquet"
-    ),
-    as_data_frame = FALSE
-    )
-    conceptSynonymDb <- arrow::read_parquet(glue::glue(
-      "{arrowDirectory}/concept_synonym.parquet"
-    ),
-    as_data_frame = FALSE
-    )
-    conceptRelationshipDb <- arrow::read_parquet(glue::glue(
-      "{arrowDirectory}/concept_relationship.parquet"
-    ),
-    as_data_frame = FALSE
-    )
-  }
+  conceptDb <- cdm$concept
+  conceptAncestorDb <- cdm$concept_ancestor
+  conceptSynonymDb <- cdm$concept_synonym
+  conceptRelationshipDb <- cdm$concept_relationship
+
 
   # formatting of conceptDb variables
   conceptDb <- conceptDb %>%

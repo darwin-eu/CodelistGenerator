@@ -19,10 +19,6 @@
 #'
 #' @param candidateCodelist Dataframe
 #' @param cdm cdm_reference via CDMConnector::cdm_from_con()
-#' @param arrowDirectory Path to folder containing output of
-#' Codelist_generator::downloadVocab() - five parquet files: 'concept',
-#' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
-#' 'vocabulary. Required if db is NULL
 #' @param nonStandardVocabularies Character vector
 #'
 #' @return tibble
@@ -47,7 +43,6 @@
 #' }
 getMappings <- function(candidateCodelist,
                          cdm=NULL,
-                         arrowDirectory=NULL,
                          nonStandardVocabularies = c(
                            "ATC", "ICD10CM", "ICD10PCS",
                            "ICD9CM", "ICD9Proc",
@@ -60,18 +55,8 @@ getMappings <- function(candidateCodelist,
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
 
-    if(is.null(arrowDirectory)){
-    conceptDb <- cdm$concept
-    conceptRelationshipDb <- cdm$concept_relationship
-   }
-    if(!is.null(arrowDirectory)){
-    conceptDb <- arrow::read_parquet(glue::glue(
-               "{arrowDirectory}/concept.parquet"),
-                                   as_data_frame = FALSE)
-    conceptRelationshipDb <-  arrow::read_parquet(glue::glue(
-               "{arrowDirectory}/concept_relationship.parquet"),
-                                   as_data_frame = FALSE)
-  }
+  conceptDb <- cdm$concept
+  conceptRelationshipDb <- cdm$concept_relationship
 
   # lowercase names
   conceptDb <- dplyr::rename_with(conceptDb, tolower)

@@ -70,61 +70,61 @@ mockVocab <- function(dbType = "SQLite") {
   )
   conceptAncestor <- dplyr::bind_rows(
     data.frame(
-      ancestor_concept_id = 1,
-      descendant_concept_id = 2,
+      ancestor_concept_id = 1L,
+      descendant_concept_id = 2L,
       min_levels_of_separation = 1,
       max_levels_of_separation = 1
     ),
     data.frame(
-      ancestor_concept_id = 1,
-      descendant_concept_id = 3,
+      ancestor_concept_id = 1L,
+      descendant_concept_id = 3L,
       min_levels_of_separation = 1,
       max_levels_of_separation = 1
     ),
     data.frame(
-      ancestor_concept_id = 1,
-      descendant_concept_id = 4,
+      ancestor_concept_id = 1L,
+      descendant_concept_id = 4L,
       min_levels_of_separation = 2,
       max_levels_of_separation = 2
     ),
     data.frame(
-      ancestor_concept_id = 1,
-      descendant_concept_id = 5,
+      ancestor_concept_id = 1L,
+      descendant_concept_id = 5L,
       min_levels_of_separation = 2,
       max_levels_of_separation = 2
     ),
     data.frame(
-      ancestor_concept_id = 3,
-      descendant_concept_id = 4,
+      ancestor_concept_id = 3L,
+      descendant_concept_id = 4L,
       min_levels_of_separation = 1,
       max_levels_of_separation = 1
     ),
     data.frame(
-      ancestor_concept_id = 3,
-      descendant_concept_id = 5,
+      ancestor_concept_id = 3L,
+      descendant_concept_id = 5L,
       min_levels_of_separation = 1,
       max_levels_of_separation = 1
     )
   )
   conceptSynonym <- dplyr::bind_rows(
     data.frame(
-    concept_id = 2,
+    concept_id = 2L,
     concept_synonym_name = "Arthritis"
   ),
   data.frame(
-    concept_id = 3,
+    concept_id = 3L,
     concept_synonym_name = "Osteoarthrosis"
   )
   )
   conceptRelationship <- dplyr::bind_rows(
     data.frame(
-      concept_id_1 = 2,
-      concept_id_2 = 6,
+      concept_id_1 = 2L,
+      concept_id_2 = 6L,
       relationship_id = "Mapped from"
     ),
     data.frame(
-      concept_id_1 = 4,
-      concept_id_2 = 7,
+      concept_id_1 = 4L,
+      concept_id_2 = 7L,
       relationship_id = "Mapped from"
     )
   )

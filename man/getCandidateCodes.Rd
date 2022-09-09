@@ -6,7 +6,6 @@
 \usage{
 getCandidateCodes(
   cdm = NULL,
-  arrowDirectory = NULL,
   keywords,
   exclude = NULL,
   domains = "Condition",
@@ -25,11 +24,6 @@ getCandidateCodes(
 }
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
-
-\item{arrowDirectory}{Path to folder containing output of
-Codelist_generator::downloadVocab() - five parquet files: 'concept',
-'concept_ancestor', 'concept_relationship', 'concept_synonym', and
-'vocabulary. Required if db is NULL}
 
 \item{keywords}{Character vector of words to search for.
 Where more than one word is given (e.g. "knee osteoarthritis"),

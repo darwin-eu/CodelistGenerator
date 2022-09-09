@@ -24,10 +24,6 @@
 #' using the OMOP CDM.
 #'
 #' @param cdm cdm_reference via CDMConnector::cdm_from_con()
-#' @param arrowDirectory Path to folder containing output of
-#' Codelist_generator::downloadVocab() - five parquet files: 'concept',
-#' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
-#' 'vocabulary. Required if db is NULL
 #' @param keywords Character vector of words to search for.
 #' Where more than one word is given (e.g. "knee osteoarthritis"),
 #' all combinations of those words should be identified
@@ -81,7 +77,6 @@
 #' )
 #' }
 getCandidateCodes <- function(cdm = NULL,
-                              arrowDirectory = NULL,
                               keywords,
                               exclude = NULL,
                               domains = "Condition",
@@ -122,11 +117,6 @@ getCandidateCodes <- function(cdm = NULL,
 
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()
-  if (!is.null(arrowDirectory)) {
-    checkmate::assertTRUE(file.exists(arrowDirectory),
-      add = errorMessage
-    )
-  }
   checkmate::assertVector(keywords, add = errorMessage)
   checkmate::assertVector(exclude,
     null.ok = TRUE,
@@ -183,7 +173,6 @@ getCandidateCodes <- function(cdm = NULL,
   searchResults <- lapply(searchSpecs, function(x) {
     result <- runSearch(keywords,
       cdm,
-      arrowDirectory,
       exclude,
       domains = x$domain,
       conceptClassId,

@@ -38,7 +38,7 @@ knitr::include_graphics("mock_db_fig1.png")
 db <- mockVocab()
 
   cdm <- cdm_from_con(con = db,cdm_schema = "main",
-                      select = tidyselect::all_of(c("concept",
+                      cdm_tables = tidyselect::all_of(c("concept",
                                                     "concept_relationship",
                                                     "concept_ancestor",
                                                     "concept_synonym",

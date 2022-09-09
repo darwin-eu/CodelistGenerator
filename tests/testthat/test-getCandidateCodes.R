@@ -8,7 +8,7 @@ test_that("tests with mock db", {
   # mock db
   db <- mockVocab()
   cdm <- cdm_from_con(con = db,cdm_schema = "main",
-                      select = tidyselect::all_of(c("concept",
+                      cdm_tables = tidyselect::all_of(c("concept",
                                                     "concept_relationship",
                                                     "concept_ancestor",
                                                     "concept_synonym",
@@ -338,7 +338,7 @@ test_that("tests with mock db", {
   # mock db
   db <- mockVocab(dbType = "duckdb")
   cdm <- cdm_from_con(con = db,cdm_schema = NULL,
-                      select = tidyselect::all_of(c("concept",
+                      cdm_tables = tidyselect::all_of(c("concept",
                                                     "concept_relationship",
                                                     "concept_ancestor",
                                                     "concept_synonym",
@@ -366,25 +366,31 @@ test_that("tests with mock arrow", {
   # mock db
   db <- mockVocab()
   cdm <- cdm_from_con(con = db,cdm_schema = NULL,
-                      select = tidyselect::all_of(c("concept",
+                      cdm_tables = tidyselect::all_of(c("concept",
                                                     "concept_relationship",
                                                     "concept_ancestor",
                                                     "concept_synonym",
                                                     "vocabulary")))
 
-  dOut <- tempdir()
-  downloadVocab(
-    cdm = cdm,
-    dirOut = dOut,
-    errorIfExists = FALSE,
-    verbose = TRUE
+  dOut <- tempfile()
+  dir.create(dOut)
+  CDMConnector::stow(cdm, dOut)
+
+  cdm_arrow <- CDMConnector::cdm_from_files(
+    path = dOut,
+    cdm_tables = tidyselect::all_of(c("concept",
+                                      "concept_relationship",
+                                      "concept_ancestor",
+                                      "concept_synonym",
+                                      "vocabulary")),
+    as_data_frame = FALSE
   )
 
-    codes <- getCandidateCodes(
+
+   codes <- getCandidateCodes(cdm=cdm_arrow,
     keywords = "Musculoskeletal disorder",
     domains = "Condition",
-    includeDescendants = FALSE,
-    arrowDirectory=dOut
+    includeDescendants = FALSE
   )
   expect_true((nrow(codes) == 1 &
     codes$concept_name[1] == "Musculoskeletal disorder"))
@@ -402,7 +408,7 @@ test_that("tests with mock db - multiple domains", {
   # mock db
   db <- mockVocab(dbType = "duckdb")
   cdm <- cdm_from_con(con = db,cdm_schema = NULL,
-                      select = tidyselect::all_of(c("concept",
+                      cdm_tables = tidyselect::all_of(c("concept",
                                                     "concept_relationship",
                                                     "concept_ancestor",
                                                     "concept_synonym",
@@ -428,6 +434,48 @@ test_that("tests with mock db - multiple domains", {
                  codes$concept_id == 8))
 
   DBI::dbDisconnect(db)
+
+})
+
+test_that("tests with mock R", {
+  library(DBI)
+  library(arrow)
+  library(dbplyr)
+  library(dplyr)
+  library(CDMConnector)
+
+  # mock db
+  db <- mockVocab()
+  cdm <- cdm_from_con(con = db,cdm_schema = NULL,
+                      cdm_tables = tidyselect::all_of(c("concept",
+                                                        "concept_relationship",
+                                                        "concept_ancestor",
+                                                        "concept_synonym",
+                                                        "vocabulary")))
+
+  dOut <- tempfile()
+  dir.create(dOut)
+  CDMConnector::stow(cdm, dOut)
+
+  cdm_df <- CDMConnector::cdm_from_files(
+    path = dOut,
+    cdm_tables = tidyselect::all_of(c("concept",
+                                      "concept_relationship",
+                                      "concept_ancestor",
+                                      "concept_synonym",
+                                      "vocabulary")),
+    as_data_frame = TRUE
+  )
+
+
+  codes <- getCandidateCodes(cdm=cdm_df,
+                             keywords = "Musculoskeletal disorder",
+                             domains = "Condition",
+                             includeDescendants = FALSE
+  )
+  expect_true((nrow(codes) == 1 &
+                 codes$concept_name[1] == "Musculoskeletal disorder"))
+
 
 })
 
