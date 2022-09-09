@@ -2,11 +2,7 @@
 
 getVocabVersion <- function(cdm){
 
-# link to vocab table
-vocabDb <- cdm$vocabulary
-
-# get overall version
-version <- vocabDb %>%
+  version <- cdm$vocabulary %>%
     dplyr::rename_with(tolower) %>%
     dplyr::filter(.data$vocabulary_id == "None") %>%
     dplyr::select("vocabulary_version") %>%
@@ -19,10 +15,7 @@ return(version)
 
 getDomains <- function(cdm){
 
-  # link to vocab table
-    conceptDb <- cdm$concept
-
-  domains <- conceptDb %>%
+  domains <-  cdm$concept %>%
     dplyr::select("domain_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -34,10 +27,7 @@ getDomains <- function(cdm){
 
 getVocabularies <- function(cdm){
 
-  # link to vocab table
-      conceptDb <- cdm$concept
-
-  vocabs <- conceptDb %>%
+  vocabs <- cdm$concept %>%
     dplyr::select("vocabulary_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -48,7 +38,6 @@ getVocabularies <- function(cdm){
 }
 
 getconceptClassId <- function(cdm=NULL,
-                       arrowDirectory=NULL,
                        domain = NULL){
 
   # link to vocab table
