@@ -2,7 +2,6 @@
 
 export("%>%")
 export(compareCodelists)
-export(downloadVocab)
 export(getCandidateCodes)
 export(getMappings)
 export(mockVocab)
