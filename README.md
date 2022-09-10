@@ -35,7 +35,7 @@ library(DBI)
 library(dplyr)
 library(dbplyr)
 library(CodelistGenerator)
-
+library(CDMConnector)
 # Note that you will also need another library, like RPostgres, to make your database connection
 ```
 
@@ -58,32 +58,36 @@ db <- DBI::dbConnect(RPostgres::Postgres(),
 vocabularyDatabaseSchema<-Sys.getenv("vocabulary_schema")
 ```
 
+## Create cdm_reference
+
+We first set up a `cdm_reference` using the CDMConncetor package.
+
+``` r
+cdm <- cdm_from_con(con = db,
+                    cdm_schema = vocabularyDatabaseSchema,
+                    cdm_tables = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
+```
+
 ## Example search
 
 Every codelist is specific to a version of the OMOP CDM vocabularies, so
 we can first check the version.
 
 ``` r
-dplyr::tbl(db, dplyr::sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".vocabulary"
-    ))) %>%
-    dplyr::rename_with(tolower) %>%
-    dplyr::filter(.data$vocabulary_id == "None") %>%
-    dplyr::select("vocabulary_version") %>%
-    dplyr::collect() %>%
-    dplyr::pull()
+getVocabVersion(cdm=cdm)
 #> [1] "v5.0 13-JUL-21"
 ```
 
 We can then search for asthma like so
 
 ``` r
-asthma1<-getCandidateCodes(keywords="asthma",
-                    domains = "Condition",
-                    db=db,
-                    vocabularyDatabaseSchema = vocabularyDatabaseSchema)
+asthma1<-getCandidateCodes(cdm=cdm,
+                           keywords="asthma",
+                    domains = "Condition")
 head(asthma1, 10)
 ```
 
@@ -125,7 +129,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -145,7 +149,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -165,7 +169,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -185,7 +189,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -205,7 +209,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -225,7 +229,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -245,7 +249,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -265,7 +269,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -285,7 +289,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -305,7 +309,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -321,8 +325,7 @@ strategy, in which case this can be added like so
 asthma2<-getCandidateCodes(keywords="asthma",
                     domains = "Condition",
                     exclude = "Poisoning by antiasthmatic",
-                    db=db,
-                    vocabularyDatabaseSchema = vocabularyDatabaseSchema)
+                    cdm=cdm)
 head(asthma2, 10)
 ```
 
@@ -364,7 +367,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -384,7 +387,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -404,7 +407,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -424,7 +427,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -444,7 +447,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -464,7 +467,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -484,7 +487,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -504,7 +507,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -524,7 +527,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -544,7 +547,7 @@ condition
 clinical finding
 </td>
 <td style="text-align:left;">
-SNOMED
+snomed
 </td>
 <td style="text-align:left;">
 From initial search
@@ -557,10 +560,9 @@ We can then also see non-standard codes these are mapped from, for
 example
 
 ``` r
-asthmaIcdMappings<-getMappings(candidateCodelist=asthma2,
-                     nonStandardVocabularies="ICD10CM",
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+asthmaIcdMappings<-getMappings(cdm=cdm,
+                               candidateCodelist=asthma2,
+                     nonStandardVocabularies="ICD10CM")
 head(asthmaIcdMappings %>% 
        select(standard_concept_name,
               standard_vocabulary_id,

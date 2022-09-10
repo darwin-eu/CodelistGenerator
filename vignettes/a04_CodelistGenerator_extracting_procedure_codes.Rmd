@@ -1,11 +1,14 @@
 ---
-title: "04 Codelists for medications"
+title: "04 Generating a codelist for procedures"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{a04_codelists_for_medications}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{04_CodelistGenerator_extracting_procedure_codes}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
+
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -21,17 +24,18 @@ library(DBI)
 library(RSQLite)
 library(here)
 library(dplyr)
-library(dbplyr)
 library(stringr)
 library(DT)
 library(kableExtra)
 library(CodelistGenerator)
 ```
 
-## Creating a codelists for metformin
-For this vignette we are going to create codelists for identifying a metformin, looking in the drug domain.
+## Creating a codelists for colonoscopy
+For this vignette we are going to create codelists for identifying a colonoscopy. For this example we are going to generate a candidate codelists looking for codes in either the procedure or measurement domain.
 
 ## Connecting to a database with the OMOP CDM vocabularies
+As described previously there are alternative ways to link to the vocabularies. A connection to an existing database can be made like so:
+
 ```{r, eval=FALSE}
 library(DBI)
 library(RPostgres)
@@ -57,7 +61,7 @@ db <- dbConnect(RPostgres::Postgres(),
 vocabularyDatabaseSchema <- "vocabulary"
 ```
 
-## Codelist from "metformin" and its descendants
+## Codelist from "colonoscopy" and its descendants
 First we can follow the approach of identifying high-level codes and include all their descendants.
 
 ```{r, eval=FALSE}
@@ -77,10 +81,10 @@ codesFromDescendants <- tbl(
     ".concept_ancestor"
   ))
 ) %>%
-  filter(ancestor_concept_id %in% c("1503297")) %>%
+  filter(ancestor_concept_id %in% c("4249893", "937652", "40480729")) %>%
   select("descendant_concept_id") %>%
   rename("concept_id" = "descendant_concept_id") %>%
-  inner_join(tbl(db, sql(paste0(
+  left_join(tbl(db, sql(paste0(
     "SELECT * FROM ",
     vocabularyDatabaseSchema,
     ".concept"
@@ -93,7 +97,7 @@ codesFromDescendants <- tbl(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codesFromDescendants <- readRDS(here("vignettes", "medData01.RData"))
+codesFromDescendants <- readRDS(here("vignettes", "procData01.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
@@ -107,29 +111,30 @@ datatable(codesFromDescendants,
 ```
 
 ## Generating a candidate codelist using Codelist Generator
-But we can also use CodelistGenerator to generate a candidate codelist for metformin,
+But we can also use CodelistGenerator to generate a candidate codelist for colonoscopy.
 
 ```{r, eval=FALSE }
 library(CodelistGenerator)
 ```
 
-Let's do a search for a single keyword of "metformin", including descendants.
+Let's do a search for a single keyword of "colonoscopy" without any exclusions and not including descendants
 ```{r, eval=FALSE }
-metforminCodes2 <- getCandidateCodes(
-  keywords = "metformin",
-  domains = c("Drug"),
-  includeDescendants = TRUE,
+colonoscopyCodes2 <- getCandidateCodes(
+  keywords = "colonoscopy",
+  domains = c("Procedure", "Measurement"),
+  exclude = NULL,
+  includeDescendants = FALSE,
   db = db,
   vocabularyDatabaseSchema = vocabularyDatabaseSchema
 )
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-metforminCodes2 <- readRDS(here("vignettes", "metforminCodes2.RData"))
+colonoscopyCodes2 <- readRDS(here("vignettes", "procData02.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(metforminCodes2,
+datatable(colonoscopyCodes2,
   rownames = FALSE,
   options = list(
     pageLength = 10,
@@ -140,7 +145,10 @@ datatable(metforminCodes2,
 
 What is the difference between this codelist and the one based on descendants?
 ```{r,  eval=TRUE }
-codeComparison <- compareCodelists(codesFromDescendants, metforminCodes2)
+codeComparison <- compareCodelists(
+  codesFromDescendants,
+  colonoscopyCodes2
+)
 ```
 
 
@@ -154,6 +162,19 @@ What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
 datatable(codeComparison %>%
   filter(codelist == "Only codelist 2"),
+rownames = FALSE,
+options = list(
+  pageLength = 10,
+  lengthMenu = c(10, 20, 50)
+)
+)
+```
+
+
+But, what are the codes from specified codes and descendants but not picked up by CodelistGenerator?
+```{r,  message=FALSE, warning=FALSE }
+datatable(codeComparison %>%
+  filter(codelist == "Only codelist 1"),
 rownames = FALSE,
 options = list(
   pageLength = 10,

@@ -23,7 +23,7 @@ getCandidateCodes(
 )
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
+\item{cdm}{cdm_reference via CDMConnector}
 
 \item{keywords}{Character vector of words to search for.
 Where more than one word is given (e.g. "knee osteoarthritis"),

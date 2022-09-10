@@ -1,8 +1,8 @@
 ---
-title: "02 Options for CodelistGenerator (with mock vocabulary)"
+title: "02 Options for CodelistGenerator: examples with a with mock vocabulary"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{02a_Options_for_CodelistGenerator}
+  %\VignetteIndexEntry{02_Options_for_CodelistGenerator}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

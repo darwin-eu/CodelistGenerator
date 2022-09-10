@@ -23,7 +23,7 @@
 #' can be considered for creating a phenotype
 #' using the OMOP CDM.
 #'
-#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
+#' @param cdm cdm_reference via CDMConnector
 #' @param keywords Character vector of words to search for.
 #' Where more than one word is given (e.g. "knee osteoarthritis"),
 #' all combinations of those words should be identified

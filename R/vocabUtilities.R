@@ -1,5 +1,13 @@
 
 
+#' getVocabVersion
+#'
+#' @param cdm cdm_reference via CDMConnector
+#'
+#' @return
+#' @export
+#'
+#' @examples
 getVocabVersion <- function(cdm){
 
   version <- cdm$vocabulary %>%
@@ -13,6 +21,14 @@ return(version)
 
 }
 
+#' getDomains
+#'
+#' @param cdm cdm_reference via CDMConnector
+#'
+#' @return
+#' @export
+#'
+#' @examples
 getDomains <- function(cdm){
 
   domains <-  cdm$concept %>%
@@ -25,6 +41,14 @@ getDomains <- function(cdm){
 
 }
 
+#' getVocabularies
+#'
+#' @param cdm cdm_reference via CDMConnector
+#'
+#' @return
+#' @export
+#'
+#' @examples
 getVocabularies <- function(cdm){
 
   vocabs <- cdm$concept %>%
@@ -37,6 +61,15 @@ getVocabularies <- function(cdm){
 
 }
 
+#' getconceptClassId
+#'
+#' @param cdm cdm_reference via CDMConnector
+#' @param domain Vocabulary domain
+#'
+#' @return
+#' @export
+#'
+#' @examples
 getconceptClassId <- function(cdm=NULL,
                        domain = NULL){
 
