@@ -3,11 +3,11 @@ pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   a01_Introduction_to_CodelistGenerator: a01_Introduction_to_CodelistGenerator.html
-  a02a_Options_for_CodelistGenerator: a02a_Options_for_CodelistGenerator.html
-  a02b_Options_for_CodelistGenerator: a02b_Options_for_CodelistGenerator.html
-  a03_CodelistGenerator_extracting_procedure_codes: a03_CodelistGenerator_extracting_procedure_codes.html
-  a04_codelists_for_medications: a04_codelists_for_medications.html
-last_built: 2022-08-31T18:00Z
+  a02_Options_for_CodelistGenerator: a02_Options_for_CodelistGenerator.html
+  a03_Options_for_CodelistGenerator: a03_Options_for_CodelistGenerator.html
+  a04_CodelistGenerator_extracting_procedure_codes: a04_CodelistGenerator_extracting_procedure_codes.html
+  a05_codelists_for_medications: a05_codelists_for_medications.html
+last_built: 2022-09-18T08:22Z
 urls:
   reference: https://darwin-eu.github.io/CodelistGenerator/reference
   article: https://darwin-eu.github.io/CodelistGenerator/articles

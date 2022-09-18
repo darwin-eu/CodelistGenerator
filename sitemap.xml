@@ -16,16 +16,16 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a01_Introduction_to_CodelistGenerator.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02a_Options_for_CodelistGenerator.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02_Options_for_CodelistGenerator.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02b_Options_for_CodelistGenerator.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a03_Options_for_CodelistGenerator.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a03_CodelistGenerator_extracting_procedure_codes.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a04_CodelistGenerator_extracting_procedure_codes.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a04_codelists_for_medications.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a05_codelists_for_medications.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/articles/index.html</loc>
@@ -43,13 +43,22 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/downloadVocab.html</loc>
-  </url>
-  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDomains.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getMappings.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabVersion.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabularies.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getconceptClassId.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc>
