@@ -22,16 +22,12 @@ Compare two codelists
 library(DBI)
 library(CodelistGenerator)
 db <- DBI::dbConnect(" Your database connection here ")
-vocabularyDatabaseSchema <- " Your vocabulary schema here "
-asthmaCodes <- getCandidateCodes(
-  keywords = "asthma",
-  db = db,
-  vocabularyDatabaseSchema = " Your vocabulary schema here "
+cdm <- cdm_from_con(con = db,cdm_schema = "main"
+asthmaCodes <- getCandidateCodes(cdm=cdm,
+  keywords = "asthma"
 )
-persistantAsthmaCodes <- getCandidateCodes(
-  keywords = "Persistent asthma",
-  db = db,
-  vocabularyDatabaseSchema = " Your vocabulary schema here "
+persistantAsthmaCodes <- getCandidateCodes(cdm=cdm,
+  keywords = "Persistent asthma"
 )
 compareCodelists(
   codelist1 = asthmaCodes,

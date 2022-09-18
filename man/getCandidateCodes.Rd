@@ -5,9 +5,7 @@
 \title{Generate candidate codelist for the OMOP CDM}
 \usage{
 getCandidateCodes(
-  db = NULL,
-  vocabularyDatabaseSchema = NULL,
-  arrowDirectory = NULL,
+  cdm = NULL,
   keywords,
   exclude = NULL,
   domains = "Condition",
@@ -25,16 +23,7 @@ getCandidateCodes(
 )
 }
 \arguments{
-\item{db}{Database connection via DBI::dbConnect(). Required if
-arrowDirectory is NULL}
-
-\item{vocabularyDatabaseSchema}{Name of database
-schema with vocab tables}
-
-\item{arrowDirectory}{Path to folder containing output of
-Codelist_generator::downloadVocab() - five parquet files: 'concept',
-'concept_ancestor', 'concept_relationship', 'concept_synonym', and
-'vocabulary. Required if db is NULL}
+\item{cdm}{cdm_reference via CDMConnector}
 
 \item{keywords}{Character vector of words to search for.
 Where more than one word is given (e.g. "knee osteoarthritis"),

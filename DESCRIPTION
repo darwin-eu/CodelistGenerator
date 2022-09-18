@@ -10,6 +10,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports:
+    CDMConnector,
+    tidyselect,
     checkmate (>= 2.0.0),
     dbplyr (>= 2.2.1),
     dplyr (>= 1.0.0),
@@ -31,6 +33,7 @@ Suggests:
     testthat (>= 3.0.0),
     kableExtra (>= 1.0.0),
     RPostgres
+Remotes:  OdyOSG/CDMConnector
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/

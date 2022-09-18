@@ -13,12 +13,44 @@ library(DT)
 library(kableExtra)
 devtools::load_all()
 
-arrowDirectory <- Sys.getenv("VocabArrowPath")
+# example with postgres database connection details
+db <- DBI::dbConnect(RPostgres::Postgres(),
+                     dbname = Sys.getenv("DB_SERVER_cdm_aurum_202106_dbi"),
+                     port = Sys.getenv("DB_PORT"),
+                     host = Sys.getenv("DB_HOST"),
+                     user = Sys.getenv("DB_USER"),
+                     password = Sys.getenv("DB_PASSWORD")
+)
+# name of vocabulary schema
+vocabularyDatabaseSchema <- Sys.getenv("DB_VOCAB_SCHEMA")
 
+# create cdm reference
+cdm <- CDMConnector::cdm_from_con(con = db,
+                                  cdm_schema = vocabularyDatabaseSchema,
+                                  cdm_tables = tidyselect::all_of(c("concept",
+                                                                    "concept_relationship",
+                                                                    "concept_ancestor",
+                                                                    "concept_synonym",
+                                                                    "vocabulary")))
+# vocab to arrow
+# save in temp folder for this example
+dOut<-here(tempdir(), "db_vocab")
+dir.create(dOut)
+CDMConnector::stow(cdm, dOut)
 
+# new cdm reference using arrow
+cdm_arrow <- CDMConnector::cdm_from_files(path = dOut,
+                                          cdm_tables = tidyselect::all_of(c("concept",
+                                                                            "concept_relationship",
+                                                                            "concept_ancestor",
+                                                                            "concept_synonym",
+                                                                            "vocabulary")),
+                                          as_data_frame = FALSE)
+
+rm(cdm)
 
 # intro vignette ----
-vocabVersion <- getVocabVersion(arrowDirectory = arrowDirectory)
+vocabVersion <- getVocabVersion(cdm = cdm_arrow)
 
 saveRDS(
   vocabVersion,
@@ -26,16 +58,12 @@ saveRDS(
 )
 
 
-codesFromDescendants <- arrow::read_parquet(paste0(arrowDirectory,
-                                                   "/concept_ancestor.parquet"),
-                                            as_data_frame = FALSE)%>%
+codesFromDescendants <- cdm_arrow$concept_ancestor %>%
   filter(.data$ancestor_concept_id == 4182210) %>%
   select("descendant_concept_id") %>%
   rename("concept_id" = "descendant_concept_id") %>%
   select("concept_id")   %>%
-  left_join(arrow::read_parquet(paste0(arrowDirectory,
-                                       "/concept.parquet"),
-                                as_data_frame = FALSE),
+  left_join(cdm_arrow$concept,
             by="concept_id")  %>%
   select("concept_id", "concept_name", "domain_id", "vocabulary_id") %>%
   collect()
@@ -45,7 +73,7 @@ saveRDS(
   here("vignettes", "introData01.RData")
 )
 
-dementiaCodes1 <- getCandidateCodes(
+dementiaCodes1 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "dementia",
   domains = "Condition",
   searchViaSynonyms = FALSE,
@@ -53,7 +81,6 @@ dementiaCodes1 <- getCandidateCodes(
   exclude = NULL,
   includeDescendants = TRUE,
   includeAncestor = FALSE,
-  arrowDirectory = Sys.getenv("VocabArrowPath"),
   verbose=TRUE
 )
 saveRDS(
@@ -68,20 +95,18 @@ saveRDS(
   here("vignettes", "introData03.RData")
 )
 
-icdMappings <- getMappings(
+icdMappings <- getMappings(cdm = cdm_arrow,
   candidateCodelist = dementiaCodes1,
-  nonStandardVocabularies = "ICD10CM",
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  nonStandardVocabularies = "ICD10CM"
 )
 saveRDS(
   icdMappings,
   here("vignettes", "introData04.RData")
 )
 
-readMappings <- getMappings(
+readMappings <- getMappings(cdm = cdm_arrow,
   candidateCodelist = dementiaCodes1,
-  nonStandardVocabularies = "Read",
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  nonStandardVocabularies = "Read"
 )
 saveRDS(
   readMappings,
@@ -90,7 +115,7 @@ saveRDS(
 
 
 # options vignette ------
-oaCodes1 <- getCandidateCodes(
+oaCodes1 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchViaSynonyms = FALSE,
@@ -101,7 +126,7 @@ oaCodes1 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  verbose = TRUE
 )
 saveRDS(
   oaCodes1,
@@ -109,7 +134,7 @@ saveRDS(
 )
 
 # include desc
-oaCodes2 <- getCandidateCodes(
+oaCodes2 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchViaSynonyms = FALSE,
@@ -119,8 +144,7 @@ oaCodes2 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = TRUE,
-  includeAncestor = FALSE,
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes2,
@@ -128,7 +152,7 @@ saveRDS(
 )
 
 # include obs
-oaCodes3 <- getCandidateCodes(
+oaCodes3 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
   searchViaSynonyms = FALSE,
@@ -139,8 +163,7 @@ oaCodes3 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes3,
@@ -148,7 +171,7 @@ saveRDS(
 )
 
 # search syn
-oaCodes4 <- getCandidateCodes(
+oaCodes4 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = TRUE,
@@ -160,8 +183,7 @@ oaCodes4 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes4,
@@ -169,7 +191,7 @@ saveRDS(
 )
 
 # search source
-oaCodes5 <- getCandidateCodes(
+oaCodes5 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchNonStandard = TRUE,
@@ -178,8 +200,7 @@ oaCodes5 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes5,
@@ -189,7 +210,7 @@ saveRDS(
 
 
 # fuzzy search
-oaCodes6 <- getCandidateCodes(
+oaCodes6 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchViaSynonyms = FALSE,
@@ -200,8 +221,7 @@ oaCodes6 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes6,
@@ -209,7 +229,7 @@ saveRDS(
 )
 
 # fuzzy search 0.2
-oaCodes7 <- getCandidateCodes(
+oaCodes7 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchViaSynonyms = FALSE,
@@ -220,8 +240,7 @@ oaCodes7 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes7,
@@ -229,7 +248,7 @@ saveRDS(
 )
 
 # include ancestor
-oaCodes8 <- getCandidateCodes(
+oaCodes8 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchViaSynonyms = FALSE,
@@ -240,8 +259,7 @@ oaCodes8 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = TRUE,
-  arrowDirectory = Sys.getenv("VocabArrowPath")
+  includeAncestor = TRUE
 )
 saveRDS(
   oaCodes8,
@@ -249,16 +267,11 @@ saveRDS(
 )
 
 # colonoscopy vignette ------
-codesFromDescendants<-tbl(db,
-  sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept_ancestor"))) %>%
+codesFromDescendants<-cdm_arrow$concept_ancestor %>%
   filter(ancestor_concept_id %in% c("4249893", "937652", "40480729")) %>%
   select("descendant_concept_id") %>%
   rename("concept_id"="descendant_concept_id") %>%
-  inner_join(tbl(db, sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept"))))%>%
+  inner_join(cdm_arrow$concept) %>%
   select("concept_id", "concept_name",
          "domain_id", "vocabulary_id") %>%
   collect()
@@ -270,15 +283,15 @@ saveRDS(
 
 
 
-colonoscopyCodes2<-getCandidateCodes(keywords="colonoscopy",
+colonoscopyCodes2<-getCandidateCodes(cdm = cdm_arrow,
+                                     keywords="colonoscopy",
                     domains=c("Procedure", "Measurement"),
                     searchViaSynonyms = FALSE,
                     fuzzyMatch = FALSE,
                     exclude = NULL,
                     includeDescendants = FALSE,
                     includeAncestor = FALSE,
-                    verbose = TRUE ,
-                    arrowDirectory = Sys.getenv("VocabArrowPath"))
+                    verbose = TRUE )
 saveRDS(
   colonoscopyCodes2,
   here("vignettes", "procData02.RData")
@@ -287,16 +300,11 @@ saveRDS(
 
 
 # medication vignette ------
-codesFromDescendants<-tbl(db,
-  sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept_ancestor"))) %>%
+codesFromDescendants<-cdm_arrow$concept_ancestor %>%
   filter(ancestor_concept_id %in% c("1503297")) %>%
   select("descendant_concept_id") %>%
   rename("concept_id"="descendant_concept_id") %>%
-  inner_join(tbl(db, sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept"))))%>%
+  inner_join(cdm_arrow$concept )%>%
   select("concept_id", "concept_name",
          "domain_id", "vocabulary_id") %>%
   collect()
@@ -308,7 +316,8 @@ saveRDS(
 
 
 
-metforminCodes2<-getCandidateCodes(keywords="metformin",
+metforminCodes2<-getCandidateCodes(cdm = cdm_arrow,
+                                   keywords="metformin",
                     domains=c("Drug"),
                     standardConcept=c("Standard", "Classification"),
                     conceptClassId="Ingredient",
@@ -317,15 +326,15 @@ metforminCodes2<-getCandidateCodes(keywords="metformin",
                     exclude = NULL,
                     includeDescendants = TRUE,
                     includeAncestor = FALSE,
-                    verbose = TRUE ,
-                    arrowDirectory = Sys.getenv("VocabArrowPath"))
+                    verbose = TRUE )
 saveRDS(
   metforminCodes2,
   here("vignettes", "metforminCodes2.RData")
 )
 
 
-getCandidateCodes(keywords="metformin",
+getCandidateCodes(cdm = cdm_arrow,
+  keywords="metformin",
                     domains=c("Drug"),
                     standardConcept=c("Standard", "Classification"),
                     conceptClassId="Ingredient",
@@ -334,9 +343,9 @@ getCandidateCodes(keywords="metformin",
                     exclude = NULL,
                     includeDescendants = TRUE,
                     includeAncestor = FALSE,
-                    verbose = TRUE ,
-                  arrowDirectory = Sys.getenv("VocabArrowPath"))
-getCandidateCodes(keywords="metformin",
+                    verbose = TRUE )
+getCandidateCodes(cdm = cdm_arrow,
+                  keywords="metformin",
                     domains=c("Drug"),
                     standardConcept=c("Standard", "Classification"),
                     conceptClassId="Prescription Drug",
@@ -345,6 +354,5 @@ getCandidateCodes(keywords="metformin",
                     exclude = NULL,
                     includeDescendants = TRUE,
                     includeAncestor = FALSE,
-                    verbose = TRUE ,
-                  arrowDirectory = Sys.getenv("VocabArrowPath"))
+                    verbose = TRUE )
 

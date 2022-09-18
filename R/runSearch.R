@@ -1,7 +1,5 @@
 runSearch <- function(keywords,
-                      db = NULL,
-                      vocabularyDatabaseSchema = NULL,
-                      arrowDirectory = NULL,
+                      cdm = NULL,
                       exclude = NULL,
                       domains = "Condition",
                       conceptClassId = NULL,
@@ -18,49 +16,11 @@ runSearch <- function(keywords,
 
   # connect to relevant vocabulary tables
   # will return informative error if not found
-  if (is.null(arrowDirectory)) {
-    if (!is.null(vocabularyDatabaseSchema)) {
-      conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-        "SELECT * FROM {vocabularyDatabaseSchema}.concept"
-      )))
-      conceptAncestorDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-        "SELECT * FROM {vocabularyDatabaseSchema}.concept_ancestor"
-      )))
-      conceptSynonymDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-        "SELECT * FROM {vocabularyDatabaseSchema}.concept_synonym"
-      )))
-      conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-        "SELECT * FROM {vocabularyDatabaseSchema}.concept_relationship"
-      )))
-    } else {
-      conceptDb <- dplyr::tbl(db, "concept")
-      conceptAncestorDb <- dplyr::tbl(db, "concept_ancestor")
-      conceptSynonymDb <- dplyr::tbl(db, "concept_synonym")
-      conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
-    }
-  }
-  if (!is.null(arrowDirectory)) {
-    conceptDb <- arrow::read_parquet(glue::glue(
-      "{arrowDirectory}/concept.parquet"
-    ),
-    as_data_frame = FALSE
-    )
-    conceptAncestorDb <- arrow::read_parquet(glue::glue(
-      "{arrowDirectory}/concept_ancestor.parquet"
-    ),
-    as_data_frame = FALSE
-    )
-    conceptSynonymDb <- arrow::read_parquet(glue::glue(
-      "{arrowDirectory}/concept_synonym.parquet"
-    ),
-    as_data_frame = FALSE
-    )
-    conceptRelationshipDb <- arrow::read_parquet(glue::glue(
-      "{arrowDirectory}/concept_relationship.parquet"
-    ),
-    as_data_frame = FALSE
-    )
-  }
+  conceptDb <- cdm$concept
+  conceptAncestorDb <- cdm$concept_ancestor
+  conceptSynonymDb <- cdm$concept_synonym
+  conceptRelationshipDb <- cdm$concept_relationship
+
 
   # formatting of conceptDb variables
   conceptDb <- conceptDb %>%
@@ -542,11 +502,14 @@ tidyWords <- function(words) {
   workingWords <- stringr::str_to_lower(workingWords)
   workingWords <- trimws(workingWords)
 
-  workingWords
+  return(workingWords)
 }
 
 getExactMatches <- function(words,
                             conceptDf) {
+
+  conceptDf <- conceptDf %>% # start with all
+    dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
   # because there may be a lot of synonyms, get these from a loop
   # (stringr::str_detect slows considerably
@@ -560,8 +523,7 @@ getExactMatches <- function(words,
   conceptsFound <- list()
   for (i in seq_along(words)) {
     workingExclude <- unlist(strsplit(words[i], " "))
-    workingConcepts <- conceptDf %>% # start with all
-      dplyr::mutate(concept_name = tidyWords(.data$concept_name))
+    workingConcepts <- conceptDf # start with all
 
     for (j in seq_along(workingExclude)) {
       workingConcepts <- workingConcepts %>%
@@ -572,13 +534,18 @@ getExactMatches <- function(words,
     }
     conceptsFound[[i]] <- workingConcepts
   }
+  conceptsFound <- dplyr::bind_rows(conceptsFound) %>% dplyr::distinct()
 
-  return(dplyr::bind_rows(conceptsFound))
+  return(conceptsFound)
 }
 
 getFuzzyMatches <- function(words,
                             conceptDf,
                             mdCost) {
+
+  conceptDf <- conceptDf %>% # start with all
+    dplyr::mutate(concept_name = tidyWords(.data$concept_name))
+
   conceptsFound <- list()
   for (i in seq_along(words)) {
     workingKeywords <- unlist(strsplit(words[i], " "))
@@ -586,8 +553,7 @@ getFuzzyMatches <- function(words,
     workingKeywords <- workingKeywords[
       stringr::str_count(workingKeywords) > 1
     ]
-    workingConcepts <- conceptDf %>% # start with all
-      dplyr::mutate(concept_name = tidyWords(.data$concept_name))
+    workingConcepts <- conceptDf  # start with all
     for (j in seq_along(workingKeywords)) {
       # filter each term within the loop, one after the other
       indx <- agrep(workingKeywords[j], workingConcepts$concept_name,
@@ -601,8 +567,10 @@ getFuzzyMatches <- function(words,
     conceptsFound[[i]] <- workingConcepts
   }
 
-  dplyr::bind_rows(conceptsFound) %>%
+  conceptsFound <- dplyr::bind_rows(conceptsFound) %>%
     dplyr::distinct()
+
+  return(conceptsFound)
 }
 
 addDescendants <- function(workingCandidateCodes,
@@ -625,7 +593,7 @@ addDescendants <- function(workingCandidateCodes,
     dplyr::left_join(conceptDf, by = "concept_id") %>%
     dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
-  candidateCodeDescendants
+  return(candidateCodeDescendants)
 }
 
 addAncestor <- function(workingCandidateCodes,

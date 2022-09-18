@@ -3,25 +3,28 @@ test_that("comparing two codelists", {
   library(RSQLite)
   library(dbplyr)
   library(dplyr)
+  library(CDMConnector)
 
   # mock db
   db <- mockVocab()
+  cdm <- cdm_from_con(con = db,cdm_schema = "main",
+                      cdm_tables = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
 
   # tests
-  codes1 <- getCandidateCodes(
+  codes1 <- getCandidateCodes(cdm=cdm,
     keywords = "Arthritis",
     domains = "Condition",
-    includeDescendants = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    includeDescendants = TRUE
   )
 
-  codes2 <- getCandidateCodes(
+  codes2 <- getCandidateCodes(cdm=cdm,
     keywords = c("knee osteoarthritis", "arthrosis"),
     domains = "Condition",
-    includeDescendants = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    includeDescendants = TRUE
   )
 
   codesCompared <- compareCodelists(
@@ -73,26 +76,29 @@ test_that("comparing two codelists- same codes found but in differnt ways", {
   library(RSQLite)
   library(dbplyr)
   library(dplyr)
+  library(CDMConnector)
 
   # mock db
   db <- mockVocab()
+  cdm <- cdm_from_con(con = db,cdm_schema = "main",
+                      cdm_tables = tidyselect::all_of(c("concept",
+                                                    "concept_relationship",
+                                                    "concept_ancestor",
+                                                    "concept_synonym",
+                                                    "vocabulary")))
 
   # tests
-  codes1 <- getCandidateCodes(
+  codes1 <- getCandidateCodes(cdm=cdm,
     keywords = "Arthritis",
     domains = "Condition",
-    includeDescendants = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    includeDescendants = TRUE
   )
 
-  codes2 <- getCandidateCodes(
+  codes2 <- getCandidateCodes(cdm=cdm,
     keywords = c("arthrosis"),
     searchInSynonyms = TRUE,
     domains = "Condition",
-    includeDescendants = TRUE,
-    db = db,
-    vocabularyDatabaseSchema = "main"
+    includeDescendants = TRUE
   )
 
   codesCompared <- compareCodelists(

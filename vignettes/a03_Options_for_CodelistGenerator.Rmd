@@ -1,8 +1,8 @@
 ---
-title: "02 Options for CodelistGenerator(with full vocabulary)"
+title: "03 Options for CodelistGenerator: examples from full vocabulary"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{02b_Options_for_CodelistGenerator}
+  %\VignetteIndexEntry{03_Options_for_CodelistGenerator}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -30,6 +30,7 @@ library(stringr)
 library(DT)
 library(kableExtra)
 library(CodelistGenerator)
+library(CDMConnector)
 ```
 
 

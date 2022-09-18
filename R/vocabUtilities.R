@@ -1,31 +1,16 @@
 
 
-getVocabVersion <- function(db = NULL,
-                            vocabularyDatabaseSchema=NULL,
-                            arrowDirectory=NULL){
+#' getVocabVersion
+#'
+#' @param cdm cdm_reference via CDMConnector
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getVocabVersion <- function(cdm){
 
-# link to vocab table
-if(!is.null(db)){
-if(!is.null(vocabularyDatabaseSchema)){
-    vocabDb <-  dplyr::tbl(db, dplyr::sql(paste0(
-      "SELECT * FROM ",
-      vocabularyDatabaseSchema,
-      ".vocabulary"
-    )))
-}
-  if(is.null(vocabularyDatabaseSchema)){
-    vocabDb <- dplyr::tbl(db, "vocabulary")
-  }
-}
-
-if(!is.null(arrowDirectory)){
-vocabDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                           "/vocabulary.parquet"),
-                    as_data_frame = FALSE)
-}
-
-# get overall version
-version <- vocabDb %>%
+  version <- cdm$vocabulary %>%
     dplyr::rename_with(tolower) %>%
     dplyr::filter(.data$vocabulary_id == "None") %>%
     dplyr::select("vocabulary_version") %>%
@@ -36,31 +21,17 @@ return(version)
 
 }
 
-getDomains <- function(db = NULL,
-                       vocabularyDatabaseSchema=NULL,
-                       arrowDirectory=NULL){
+#' getDomains
+#'
+#' @param cdm cdm_reference via CDMConnector
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getDomains <- function(cdm){
 
-  # link to vocab table
-  if(!is.null(db)){
-    if(!is.null(vocabularyDatabaseSchema)){
-      conceptDb <-  dplyr::tbl(db, dplyr::sql(paste0(
-        "SELECT * FROM ",
-        vocabularyDatabaseSchema,
-        ".concept"
-      )))
-    }
-    if(is.null(vocabularyDatabaseSchema)){
-      conceptDb <- dplyr::tbl(db, "concept")
-    }
-  }
-
-  if(!is.null(arrowDirectory)){
-    conceptDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                                           "/concept.parquet"),
-                                    as_data_frame = FALSE)
-  }
-
-  domains <- conceptDb %>%
+  domains <-  cdm$concept %>%
     dplyr::select("domain_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -70,32 +41,18 @@ getDomains <- function(db = NULL,
 
 }
 
-getVocabularies <- function(db = NULL,
-                       vocabularyDatabaseSchema=NULL,
-                       arrowDirectory=NULL){
+#' getVocabularies
+#'
+#' @param cdm cdm_reference via CDMConnector
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getVocabularies <- function(cdm){
 
-  # link to vocab table
-  if(!is.null(db)){
-    if(!is.null(vocabularyDatabaseSchema)){
-      conceptDb <-  dplyr::tbl(db, dplyr::sql(paste0(
-        "SELECT * FROM ",
-        vocabularyDatabaseSchema,
-        ".concept"
-      )))
-    }
-    if(is.null(vocabularyDatabaseSchema)){
-      conceptDb <- dplyr::tbl(db, "concept")
-    }
-  }
-
-  if(!is.null(arrowDirectory)){
-    conceptDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                                             "/concept.parquet"),
-                                      as_data_frame = FALSE)
-  }
-
-  vocabs <- conceptDb %>%
-    dplyr::select("vocab_id") %>%
+  vocabs <- cdm$concept %>%
+    dplyr::select("vocabulary_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
     dplyr::pull()
@@ -104,30 +61,20 @@ getVocabularies <- function(db = NULL,
 
 }
 
-getconceptClassId <- function(db = NULL,
-                       vocabularyDatabaseSchema=NULL,
-                       arrowDirectory=NULL,
+#' getconceptClassId
+#'
+#' @param cdm cdm_reference via CDMConnector
+#' @param domain Vocabulary domain
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getconceptClassId <- function(cdm=NULL,
                        domain = NULL){
 
   # link to vocab table
-  if(!is.null(db)){
-    if(!is.null(vocabularyDatabaseSchema)){
-      conceptDb <-  dplyr::tbl(db, dplyr::sql(paste0(
-        "SELECT * FROM ",
-        vocabularyDatabaseSchema,
-        ".concept"
-      )))
-    }
-    if(is.null(vocabularyDatabaseSchema)){
-      conceptDb <- dplyr::tbl(db, "concept")
-    }
-  }
-
-  if(!is.null(arrowDirectory)){
-    conceptDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                                             "/concept.parquet"),
-                                      as_data_frame = FALSE)
-  }
+      conceptDb <- cdm$concept
 
   if(!is.null(domain)){
   conceptDb <- conceptDb %>%
