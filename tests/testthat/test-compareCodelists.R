@@ -1,18 +1,10 @@
 test_that("comparing two codelists", {
-  library(DBI)
-  library(RSQLite)
-  library(dbplyr)
-  library(dplyr)
-  library(CDMConnector)
 
-  # mock db
-  db <- mockVocab()
-  cdm <- cdm_from_con(con = db,cdm_schema = "main",
-                      cdm_tables = tidyselect::all_of(c("concept",
-                                                    "concept_relationship",
-                                                    "concept_ancestor",
-                                                    "concept_synonym",
-                                                    "vocabulary")))
+  backends<- c("database", "arrow","data_frame")
+
+  for(i in 1:length(backends)){
+    # mock db
+    cdm <- mockVocabRef(backends[[i]])
 
   # tests
   codes1 <- getCandidateCodes(cdm=cdm,
@@ -41,24 +33,24 @@ test_that("comparing two codelists", {
     names(codesCompared)))
 
   expect_true(codesCompared %>%
-    filter(concept_id == 3) %>%
-    select(codelist) %>%
-    pull() == "Only codelist 1")
+    dplyr::filter(concept_id == 3) %>%
+    dplyr::select(codelist) %>%
+    dplyr::pull() == "Only codelist 1")
 
   expect_true(codesCompared %>%
-    filter(concept_id == 5) %>%
-    select(codelist) %>%
-    pull() == "Only codelist 1")
+    dplyr::filter(concept_id == 5) %>%
+    dplyr::select(codelist) %>%
+    dplyr::pull() == "Only codelist 1")
 
   expect_true(codesCompared %>%
-    filter(concept_id == 4) %>%
-    select(codelist) %>%
-    pull() == "Both")
+                dplyr::filter(concept_id == 4) %>%
+                dplyr::select(codelist) %>%
+                dplyr::pull() == "Both")
 
   expect_true(codesCompared %>%
-    filter(concept_id == 2) %>%
-    select(codelist) %>%
-    pull() == "Only codelist 2")
+                dplyr::filter(concept_id == 2) %>%
+                dplyr::select(codelist) %>%
+                dplyr::pull() == "Only codelist 2")
 
   # expected errors
   expect_error(compareCodelists(
@@ -69,23 +61,17 @@ test_that("comparing two codelists", {
     codelist1 = "a",
     codelist2 = codes2
   ))
+  }
+
 })
 
-test_that("comparing two codelists- same codes found but in differnt ways", {
-  library(DBI)
-  library(RSQLite)
-  library(dbplyr)
-  library(dplyr)
-  library(CDMConnector)
+test_that("comparing two codelists- same codes found different ways", {
 
-  # mock db
-  db <- mockVocab()
-  cdm <- cdm_from_con(con = db,cdm_schema = "main",
-                      cdm_tables = tidyselect::all_of(c("concept",
-                                                    "concept_relationship",
-                                                    "concept_ancestor",
-                                                    "concept_synonym",
-                                                    "vocabulary")))
+  backends<- c("database", "arrow","data_frame")
+
+  for(i in 1:length(backends)){
+    # mock db
+    cdm <- mockVocabRef(backends[[i]])
 
   # tests
   codes1 <- getCandidateCodes(cdm=cdm,
@@ -110,24 +96,24 @@ test_that("comparing two codelists- same codes found but in differnt ways", {
   expect_true(nrow(codesCompared) == 4)
 
   expect_true(codesCompared %>%
-                filter(concept_id == 3) %>%
-                select(codelist) %>%
-                pull() == "Both")
+                dplyr::filter(concept_id == 3) %>%
+                dplyr::select(codelist) %>%
+                dplyr::pull() == "Both")
 
   expect_true(codesCompared %>%
-                filter(concept_id == 4) %>%
-                select(codelist) %>%
-                pull() == "Both")
+                dplyr::filter(concept_id == 4) %>%
+                dplyr::select(codelist) %>%
+                dplyr::pull() == "Both")
 
   expect_true(codesCompared %>%
-                filter(concept_id == 5) %>%
-                select(codelist) %>%
-                pull() == "Both")
+                dplyr::filter(concept_id == 5) %>%
+                dplyr::select(codelist) %>%
+                dplyr::pull() == "Both")
 
   expect_true(codesCompared %>%
-                filter(concept_id == 2) %>%
-                select(codelist) %>%
-                pull() == "Only codelist 2")
-
+                dplyr::filter(concept_id == 2) %>%
+                dplyr::select(codelist) %>%
+                dplyr::pull() == "Only codelist 2")
+  }
 
 })

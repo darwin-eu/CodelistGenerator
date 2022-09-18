@@ -19,7 +19,6 @@ knitr::opts_chunk$set(
 ## Mock vocabulary database
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 library(DBI)
-library(RSQLite)
 library(dplyr)
 library(dbplyr)
 library(here)
@@ -35,14 +34,7 @@ knitr::include_graphics("mock_db_fig1.png")
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE, results='hide'}
-db <- mockVocab()
-
-  cdm <- cdm_from_con(con = db,cdm_schema = "main",
-                      cdm_tables = tidyselect::all_of(c("concept",
-                                                    "concept_relationship",
-                                                    "concept_ancestor",
-                                                    "concept_synonym",
-                                                    "vocabulary")))
+cdm <- mockVocabRef()
 ```
 
 ## Search for exact keyword match 
@@ -250,6 +242,3 @@ kable(codes)
 ```
 
 
-```{r}
-dbDisconnect(db)
-```

@@ -1,18 +1,10 @@
 test_that("tests with mock db", {
-  library(DBI)
-  library(RSQLite)
-  library(dbplyr)
-  library(dplyr)
-  library(CDMConnector)
 
-  # mock db
-  db <- mockVocab()
-  cdm <- cdm_from_con(con = db,cdm_schema = "main",
-                      cdm_tables = tidyselect::all_of(c("concept",
-                                                    "concept_relationship",
-                                                    "concept_ancestor",
-                                                    "concept_synonym",
-                                                    "vocabulary")))
+  backends<- c("database", "arrow","data_frame")
+
+  for(i in 1:length(backends)){
+    # mock db
+    cdm <- mockVocabRef(backends[[i]])
 
   # tests
   # test keywords search - exact
@@ -330,89 +322,16 @@ test_that("tests with mock db", {
   ))
 
 
-  DBI::dbDisconnect(db)
-
-
-  # use duckdb instead of SQLite
-  # where there is no vocabulary schema name
-  # mock db
-  db <- mockVocab(dbType = "duckdb")
-  cdm <- cdm_from_con(con = db,cdm_schema = NULL,
-                      cdm_tables = tidyselect::all_of(c("concept",
-                                                    "concept_relationship",
-                                                    "concept_ancestor",
-                                                    "concept_synonym",
-                                                    "vocabulary")))
-
-  # tests
-  # test keywords search - exact
-  codes <- getCandidateCodes(
-    cdm=cdm,
-    keywords = "Musculoskeletal disorder",
-    domains = "Condition",
-    includeDescendants = FALSE
-  )
-  expect_true(codes$concept_id =="1"  )
-  DBI::dbDisconnect(db)
-})
-
-test_that("tests with mock arrow", {
-  library(DBI)
-  library(arrow)
-  library(dbplyr)
-  library(dplyr)
-  library(CDMConnector)
-
-  # mock db
-  db <- mockVocab()
-  cdm <- cdm_from_con(con = db,cdm_schema = NULL,
-                      cdm_tables = tidyselect::all_of(c("concept",
-                                                    "concept_relationship",
-                                                    "concept_ancestor",
-                                                    "concept_synonym",
-                                                    "vocabulary")))
-
-  dOut <- tempfile()
-  dir.create(dOut)
-  CDMConnector::stow(cdm, dOut)
-
-  cdm_arrow <- CDMConnector::cdm_from_files(
-    path = dOut,
-    cdm_tables = tidyselect::all_of(c("concept",
-                                      "concept_relationship",
-                                      "concept_ancestor",
-                                      "concept_synonym",
-                                      "vocabulary")),
-    as_data_frame = FALSE
-  )
-
-
-   codes <- getCandidateCodes(cdm=cdm_arrow,
-    keywords = "Musculoskeletal disorder",
-    domains = "Condition",
-    includeDescendants = FALSE
-  )
-  expect_true((nrow(codes) == 1 &
-    codes$concept_name[1] == "Musculoskeletal disorder"))
-
-
+  }
 })
 
 test_that("tests with mock db - multiple domains", {
-  library(DBI)
-  library(RSQLite)
-  library(dbplyr)
-  library(dplyr)
-  library(CDMConnector)
 
-  # mock db
-  db <- mockVocab(dbType = "duckdb")
-  cdm <- cdm_from_con(con = db,cdm_schema = NULL,
-                      cdm_tables = tidyselect::all_of(c("concept",
-                                                    "concept_relationship",
-                                                    "concept_ancestor",
-                                                    "concept_synonym",
-                                                    "vocabulary")))
+  backends<- c("database", "arrow","data_frame")
+
+  for(i in 1:length(backends)){
+    # mock db
+    cdm <- mockVocabRef(backends[[i]])
 
   # tests
   # test keywords search - exact
@@ -433,51 +352,10 @@ test_that("tests with mock db - multiple domains", {
   expect_true(all(nrow(codes) == 1 &
                  codes$concept_id == 8))
 
-  DBI::dbDisconnect(db)
+  }
 
 })
 
-test_that("tests with mock R", {
-  library(DBI)
-  library(arrow)
-  library(dbplyr)
-  library(dplyr)
-  library(CDMConnector)
-
-  # mock db
-  db <- mockVocab()
-  cdm <- cdm_from_con(con = db,cdm_schema = NULL,
-                      cdm_tables = tidyselect::all_of(c("concept",
-                                                        "concept_relationship",
-                                                        "concept_ancestor",
-                                                        "concept_synonym",
-                                                        "vocabulary")))
-
-  dOut <- tempfile()
-  dir.create(dOut)
-  CDMConnector::stow(cdm, dOut)
-
-  cdm_df <- CDMConnector::cdm_from_files(
-    path = dOut,
-    cdm_tables = tidyselect::all_of(c("concept",
-                                      "concept_relationship",
-                                      "concept_ancestor",
-                                      "concept_synonym",
-                                      "vocabulary")),
-    as_data_frame = TRUE
-  )
-
-
-  codes <- getCandidateCodes(cdm=cdm_df,
-                             keywords = "Musculoskeletal disorder",
-                             domains = "Condition",
-                             includeDescendants = FALSE
-  )
-  expect_true((nrow(codes) == 1 &
-                 codes$concept_name[1] == "Musculoskeletal disorder"))
-
-
-})
 
 
 # test_that("tests with synthetic db", {

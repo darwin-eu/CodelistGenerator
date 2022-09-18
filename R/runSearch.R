@@ -477,7 +477,8 @@ runSearch <- function(keywords,
       dplyr::group_by(.data$concept_id) %>%
       dplyr::mutate(seq = dplyr::row_number(.data$concept_id)) %>%
       dplyr::filter(seq == 1) %>%
-      dplyr::select(-"seq")
+      dplyr::select(-"seq") %>%
+      dplyr::ungroup()
 
     return(candidateCodes)
   }

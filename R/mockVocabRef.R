@@ -17,25 +17,22 @@
 
 #' Generate example vocabulary database
 #'
-#' @param dbType Character vector with type of in memory database.
-#' Either 'SQL lite' or 'duckdb'
-#' @return DBIConnection to SQLite database
-#' with mock vocabulary
+#' @param backend 'database' (duckdb), 'arrow' (parquet files), or 'data_frame'
+#' @return cdm reference with mock vocabulary
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' library(DBI)
-#' library(RSQLite)
+#' library(duckdb)
 #' library(CodelistGenerator)
-#' db <- mockVocab()
+#' db <- mockVocab("database")
 #' }
-mockVocab <- function(dbType = "SQLite") {
+mockVocabRef <- function(backend = "database") {
   errorMessage <- checkmate::makeAssertCollection()
-  checkmate::assertTRUE(dbType %in% c("SQLite", "duckdb"))
-  checkmate::assertTRUE(length(dbType) == 1)
+  checkmate::assertTRUE(backend %in% c("database", "arrow", "data_frame"))
+  checkmate::assertTRUE(length(backend) == 1)
   checkmate::reportAssertions(collection = errorMessage)
-
 
   # tables
   concept <- data.frame(
@@ -140,13 +137,8 @@ mockVocab <- function(dbType = "SQLite") {
                vocabulary_version= "v5.0 22-JUN-22",
                vocabulary_concept_id=44819096))
 
-  # into in-memory databse
-  if (dbType == "SQLite") {
-    db <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-  }
-  if (dbType == "duckdb") {
+  # into in-memory duckdb
     db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
-  }
 
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept",
@@ -179,5 +171,41 @@ mockVocab <- function(dbType = "SQLite") {
     )
   })
 
-  return(db)
+ cdm <- CDMConnector::cdm_from_con(db,
+                             cdm_tables = tidyselect::all_of(c("concept",
+                                                               "concept_relationship",
+                                                               "concept_ancestor",
+                                                               "concept_synonym",
+                                                               "vocabulary")))
+  if (backend == "database") {
+    return(cdm)
+  }
+
+ if (backend %in%  c("arrow", "data_frame")) {
+   dOut <- tempfile()
+   dir.create(dOut)
+   CDMConnector::stow(cdm, dOut)
+
+   if (backend=="arrow") {
+   cdm_arrow <- CDMConnector::cdm_from_files(path = dOut,
+                                             cdm_tables = tidyselect::all_of(c("concept",
+                                                                               "concept_relationship",
+                                                                               "concept_ancestor",
+                                                                               "concept_synonym",
+                                                                               "vocabulary")),
+                                             as_data_frame = FALSE)
+   return(cdm_arrow)}
+
+   if (backend=="data_frame") {
+     cdm_data_frame <- CDMConnector::cdm_from_files(path = dOut,
+                                               cdm_tables = tidyselect::all_of(c("concept",
+                                                                                 "concept_relationship",
+                                                                                 "concept_ancestor",
+                                                                                 "concept_synonym",
+                                                                                 "vocabulary")),
+                                               as_data_frame = FALSE)
+     return(cdm_data_frame)}
+
+ }
+
 }

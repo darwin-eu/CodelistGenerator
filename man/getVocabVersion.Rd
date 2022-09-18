@@ -9,6 +9,9 @@ getVocabVersion(cdm)
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
 }
+\value{
+
+}
 \description{
 getVocabVersion
 }
