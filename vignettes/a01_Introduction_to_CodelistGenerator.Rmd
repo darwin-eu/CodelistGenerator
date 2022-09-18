@@ -19,12 +19,10 @@ knitr::opts_chunk$set(
 ## Creating a codelist for dementia
 For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain. Let's first load some libraries
 
-
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 library(here)
 library(readr)
 library(DBI)
-library(RSQLite)
 library(here)
 library(dplyr)
 library(stringr)
@@ -33,21 +31,6 @@ library(kableExtra)
 library(CodelistGenerator)
 library(CDMConnector)
 ```
-
-```{r, eval=FALSE}
-library(CodelistGenerator)
-library(CDMConnector)
-library(dplyr)
-library(dbplyr)
-library(stringr)
-library(DT)
-library(kableExtra)
-library(readr)
-library(DBI)
-library(RSQLite)
-library(here)
-```
-
 
 ## Connect to the OMOP CDM vocabularies
 CodelistGenerator works with a `cdm_reference` to the vocabularies tables of the OMOP CDM using the CDMConnector package. This `cdm_reference` could be to the tables in a database, using an arrow_table, or loaded into R. CodelistGenerator will generally work fastest with an arrow_table so let's first set that up.
@@ -61,61 +44,35 @@ db <- DBI::dbConnect(RPostgres::Postgres(),
   user = Sys.getenv("user"),
   password = Sys.getenv("password")
 )
-
 # name of vocabulary schema
 vocabularyDatabaseSchema <- Sys.getenv("vocabulary_schema")
-```
 
-```{r,  message=FALSE, warning=FALSE, echo=FALSE}
-library(DBI)
-library(RPostgres)
-library(dplyr)
-library(dbplyr)
-library(CodelistGenerator)
-library(kableExtra)
-library(CDMConnector)
+# create cdm reference
+cdm <- CDMConnector::cdm_from_con(con = db, 
+                                  cdm_schema = vocabularyDatabaseSchema,
+                                  cdm_tables = tidyselect::all_of(c("concept",
+                                                                "concept_relationship",
+                                                                "concept_ancestor",
+                                                                "concept_synonym",
+                                                                "vocabulary")))
+# vocab to arrow
+# save in temp folder for this example
+dOut<-here(tempdir(), "db_vocab")
+dir.create(dOut)
+CDMConnector::stow(cdm, dOut)
 
-# usethis::edit_r_environ()
-db <- dbConnect(RPostgres::Postgres(),
-  dbname = Sys.getenv("serverDbi_FEB22"),
-  port = Sys.getenv("DB_PORT_FEB22"),
-  host = Sys.getenv("DB_HOST_FEB22"),
-  user = Sys.getenv("DB_USER_FEB22"),
-  password = Sys.getenv("DB_PASSWORD_FEB22")
-)
-vocabularyDatabaseSchema <- Sys.getenv("DB_VOCAB_FEB22")
-```
+# new cdm reference using arrow
+cdm_arrow <- CDMConnector::cdm_from_files(path = dOut, 
+                                          cdm_tables = tidyselect::all_of(c("concept",
+                                                                            "concept_relationship",
+                                                                            "concept_ancestor",
+                                                                            "concept_synonym",
+                                                                            "vocabulary")),
+                                          as_data_frame = FALSE) 
 
-```{r, eval=FALSE}
-cdm <- cdm_from_con(
-  con = db,
-  cdm_schema = vocabularyDatabaseSchema,
-  cdm_tables = tidyselect::all_of(c(
-    "concept",
-    "concept_relationship",
-    "concept_ancestor",
-    "concept_synonym",
-    "vocabulary"
-  ))
-)
-
-# extract vocab tables to use as arrow table
-  dOut <- tempfile()
-  dir.create(dOut)
-  CDMConnector::stow(cdm, dOut)
-
-# create new reference to files
-  cdm_arrow <- CDMConnector::cdm_from_files(
-    path = dOut,
-    cdm_tables = tidyselect::all_of(c("concept",
-                                      "concept_relationship",
-                                      "concept_ancestor",
-                                      "concept_synonym",
-                                      "vocabulary")),
-    as_data_frame = FALSE
-  )
 rm(cdm)
 ```
+
 
 ## Check version of the vocabularies
 It is important to note that the results from CodelistGenerator will be specific to a particular version of the OMOP CDM vocabularies. We can see the version of the vocabulary being used like so

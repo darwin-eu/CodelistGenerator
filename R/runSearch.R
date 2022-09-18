@@ -502,11 +502,14 @@ tidyWords <- function(words) {
   workingWords <- stringr::str_to_lower(workingWords)
   workingWords <- trimws(workingWords)
 
-  workingWords
+  return(workingWords)
 }
 
 getExactMatches <- function(words,
                             conceptDf) {
+
+  conceptDf <- conceptDf %>% # start with all
+    dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
   # because there may be a lot of synonyms, get these from a loop
   # (stringr::str_detect slows considerably
@@ -520,8 +523,7 @@ getExactMatches <- function(words,
   conceptsFound <- list()
   for (i in seq_along(words)) {
     workingExclude <- unlist(strsplit(words[i], " "))
-    workingConcepts <- conceptDf %>% # start with all
-      dplyr::mutate(concept_name = tidyWords(.data$concept_name))
+    workingConcepts <- conceptDf # start with all
 
     for (j in seq_along(workingExclude)) {
       workingConcepts <- workingConcepts %>%
@@ -532,13 +534,18 @@ getExactMatches <- function(words,
     }
     conceptsFound[[i]] <- workingConcepts
   }
+  conceptsFound <- dplyr::bind_rows(conceptsFound) %>% dplyr::distinct()
 
-  return(dplyr::bind_rows(conceptsFound))
+  return(conceptsFound)
 }
 
 getFuzzyMatches <- function(words,
                             conceptDf,
                             mdCost) {
+
+  conceptDf <- conceptDf %>% # start with all
+    dplyr::mutate(concept_name = tidyWords(.data$concept_name))
+
   conceptsFound <- list()
   for (i in seq_along(words)) {
     workingKeywords <- unlist(strsplit(words[i], " "))
@@ -546,8 +553,7 @@ getFuzzyMatches <- function(words,
     workingKeywords <- workingKeywords[
       stringr::str_count(workingKeywords) > 1
     ]
-    workingConcepts <- conceptDf %>% # start with all
-      dplyr::mutate(concept_name = tidyWords(.data$concept_name))
+    workingConcepts <- conceptDf  # start with all
     for (j in seq_along(workingKeywords)) {
       # filter each term within the loop, one after the other
       indx <- agrep(workingKeywords[j], workingConcepts$concept_name,
@@ -561,8 +567,10 @@ getFuzzyMatches <- function(words,
     conceptsFound[[i]] <- workingConcepts
   }
 
-  dplyr::bind_rows(conceptsFound) %>%
+  conceptsFound <- dplyr::bind_rows(conceptsFound) %>%
     dplyr::distinct()
+
+  return(conceptsFound)
 }
 
 addDescendants <- function(workingCandidateCodes,
@@ -585,7 +593,7 @@ addDescendants <- function(workingCandidateCodes,
     dplyr::left_join(conceptDf, by = "concept_id") %>%
     dplyr::mutate(concept_name = tidyWords(.data$concept_name))
 
-  candidateCodeDescendants
+  return(candidateCodeDescendants)
 }
 
 addAncestor <- function(workingCandidateCodes,
