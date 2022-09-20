@@ -31,7 +31,8 @@ Suggests:
     here (>= 1.0.0),
     testthat (>= 3.0.0),
     kableExtra (>= 1.0.0),
-    RPostgres
+    RPostgres,
+    odbc
 Remotes:  OdyOSG/CDMConnector
 Config/testthat/edition: 3
 VignetteBuilder: knitr

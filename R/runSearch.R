@@ -41,8 +41,7 @@ runSearch <- function(keywords,
       standard_concept = ifelse(.data$standard_concept == "S",
         "standard", .data$standard_concept
       )
-    ) %>%
-    dplyr::compute()
+    )
 
   ## domains, standardConcept vocab, and conceptClassId to lower
   domains <- tolower(domains)
@@ -91,8 +90,7 @@ runSearch <- function(keywords,
     ) %>%
     dplyr::filter(.data$domain_id %in% .env$domains) %>%
     dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
-    dplyr::select(-c("domain_id", "standard_concept")) %>%
-    dplyr::compute()
+    dplyr::select(-c("domain_id", "standard_concept"))
 
   conceptAncestor <- conceptAncestorDb %>%
     dplyr::left_join(conceptDb %>%
