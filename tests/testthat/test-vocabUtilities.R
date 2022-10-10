@@ -1,14 +1,10 @@
 test_that("tests with mock db", {
 
-  # eunomia
-  db <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
-  cdm <- CDMConnector::cdm_from_con(db, cdm_schema = "main",
-                                    cdm_tables = tidyselect::all_of(c("concept",
-                                                                      "concept_relationship",
-                                                                      "concept_ancestor",
-                                                                      "concept_synonym",
-                                                                      "vocabulary")))
+  backends<- c("database", "arrow","data_frame")
 
+  for(i in 1:length(backends)){
+    # mock db
+    cdm <- mockVocabRef(backends[[i]])
 
   version <- getVocabVersion(cdm=cdm)
   expect_true(length(version)==1)
@@ -29,7 +25,9 @@ test_that("tests with mock db", {
                     domain = "Condition")
   expect_true(is.character(concept_classes))
 
-  DBI::dbDisconnect(db)
+  descendants <- getDescendants(cdm=cdm,
+                 concept_id = 1)
+  expect_true(all(descendants$concept_id == c(1,2,3,4,5)))
 
-
+}
 })

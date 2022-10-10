@@ -3,6 +3,7 @@
 export("%>%")
 export(compareCodelists)
 export(getCandidateCodes)
+export(getDescendants)
 export(getDomains)
 export(getMappings)
 export(getVocabVersion)
