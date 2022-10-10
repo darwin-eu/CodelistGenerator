@@ -147,7 +147,7 @@ getconceptClassId <- function(cdm,
 #' getDescendants
 #'
 #' @param cdm cdm_reference via CDMConnector
-#' @param concpet_id concpet_id to search
+#' @param concept_id concpet_id to search
 #'
 #' @return
 #' @export

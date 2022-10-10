@@ -9,7 +9,7 @@ getDescendants(cdm, concept_id)
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
 
-\item{concpet_id}{concpet_id to search}
+\item{concept_id}{concpet_id to search}
 }
 \value{
 
