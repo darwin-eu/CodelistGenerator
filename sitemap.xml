@@ -40,6 +40,12 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/CodelistGenerator-package.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/checkDbType.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/checkTableExists.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
   </url>
   <url>
