@@ -29,5 +29,12 @@ test_that("tests with mock db", {
                  concept_id = 1)
   expect_true(all(descendants$concept_id == c(1,2,3,4,5)))
 
+  # expected errors
+  expect_error(getVocabVersion(cdm="a"))
+  expect_error(getVocabularies(cdm="a"))
+  expect_error(getDomains(cdm="a"))
+  expect_error(getconceptClassId(cdm="a"))
+  expect_error(getDescendants(cdm="a"))
+
 }
 })

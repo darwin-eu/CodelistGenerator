@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2022 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -51,8 +51,17 @@ getMappings <- function(candidateCodelist,
                            "SNOMED"
                          )) {
   errorMessage <- checkmate::makeAssertCollection()
+  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   checkmate::assertVector(nonStandardVocabularies, add = errorMessage)
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
+  checkmate::reportAssertions(collection = errorMessage)
+  # in addition, now will check we have the required tables
+  errorMessage <- checkmate::makeAssertCollection()
+  checkTableExists(cdm, "concept", errorMessage)
+  checkTableExists(cdm, "concept_relationship", errorMessage)
+  checkTableExists(cdm, "concept_ancestor", errorMessage)
+  checkTableExists(cdm, "concept_synonym", errorMessage)
+  checkTableExists(cdm, "vocabulary", errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
 
   conceptDb <- cdm$concept
@@ -73,7 +82,7 @@ getMappings <- function(candidateCodelist,
   # check nonStandardVocabularies exist
   errorMessage <- checkmate::makeAssertCollection()
   nonStandardVocabulariesInDb <- conceptDb %>%
-    dplyr::select(.data$vocabulary_id) %>%
+    dplyr::select("vocabulary_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
     dplyr::pull()

@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2022 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -117,6 +117,7 @@ getCandidateCodes <- function(cdm = NULL,
 
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()
+  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   checkmate::assertVector(keywords, add = errorMessage)
   checkmate::assertVector(exclude,
     null.ok = TRUE,
@@ -152,7 +153,14 @@ getCandidateCodes <- function(cdm = NULL,
   checkmate::assert_logical(fuzzyMatch, add = errorMessage)
   checkmate::assert_numeric(maxDistanceCost, add = errorMessage)
   checkmate::assert_logical(verbose, add = errorMessage)
-  # report assertions
+  checkmate::reportAssertions(collection = errorMessage)
+  # in addition, now will check we have the required tables
+  errorMessage <- checkmate::makeAssertCollection()
+  checkTableExists(cdm, "concept", errorMessage)
+  checkTableExists(cdm, "concept_relationship", errorMessage)
+  checkTableExists(cdm, "concept_ancestor", errorMessage)
+  checkTableExists(cdm, "concept_synonym", errorMessage)
+  checkTableExists(cdm, "vocabulary", errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
 
 

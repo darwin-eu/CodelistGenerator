@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2022 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #

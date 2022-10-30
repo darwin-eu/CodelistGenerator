@@ -321,6 +321,13 @@ test_that("tests with mock db", {
     includeDescendants = FALSE
   ))
 
+  cdm_1<-cdm
+  cdm_1$concept<-NULL
+  expect_error(getCandidateCodes(
+    cdm=cdm_1,
+    keywords = "Musculoskeletal disorder"
+  ))
+
 
   }
 })
