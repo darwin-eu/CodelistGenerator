@@ -33,7 +33,6 @@ Suggests:
     kableExtra (>= 1.0.0),
     RPostgres,
     odbc
-Remotes:  OdyOSG/CDMConnector
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
