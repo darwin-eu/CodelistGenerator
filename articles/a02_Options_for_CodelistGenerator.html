@@ -62,7 +62,8 @@
 
 
 
-<script src="a02_Options_for_CodelistGenerator_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>02 Options for CodelistGenerator: examples with a with mock vocabulary</h1>
             
@@ -76,7 +77,8 @@
 <div class="section level2">
 <h2 id="mock-vocabulary-database">Mock vocabulary database<a class="anchor" aria-label="anchor" href="#mock-vocabulary-database"></a>
 </h2>
-<p>Let´s say we have a mock vocabulary database with these hypothetical concepts and relationships.</p>
+<p>Let´s say we have a mock vocabulary database with these hypothetical
+concepts and relationships.</p>
 <p><img src="mock_db_fig1.png"><!-- --></p>
 </div>
 <div class="section level2">
@@ -192,7 +194,8 @@ From initial search
 <h2 id="add-descendants">Add descendants<a class="anchor" aria-label="anchor" href="#add-descendants"></a>
 </h2>
 <p><img src="mock_db_fig7.png"><!-- --></p>
-<p>To include descendants of an identified code, we can set includeDescendants to TRUE</p>
+<p>To include descendants of an identified code, we can set
+includeDescendants to TRUE</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm<span class="op">=</span><span class="va">cdm</span>,</span>
@@ -328,7 +331,8 @@ From descendants
 <div class="section level2">
 <h2 id="multiple-search-terms">Multiple search terms<a class="anchor" aria-label="anchor" href="#multiple-search-terms"></a>
 </h2>
-<p>We can also search for multiple keywords at the same time, and would have picked these all up with the following search</p>
+<p>We can also search for multiple keywords at the same time, and would
+have picked these all up with the following search</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm<span class="op">=</span><span class="va">cdm</span>,</span>
@@ -471,7 +475,8 @@ From initial search
 <h2 id="add-ancestor">Add ancestor<a class="anchor" aria-label="anchor" href="#add-ancestor"></a>
 </h2>
 <p><img src="mock_db_fig5.png"><!-- --></p>
-<p>To include the ancestors one level above the identified concepts we can set includeAncestor to TRUE</p>
+<p>To include the ancestors one level above the identified concepts we
+can set includeAncestor to TRUE</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm<span class="op">=</span><span class="va">cdm</span>,</span>
@@ -550,7 +555,9 @@ From ancestor
 <h2 id="searches-with-multiple-words">Searches with multiple words<a class="anchor" aria-label="anchor" href="#searches-with-multiple-words"></a>
 </h2>
 <p><img src="mock_db_fig4.png"><!-- --></p>
-<p>We can also find concepts with multiple words even if they are in a different order. For example, a search for “Knee osteoarthritis” will pick up “Osteoarthritis of knee”.</p>
+<p>We can also find concepts with multiple words even if they are in a
+different order. For example, a search for “Knee osteoarthritis” will
+pick up “Osteoarthritis of knee”.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm<span class="op">=</span><span class="va">cdm</span>,</span>
@@ -686,7 +693,10 @@ From initial search
 <h2 id="search-using-synonyms">Search using synonyms<a class="anchor" aria-label="anchor" href="#search-using-synonyms"></a>
 </h2>
 <p><img src="mock_db_fig6.png"><!-- --></p>
-<p>We can also pick up codes based on their synonyms. In this case “Arthritis” has a synonym of “Osteoarthrosis” and so a search of both the primary name of a concept and any of its associated synonyms would pick up this synonym and it would be included.</p>
+<p>We can also pick up codes based on their synonyms. In this case
+“Arthritis” has a synonym of “Osteoarthrosis” and so a search of both
+the primary name of a concept and any of its associated synonyms would
+pick up this synonym and it would be included.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm<span class="op">=</span><span class="va">cdm</span>,</span>
@@ -800,7 +810,11 @@ From descendants
 </tr>
 </tbody>
 </table>
-<p>Or, in this case, we can get the same result by searching via synonyms. In this case when using searchViaSynonyms=TRUE, “Arthritis” (which gets identified first) has a synonym of “Osteoarthrosis”, and based on this synonym we can also include the “Osteoarthrosis” concept.</p>
+<p>Or, in this case, we can get the same result by searching via
+synonyms. In this case when using searchViaSynonyms=TRUE, “Arthritis”
+(which gets identified first) has a synonym of “Osteoarthrosis”, and
+based on this synonym we can also include the “Osteoarthrosis”
+concept.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm<span class="op">=</span><span class="va">cdm</span>,</span>
@@ -919,7 +933,8 @@ Via synonyms
 <h2 id="fuzzy-matches-instead-of-only-exact-matches">Fuzzy matches instead of only exact matches<a class="anchor" aria-label="anchor" href="#fuzzy-matches-instead-of-only-exact-matches"></a>
 </h2>
 <p><img src="mock_db_fig6.png"><!-- --></p>
-<p>We could have also picked up “Osteoarthrosis” by doing fuzzy matching which allows for some differences in spelling.</p>
+<p>We could have also picked up “Osteoarthrosis” by doing fuzzy matching
+which allows for some differences in spelling.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm<span class="op">=</span><span class="va">cdm</span>,</span>
@@ -1038,7 +1053,8 @@ From initial search
 <div class="section level2">
 <h2 id="search-via-non-standard">Search via non-standard<a class="anchor" aria-label="anchor" href="#search-via-non-standard"></a>
 </h2>
-<p>Or we could have also picked up “Osteoarthrosis” by searching via non-standard.</p>
+<p>Or we could have also picked up “Osteoarthrosis” by searching via
+non-standard.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm<span class="op">=</span><span class="va">cdm</span>,</span>
