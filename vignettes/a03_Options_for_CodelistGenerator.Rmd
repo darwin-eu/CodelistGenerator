@@ -72,7 +72,7 @@ oaCodes1 <- readRDS(here("vignettes", "optionsData01.RData"))
 To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, without fuzzy matching, and without including descendants or the direct ancestor of the included concepts.
 
 ```{r, eval=FALSE}
-oaCodes1 <- get_candidate_codes(
+oaCodes1 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
@@ -108,7 +108,7 @@ oaCodes2 <- readRDS(here("vignettes", "optionsData02.RData"))
 
 Now we will also include the descendants of included concepts.
 ```{r, eval=FALSE}
-oaCodes2 <- get_candidate_codes(
+oaCodes2 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
@@ -148,7 +148,7 @@ oaCodes3 <- readRDS(here("vignettes", "optionsData03.RData"))
 
 Now we will search the observation domain as well as the condition domain.
 ```{r, eval=FALSE}
-oaCodes3 <- get_candidate_codes(
+oaCodes3 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
   searchInSynonyms = FALSE,
@@ -188,7 +188,7 @@ oaCodes4 <- readRDS(here("vignettes", "optionsData04.RData"))
 
 Now we will search the concept synonym table to identify concepts to include.
 ```{r, eval=FALSE}
-oaCodes4 <- get_candidate_codes(
+oaCodes4 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = TRUE,
@@ -228,7 +228,7 @@ oaCodes5 <- readRDS(here("vignettes", "optionsData04.RData"))
 
 Now we will search the concept synonym table to identify concepts to include.
 ```{r, eval=FALSE}
-oaCodes5 <- get_candidate_codes(
+oaCodes5 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
@@ -268,7 +268,7 @@ oaCodes6 <- readRDS(here("vignettes", "optionsData05.RData"))
 
 Now we will use an approximate search. See https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/agrep for further details (as this is what is running under the hood). Note, using the defaults of 0.1 for for substitutions, deletions, and insertions.
 ```{r, eval=FALSE}
-oaCodes6 <- get_candidate_codes(
+oaCodes6 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
@@ -309,7 +309,7 @@ oaCodes7 <- readRDS(here("vignettes", "optionsData06.RData"))
 
 Here we widen the approximate searching, increasing the maximum distance allowed for a match to 0.2 for substitutions, deletions, and insertions.
 ```{r, eval=FALSE}
-oaCodes7 <- get_candidate_codes(
+oaCodes7 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
@@ -350,7 +350,7 @@ oaCodes8 <- readRDS(here("vignettes", "optionsData07.RData"))
 
 Now we include the direct ancestor of included terms.
 ```{r, eval=FALSE}
-oaCodes8 <- get_candidate_codes(
+oaCodes8 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
