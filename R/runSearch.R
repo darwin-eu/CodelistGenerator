@@ -36,6 +36,7 @@ runSearch <- function(keywords,
   conceptAncestorDb <- cdm$concept_ancestor
   conceptSynonymDb <- cdm$concept_synonym
   conceptRelationshipDb <- cdm$concept_relationship
+  drugStrengthDb <- cdm$drug_strength
 
 
   # formatting of conceptDb variables
@@ -133,6 +134,20 @@ runSearch <- function(keywords,
   if (searchInSynonyms == TRUE |
     searchViaSynonyms == TRUE) {
     conceptSynonym <- conceptSynonymDb %>%
+      dplyr::collect() %>%
+      dplyr::rename_with(tolower)
+  }
+
+  # collect the drug_strength table if drug
+  if (domains == "drug"){
+    drugStrength <- drugStrengthDb %>%
+      dplyr::left_join(conceptDb %>%
+                         dplyr::rename("drug_concept_id" = "concept_id") %>%
+                         dplyr::select("drug_concept_id", "domain_id", "standard_concept"),
+                       by = "drug_concept_id"
+      ) %>%
+      dplyr::filter(.data$domain_id %in% .env$domains) %>%
+      dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
       dplyr::collect() %>%
       dplyr::rename_with(tolower)
   }
@@ -475,18 +490,41 @@ runSearch <- function(keywords,
       ) %>%
       dplyr::distinct()
 
+    candidateCodesOrig <- candidateCodes  #  temp save the list
+
+    #if domain = "drug", add drug_strength information
+
+    if (domains=="drug"){
+    candidateCodes <- candidateCodes %>%
+      dplyr::left_join(drugStrength %>%
+                         dplyr::rename("concept_id"="drug_concept_id") %>%
+                         dplyr::select(-"valid_start_date", -"valid_end_date", -"invalid_reason", -"domain_id", -"standard_concept"),
+                       by = "concept_id")
+
+    candidateCodes <- candidateCodes %>%
+      dplyr::select(
+        "concept_id", "concept_name",
+        "domain_id", "concept_class_id",
+        "vocabulary_id", "found_from",
+        "ingredient_concept_id", "amount_value", "amount_unit_concept_id",
+        "numerator_value", "numerator_unit_concept_id",
+        "denominator_value", "denominator_unit_concept_id", "box_size"
+      )
+    } else{
     candidateCodes <- candidateCodes %>%
       dplyr::select(
         "concept_id", "concept_name",
         "domain_id", "concept_class_id",
         "vocabulary_id", "found_from"
       )
+    }
 
     candidateCodes <- candidateCodes %>%
       dplyr::distinct()
 
     # remove duplicates (found in different ways)
     # keep first time it was found
+    # for drug,  same concept_id with different ingredient_concept_id will be removed as well.
     candidateCodes <- candidateCodes %>%
       dplyr::group_by(.data$concept_id) %>%
       dplyr::mutate(seq = dplyr::row_number(.data$concept_id)) %>%
