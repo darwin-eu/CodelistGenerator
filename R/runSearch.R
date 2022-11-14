@@ -490,15 +490,17 @@ runSearch <- function(keywords,
       ) %>%
       dplyr::distinct()
 
-    candidateCodesOrig <- candidateCodes  #  temp save the list
-
     #if domain = "drug", add drug_strength information
 
-    if (domains=="drug"){
+    if (domains == "drug"){
     candidateCodes <- candidateCodes %>%
       dplyr::left_join(drugStrength %>%
                          dplyr::rename("concept_id"="drug_concept_id") %>%
-                         dplyr::select(-"valid_start_date", -"valid_end_date", -"invalid_reason", -"domain_id", -"standard_concept"),
+                         dplyr::mutate("concept_id" = as.numeric("concept_id")) %>%  # in Eunomia the drug_strength is empty with concept_id as char, will lead to error in test-eunomia. Yet force it to numeric will give warning.
+                         dplyr::select( "concept_id",
+                                        "ingredient_concept_id", "amount_value", "amount_unit_concept_id",
+                                        "numerator_value", "numerator_unit_concept_id", "denominator_value", "denominator_unit_concept_id", "box_size"
+                         ),
                        by = "concept_id")
 
     candidateCodes <- candidateCodes %>%
