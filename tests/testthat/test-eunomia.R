@@ -7,7 +7,8 @@ test_that("vocabUtilities", {
                                                                       "concept_relationship",
                                                                       "concept_ancestor",
                                                                       "concept_synonym",
-                                                                      "vocabulary")))
+                                                                      "vocabulary",
+                                                                      "drug_strength")))
 
 
   version <- getVocabVersion(cdm=cdm)
@@ -47,7 +48,8 @@ test_that("getCandidateCodes", {
                                                                       "concept_relationship",
                                                                       "concept_ancestor",
                                                                       "concept_synonym",
-                                                                      "vocabulary")))
+                                                                      "vocabulary",
+                                                                      "drug_strength")))
 
   # test keywords search - exact - all options
   codes1 <- getCandidateCodes(
@@ -72,6 +74,17 @@ test_that("getCandidateCodes", {
     includeDescendants = TRUE,
     includeAncestor = TRUE
   )
+  # test search in drug
+  codes3 <- getCandidateCodes(
+    cdm=cdm,
+    keywords = "Diclofenac",
+    fuzzyMatch = TRUE,
+    domains = "Drug",
+    searchInSynonyms = TRUE,
+    searchViaSynonyms = TRUE,
+    includeDescendants = TRUE,
+    includeAncestor = TRUE
+  )
 
   # variable names
   expect_true(all(c(
@@ -85,6 +98,13 @@ test_that("getCandidateCodes", {
     "domain_id", "vocabulary_id"
   ) %in%
     names(codes2)))
+
+  expect_true(all(c(
+    "concept_id", "concept_name",
+    "domain_id", "vocabulary_id","found_from", "ingredient_concept_id", "amount_value", "amount_unit_concept_id",
+    "numerator_value", "numerator_unit_concept_id", "denominator_value", "denominator_unit_concept_id", "box_size"
+  ) %in%
+    names(codes3)))
 
   DBI::dbDisconnect(db)
 

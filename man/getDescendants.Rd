@@ -11,9 +11,6 @@ getDescendants(cdm, concept_id)
 
 \item{concept_id}{concpet_id to search}
 }
-\value{
-
-}
 \description{
 getDescendants
 }

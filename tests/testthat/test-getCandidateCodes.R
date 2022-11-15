@@ -209,7 +209,47 @@ test_that("tests with mock db", {
   )
   expect_true(nrow(codes) >= 1)
 
+  # test search in drug
+  codes <- getCandidateCodes(
+    cdm=cdm,
+    keywords = "adalimumab",
+    fuzzyMatch = TRUE,
+    domains = "Drug",
+    searchInSynonyms = TRUE,
+    searchViaSynonyms = TRUE,
+    includeDescendants = TRUE,
+    includeAncestor = TRUE
+  )
+  expect_true(all(c(
+    "concept_id", "concept_name",
+    "domain_id", "vocabulary_id","found_from", "ingredient_concept_id",
+    "amount_value", "amount_unit_concept_id",
+    "numerator_value", "numerator_unit_concept_id", "denominator_value",
+    "denominator_unit_concept_id", "box_size"
+  ) %in%
+    names(codes)))
+  expect_true(codes$concept_id=="9")
 
+ # search for drug and condition
+  codes <- getCandidateCodes(
+    cdm=cdm,
+    keywords = c("arthritis","adalimumab"),
+    fuzzyMatch = TRUE,
+    domains = c("Condition","Drug"),
+    searchInSynonyms = TRUE,
+    searchViaSynonyms = TRUE,
+    includeDescendants = TRUE,
+    includeAncestor = TRUE
+  )
+  expect_true(all(c(
+    "concept_id", "concept_name",
+    "domain_id", "vocabulary_id","found_from", "ingredient_concept_id",
+    "amount_value", "amount_unit_concept_id",
+    "numerator_value", "numerator_unit_concept_id", "denominator_value",
+    "denominator_unit_concept_id", "box_size"
+  ) %in%
+    names(codes)))
+  expect_true(any(codes$concept_id %in% "9"))
 
   ## Edge cases
   # check empty candidate set

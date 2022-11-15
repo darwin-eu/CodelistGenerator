@@ -11,9 +11,6 @@ getconceptClassId(cdm, domain = NULL)
 
 \item{domain}{Vocabulary domain}
 }
-\value{
-
-}
 \description{
 getconceptClassId
 }

@@ -36,7 +36,7 @@ mockVocabRef <- function(backend = "database") {
 
   # tables
   concept <- data.frame(
-    concept_id = 1:8,
+    concept_id = 1:9,
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
@@ -45,23 +45,24 @@ mockVocabRef <- function(backend = "database") {
       "Osteoarthritis of hip",
       "Degenerative arthropathy",
       "Knee osteoarthritis",
-      "H/O osteoarthritis"
+      "H/O osteoarthritis",
+      "Adalimumab"
     ),
-    domain_id = c(rep("Condition",7), "Observation"),
+    domain_id = c(rep("Condition",7), "Observation","Drug"),
     vocabulary_id = c(
       rep("SNOMED", 5),
       rep("Read", 2),
-      "LOINC"
+      "LOINC","RxNorm"
     ),
     standard_concept = c(
       rep("S", 5),
       rep(NA, 2),
-      "S"
+      "S", "S"
     ),
     concept_class_id = c(
       rep("Clinical Finding", 5),
       rep("Diagnosis", 2),
-      "Observation"
+      "Observation","Ingredient"
     ),
     concept_code = "1234"
   )
@@ -137,6 +138,20 @@ mockVocabRef <- function(backend = "database") {
                vocabulary_version= "v5.0 22-JUN-22",
                vocabulary_concept_id=44819096))
 
+  drugStrength <- dplyr::bind_rows(
+    data.frame(
+      drug_concept_id = 9L,
+      ingredient_concept_id = 9L,
+      amount_value = NA,
+      amount_unit_concept_id = 8576,
+      numerator_value = 0.010,
+      numerator_unit_concept_id = 8576,
+      denominator_value = 0.5,
+      denominator_unit_concept_id = 8587,
+      box_size =NA
+    )
+    )
+
   # into in-memory duckdb
     db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
 
@@ -171,12 +186,19 @@ mockVocabRef <- function(backend = "database") {
     )
   })
 
+  DBI::dbWithTransaction(db, {
+    DBI::dbWriteTable(db, "drug_strength",
+                      drugStrength,
+                      overwrite = TRUE
+    )
+  })
  cdm <- CDMConnector::cdm_from_con(db,
                              cdm_tables = tidyselect::all_of(c("concept",
                                                                "concept_relationship",
                                                                "concept_ancestor",
                                                                "concept_synonym",
-                                                               "vocabulary")))
+                                                               "vocabulary",
+                                                               "drug_strength")))
   if (backend == "database") {
     return(cdm)
   }
@@ -192,7 +214,8 @@ mockVocabRef <- function(backend = "database") {
                                                                                "concept_relationship",
                                                                                "concept_ancestor",
                                                                                "concept_synonym",
-                                                                               "vocabulary")),
+                                                                               "vocabulary",
+                                                                               "drug_strength")),
                                              as_data_frame = FALSE)
    return(cdm_arrow)}
 
@@ -202,7 +225,8 @@ mockVocabRef <- function(backend = "database") {
                                                                                  "concept_relationship",
                                                                                  "concept_ancestor",
                                                                                  "concept_synonym",
-                                                                                 "vocabulary")),
+                                                                                 "vocabulary",
+                                                                                 "drug_strength")),
                                                as_data_frame = FALSE)
      return(cdm_data_frame)}
 
