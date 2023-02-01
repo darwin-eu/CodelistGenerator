@@ -1,7 +1,10 @@
 test_that("vocabUtilities", {
+  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
+  skip_if_not(rlang::is_installed("duckdb", version = "0.6"))
+  skip_if_not(CDMConnector::eunomia_is_available())
 
-  # eunomia
-  db <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
+  db <- DBI::dbConnect(duckdb::duckdb(),
+                       dbdir = CDMConnector::eunomia_dir())
   cdm <- CDMConnector::cdm_from_con(db, cdm_schema = "main",
                                     cdm_tables = tidyselect::all_of(c("concept",
                                                                       "concept_relationship",
@@ -23,10 +26,10 @@ test_that("vocabUtilities", {
   expect_true(all(c("Condition", "Observation") %in% domains))
   expect_true(is.character(domains))
 
-  concept_classes <- getconceptClassId(cdm=cdm)
+  concept_classes <- getConceptClassId(cdm=cdm)
   expect_true(is.character(concept_classes))
 
-  concept_classes <- getconceptClassId(cdm=cdm,
+  concept_classes <- getConceptClassId(cdm=cdm,
                                        domain = "Condition")
   expect_true(is.character(concept_classes))
 
@@ -40,8 +43,10 @@ test_that("vocabUtilities", {
 })
 
 test_that("getCandidateCodes", {
+  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
+  skip_if_not(rlang::is_installed("duckdb", version = "0.6"))
+  skip_if_not(CDMConnector::eunomia_is_available())
 
-  # eunomia
   db <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
   cdm <- CDMConnector::cdm_from_con(db, cdm_schema = "main",
                                     cdm_tables = tidyselect::all_of(c("concept",

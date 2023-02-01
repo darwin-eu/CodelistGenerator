@@ -18,10 +18,10 @@ test_that("tests with mock db", {
   expect_true(all(c("Condition", "Observation") %in% domains))
   expect_true(is.character(domains))
 
-  concept_classes <- getconceptClassId(cdm=cdm)
+  concept_classes <- getConceptClassId(cdm=cdm)
   expect_true(is.character(concept_classes))
 
-  concept_classes <- getconceptClassId(cdm=cdm,
+  concept_classes <- getConceptClassId(cdm=cdm,
                     domain = "Condition")
   expect_true(is.character(concept_classes))
 
@@ -33,8 +33,14 @@ test_that("tests with mock db", {
   expect_error(getVocabVersion(cdm="a"))
   expect_error(getVocabularies(cdm="a"))
   expect_error(getDomains(cdm="a"))
-  expect_error(getconceptClassId(cdm="a"))
+  expect_error(getDomains(cdm, standardConcept = FALSE))
+  expect_error(getConceptClassId(cdm="a"))
+  expect_error(getConceptClassId(cdm, standardConcept = FALSE))
   expect_error(getDescendants(cdm="a"))
+
+  if(backends[[i]]=="database"){
+    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  }
 
 }
 })

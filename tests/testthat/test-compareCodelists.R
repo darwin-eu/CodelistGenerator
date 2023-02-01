@@ -61,6 +61,11 @@ test_that("comparing two codelists", {
     codelist1 = "a",
     codelist2 = codes2
   ))
+
+  if(backends[[i]]=="database"){
+    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  }
+
   }
 
 })
@@ -114,6 +119,11 @@ test_that("comparing two codelists- same codes found different ways", {
                 dplyr::filter(concept_id == 2) %>%
                 dplyr::select(codelist) %>%
                 dplyr::pull() == "Only codelist 2")
+
+  if(backends[[i]]=="database"){
+    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  }
+
   }
 
 })

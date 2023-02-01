@@ -8,21 +8,21 @@ Description: Generate a candidate codelist for the OMOP CDM based on string matc
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports:
-    CDMConnector,
-    tidyselect,
+    CDMConnector (>= 0.4.1),
     checkmate (>= 2.0.0),
-    dbplyr (>= 2.2.1),
+    DBI (>= 1.1.0),
     dplyr (>= 1.0.0),
-    stringr (>= 1.4.0),
     magrittr (>= 2.0.0),
     rlang (>= 1.0.0),
-    DBI (>= 1.1.0),
-    arrow (>= 9.0.0),
-    glue
+    glue (>= 1.5.0),
+    stringr (>= 1.4.0),
+    tidyselect (>= 1.2.0)
 Suggests: 
+    arrow (>= 9.0.0),
     covr,
+    dbplyr (>= 2.2.1),
     knitr,
     readr (>= 2.1.0),
     duckdb,

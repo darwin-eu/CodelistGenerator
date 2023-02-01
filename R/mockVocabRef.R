@@ -210,24 +210,14 @@ mockVocabRef <- function(backend = "database") {
 
    if (backend=="arrow") {
    cdm_arrow <- CDMConnector::cdm_from_files(path = dOut,
-                                             cdm_tables = tidyselect::all_of(c("concept",
-                                                                               "concept_relationship",
-                                                                               "concept_ancestor",
-                                                                               "concept_synonym",
-                                                                               "vocabulary",
-                                                                               "drug_strength")),
                                              as_data_frame = FALSE)
+   DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
    return(cdm_arrow)}
 
    if (backend=="data_frame") {
      cdm_data_frame <- CDMConnector::cdm_from_files(path = dOut,
-                                               cdm_tables = tidyselect::all_of(c("concept",
-                                                                                 "concept_relationship",
-                                                                                 "concept_ancestor",
-                                                                                 "concept_synonym",
-                                                                                 "vocabulary",
-                                                                                 "drug_strength")),
                                                as_data_frame = FALSE)
+     DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
      return(cdm_data_frame)}
 
  }

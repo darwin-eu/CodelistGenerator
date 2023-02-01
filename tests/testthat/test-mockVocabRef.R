@@ -9,4 +9,5 @@ test_that("mock vocab db", {
 
   expect_true(dplyr::all_equal(concept_from_db,concept_from_arrow,concept_from_df))
 
+  DBI::dbDisconnect(attr(cdm_db, "dbcon"), shutdown = TRUE)
 })

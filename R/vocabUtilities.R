@@ -24,17 +24,17 @@
 #' @examples
 getVocabVersion <- function(cdm){
 
-  error_message <- checkmate::makeAssertCollection()
+  errorMessage <- checkmate::makeAssertCollection()
   cdm_inherits_check <- inherits(cdm, "cdm_reference")
   checkmate::assertTRUE(cdm_inherits_check,
-                        add = error_message
+                        add = errorMessage
   )
   if (!isTRUE(cdm_inherits_check)) {
-    error_message$push(
+    errorMessage$push(
       "- cdm must be a CDMConnector CDM reference object"
     )
   }
-  checkmate::reportAssertions(collection = error_message)
+  checkmate::reportAssertions(collection = errorMessage)
 
   version <- cdm$vocabulary %>%
     dplyr::rename_with(tolower) %>%
@@ -50,26 +50,66 @@ return(version)
 #' getDomains
 #'
 #' @param cdm cdm_reference via CDMConnector
+#' @param standardConcept  Character vector with one or more of "Standard",
+#' "Classification", and "Non-standard". These correspond to the flags used
+#' for the standard_concept field in the concept table of the cdm.
 #'
 #' @return
 #' @export
 #'
 #' @examples
-getDomains <- function(cdm){
+getDomains <- function(cdm,
+                       standardConcept = "Standard"){
 
-  error_message <- checkmate::makeAssertCollection()
+  errorMessage <- checkmate::makeAssertCollection()
   cdm_inherits_check <- inherits(cdm, "cdm_reference")
   checkmate::assertTRUE(cdm_inherits_check,
-                        add = error_message
+                        add = errorMessage
   )
   if (!isTRUE(cdm_inherits_check)) {
-    error_message$push(
+    errorMessage$push(
       "- cdm must be a CDMConnector CDM reference object"
     )
   }
-  checkmate::reportAssertions(collection = error_message)
+  checkmate::assertVector(standardConcept, add = errorMessage)
+  standardConceptCheck <- all(tolower(standardConcept) %in%
+                                c(
+                                  "standard",
+                                  "classification",
+                                  "non-standard"
+                                ))
+  checkmate::assertTRUE(standardConceptCheck,
+                        add = errorMessage
+  )
+  if (!isTRUE(standardConceptCheck)) {
+    errorMessage$push(
+      "- standardConcept should be one or more of Standard, Non-stanadard, or Classification"
+    )
+  }
+  checkmate::reportAssertions(collection = errorMessage)
 
-  domains <-  cdm$concept %>%
+  conceptDb <- cdm$concept
+
+  standardConcept<-tolower(standardConcept)
+  conceptDb <- conceptDb %>%
+    dplyr::mutate(
+      standard_concept = ifelse(is.na(.data$standard_concept),
+                                "non-standard", .data$standard_concept
+      )
+    ) %>%
+    dplyr::mutate(
+      standard_concept = ifelse(.data$standard_concept == "C",
+                                "classification", .data$standard_concept
+      )
+    ) %>%
+    dplyr::mutate(
+      standard_concept = ifelse(.data$standard_concept == "S",
+                                "standard", .data$standard_concept
+      )
+    ) %>%
+    dplyr::filter(.data$standard_concept %in% .env$standardConcept)
+
+  domains <-  conceptDb %>%
     dplyr::select("domain_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
@@ -89,17 +129,17 @@ getDomains <- function(cdm){
 #' @examples
 getVocabularies <- function(cdm){
 
-  error_message <- checkmate::makeAssertCollection()
+  errorMessage <- checkmate::makeAssertCollection()
   cdm_inherits_check <- inherits(cdm, "cdm_reference")
   checkmate::assertTRUE(cdm_inherits_check,
-                        add = error_message
+                        add = errorMessage
   )
   if (!isTRUE(cdm_inherits_check)) {
-    error_message$push(
+    errorMessage$push(
       "- cdm must be a CDMConnector CDM reference object"
     )
   }
-  checkmate::reportAssertions(collection = error_message)
+  checkmate::reportAssertions(collection = errorMessage)
 
   vocabs <- cdm$concept %>%
     dplyr::select("vocabulary_id") %>%
@@ -111,33 +151,49 @@ getVocabularies <- function(cdm){
 
 }
 
-#' getconceptClassId
+#' getConceptClassId
 #'
 #' @param cdm cdm_reference via CDMConnector
+#' @param standardConcept  Character vector with one or more of "Standard",
+#' "Classification", and "Non-standard". These correspond to the flags used
+#' for the standard_concept field in the concept table of the cdm.
 #' @param domain Vocabulary domain
 #'
 #' @return
 #' @export
 #'
 #' @examples
-getconceptClassId <- function(cdm,
+getConceptClassId <- function(cdm,
+                              standardConcept = "Standard",
                        domain = NULL){
 
-  error_message <- checkmate::makeAssertCollection()
+  errorMessage <- checkmate::makeAssertCollection()
   cdm_inherits_check <- inherits(cdm, "cdm_reference")
   checkmate::assertTRUE(cdm_inherits_check,
-                        add = error_message
+                        add = errorMessage
   )
   if (!isTRUE(cdm_inherits_check)) {
-    error_message$push(
+    errorMessage$push(
       "- cdm must be a CDMConnector CDM reference object"
     )
   }
+  checkmate::assertVector(standardConcept, add = errorMessage)
+  standardConceptCheck <- all(tolower(standardConcept) %in%
+                                c(
+                                  "standard",
+                                  "classification",
+                                  "non-standard"
+                                ))
+  if (!isTRUE(standardConceptCheck)) {
+    errorMessage$push(
+      "- standardConcept should be one or more of Standard, Non-stanadard, or Classification"
+    )
+  }
   checkmate::assert_character(domain,
-                              add = error_message,
+                              add = errorMessage,
                               null.ok = TRUE
   )
-  checkmate::reportAssertions(collection = error_message)
+  checkmate::reportAssertions(collection = errorMessage)
 
   # link to vocab table
   conceptDb <- cdm$concept
@@ -146,6 +202,25 @@ getconceptClassId <- function(cdm,
   conceptDb <- conceptDb %>%
     dplyr::filter(.data$domain_id==.env$domain)
   }
+
+  standardConcept<-tolower(standardConcept)
+  conceptDb <- conceptDb %>%
+    dplyr::mutate(
+      standard_concept = ifelse(is.na(.data$standard_concept),
+                                "non-standard", .data$standard_concept
+      )
+    ) %>%
+    dplyr::mutate(
+      standard_concept = ifelse(.data$standard_concept == "C",
+                                "classification", .data$standard_concept
+      )
+    ) %>%
+    dplyr::mutate(
+      standard_concept = ifelse(.data$standard_concept == "S",
+                                "standard", .data$standard_concept
+      )
+    ) %>%
+    dplyr::filter(.data$standard_concept %in% .env$standardConcept)
 
   # get overall version
   conceptClassId <- conceptDb %>%
@@ -169,20 +244,20 @@ getconceptClassId <- function(cdm,
 #' @examples
 getDescendants <- function(cdm, concept_id){
 
-  error_message <- checkmate::makeAssertCollection()
+  errorMessage <- checkmate::makeAssertCollection()
   cdm_inherits_check <- inherits(cdm, "cdm_reference")
   checkmate::assertTRUE(cdm_inherits_check,
-                        add = error_message
+                        add = errorMessage
   )
   if (!isTRUE(cdm_inherits_check)) {
-    error_message$push(
+    errorMessage$push(
       "- cdm must be a CDMConnector CDM reference object"
     )
   }
   checkmate::assert_numeric(concept_id,
-                              add = error_message
+                              add = errorMessage
   )
-  checkmate::reportAssertions(collection = error_message)
+  checkmate::reportAssertions(collection = errorMessage)
 
 descendants<- cdm$concept_ancestor %>%
     dplyr::filter(.data$ancestor_concept_id %in%  .env$concept_id) %>%

@@ -1,6 +1,6 @@
 test_that("tests with mock db", {
 
-  backends<- c("database", "arrow","data_frame")
+  backends<- c("database", "arrow", "data_frame")
 
   for(i in 1:length(backends)){
     # mock db
@@ -368,6 +368,10 @@ test_that("tests with mock db", {
     keywords = "Musculoskeletal disorder"
   ))
 
+  if(backends[[i]]=="database"){
+    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  }
+
 
   }
 })
@@ -399,33 +403,10 @@ test_that("tests with mock db - multiple domains", {
   expect_true(all(nrow(codes) == 1 &
                  codes$concept_id == 8))
 
+  if(backends[[i]]=="database"){
+    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  }
+
   }
 
 })
-
-
-
-# test_that("tests with synthetic db", {
-#   library(DBI)
-#   library(odbc)
-#   library(dbplyr)
-#   library(dplyr)
-# db <-DBI::dbConnect(odbc::odbc(),
-#                       Driver   = "ODBC Driver 11 for SQL Server",
-#                       Server   = Sys.getenv("darwinDbDatabaseServer"),
-#                       Database = Sys.getenv("darwinDbDatabase"),
-#                       UID      = Sys.getenv("darwinDbUser"),
-#                       PWD      = Sys.getenv("darwinDbPassword"),
-#                       Port     = Sys.getenv("darwinDbDatabasePort"))
-#
-# codes<-getCandidateCodes(
-#     keywords = "Musculoskeletal disorder",
-#     domains = "Condition",
-#     includeDescendants = FALSE,
-#     db = db,
-#     vocabularyDatabaseSchema = Sys.getenv("darwinDbCdmSchema")
-#   )
-# expect_true(nrow(codes)>1)
-#
-# dbDisconnect(db)
-# })

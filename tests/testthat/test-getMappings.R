@@ -1,8 +1,4 @@
 test_that("tests with mock", {
-  library(DBI)
-  library(dbplyr)
-  library(dplyr)
-  library(CDMConnector)
 
   backends<- c("database", "arrow","data_frame")
 
@@ -65,6 +61,11 @@ test_that("tests with mock", {
     candidateCodelist = codes,
     nonStandardVocabularies = c("Read", "READX")
   ))
+
+  if(backends[[i]]=="database"){
+    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  }
+
   }
 
 })
