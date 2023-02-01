@@ -1,10 +1,10 @@
 Package: CodelistGenerator
-Title: Generate Candidate Codelists for the OMOP CDM
+Title: Generate Candidate Codelists for the OMOP Common Data Model
 Version: 0.9.1
 Authors@R: 
     person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9286-1128"))
-Description: Generate a candidate codelist for the OMOP CDM based on string matching. For a given search strategy, a candidate codelist will be returned.
+Description: Generate a candidate codelist for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate codelist will be returned.
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
