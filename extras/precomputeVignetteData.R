@@ -4,7 +4,6 @@
 # will create the data for vignettes here
 library(readr)
 library(DBI)
-library(RSQLite)
 library(here)
 library(dplyr)
 library(dbplyr)
@@ -31,6 +30,7 @@ cdm <- CDMConnector::cdm_from_con(con = db,
                                                                     "concept_relationship",
                                                                     "concept_ancestor",
                                                                     "concept_synonym",
+                                                                    "drug_strength",
                                                                     "vocabulary")))
 # vocab to arrow
 # save in temp folder for this example
@@ -40,11 +40,6 @@ CDMConnector::stow(cdm, dOut)
 
 # new cdm reference using arrow
 cdm_arrow <- CDMConnector::cdm_from_files(path = dOut,
-                                          cdm_tables = tidyselect::all_of(c("concept",
-                                                                            "concept_relationship",
-                                                                            "concept_ancestor",
-                                                                            "concept_synonym",
-                                                                            "vocabulary")),
                                           as_data_frame = FALSE)
 
 rm(cdm)
@@ -266,93 +261,41 @@ saveRDS(
   here("vignettes", "optionsData07.RData")
 )
 
-# colonoscopy vignette ------
-codesFromDescendants<-cdm_arrow$concept_ancestor %>%
-  filter(ancestor_concept_id %in% c("4249893", "937652", "40480729")) %>%
-  select("descendant_concept_id") %>%
-  rename("concept_id"="descendant_concept_id") %>%
-  inner_join(cdm_arrow$concept) %>%
-  select("concept_id", "concept_name",
-         "domain_id", "vocabulary_id") %>%
-  collect()
-
-saveRDS(
-  codesFromDescendants,
-  here("vignettes", "procData01.RData")
-)
-
-
-
-colonoscopyCodes2<-getCandidateCodes(cdm = cdm_arrow,
-                                     keywords="colonoscopy",
-                    domains=c("Procedure", "Measurement"),
-                    searchViaSynonyms = FALSE,
-                    fuzzyMatch = FALSE,
-                    exclude = NULL,
-                    includeDescendants = FALSE,
-                    includeAncestor = FALSE,
-                    verbose = TRUE )
-saveRDS(
-  colonoscopyCodes2,
-  here("vignettes", "procData02.RData")
-)
-
-
-
 # medication vignette ------
-codesFromDescendants<-cdm_arrow$concept_ancestor %>%
-  filter(ancestor_concept_id %in% c("1503297")) %>%
-  select("descendant_concept_id") %>%
-  rename("concept_id"="descendant_concept_id") %>%
-  inner_join(cdm_arrow$concept )%>%
-  select("concept_id", "concept_name",
-         "domain_id", "vocabulary_id") %>%
-  collect()
-
+ac_codes_1 <- getCandidateCodes(cdm = cdm_arrow,
+                                     keywords="acetaminophen",
+                                     domains="drug",
+                                     standardConcept="standard",
+                                     includeDescendants = TRUE,
+                                     verbose = TRUE )
 saveRDS(
-  codesFromDescendants,
+  ac_codes_1,
   here("vignettes", "medData01.RData")
 )
 
-
-
-metforminCodes2<-getCandidateCodes(cdm = cdm_arrow,
-                                   keywords="metformin",
-                    domains=c("Drug"),
-                    standardConcept=c("Standard", "Classification"),
-                    conceptClassId="Ingredient",
-                    searchViaSynonyms = FALSE,
-                    fuzzyMatch = FALSE,
-                    exclude = NULL,
-                    includeDescendants = TRUE,
-                    includeAncestor = FALSE,
-                    verbose = TRUE )
+ac_codes_2 <- getCandidateCodes(cdm = cdm_arrow,
+                                keywords="acetaminophen",
+                                domains="drug",
+                                doseForm = c("injection", "intravenous"),
+                                standardConcept="standard",
+                                includeDescendants = TRUE,
+                                verbose = TRUE )
 saveRDS(
-  metforminCodes2,
-  here("vignettes", "metforminCodes2.RData")
+  ac_codes_2,
+  here("vignettes", "medData02.RData")
 )
 
 
-getCandidateCodes(cdm = cdm_arrow,
-  keywords="metformin",
-                    domains=c("Drug"),
-                    standardConcept=c("Standard", "Classification"),
-                    conceptClassId="Ingredient",
-                    searchViaSynonyms = FALSE,
-                    fuzzyMatch = FALSE,
-                    exclude = NULL,
-                    includeDescendants = TRUE,
-                    includeAncestor = FALSE,
-                    verbose = TRUE )
-getCandidateCodes(cdm = cdm_arrow,
-                  keywords="metformin",
-                    domains=c("Drug"),
-                    standardConcept=c("Standard", "Classification"),
-                    conceptClassId="Prescription Drug",
-                    searchViaSynonyms = FALSE,
-                    fuzzyMatch = FALSE,
-                    exclude = NULL,
-                    includeDescendants = TRUE,
-                    includeAncestor = FALSE,
-                    verbose = TRUE )
+ac_codes_3 <- getCandidateCodes(cdm = cdm_arrow,
+                                keywords="acetaminophen",
+                                domains="drug",
+                                conceptClassId = c("Quant Clinical Drug"),
+                                doseForm = c("injection", "intravenous"),
+                                standardConcept="standard",
+                                includeDescendants = TRUE,
+                                verbose = TRUE)
+saveRDS(
+  ac_codes_3,
+  here("vignettes", "medData03.RData")
+)
 

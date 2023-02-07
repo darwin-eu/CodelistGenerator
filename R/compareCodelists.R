@@ -24,22 +24,24 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' library(DBI)
-#' library(CodelistGenerator)
-#' db <- DBI::dbConnect(" Your database connection here ")
-#' cdm <- cdm_from_con(con = db,cdm_schema = "main"
-#' asthmaCodes <- getCandidateCodes(cdm=cdm,
-#'   keywords = "asthma"
+#' cdm <- mockVocabRef()
+#' codes1 <- getCandidateCodes(
+#'  cdm = cdm,
+#'  keywords = "Arthritis",
+#'  domains = "Condition",
+#'  includeDescendants = TRUE
 #' )
-#' persistantAsthmaCodes <- getCandidateCodes(cdm=cdm,
-#'   keywords = "Persistent asthma"
-#' )
+#' codes2 <- getCandidateCodes(
+#'  cdm = cdm,
+#'  keywords = c("knee osteoarthritis", "arthrosis"),
+#'  domains = "Condition",
+#'  includeDescendants = TRUE
+#')
 #' compareCodelists(
-#'   codelist1 = asthmaCodes,
-#'   codelist2 = persistantAsthmaCodes
+#'  codelist1 = codes1,
+#'  codelist2 = codes2
 #' )
-#' }
+#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 compareCodelists <- function(codelist1,
                               codelist2) {
 

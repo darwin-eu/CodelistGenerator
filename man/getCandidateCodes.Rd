@@ -10,6 +10,7 @@ getCandidateCodes(
   exclude = NULL,
   domains = "Condition",
   conceptClassId = NULL,
+  doseForm = NULL,
   vocabularyId = NULL,
   standardConcept = "Standard",
   searchInSynonyms = FALSE,
@@ -37,6 +38,8 @@ to identify concepts to exclude.}
 
 \item{conceptClassId}{Character vector with one or more concept class
 of the Concept}
+
+\item{doseForm}{The dose form associated with a drug}
 
 \item{vocabularyId}{Character vector with one or more vocabulary
 of the Concept}
@@ -82,15 +85,10 @@ can be considered for creating a phenotype
 using the OMOP CDM.
 }
 \examples{
-\dontrun{
-library(DBI)
-library(CodelistGenerator)
-db <- DBI::dbConnect(" Your database connection here ")
-vocabularyDatabaseSchema <- " Your vocabulary schema here "
-getCandidateCodes(
-  keywords = "asthma",
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
-)
-}
+cdm <- CodelistGenerator::mockVocabRef()
+CodelistGenerator::getCandidateCodes(
+  cdm = cdm,
+  keywords = "osteoarthritis"
+ )
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 }

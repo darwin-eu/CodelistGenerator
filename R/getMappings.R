@@ -25,24 +25,18 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' library(DBI)
-#' library(CodelistGenerator)
-#' db <- DBI::dbConnect(" Your database connection here ")
-#' vocabularyDatabaseSchema <- " Your vocabulary schema here "
-#' asthma_codes <- get_candidate_codes(
-#'   keywords = "asthma",
-#'   db = db,
-#'   vocabularyDatabaseSchema = " Your vocabulary schema here "
+#' cdm <- CodelistGenerator::mockVocabRef()
+#' codes <- CodelistGenerator::getCandidateCodes(
+#'   cdm = cdm,
+#'   keywords = "osteoarthritis"
 #' )
-#' getMappings(
-#'   candidateCodelist = asthma_codes,
-#'   db = db,
-#'   vocabularyDatabaseSchema = " Your vocabulary schema here "
-#' )
-#' }
+#' CodelistGenerator::getMappings(
+#'   cdm = cdm,
+#'   candidateCodelist = codes,
+#'   nonStandardVocabularies = "READ"
+#')
 getMappings <- function(candidateCodelist,
-                         cdm=NULL,
+                         cdm = NULL,
                          nonStandardVocabularies = c(
                            "ATC", "ICD10CM", "ICD10PCS",
                            "ICD9CM", "ICD9Proc",
@@ -87,7 +81,8 @@ getMappings <- function(candidateCodelist,
     dplyr::collect() %>%
     dplyr::pull()
   for (i in seq_along(nonStandardVocabularies)) {
-    nonStandardVocabulariesCheck <- nonStandardVocabularies[i] %in% nonStandardVocabulariesInDb
+    nonStandardVocabulariesCheck <- nonStandardVocabularies[i] %in%
+      nonStandardVocabulariesInDb
     checkmate::assertTRUE(nonStandardVocabulariesCheck, add = errorMessage)
     if (!isTRUE(nonStandardVocabulariesCheck)) {
       errorMessage$push(
@@ -138,7 +133,7 @@ getMappings <- function(candidateCodelist,
     dplyr::rename("non_standard_concept_name" = "concept_name") %>%
     dplyr::rename("non_standard_vocabulary_id" = "vocabulary_id")
 
-  mappedCodes<-mappedCodes %>%
+  mappedCodes <- mappedCodes %>%
     dplyr::distinct() %>%
     dplyr::arrange(.data$standard_concept_id)
 

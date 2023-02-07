@@ -22,12 +22,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' library(DBI)
-#' library(duckdb)
-#' library(CodelistGenerator)
-#' db <- mockVocab("database")
-#' }
+#' cdm <- mockVocabRef()
+#' cdm
+#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 mockVocabRef <- function(backend = "database") {
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertTRUE(backend %in% c("database", "arrow", "data_frame"))
@@ -36,7 +33,7 @@ mockVocabRef <- function(backend = "database") {
 
   # tables
   concept <- data.frame(
-    concept_id = 1:9,
+    concept_id = 1:10,
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
@@ -46,23 +43,24 @@ mockVocabRef <- function(backend = "database") {
       "Degenerative arthropathy",
       "Knee osteoarthritis",
       "H/O osteoarthritis",
-      "Adalimumab"
+      "Adalimumab",
+      "Injection"
     ),
-    domain_id = c(rep("Condition",7), "Observation","Drug"),
+    domain_id = c(rep("Condition", 7), "Observation", "Drug", "Drug"),
     vocabulary_id = c(
       rep("SNOMED", 5),
       rep("Read", 2),
-      "LOINC","RxNorm"
+      "LOINC", "RxNorm", "OMOP"
     ),
     standard_concept = c(
       rep("S", 5),
       rep(NA, 2),
-      "S", "S"
+      "S", "S", NA
     ),
     concept_class_id = c(
       rep("Clinical Finding", 5),
       rep("Diagnosis", 2),
-      "Observation","Ingredient"
+      "Observation", "Ingredient", "Dose Form"
     ),
     concept_code = "1234"
   )
@@ -106,13 +104,13 @@ mockVocabRef <- function(backend = "database") {
   )
   conceptSynonym <- dplyr::bind_rows(
     data.frame(
-    concept_id = 2L,
-    concept_synonym_name = "Arthritis"
-  ),
-  data.frame(
-    concept_id = 3L,
-    concept_synonym_name = "Osteoarthrosis"
-  )
+      concept_id = 2L,
+      concept_synonym_name = "Arthritis"
+    ),
+    data.frame(
+      concept_id = 3L,
+      concept_synonym_name = "Osteoarthrosis"
+    )
   )
   conceptRelationship <- dplyr::bind_rows(
     data.frame(
@@ -124,19 +122,29 @@ mockVocabRef <- function(backend = "database") {
       concept_id_1 = 4L,
       concept_id_2 = 7L,
       relationship_id = "Mapped from"
+    ),
+    data.frame(
+      concept_id_1 = 9L,
+      concept_id_2 = 10L,
+      relationship_id = "RxNorm has dose form"
     )
   )
   vocabulary <- dplyr::bind_rows(
-    data.frame(vocabulary_id = "SNOMED",
-                           vocabulary_name = "SNOMED",
-                           vocabulary_reference = "1",
-                           vocabulary_version= "1",
-                           vocabulary_concept_id=1),
-    data.frame(vocabulary_id = "None",
-               vocabulary_name = "OMOP Standardized Vocabularies",
-               vocabulary_reference = "Omop generated",
-               vocabulary_version= "v5.0 22-JUN-22",
-               vocabulary_concept_id=44819096))
+    data.frame(
+      vocabulary_id = "SNOMED",
+      vocabulary_name = "SNOMED",
+      vocabulary_reference = "1",
+      vocabulary_version = "1",
+      vocabulary_concept_id = 1
+    ),
+    data.frame(
+      vocabulary_id = "None",
+      vocabulary_name = "OMOP Standardized Vocabularies",
+      vocabulary_reference = "Omop generated",
+      vocabulary_version = "v5.0 22-JUN-22",
+      vocabulary_concept_id = 44819096
+    )
+  )
 
   drugStrength <- dplyr::bind_rows(
     data.frame(
@@ -148,12 +156,12 @@ mockVocabRef <- function(backend = "database") {
       numerator_unit_concept_id = 8576,
       denominator_value = 0.5,
       denominator_unit_concept_id = 8587,
-      box_size =NA
+      box_size = NA
     )
-    )
+  )
 
   # into in-memory duckdb
-    db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
+  db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
 
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "concept",
@@ -188,48 +196,45 @@ mockVocabRef <- function(backend = "database") {
 
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "drug_strength",
-                      drugStrength,
-                      overwrite = TRUE
+      drugStrength,
+      overwrite = TRUE
     )
   })
- cdm <- CDMConnector::cdm_from_con(db,
-                             cdm_tables = tidyselect::all_of(c("concept",
-                                                               "concept_relationship",
-                                                               "concept_ancestor",
-                                                               "concept_synonym",
-                                                               "vocabulary",
-                                                               "drug_strength")))
+  cdm <- CDMConnector::cdm_from_con(db,
+    cdm_tables = tidyselect::all_of(c(
+      "concept",
+      "concept_relationship",
+      "concept_ancestor",
+      "concept_synonym",
+      "vocabulary",
+      "drug_strength"
+    ))
+  )
   if (backend == "database") {
     return(cdm)
   }
 
- if (backend %in%  c("arrow", "data_frame")) {
-   dOut <- tempfile()
-   dir.create(dOut)
-   CDMConnector::stow(cdm, dOut)
+  if (backend %in% c("arrow", "data_frame")) {
+    dOut <- tempfile()
+    dir.create(dOut)
+    CDMConnector::stow(cdm, dOut)
 
-   if (backend=="arrow") {
-   cdm_arrow <- CDMConnector::cdm_from_files(path = dOut,
-                                             cdm_tables = tidyselect::all_of(c("concept",
-                                                                               "concept_relationship",
-                                                                               "concept_ancestor",
-                                                                               "concept_synonym",
-                                                                               "vocabulary",
-                                                                               "drug_strength")),
-                                             as_data_frame = FALSE)
-   return(cdm_arrow)}
+    if (backend == "arrow") {
+      cdmArrow <- CDMConnector::cdm_from_files(
+        path = dOut,
+        as_data_frame = FALSE
+      )
+      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+      return(cdmArrow)
+    }
 
-   if (backend=="data_frame") {
-     cdm_data_frame <- CDMConnector::cdm_from_files(path = dOut,
-                                               cdm_tables = tidyselect::all_of(c("concept",
-                                                                                 "concept_relationship",
-                                                                                 "concept_ancestor",
-                                                                                 "concept_synonym",
-                                                                                 "vocabulary",
-                                                                                 "drug_strength")),
-                                               as_data_frame = FALSE)
-     return(cdm_data_frame)}
-
- }
-
+    if (backend == "data_frame") {
+      cdmDF <- CDMConnector::cdm_from_files(
+        path = dOut,
+        as_data_frame = TRUE
+      )
+      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+      return(cdmDF)
+    }
+  }
 }

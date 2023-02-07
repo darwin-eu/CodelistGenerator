@@ -4,11 +4,23 @@
 \alias{getDomains}
 \title{getDomains}
 \usage{
-getDomains(cdm)
+getDomains(cdm, standardConcept = "Standard")
 }
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
+
+\item{standardConcept}{Character vector with one or more of "Standard",
+"Classification", and "Non-standard". These correspond to the flags used
+for the standard_concept field in the concept table of the cdm.}
+}
+\value{
+The domains of the cdm
 }
 \description{
 getDomains
+}
+\examples{
+cdm <- mockVocabRef()
+getDomains(cdm = cdm)
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 }

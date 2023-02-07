@@ -33,6 +33,7 @@
 #' @param domains Character vector with one or more of the OMOP CDM domain.
 #' @param conceptClassId Character vector with one or more concept class
 #' of the Concept
+#' @param doseForm The dose form associated with a drug
 #' @param vocabularyId Character vector with one or more vocabulary
 #' of the Concept
 #' @param standardConcept  Character vector with one or more of "Standard",
@@ -65,22 +66,18 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' library(DBI)
-#' library(CodelistGenerator)
-#' db <- DBI::dbConnect(" Your database connection here ")
-#' vocabularyDatabaseSchema <- " Your vocabulary schema here "
-#' getCandidateCodes(
-#'   keywords = "asthma",
-#'   db = db,
-#'   vocabularyDatabaseSchema = vocabularyDatabaseSchema
-#' )
-#' }
+#' cdm <- CodelistGenerator::mockVocabRef()
+#' CodelistGenerator::getCandidateCodes(
+#'   cdm = cdm,
+#'   keywords = "osteoarthritis"
+#'  )
+#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 getCandidateCodes <- function(cdm = NULL,
                               keywords,
                               exclude = NULL,
                               domains = "Condition",
                               conceptClassId = NULL,
+                              doseForm = NULL,
                               vocabularyId = NULL,
                               standardConcept = "Standard",
                               searchInSynonyms = FALSE,
@@ -128,6 +125,8 @@ getCandidateCodes <- function(cdm = NULL,
     add = errorMessage,
     null.ok = TRUE
   )
+  checkmate::assertCharacter(doseForm, add = errorMessage,
+                             null.ok = TRUE)
   checkmate::assertVector(vocabularyId,
                           add = errorMessage,
                           null.ok = TRUE
@@ -170,7 +169,7 @@ getCandidateCodes <- function(cdm = NULL,
 
   # run search by domain
   searchSpecs <- data.frame(
-    id = 1:length(domains),
+    id = seq_along(domains),
     domain = domains
   )
   searchSpecs <- split(
@@ -180,20 +179,21 @@ getCandidateCodes <- function(cdm = NULL,
 
   searchResults <- lapply(searchSpecs, function(x) {
     result <- runSearch(keywords,
-      cdm,
-      exclude,
+      cdm = cdm,
+      exclude = exclude,
       domains = x$domain,
-      conceptClassId,
-      vocabularyId,
-      standardConcept,
-      searchInSynonyms,
-      searchViaSynonyms,
-      searchNonStandard,
-      fuzzyMatch,
-      maxDistanceCost,
-      includeDescendants,
-      includeAncestor,
-      verbose
+      conceptClassId = conceptClassId,
+      doseForm = doseForm,
+      vocabularyId = vocabularyId,
+      standardConcept = standardConcept,
+      searchInSynonyms = searchInSynonyms,
+      searchViaSynonyms = searchViaSynonyms,
+      searchNonStandard = searchNonStandard,
+      fuzzyMatch = fuzzyMatch,
+      maxDistanceCost = maxDistanceCost,
+      includeDescendants = includeDescendants,
+      includeAncestor = includeAncestor,
+      verbose = verbose
     )
 
     return(result)
