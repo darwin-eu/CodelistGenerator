@@ -4,13 +4,21 @@
 \alias{getDescendants}
 \title{getDescendants}
 \usage{
-getDescendants(cdm, concept_id)
+getDescendants(cdm, conceptId)
 }
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
 
-\item{concept_id}{concpet_id to search}
+\item{conceptId}{concpet_id to search}
+}
+\value{
+The descendants of a given concept id
 }
 \description{
 getDescendants
+}
+\examples{
+cdm <- mockVocabRef()
+getDescendants(cdm = cdm, conceptId = 1)
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 }

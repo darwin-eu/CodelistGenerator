@@ -1,0 +1,127 @@
+---
+title: "Code lists for medications"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a04_codelists_for_medications}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r,  message=FALSE, warning=FALSE,echo=FALSE}
+library(here)
+library(readr)
+library(DBI)
+library(here)
+library(dplyr)
+library(dbplyr)
+library(stringr)
+library(DT)
+library(kableExtra)
+library(CodelistGenerator)
+```
+
+## Creating a codelists for acetaminophen
+For this vignette we are going to create codelists for identifying a acetaminophen, looking in the drug domain.
+
+## Connecting to a database with the OMOP CDM vocabularies
+```{r, eval=FALSE}
+# postgres database connection details
+serverDbi <- Sys.getenv("server")
+user <- Sys.getenv("user")
+password <- Sys.getenv("password")
+port <- Sys.getenv("port")
+host <- Sys.getenv("host")
+
+db <- DBI::dbConnect(RPostgres::Postgres(),
+  dbname = serverDbi,
+  port = port,
+  host = host,
+  user = user,
+  password = password
+)
+
+# name of vocabulary schema
+vocabularyDatabaseSchema <- "vocabulary"
+```
+
+## Codelist from "acetaminophen" and its descendants
+First we can follow the approach of identifying high-level codes and include all their descendants.
+
+```{r, eval=FALSE}
+library(dplyr)
+library(CodelistGenerator)
+library(stringr)
+library(DT)
+library(kableExtra)
+```
+
+```{r, eval=FALSE}
+acetaminophen1 <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "acetaminophen",
+  domains = "drug",
+  standardConcept = "standard",
+  includeDescendants = TRUE
+)
+```
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
+acetaminophen1 <- readRDS(here("vignettes", "medData01.RData"))
+```
+
+```{r,  message=FALSE, warning=FALSE }  
+acetaminophen1 %>% dplyr::glimpse()
+```
+
+## Restrict on dose form
+We can also restrict on dose form, in this case requiring dose form to include either "injection" or "intravenous" in it's name
+```{r, eval=FALSE}
+acetaminophen2 <- getCandidateCodes(
+  cdm = cdm_arrow,
+  keywords = "acetaminophen",
+  domains = "drug",
+  doseForm = c("injection", "intravenous"),
+  standardConcept = "standard",
+  includeDescendants = TRUE,
+  verbose = TRUE
+)
+```
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
+acetaminophen2 <- readRDS(here("vignettes", "medData02.RData"))
+```
+
+```{r,  message=FALSE, warning=FALSE }  
+acetaminophen2 %>% dplyr::glimpse()
+```
+
+## Restrict on concept class
+We can also restrict on concept class, in this case only identifying codes with a concept class of "Quant Clinical Drug"
+
+```{r, eval=FALSE}
+acetaminophen3 <- getCandidateCodes(
+  cdm = cdm_arrow,
+  keywords = "acetaminophen",
+  domains = "drug",
+  conceptClassId = c("Quant Clinical Drug"),
+  doseForm = c("injection", "intravenous"),
+  standardConcept = "standard",
+  includeDescendants = TRUE,
+  verbose = TRUE
+)
+```
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
+acetaminophen3 <- readRDS(here("vignettes", "medData03.RData"))
+```
+
+```{r,  message=FALSE, warning=FALSE }  
+acetaminophen3 %>% dplyr::glimpse()
+```

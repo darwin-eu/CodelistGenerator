@@ -9,6 +9,14 @@ getVocabVersion(cdm)
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
 }
+\value{
+the vocabulary version being used
+}
 \description{
 getVocabVersion
+}
+\examples{
+cdm <- mockVocabRef()
+getVocabVersion(cdm = cdm)
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 }

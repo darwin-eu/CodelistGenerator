@@ -16,10 +16,7 @@ cdm reference with mock vocabulary
 Generate example vocabulary database
 }
 \examples{
-\dontrun{
-library(DBI)
-library(duckdb)
-library(CodelistGenerator)
-db <- mockVocab("database")
-}
+cdm <- mockVocabRef()
+cdm
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 }

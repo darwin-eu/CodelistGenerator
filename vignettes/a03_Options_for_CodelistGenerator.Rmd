@@ -1,5 +1,5 @@
 ---
-title: "03 Options for CodelistGenerator: examples from full vocabulary"
+title: "CodelistGenerator options: examples with a with mock vocabulary"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{03_Options_for_CodelistGenerator}
@@ -16,370 +16,231 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Set up 
-
+## Mock vocabulary database
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-library(here)
-library(readr)
 library(DBI)
-library(here)
 library(dplyr)
 library(dbplyr)
-library(stringr)
-library(DT)
+library(here)
 library(kableExtra)
 library(CodelistGenerator)
 library(CDMConnector)
 ```
 
+Let´s say we have a mock vocabulary database with these hypothetical concepts and relationships.
 
-## Creating a codelist for osteoarthritis
-For this example we are going to generate a candidate codelist for osteoarthritis, looking at the impact of alternative search strategies.
-
-## Set up 
-```{r, eval=FALSE}
-library(DBI)
-library(RPostgres)
+```{r,echo=FALSE}
+knitr::include_graphics("mock_db_fig1.png")
 ```
 
-```{r, eval=FALSE}
-# postgres database connection details
-serverDbi <- Sys.getenv("server")
-user <- Sys.getenv("user")
-password <- Sys.getenv("password")
-port <- Sys.getenv("port")
-host <- Sys.getenv("host")
-
-db <- dbConnect(RPostgres::Postgres(),
-  dbname = serverDbi,
-  port = port,
-  host = host,
-  user = user,
-  password = password
-)
-
-# name of vocabulary schema
-vocabularyDatabaseSchema <- "vocabulary"
+```{r,  message=FALSE, warning=FALSE,echo=FALSE, results='hide'}
+cdm <- mockVocabRef()
 ```
 
-
-## Search strategies
-### Condition domain, without searching via or in synonyms, without fuzzy match, with exclusions, without including descendants or ancestor
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes1 <- readRDS(here("vignettes", "optionsData01.RData"))
+## Search for exact keyword match 
+```{r,echo=FALSE}
+knitr::include_graphics("mock_db_fig2.png")
 ```
 
-To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, without fuzzy matching, and without including descendants or the direct ancestor of the included concepts.
-
-```{r, eval=FALSE}
-oaCodes1 <- getCandidateCodes(
-  keywords = "osteoarthritis",
+To find "Musculoskeletal disorder" we can search for that like so 
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "Musculoskeletal disorder",
   domains = "Condition",
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
 )
+
+kable(codes)
 ```
 
-What is the candidate codelist?
-```{r,  message=FALSE, warning=FALSE }  
-datatable(oaCodes1,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 250)
-  )
-)
-```
-
-
-### Including descendants
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes2 <- readRDS(here("vignettes", "optionsData02.RData"))
-```
-
-Now we will also include the descendants of included concepts.
-```{r, eval=FALSE}
-oaCodes2 <- getCandidateCodes(
-  keywords = "osteoarthritis",
+Note, we would also identify it based on a partial match
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "Musculoskeletal",
   domains = "Condition",
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
-  includeDescendants = TRUE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeDescendants = FALSE
 )
+
+kable(codes)
 ```
 
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To2 <- compareCodelists(oaCodes1, oaCodes2) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
-
-datatable(newCodes1To2,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+## Add descendants
+```{r,echo=FALSE}
+knitr::include_graphics("mock_db_fig7.png")
 ```
 
-### Including observation domain
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes3 <- readRDS(here("vignettes", "optionsData03.RData"))
-```
-
-Now we will search the observation domain as well as the condition domain.
-```{r, eval=FALSE}
-oaCodes3 <- getCandidateCodes(
-  keywords = "osteoarthritis",
-  domains = c("Condition", "Observation"),
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
-  includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
-)
-```
-
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To3 <- compareCodelists(oaCodes1, oaCodes3) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
-
-datatable(newCodes1To3,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
-```
-
-### Search synonyms (both in and via)
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes4 <- readRDS(here("vignettes", "optionsData04.RData"))
-```
-
-Now we will search the concept synonym table to identify concepts to include.
-```{r, eval=FALSE}
-oaCodes4 <- getCandidateCodes(
-  keywords = "osteoarthritis",
+To include descendants of an identified code, we can set includeDescendants to TRUE
+```{r}
+kable(getCandidateCodes(
+  cdm = cdm,
+  keywords = "Musculoskeletal disorder",
   domains = "Condition",
-  searchInSynonyms = TRUE,
-  searchViaSynonyms = TRUE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
+  includeDescendants = TRUE
+))
+```
+
+## Multiple search terms 
+We can also search for multiple keywords at the same time, and would have picked these all up with the following search
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = c(
+    "Musculoskeletal disorder",
+    "arthritis",
+    "arthrosis"
   ),
-  includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
-)
-```
-
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To4 <- compareCodelists(oaCodes1, oaCodes4) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
-
-datatable(newCodes1To4,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
-```
-
-### Search via non-standard
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes5 <- readRDS(here("vignettes", "optionsData04.RData"))
-```
-
-Now we will search the concept synonym table to identify concepts to include.
-```{r, eval=FALSE}
-oaCodes5 <- getCandidateCodes(
-  keywords = "osteoarthritis",
   domains = "Condition",
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = TRUE,
-  fuzzyMatch = FALSE,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
-  includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeDescendants = FALSE
 )
+
+kable(codes)
 ```
 
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To5 <- compareCodelists(oaCodes1, oaCodes5) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
-
-datatable(newCodes1To5,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+## Add ancestor
+```{r, echo=FALSE}
+knitr::include_graphics("mock_db_fig5.png")
 ```
 
-### Using a fuzzy search
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes6 <- readRDS(here("vignettes", "optionsData05.RData"))
-```
+To include the ancestors one level above the identified concepts we can set includeAncestor to TRUE
 
-Now we will use an approximate search. See https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/agrep for further details (as this is what is running under the hood). Note, using the defaults of 0.1 for for substitutions, deletions, and insertions.
-```{r, eval=FALSE}
-oaCodes6 <- getCandidateCodes(
-  keywords = "osteoarthritis",
-  domains = "Condition",
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = TRUE,
-  maxDistanceCost = 0.1,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
-  includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
-)
-```
-
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To6 <- compareCodelists(oaCodes1, oaCodes6) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
-
-datatable(newCodes1To6,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
-```
-
-### Using a more generous fuzzy search
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes7 <- readRDS(here("vignettes", "optionsData06.RData"))
-```
-
-Here we widen the approximate searching, increasing the maximum distance allowed for a match to 0.2 for substitutions, deletions, and insertions.
-```{r, eval=FALSE}
-oaCodes7 <- getCandidateCodes(
-  keywords = "osteoarthritis",
-  domains = "Condition",
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = TRUE,
-  maxDistanceCost = 0.2,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
-  includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
-)
-```
-
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To7 <- compareCodelists(oaCodes1, oaCodes7) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
-
-datatable(newCodes1To7,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
-```
-
-### Include ancestor
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes8 <- readRDS(here("vignettes", "optionsData07.RData"))
-```
-
-Now we include the direct ancestor of included terms.
-```{r, eval=FALSE}
-oaCodes8 <- getCandidateCodes(
-  keywords = "osteoarthritis",
-  domains = "Condition",
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
-  maxDistanceCost = 0.1,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
-  includeDescendants = FALSE,
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "Osteoarthritis of knee",
   includeAncestor = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  domains = "Condition"
 )
+
+kable(codes)
 ```
 
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To8 <- compareCodelists(oaCodes1, oaCodes8) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
+## Searches with multiple words
+```{r, echo=FALSE}
+knitr::include_graphics("mock_db_fig4.png")
+```
 
-datatable(newCodes1To8,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
+We can also find concepts with multiple words even if they are in a different order. For example, a search for "Knee osteoarthritis" will pick up "Osteoarthritis of knee".
+
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "Knee osteoarthritis",
+  domains = "Condition",
+  includeDescendants = TRUE
 )
+
+kable(codes)
+```
+
+
+## With exclusions
+```{r, echo=FALSE}
+knitr::include_graphics("mock_db_fig5.png")
+```
+
+We can also exclude specific terms 
+
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "arthritis",
+  exclude = "Hip osteoarthritis",
+  domains = "Condition"
+)
+
+kable(codes)
+```
+
+## Search using synonyms
+```{r, echo=FALSE}
+knitr::include_graphics("mock_db_fig6.png")
+```
+
+We can also pick up codes based on their synonyms. In this case "Arthritis" has a synonym of "Osteoarthrosis" and so a search of both the primary name of a concept and any of its associated synonyms would pick up this synonym and it would be included.
+
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "osteoarthrosis",
+  domains = "Condition",
+  searchInSynonyms = TRUE
+)
+
+kable(codes)
+```
+
+Or, in this case, we can get the same result by searching via synonyms. In this case when using searchViaSynonyms=TRUE, "Arthritis" (which gets identified first) has a synonym of "Osteoarthrosis", and based on this synonym we can also include the "Osteoarthrosis" concept.
+
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "arthritis",
+  domains = "Condition",
+  searchViaSynonyms = TRUE
+)
+
+kable(codes)
+```
+
+## Fuzzy matches instead of only exact matches 
+```{r, echo=FALSE}
+knitr::include_graphics("mock_db_fig6.png")
+```
+
+We could have also picked up "Osteoarthrosis" by doing fuzzy matching which allows for some differences in spelling.
+
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = "arthritis",
+  domains = "Condition",
+  fuzzyMatch = TRUE,
+  maxDistanceCost = 0.2
+)
+
+kable(codes)
+```
+
+## Search via non-standard
+Or we could have also picked up "Osteoarthrosis" by searching via non-standard.
+
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = c("arthritis", "arthropathy"),
+  domains = "Condition",
+  searchNonStandard = TRUE
+)
+
+kable(codes)
+```
+
+## Search for both standard and non-standard concepts
+
+```{r, echo=FALSE}
+knitr::include_graphics("mock_db_fig8.png")
+```
+
+We can also include non-standard codes in our results like so
+
+```{r}
+codes <- getCandidateCodes(
+  cdm = cdm,
+  keywords = c(
+    "Musculoskeletal disorder",
+    "arthritis",
+    "arthropathy",
+    "arthrosis"
+  ),
+  domains = "Condition",
+  standardConcept = c("Standard", "Non-standard")
+)
+
+kable(codes)
+```
+
+```{r,echo=FALSE}
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 ```

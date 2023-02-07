@@ -15,6 +15,14 @@ for the standard_concept field in the concept table of the cdm.}
 
 \item{domain}{Vocabulary domain}
 }
+\value{
+The concept class used for a given set of domains
+}
 \description{
 getConceptClassId
+}
+\examples{
+cdm <- mockVocabRef()
+getConceptClassId(cdm = cdm, domain = "drug")
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 }

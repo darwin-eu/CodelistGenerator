@@ -25,20 +25,14 @@ tibble
 Show mappings from non-standard vocabularies to standard
 }
 \examples{
-\dontrun{
-library(DBI)
-library(CodelistGenerator)
-db <- DBI::dbConnect(" Your database connection here ")
-vocabularyDatabaseSchema <- " Your vocabulary schema here "
-asthma_codes <- get_candidate_codes(
-  keywords = "asthma",
-  db = db,
-  vocabularyDatabaseSchema = " Your vocabulary schema here "
+cdm <- CodelistGenerator::mockVocabRef()
+codes <- CodelistGenerator::getCandidateCodes(
+  cdm = cdm,
+  keywords = "osteoarthritis"
 )
-getMappings(
-  candidateCodelist = asthma_codes,
-  db = db,
-  vocabularyDatabaseSchema = " Your vocabulary schema here "
+CodelistGenerator::getMappings(
+  cdm = cdm,
+  candidateCodelist = codes,
+  nonStandardVocabularies = "READ"
 )
-}
 }

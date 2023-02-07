@@ -14,12 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Check the database type.
-#'
-#' @param cdm cdm reference
-#' @param type type of the database, default cdm_reference
-#' @param messageStore checkmate collection
-#'
 checkDbType <- function(cdm, type = "cdm_reference", messageStore) {
   dbInheritsCheck <- inherits(cdm, type)
   checkmate::assertTRUE(dbInheritsCheck,
@@ -29,19 +23,12 @@ checkDbType <- function(cdm, type = "cdm_reference", messageStore) {
   }
 }
 
-
-#' Check if given table exists in cdm.
-#'
-#' @param cdm the db reference
-#' @param tableName checkmate collection
-#' @param messageStore the message store
-#'
 checkTableExists <- function(cdm, tableName, messageStore) {
-  table_exists <- inherits(cdm[[tableName]], c("tbl_dbi",
+  tableExists <- inherits(cdm[[tableName]], c("tbl_dbi",
                                                "ArrowObject", "ArrowTabular",
-                                               "tbl" ,  "data.frame"))
-  checkmate::assertTRUE(table_exists, add = messageStore)
-  if (!isTRUE(table_exists)) {
+                                               "tbl",  "data.frame"))
+  checkmate::assertTRUE(tableExists, add = messageStore)
+  if (!isTRUE(tableExists)) {
     messageStore$push(glue::glue("- {tableName} is not found in the cdm reference"))
   }
 }
