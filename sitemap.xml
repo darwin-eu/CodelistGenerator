@@ -16,16 +16,13 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a01_Introduction_to_CodelistGenerator.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02_Options_for_CodelistGenerator.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02_Candidate_codes_OA.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a03_Options_for_CodelistGenerator.html</loc>
   </url>
   <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a04_CodelistGenerator_extracting_procedure_codes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a05_codelists_for_medications.html</loc>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a04_codelists_for_medications.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/articles/index.html</loc>
@@ -37,13 +34,10 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/index.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/news/index.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/CodelistGenerator-package.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/checkDbType.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/checkTableExists.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
@@ -56,6 +50,9 @@
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDomains.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDoseForm.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getMappings.html</loc>
