@@ -43,16 +43,7 @@ subset of the OMOP CDM vocabularies)
 
 ``` r
 db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
-cdm <- cdm_from_con(db,
-  cdm_schema = "main",
-  cdm_tables = tidyselect::all_of(c(
-    "concept",
-    "concept_relationship",
-    "concept_ancestor",
-    "concept_synonym",
-    "vocabulary"
-  ))
-)
+cdm <- cdm_from_con(db, cdm_schema = "main")
 ```
 
 Although we can run the search using vocabulary tables in the database
@@ -82,32 +73,34 @@ getVocabVersion(cdm = cdm_arrow)
 We can then search for asthma like so
 
 ``` r
-getCandidateCodes(
+asthma_codes1 <- getCandidateCodes(
   cdm = cdm_arrow,
   keywords = "asthma",
   domains = "Condition"
-) %>% 
+) 
+asthma_codes1 %>% 
   glimpse()
 #> Rows: 2
 #> Columns: 6
-#> $ concept_id       <dbl> 4051466, 317009
-#> $ concept_name     <chr> "Childhood asthma", "Asthma"
+#> $ concept_id       <dbl> 317009, 4051466
+#> $ concept_name     <chr> "Asthma", "Childhood asthma"
 #> $ domain_id        <chr> "condition", "condition"
 #> $ concept_class_id <chr> "clinical finding", "clinical finding"
 #> $ vocabulary_id    <chr> "snomed", "snomed"
-#> $ found_from       <chr> "From initial search", "From initial search"
+#> $ found_from       <chr> "From initial search", "From descendants"
 ```
 
 Perhaps we want to exclude certain concepts as part of the search
 strategy, in which case this can be added like so
 
 ``` r
-getCandidateCodes(
+asthma_codes2 <- getCandidateCodes(
   cdm = cdm_arrow,
   keywords = "asthma",
   exclude = "childhood",
   domains = "Condition"
-) %>% 
+) 
+asthma_codes2 %>% 
   glimpse()
 #> Rows: 1
 #> Columns: 6
@@ -117,6 +110,17 @@ getCandidateCodes(
 #> $ concept_class_id <chr> "clinical finding"
 #> $ vocabulary_id    <chr> "snomed"
 #> $ found_from       <chr> "From initial search"
+```
+
+We can compare these two code lists like so
+
+``` r
+compareCodelists(asthma_codes1, asthma_codes2)
+#> # A tibble: 2 × 3
+#>   concept_id concept_name     codelist       
+#>        <dbl> <chr>            <chr>          
+#> 1     317009 Asthma           Both           
+#> 2    4051466 Childhood asthma Only codelist 1
 ```
 
 We can then also see non-standard codes these are mapped from, for

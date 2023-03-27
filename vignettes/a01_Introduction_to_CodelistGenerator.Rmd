@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Creating a codelist for dementia
+## Creating a code list for dementia
 For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain. Let's first load some libraries
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
@@ -93,7 +93,7 @@ vocabVersion <- readRDS(here("vignettes", "introVocab.RData"))
 vocabVersion
 ```
 
-## Codelist from "Dementia" (4182210) and its descendants
+## A code list from "Dementia" (4182210) and its descendants
 The simplest approach to identifying potential codes is to take a high-level code and include all its descendants. 
 
 
@@ -137,7 +137,7 @@ datatable(codesFromDescendants,
 
 This looks to pick up most relevant codes. But, this approach misses codes that are not a descendant of 4182210. For example, codes such as "Wandering due to dementia" (37312577; https://athena.ohdsi.org/search-terms/terms/37312577) and "Anxiety due to dementia" (37312031; https://athena.ohdsi.org/search-terms/terms/37312031) are not picked up.
 
-## Generating a candidate codelist using CodelistGenerator
+## Generating a candidate code list using CodelistGenerator
 To try and include all such terms that could be included we can use CodelistGenerator.
 
 First, let's do a simple search for a single keyword of "dementia", including descendants of the identified codes.
@@ -164,7 +164,9 @@ datatable(dementiaCodes1,
 )
 ```
 
-What is the difference between this codelist and the one from 4182210 and its descendants?
+
+## Comparing code lists
+What is the difference between this code list and the one from 4182210 and its descendants?
 ```{r,  eval=FALSE }
 codeComparison <- compareCodelists(
   codesFromDescendants,
@@ -196,7 +198,7 @@ datatable(
 ```
 
 ## Review mappings from non-standard vocabularies
-Perhaps we want to see what ICD10CM codes map to our candidate codelist. We can get these by running
+Perhaps we want to see what ICD10CM codes map to our candidate code list. We can get these by running
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 icdMappings <- readRDS(here("vignettes", "introData04.RData"))
