@@ -420,3 +420,49 @@ test_that("tests with mock db - multiple domains", {
     }
   }
 })
+
+test_that("tests exact match", {
+  backends <- c("database", "arrow", "data_frame")
+
+  for (i in seq_along(backends)) {
+    # mock db
+    cdm <- mockVocabRef(backends[[i]])
+
+    # tests
+    # test keywords search - exact
+    codes <- getCandidateCodes(
+      cdm = cdm,
+      keywords = "arthritis",
+      exactMatch = TRUE,
+      domains = c("Condition", "Observation"),
+      includeDescendants = FALSE
+    )
+    expect_true((nrow(codes) == 1 &
+                   codes$concept_id == 3 &
+                   !codes$concept_id %in% c(1, 2, 4:8)))
+
+    # without exact match
+    codes1 <- getCandidateCodes(
+      cdm = cdm,
+      keywords = "arthriti",
+      exactMatch = TRUE,
+      domains = c("Condition", "Observation"),
+      includeDescendants = FALSE
+    )
+    expect_true(nrow(codes1) == 0)
+
+    # expect error if fuzzy and exact
+    expect_error(getCandidateCodes(
+      cdm = cdm,
+      keywords = "arthritis",
+      exactMatch = TRUE,
+      fuzzyMatch = TRUE
+    ))
+
+    if (backends[[i]] == "database") {
+      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+    }
+  }
+
+
+})

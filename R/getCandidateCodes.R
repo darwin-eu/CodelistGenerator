@@ -39,6 +39,8 @@
 #' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
+#' @param exactMatch Either TRUE or FALSE. If TRUE only exact matches of
+#' keywords will be identified when running the initial search.
 #' @param searchInSynonyms Either TRUE or FALSE. If TRUE the code will also
 #' search using both the primary name in the concept table and synonyms from
 #' the concept synonym table.
@@ -80,6 +82,7 @@ getCandidateCodes <- function(cdm = NULL,
                               doseForm = NULL,
                               vocabularyId = NULL,
                               standardConcept = "Standard",
+                              exactMatch = FALSE,
                               searchInSynonyms = FALSE,
                               searchViaSynonyms = FALSE,
                               searchNonStandard = FALSE,
@@ -98,6 +101,7 @@ getCandidateCodes <- function(cdm = NULL,
     message(glue::glue("-- domains: {toString(domains)}"))
     message(glue::glue("-- conceptClassId: {toString(conceptClassId)}"))
     message(glue::glue("-- vocabularyId: {toString(vocabularyId)}"))
+    message(glue::glue("-- exactMatch: {toString(exactMatch)}"))
     message(glue::glue("-- standardConcept: {toString(standardConcept)}"))
     message(glue::glue("-- searchInSynonyms: {toString(searchInSynonyms)}"))
     message(glue::glue("-- searchViaSynonyms: {toString(searchViaSynonyms)}"))
@@ -144,6 +148,7 @@ getCandidateCodes <- function(cdm = NULL,
     )
   }
   checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
+  checkmate::assert_logical(exactMatch, add = errorMessage)
   checkmate::assert_logical(searchInSynonyms, add = errorMessage)
   checkmate::assert_logical(searchViaSynonyms, add = errorMessage)
   checkmate::assert_logical(searchNonStandard, add = errorMessage)
@@ -162,6 +167,16 @@ getCandidateCodes <- function(cdm = NULL,
   checkTableExists(cdm, "vocabulary", errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
 
+  errorMessage <- checkmate::makeAssertCollection()
+  if(exactMatch == TRUE){
+    checkmate::assert_false(fuzzyMatch, add = errorMessage)
+  if (!isFALSE(fuzzyMatch)) {
+    errorMessage$push(
+      "- fuzzyMatch must be FALSE if exactMatch is TRUE"
+    )
+  }
+}
+  checkmate::reportAssertions(collection = errorMessage)
 
   if (verbose == TRUE) {
     message("Starting search")
@@ -186,6 +201,7 @@ getCandidateCodes <- function(cdm = NULL,
       doseForm = doseForm,
       vocabularyId = vocabularyId,
       standardConcept = standardConcept,
+      exactMatch = exactMatch,
       searchInSynonyms = searchInSynonyms,
       searchViaSynonyms = searchViaSynonyms,
       searchNonStandard = searchNonStandard,
