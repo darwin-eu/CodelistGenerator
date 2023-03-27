@@ -45,16 +45,7 @@ library(kableExtra)
 In this example we'll use the Eunomia dataset (which only contains a subset of the OMOP CDM vocabularies)
 ```{r}
 db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
-cdm <- cdm_from_con(db,
-  cdm_schema = "main",
-  cdm_tables = tidyselect::all_of(c(
-    "concept",
-    "concept_relationship",
-    "concept_ancestor",
-    "concept_synonym",
-    "vocabulary"
-  ))
-)
+cdm <- cdm_from_con(db, cdm_schema = "main")
 ```
 
 Although we can run the search using vocabulary tables in the database or loaded into R, the fastest approach is using arrow. So let's create a new cdm reference using arrow (in this example saved to the temp directory, but in practice you could of course save files elsewhere for reuse).
@@ -76,23 +67,30 @@ getVocabVersion(cdm = cdm_arrow)
 
 We can then search for asthma like so
 ```{r}
-getCandidateCodes(
+asthma_codes1 <- getCandidateCodes(
   cdm = cdm_arrow,
   keywords = "asthma",
   domains = "Condition"
-) %>% 
+) 
+asthma_codes1 %>% 
   glimpse()
 ```
 
 Perhaps we want to exclude certain concepts as part of the search strategy, in which case this can be added like so
 ```{r}
-getCandidateCodes(
+asthma_codes2 <- getCandidateCodes(
   cdm = cdm_arrow,
   keywords = "asthma",
   exclude = "childhood",
   domains = "Condition"
-) %>% 
+) 
+asthma_codes2 %>% 
   glimpse()
+```
+
+We can compare these two code lists like so
+```{r}
+compareCodelists(asthma_codes1, asthma_codes2)
 ```
 
 We can then also see non-standard codes these are mapped from, for example here we can see the non-standard ICD10 code that maps to a standard snomed code for gastrointestinal hemorrhage returned by our search
