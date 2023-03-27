@@ -69,6 +69,7 @@ using the OMOP CDM.</p>
 <span>  doseForm <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  vocabularyId <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  standardConcept <span class="op">=</span> <span class="st">"Standard"</span>,</span>
+<span>  exactMatch <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchInSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchViaSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -120,6 +121,11 @@ of the Concept</p></dd>
 <dd><p>Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.</p></dd>
+
+
+<dt>exactMatch</dt>
+<dd><p>Either TRUE or FALSE. If TRUE only exact matches of
+keywords will be identified when running the initial search.</p></dd>
 
 
 <dt>searchInSynonyms</dt>
@@ -181,11 +187,10 @@ If TRUE, progress will be reported.</p></dd>
 <span class="r-in"><span>  keywords <span class="op">=</span> <span class="st">"osteoarthritis"</span></span></span>
 <span class="r-in"><span> <span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   concept_id concept_name           domain_id concept_class_id vocabul…¹ found…²</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>          4 Osteoarthritis of knee condition clinical finding snomed    From i…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>          5 Osteoarthritis of hip  condition clinical finding snomed    From i…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​vocabulary_id, ²​found_from</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   concept_id concept_name    domain_id concept_class_id vocabulary_id found_from</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>          4 Osteoarthritis… condition clinical finding snomed        From init…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>          5 Osteoarthritis… condition clinical finding snomed        From init…</span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">cdm</span>, <span class="st">"dbcon"</span><span class="op">)</span>, shutdown <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
