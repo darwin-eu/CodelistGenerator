@@ -13,6 +13,7 @@ getCandidateCodes(
   doseForm = NULL,
   vocabularyId = NULL,
   standardConcept = "Standard",
+  exactMatch = FALSE,
   searchInSynonyms = FALSE,
   searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
@@ -47,6 +48,9 @@ of the Concept}
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.}
+
+\item{exactMatch}{Either TRUE or FALSE. If TRUE only exact matches of
+keywords will be identified when running the initial search.}
 
 \item{searchInSynonyms}{Either TRUE or FALSE. If TRUE the code will also
 search using both the primary name in the concept table and synonyms from

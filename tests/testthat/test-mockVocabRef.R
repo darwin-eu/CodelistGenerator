@@ -7,9 +7,10 @@ test_that("mock vocab db", {
   conceptFromArrow <- cdmArrow$concept %>% dplyr::collect()
   conceptFromDf <- cdmDF$concept %>% dplyr::collect()
 
-  expect_true(dplyr::all_equal(conceptFromDb,
-                               conceptFromArrow,
-                               conceptFromDf))
+  expect_true(all.equal(conceptFromDb,
+            conceptFromArrow))
+  expect_true(all.equal(conceptFromArrow,
+            conceptFromDf))
 
   DBI::dbDisconnect(attr(cdmDb, "dbcon"), shutdown = TRUE)
 })
