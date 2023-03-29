@@ -73,6 +73,7 @@ using the OMOP CDM.</p>
 <span>  searchInSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchViaSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  includeSequela <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  fuzzyMatch <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -142,6 +143,12 @@ search via the concept synonym table.</p></dd>
 <dt>searchNonStandard</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also
 search via non-standard concepts.</p></dd>
+
+
+<dt>includeSequela</dt>
+<dd><p>Either TRUE or FALSE. If TRUE, codes associated via
+a concept relationship of 'Due to of' or 'Occurs before' will also be
+identified.</p></dd>
 
 
 <dt>includeDescendants</dt>
