@@ -26,6 +26,7 @@ runSearch <- function(keywords,
                       searchInSynonyms,
                       searchViaSynonyms,
                       searchNonStandard,
+                      includeSequela,
                       fuzzyMatch,
                       maxDistanceCost,
                       includeDescendants,
@@ -485,6 +486,70 @@ runSearch <- function(keywords,
           )
       }
     }
+  }
+
+  # 8) add codes from sequelae
+
+  if (includeSequela == TRUE) {
+    if (verbose == TRUE) {
+      message(glue::glue("{domains}: Getting concepts from sequelae"))
+    }
+
+    sequelaCodesFrom <- candidateCodes %>%
+      dplyr::filter(!is.na(.data$concept_id)) %>%
+      dplyr::inner_join(
+        conceptRelationshipDb %>%
+          dplyr::filter(.data$relationship_id %in%
+            c("Due to of", "Occurs before")) %>%
+          dplyr::rename(
+            "concept_id" = "concept_id_1",
+            "sequelae_id" = "concept_id_2"
+          ) %>%
+          dplyr::collect(),
+        by = "concept_id"
+      )
+
+    sequelaCodesTo <- candidateCodes %>%
+      dplyr::filter(!is.na(.data$concept_id)) %>%
+      dplyr::inner_join(
+        conceptRelationshipDb %>%
+          dplyr::filter(.data$relationship_id %in%
+                          c("Due to of", "Occurs before")) %>%
+          dplyr::rename(
+            "concept_id" = "concept_id_2",
+            "sequelae_id" = "concept_id_1"
+          ) %>%
+          dplyr::collect(),
+        by = "concept_id"
+      )
+
+    sequelaCodes <- dplyr::bind_rows(sequelaCodesFrom, sequelaCodesTo)
+
+    sequelaCodes <- concept %>%
+      dplyr::inner_join(
+        sequelaCodes %>%
+          dplyr::select("sequelae_id") %>%
+          dplyr::rename("concept_id" = "sequelae_id"),
+        by = "concept_id"
+      )
+
+    candidateCodes <- dplyr::bind_rows(
+      candidateCodes,
+      sequelaCodes %>%
+        dplyr::mutate(found_from = "From sequelae")
+    ) %>%
+      dplyr::distinct()
+
+    # run exclusion
+    if (length(exclude) > 0) {
+      if (nrow(excludeCodes) > 0) {
+        candidateCodes <- candidateCodes %>%
+          dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
+                           by = "concept_id"
+          )
+      }
+    }
+
   }
 
   if (nrow(candidateCodes) == 0) {
