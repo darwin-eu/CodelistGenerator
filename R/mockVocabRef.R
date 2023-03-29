@@ -33,32 +33,33 @@ mockVocabRef <- function(backend = "database") {
 
   # tables
   concept <- data.frame(
-    concept_id = 1:10,
+    concept_id = 1:11,
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
       "Arthritis",
       "Osteoarthritis of knee",
       "Osteoarthritis of hip",
+      "Osteonecrosis",
       "Degenerative arthropathy",
       "Knee osteoarthritis",
       "H/O osteoarthritis",
       "Adalimumab",
       "Injection"
     ),
-    domain_id = c(rep("Condition", 7), "Observation", "Drug", "Drug"),
+    domain_id = c(rep("Condition", 8), "Observation", "Drug", "Drug"),
     vocabulary_id = c(
-      rep("SNOMED", 5),
+      rep("SNOMED", 6),
       rep("Read", 2),
       "LOINC", "RxNorm", "OMOP"
     ),
     standard_concept = c(
-      rep("S", 5),
+      rep("S", 6),
       rep(NA, 2),
       "S", "S", NA
     ),
     concept_class_id = c(
-      rep("Clinical Finding", 5),
+      rep("Clinical Finding", 6),
       rep("Diagnosis", 2),
       "Observation", "Ingredient", "Dose Form"
     ),
@@ -115,18 +116,23 @@ mockVocabRef <- function(backend = "database") {
   conceptRelationship <- dplyr::bind_rows(
     data.frame(
       concept_id_1 = 2L,
-      concept_id_2 = 6L,
-      relationship_id = "Mapped from"
-    ),
-    data.frame(
-      concept_id_1 = 4L,
       concept_id_2 = 7L,
       relationship_id = "Mapped from"
     ),
     data.frame(
-      concept_id_1 = 9L,
-      concept_id_2 = 10L,
+      concept_id_1 = 4L,
+      concept_id_2 = 8L,
+      relationship_id = "Mapped from"
+    ),
+    data.frame(
+      concept_id_1 = 10L,
+      concept_id_2 = 11L,
       relationship_id = "RxNorm has dose form"
+    ),
+    data.frame(
+      concept_id_1 = 3L,
+      concept_id_2 = 6L,
+      relationship_id = "Due to of"
     )
   )
   vocabulary <- dplyr::bind_rows(
@@ -148,8 +154,8 @@ mockVocabRef <- function(backend = "database") {
 
   drugStrength <- dplyr::bind_rows(
     data.frame(
-      drug_concept_id = 9L,
-      ingredient_concept_id = 9L,
+      drug_concept_id = 10L,
+      ingredient_concept_id = 10L,
       amount_value = NA,
       amount_unit_concept_id = 8576,
       numerator_value = 0.010,

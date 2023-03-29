@@ -48,6 +48,9 @@
 #' search via the concept synonym table.
 #' @param searchNonStandard Either TRUE or FALSE. If TRUE the code will also
 #' search via non-standard concepts.
+#' @param includeSequela Either TRUE or FALSE. If TRUE, codes associated via
+#' a concept relationship of 'Due to of' or 'Occurs before' will also be
+#' identified.
 #' @param includeDescendants Either TRUE or FALSE.
 #' If TRUE descendant concepts of identified concepts
 #' will be included in the candidate codelist.
@@ -86,6 +89,7 @@ getCandidateCodes <- function(cdm = NULL,
                               searchInSynonyms = FALSE,
                               searchViaSynonyms = FALSE,
                               searchNonStandard = FALSE,
+                              includeSequela = FALSE,
                               includeDescendants = TRUE,
                               includeAncestor = FALSE,
                               fuzzyMatch = FALSE,
@@ -205,6 +209,7 @@ getCandidateCodes <- function(cdm = NULL,
       searchInSynonyms = searchInSynonyms,
       searchViaSynonyms = searchViaSynonyms,
       searchNonStandard = searchNonStandard,
+      includeSequela = includeSequela,
       fuzzyMatch = fuzzyMatch,
       maxDistanceCost = maxDistanceCost,
       includeDescendants = includeDescendants,

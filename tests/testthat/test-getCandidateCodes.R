@@ -90,8 +90,8 @@ test_that("tests with mock db", {
       searchViaSynonyms = FALSE
     )
     expect_true((nrow(codes) == 4 &
-      all(codes$concept_id %in% c(3, 4, 5, 7)) &
-      all(!codes$concept_id %in% c(1, 2, 6))))
+      all(codes$concept_id %in% c(3, 4, 5, 8)) &
+      all(!codes$concept_id %in% c(1, 2, 7))))
 
 
     # test searchInSynonyms
@@ -162,6 +162,14 @@ test_that("tests with mock db", {
     )
     expect_true(all(codes$vocabulary_id %in% "read"))
 
+    # test sequalae
+    codes <- getCandidateCodes(
+      cdm = cdm,
+      keywords = c("arthritis"),
+      includeSequela = TRUE,
+      domains = "Condition"
+    )
+    expect_true("Osteonecrosis" %in% codes$concept_name)
 
     # test verbose
     expect_message(getCandidateCodes(
@@ -227,7 +235,7 @@ test_that("tests with mock db", {
       "denominator_unit_concept_id", "box_size", "dose_form"
     ) %in%
       names(codes)))
-    expect_true(codes$concept_id == "9")
+    expect_true(codes$concept_id == "10")
 
     # restrict on dose form
     codes <- getCandidateCodes(
@@ -241,7 +249,7 @@ test_that("tests with mock db", {
       includeDescendants = TRUE,
       includeAncestor = TRUE
     )
-    expect_true(codes$concept_id == "9")
+    expect_true(codes$concept_id == "10")
 
     # search for drug and condition
     codes <- getCandidateCodes(
@@ -262,7 +270,7 @@ test_that("tests with mock db", {
       "denominator_unit_concept_id", "box_size", "dose_form"
     ) %in%
       names(codes)))
-    expect_true(any(codes$concept_id %in% "9"))
+    expect_true(any(codes$concept_id %in% "10"))
 
     ## Edge cases
     # check empty candidate set
@@ -403,8 +411,8 @@ test_that("tests with mock db - multiple domains", {
       includeDescendants = FALSE
     )
     expect_true((nrow(codes) == 4 &
-      all(codes$concept_id %in% c(3:5, 8)) &
-      all(!codes$concept_id %in% c(1, 2, 6, 7))))
+      all(codes$concept_id %in% c(3:5, 9)) &
+      all(!codes$concept_id %in% c(1, 2, 6, 7, 8))))
 
     codes <- getCandidateCodes(
       cdm = cdm,
@@ -413,7 +421,7 @@ test_that("tests with mock db - multiple domains", {
       includeDescendants = FALSE
     )
     expect_true(all(nrow(codes) == 1 &
-      codes$concept_id == 8))
+      codes$concept_id == 9))
 
     if (backends[[i]] == "database") {
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)

@@ -17,6 +17,7 @@ getCandidateCodes(
   searchInSynonyms = FALSE,
   searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
+  includeSequela = FALSE,
   includeDescendants = TRUE,
   includeAncestor = FALSE,
   fuzzyMatch = FALSE,
@@ -61,6 +62,10 @@ search via the concept synonym table.}
 
 \item{searchNonStandard}{Either TRUE or FALSE. If TRUE the code will also
 search via non-standard concepts.}
+
+\item{includeSequela}{Either TRUE or FALSE. If TRUE, codes associated via
+a concept relationship of 'Due to of' or 'Occurs before' will also be
+identified.}
 
 \item{includeDescendants}{Either TRUE or FALSE.
 If TRUE descendant concepts of identified concepts
