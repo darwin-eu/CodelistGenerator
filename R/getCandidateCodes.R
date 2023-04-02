@@ -148,7 +148,7 @@ getCandidateCodes <- function(cdm = NULL,
     ))
   if (!isTRUE(standardConceptCheck)) {
     errorMessage$push(
-      "- standardConcept should be one or more of Standard, Non-stanadard, or Classification"
+      "- standardConcept must be from Standard, Non-stanadard, or Classification"
     )
   }
   checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
@@ -172,7 +172,7 @@ getCandidateCodes <- function(cdm = NULL,
   checkmate::reportAssertions(collection = errorMessage)
 
   errorMessage <- checkmate::makeAssertCollection()
-  if(exactMatch == TRUE){
+  if(exactMatch == TRUE) {
     checkmate::assert_false(fuzzyMatch, add = errorMessage)
   if (!isFALSE(fuzzyMatch)) {
     errorMessage$push(

@@ -1,5 +1,3 @@
-## Resubmission
-This is a resubmission. In this version I have:
+## R CMD check results
 
-* Reduced the length of the title to less than 65 characters
-* Fixed unexecutable code in man/compareCodelists
+This is a new release.

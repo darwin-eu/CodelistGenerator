@@ -198,7 +198,7 @@ runSearch <- function(keywords,
   }
 
   # 2a) match
-  if (fuzzyMatch == FALSE & exactMatch == FALSE) {
+  if (fuzzyMatch == FALSE && exactMatch == FALSE) {
     candidateCodes <- getMatches(
       words = tidyWords(keywords),
       conceptDf = workingConcept
@@ -294,7 +294,7 @@ runSearch <- function(keywords,
     # 4) look for any standard, condition concepts with a synonym of the
     # codes found from the keywords
     if (searchViaSynonyms == TRUE && verbose == TRUE) {
-      message(glue::glue("{domains}: Getting concepts to include from exact matches of synonyms"))
+      message(glue::glue("{domains}: Getting from exact matches of synonyms"))
     }
 
     if (searchViaSynonyms == TRUE) {
@@ -706,12 +706,13 @@ getMatches <- function(words,
     workingConcepts <- conceptDf # start with all
 
     for (j in seq_along(workingExclude)) {
-      if(nchar(workingExclude[j])>=1){
-      workingConcepts <- workingConcepts %>%
-        dplyr::filter(stringr::str_detect(
-          .data$concept_name,
-          .env$workingExclude[j]
-        ))}
+      if (nchar(workingExclude[j]) >= 1) {
+        workingConcepts <- workingConcepts %>%
+          dplyr::filter(stringr::str_detect(
+            .data$concept_name,
+            .env$workingExclude[j]
+          ))
+      }
     }
     conceptsFound[[i]] <- workingConcepts
   }

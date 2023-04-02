@@ -267,13 +267,25 @@ ac_codes_1 <- getCandidateCodes(cdm = cdm_arrow,
                                      domains="drug",
                                      standardConcept="standard",
                                      includeDescendants = TRUE,
-                                     verbose = TRUE )
+                                     verbose = TRUE)
 saveRDS(
   ac_codes_1,
   here("vignettes", "medData01.RData")
 )
 
-ac_codes_2 <- getCandidateCodes(cdm = cdm_arrow,
+ac_codes_2a <- getCandidateCodes(cdm = cdm_arrow,
+                                 keywords= c("acetaminophen injection",
+                                             "acetaminophen intravenous"),
+                                 domains="drug",
+                                 standardConcept="standard",
+                                 includeDescendants = TRUE,
+                                 verbose = TRUE)
+saveRDS(
+  ac_codes_2a,
+  here("vignettes", "medData02a.RData")
+)
+
+ac_codes_2b <- getCandidateCodes(cdm = cdm_arrow,
                                 keywords="acetaminophen",
                                 domains="drug",
                                 doseForm = c("injection", "intravenous"),
@@ -281,11 +293,16 @@ ac_codes_2 <- getCandidateCodes(cdm = cdm_arrow,
                                 includeDescendants = TRUE,
                                 verbose = TRUE )
 saveRDS(
-  ac_codes_2,
-  here("vignettes", "medData02.RData")
+  ac_codes_2b,
+  here("vignettes", "medData02b.RData")
 )
 
+ac_dose_forms <- CodelistGenerator::getDoseForm(cdm = cdm_arrow)
+saveRDS(
+  ac_dose_forms,
+  here("vignettes", "medDataDoseForms.RData"))
 
+c <- compareCodelists(ac_codes_2, ac_codes_2a)
 ac_codes_3 <- getCandidateCodes(cdm = cdm_arrow,
                                 keywords="acetaminophen",
                                 domains="drug",
@@ -299,3 +316,8 @@ saveRDS(
   here("vignettes", "medData03.RData")
 )
 
+ac_concept_class <- CodelistGenerator::getConceptClassId(cdm = cdm_arrow,
+                                                         domain = "drug")
+saveRDS(
+  ac_concept_class,
+  here("vignettes", "medDataConceptClass.RData"))
