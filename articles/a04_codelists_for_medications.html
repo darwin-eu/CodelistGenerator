@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -146,11 +146,24 @@ include all their descendants.</p>
 <div class="section level2">
 <h2 id="restrict-on-dose-form">Restrict on dose form<a class="anchor" aria-label="anchor" href="#restrict-on-dose-form"></a>
 </h2>
-<p>We can also restrict on dose form, in this case requiring dose form
-to include either “injection” or “intravenous” in it’s name</p>
+<p>We can also restrict on dose form. In this case we can specify
+“injection” or “intravenous” either in the keywords or by using the dose
+form option.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">acetaminophen2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>  cdm <span class="op">=</span> <span class="va">cdm_arrow</span>,</span>
+<code class="sourceCode R"><span><span class="va">acetaminophen2a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
+<span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"acetaminophen injection"</span>,</span>
+<span>    <span class="st">"acetaminophen intravenous"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  domains <span class="op">=</span> <span class="st">"drug"</span>,</span>
+<span>  standardConcept <span class="op">=</span> <span class="st">"standard"</span>,</span>
+<span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">acetaminophen2b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"drug"</span>,</span>
 <span>  doseForm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"injection"</span>, <span class="st">"intravenous"</span><span class="op">)</span>,</span>
@@ -159,7 +172,25 @@ to include either “injection” or “intravenous” in it’s name</p>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">acetaminophen2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">acetaminophen2a</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 127</span></span>
+<span><span class="co">#&gt; Columns: 15</span></span>
+<span><span class="co">#&gt; $ concept_id                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 740261, 19112656, 21029938, 21049585, 2105…</span></span>
+<span><span class="co">#&gt; $ concept_name                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "50 ML acetaminophen 10 MG/ML Injection", …</span></span>
+<span><span class="co">#&gt; $ domain_id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "drug", "drug", "drug", "drug", "drug", "d…</span></span>
+<span><span class="co">#&gt; $ concept_class_id            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "quant clinical drug", "quant clinical dru…</span></span>
+<span><span class="co">#&gt; $ vocabulary_id               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "rxnorm", "rxnorm", "rxnorm extension", "r…</span></span>
+<span><span class="co">#&gt; $ found_from                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From initial searc…</span></span>
+<span><span class="co">#&gt; $ ingredient_concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1125315, 1125315, 1125315, 1125315, 112531…</span></span>
+<span><span class="co">#&gt; $ amount_value                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…</span></span>
+<span><span class="co">#&gt; $ amount_unit_concept_id      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> NA, NA, NA, NA, NA, NA, NA, NA, 8576, NA, …</span></span>
+<span><span class="co">#&gt; $ numerator_value             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 500, 1000, 1000, 1000, 1000, 10, 1000, 100…</span></span>
+<span><span class="co">#&gt; $ numerator_unit_concept_id   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 8576, 8576, 8576, 8576, 8576, 8576, 8576, …</span></span>
+<span><span class="co">#&gt; $ denominator_value           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 50, 100, 100, 100, 100, NA, 100, 100, NA, …</span></span>
+<span><span class="co">#&gt; $ denominator_unit_concept_id <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 8587, 8587, 8587, 8587, 8587, 8587, 8587, …</span></span>
+<span><span class="co">#&gt; $ box_size                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> NA, NA, 10, 12, 10, 12, NA, 12, NA, 10, 10…</span></span>
+<span><span class="co">#&gt; $ dose_form                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Injection", "Injection", "Injection", "In…</span></span>
+<span><span class="va">acetaminophen2b</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 127</span></span>
 <span><span class="co">#&gt; Columns: 15</span></span>
 <span><span class="co">#&gt; $ concept_id                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 740261, 19112656, 21029938, 21049585, 2105…</span></span>
@@ -177,15 +208,212 @@ to include either “injection” or “intravenous” in it’s name</p>
 <span><span class="co">#&gt; $ denominator_unit_concept_id <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 8587, 8587, 8587, 8587, 8587, 8587, 8587, …</span></span>
 <span><span class="co">#&gt; $ box_size                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> NA, NA, 10, 12, 10, 12, NA, 12, NA, 10, 10…</span></span>
 <span><span class="co">#&gt; $ dose_form                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Injection", "Injection", "Injection", "In…</span></span></code></pre></div>
+<p>In this case the two searches return the same result.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/compareCodelists.html">compareCodelists</a></span><span class="op">(</span><span class="va">acetaminophen2a</span>, <span class="va">acetaminophen2b</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">codelist</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
+<span><span class="co">#&gt;   codelist     n</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Both       127</span></span></code></pre></div>
+<p>We can see all the dose forms that could be specified like so</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getDoseForm.html">getDoseForm</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;   [1] "Prefilled Syringe"                          </span></span>
+<span><span class="co">#&gt;   [2] "Injectable Solution"                        </span></span>
+<span><span class="co">#&gt;   [3] "Oral Tablet"                                </span></span>
+<span><span class="co">#&gt;   [4] "Oral Solution"                              </span></span>
+<span><span class="co">#&gt;   [5] "Oral Capsule"                               </span></span>
+<span><span class="co">#&gt;   [6] "Injection"                                  </span></span>
+<span><span class="co">#&gt;   [7] "Powder Spray"                               </span></span>
+<span><span class="co">#&gt;   [8] "Inhalation Solution"                        </span></span>
+<span><span class="co">#&gt;   [9] "Oral Powder"                                </span></span>
+<span><span class="co">#&gt;  [10] "Topical Ointment"                           </span></span>
+<span><span class="co">#&gt;  [11] "Oral Granules"                              </span></span>
+<span><span class="co">#&gt;  [12] "Transdermal System"                         </span></span>
+<span><span class="co">#&gt;  [13] "Topical Gel"                                </span></span>
+<span><span class="co">#&gt;  [14] "Topical Cream"                              </span></span>
+<span><span class="co">#&gt;  [15] "Extended Release Oral Tablet"               </span></span>
+<span><span class="co">#&gt;  [16] "Topical Solution"                           </span></span>
+<span><span class="co">#&gt;  [17] "Extended Release Oral Capsule"              </span></span>
+<span><span class="co">#&gt;  [18] "Ophthalmic Solution"                        </span></span>
+<span><span class="co">#&gt;  [19] "Topical Lotion"                             </span></span>
+<span><span class="co">#&gt;  [20] "Oral Suspension"                            </span></span>
+<span><span class="co">#&gt;  [21] "Inhalation Powder"                          </span></span>
+<span><span class="co">#&gt;  [22] "Nasal Solution"                             </span></span>
+<span><span class="co">#&gt;  [23] "Delayed Release Oral Tablet"                </span></span>
+<span><span class="co">#&gt;  [24] "Oral Ointment"                              </span></span>
+<span><span class="co">#&gt;  [25] "Wound Cones"                                </span></span>
+<span><span class="co">#&gt;  [26] "Injectable Suspension"                      </span></span>
+<span><span class="co">#&gt;  [27] "Granules for Oral Suspension"               </span></span>
+<span><span class="co">#&gt;  [28] "Toothpaste"                                 </span></span>
+<span><span class="co">#&gt;  [29] "Pack"                                       </span></span>
+<span><span class="co">#&gt;  [30] "Rectal Gel"                                 </span></span>
+<span><span class="co">#&gt;  [31] "Chewing Gum"                                </span></span>
+<span><span class="co">#&gt;  [32] "Rectal Ointment"                            </span></span>
+<span><span class="co">#&gt;  [33] "Rectal Powder"                              </span></span>
+<span><span class="co">#&gt;  [34] "Inhalation Spray"                           </span></span>
+<span><span class="co">#&gt;  [35] "Tablet for Oral Suspension"                 </span></span>
+<span><span class="co">#&gt;  [36] "Vaginal Film"                               </span></span>
+<span><span class="co">#&gt;  [37] "Mucosal Spray"                              </span></span>
+<span><span class="co">#&gt;  [38] "Nasal Powder"                               </span></span>
+<span><span class="co">#&gt;  [39] "Otic Suspension"                            </span></span>
+<span><span class="co">#&gt;  [40] "Intratracheal Suspension"                   </span></span>
+<span><span class="co">#&gt;  [41] "Delayed Release Oral Capsule"               </span></span>
+<span><span class="co">#&gt;  [42] "Paste"                                      </span></span>
+<span><span class="co">#&gt;  [43] "Sublingual Film"                            </span></span>
+<span><span class="co">#&gt;  [44] "Intravenous Solution"                       </span></span>
+<span><span class="co">#&gt;  [45] "Intrathecal Suspension"                     </span></span>
+<span><span class="co">#&gt;  [46] "Intramuscular Prolonged Release Suspension" </span></span>
+<span><span class="co">#&gt;  [47] "Intravenous Suspension"                     </span></span>
+<span><span class="co">#&gt;  [48] "Vaginal Spray"                              </span></span>
+<span><span class="co">#&gt;  [49] "Prefilled Applicator"                       </span></span>
+<span><span class="co">#&gt;  [50] "Inhalant"                                   </span></span>
+<span><span class="co">#&gt;  [51] "Intrauterine Drug Delivery System"          </span></span>
+<span><span class="co">#&gt;  [52] "Sustained Release Buccal Tablet"            </span></span>
+<span><span class="co">#&gt;  [53] "Otic Ointment"                              </span></span>
+<span><span class="co">#&gt;  [54] "Vaginal Ointment"                           </span></span>
+<span><span class="co">#&gt;  [55] "Augmented Topical Gel"                      </span></span>
+<span><span class="co">#&gt;  [56] "Augmented Topical Lotion"                   </span></span>
+<span><span class="co">#&gt;  [57] "Augmented Topical Ointment"                 </span></span>
+<span><span class="co">#&gt;  [58] "Intraperitoneal Solution"                   </span></span>
+<span><span class="co">#&gt;  [59] "Impregnated cigarette"                      </span></span>
+<span><span class="co">#&gt;  [60] "Nasal Metered-Dose Aerosol"                 </span></span>
+<span><span class="co">#&gt;  [61] "Powder for Nasal Solution"                  </span></span>
+<span><span class="co">#&gt;  [62] "Collodion"                                  </span></span>
+<span><span class="co">#&gt;  [63] "Dental Pin"                                 </span></span>
+<span><span class="co">#&gt;  [64] "Chewable Bar"                               </span></span>
+<span><span class="co">#&gt;  [65] "Medicated Gauzeball"                        </span></span>
+<span><span class="co">#&gt;  [66] "Dressing Gauze"                             </span></span>
+<span><span class="co">#&gt;  [67] "Topical Cake"                               </span></span>
+<span><span class="co">#&gt;  [68] "Oral Tablet with Sensor"                    </span></span>
+<span><span class="co">#&gt;  [69] "Powder for Pyelocalyceal Solution"          </span></span>
+<span><span class="co">#&gt;  [70] "Vaginal Sponge"                             </span></span>
+<span><span class="co">#&gt;  [71] "Enema"                                      </span></span>
+<span><span class="co">#&gt;  [72] "Disintegrating Oral Tablet"                 </span></span>
+<span><span class="co">#&gt;  [73] "Topical Spray"                              </span></span>
+<span><span class="co">#&gt;  [74] "Ophthalmic Ointment"                        </span></span>
+<span><span class="co">#&gt;  [75] "Buccal Film"                                </span></span>
+<span><span class="co">#&gt;  [76] "Powder for Oral Solution"                   </span></span>
+<span><span class="co">#&gt;  [77] "Sublingual Tablet"                          </span></span>
+<span><span class="co">#&gt;  [78] "Oral Spray"                                 </span></span>
+<span><span class="co">#&gt;  [79] "Mouthwash"                                  </span></span>
+<span><span class="co">#&gt;  [80] "Oral Strip"                                 </span></span>
+<span><span class="co">#&gt;  [81] "Oral Film"                                  </span></span>
+<span><span class="co">#&gt;  [82] "Auto-Injector"                              </span></span>
+<span><span class="co">#&gt;  [83] "Vaginal Cream"                              </span></span>
+<span><span class="co">#&gt;  [84] "Granules for Oral Solution"                 </span></span>
+<span><span class="co">#&gt;  [85] "Vaginal Gel"                                </span></span>
+<span><span class="co">#&gt;  [86] "Topical Suspension"                         </span></span>
+<span><span class="co">#&gt;  [87] "Effervescent Oral Tablet"                   </span></span>
+<span><span class="co">#&gt;  [88] "Oral Cream"                                 </span></span>
+<span><span class="co">#&gt;  [89] "Topical Foam"                               </span></span>
+<span><span class="co">#&gt;  [90] "Rectal Solution"                            </span></span>
+<span><span class="co">#&gt;  [91] "Nasal Ointment"                             </span></span>
+<span><span class="co">#&gt;  [92] "Rectal Cream"                               </span></span>
+<span><span class="co">#&gt;  [93] "Nasal Inhaler"                              </span></span>
+<span><span class="co">#&gt;  [94] "Vaginal Insert"                             </span></span>
+<span><span class="co">#&gt;  [95] "Kit for radiopharmaceutical preparation"    </span></span>
+<span><span class="co">#&gt;  [96] "Metered Dose Nasal Spray"                   </span></span>
+<span><span class="co">#&gt;  [97] "Delayed Release Oral Granules"              </span></span>
+<span><span class="co">#&gt;  [98] "Oral Flakes"                                </span></span>
+<span><span class="co">#&gt;  [99] "Powder"                                     </span></span>
+<span><span class="co">#&gt; [100] "Unknown Combination Pack Medical Aids"      </span></span>
+<span><span class="co">#&gt; [101] "Medicated nail lacquer"                     </span></span>
+<span><span class="co">#&gt; [102] "Shower Powder"                              </span></span>
+<span><span class="co">#&gt; [103] "Intravitreal Applicator"                    </span></span>
+<span><span class="co">#&gt; [104] "Nasal Pin"                                  </span></span>
+<span><span class="co">#&gt; [105] "Nasal Metered-Dose Pump"                    </span></span>
+<span><span class="co">#&gt; [106] "Tablet for Opthalmic Solution"              </span></span>
+<span><span class="co">#&gt; [107] "Vaginal Powder"                             </span></span>
+<span><span class="co">#&gt; [108] "Nasal Aerosol, Metered Dose"                </span></span>
+<span><span class="co">#&gt; [109] "Nasal Spray"                                </span></span>
+<span><span class="co">#&gt; [110] "Oral Gel"                                   </span></span>
+<span><span class="co">#&gt; [111] "Vaginal Ring"                               </span></span>
+<span><span class="co">#&gt; [112] "Oral Paste"                                 </span></span>
+<span><span class="co">#&gt; [113] "Medicated Patch"                            </span></span>
+<span><span class="co">#&gt; [114] "Oral Lozenge"                               </span></span>
+<span><span class="co">#&gt; [115] "Chewable Tablet"                            </span></span>
+<span><span class="co">#&gt; [116] "Metered Dose Inhaler"                       </span></span>
+<span><span class="co">#&gt; [117] "Mucous Membrane Topical Solution"           </span></span>
+<span><span class="co">#&gt; [118] "Vaginal System"                             </span></span>
+<span><span class="co">#&gt; [119] "Urethral Gel"                               </span></span>
+<span><span class="co">#&gt; [120] "Dry Powder Inhaler"                         </span></span>
+<span><span class="co">#&gt; [121] "Ophthalmic Gel"                             </span></span>
+<span><span class="co">#&gt; [122] "Rectal Foam"                                </span></span>
+<span><span class="co">#&gt; [123] "Cartridge"                                  </span></span>
+<span><span class="co">#&gt; [124] "Medicated Shampoo"                          </span></span>
+<span><span class="co">#&gt; [125] "Medicated Liquid Soap"                      </span></span>
+<span><span class="co">#&gt; [126] "Stick"                                      </span></span>
+<span><span class="co">#&gt; [127] "Irrigation Solution"                        </span></span>
+<span><span class="co">#&gt; [128] "Oral Granules (Effervescents)"              </span></span>
+<span><span class="co">#&gt; [129] "Oral Pellet"                                </span></span>
+<span><span class="co">#&gt; [130] "Nasal Suspension"                           </span></span>
+<span><span class="co">#&gt; [131] "Intrauterine System"                        </span></span>
+<span><span class="co">#&gt; [132] "Vaginal Foam"                               </span></span>
+<span><span class="co">#&gt; [133] "Nasal Gel"                                  </span></span>
+<span><span class="co">#&gt; [134] "Douche"                                     </span></span>
+<span><span class="co">#&gt; [135] "Jet Injector"                               </span></span>
+<span><span class="co">#&gt; [136] "Rectal Spray"                               </span></span>
+<span><span class="co">#&gt; [137] "Oil"                                        </span></span>
+<span><span class="co">#&gt; [138] "Bar Soap"                                   </span></span>
+<span><span class="co">#&gt; [139] "Bath Salts"                                 </span></span>
+<span><span class="co">#&gt; [140] "Variable Drug Form"                         </span></span>
+<span><span class="co">#&gt; [141] "Oral Gas"                                   </span></span>
+<span><span class="co">#&gt; [142] "Medicated Tape"                             </span></span>
+<span><span class="co">#&gt; [143] "Inhalation Suspension"                      </span></span>
+<span><span class="co">#&gt; [144] "Powder for Oral Suspension"                 </span></span>
+<span><span class="co">#&gt; [145] "Rectal Suppository"                         </span></span>
+<span><span class="co">#&gt; [146] "Topical Powder"                             </span></span>
+<span><span class="co">#&gt; [147] "Otic Solution"                              </span></span>
+<span><span class="co">#&gt; [148] "Gas for Inhalation"                         </span></span>
+<span><span class="co">#&gt; [149] "Ophthalmic Irrigation Solution"             </span></span>
+<span><span class="co">#&gt; [150] "Buccal Tablet"                              </span></span>
+<span><span class="co">#&gt; [151] "Topical Oil"                                </span></span>
+<span><span class="co">#&gt; [152] "Ophthalmic Suspension"                      </span></span>
+<span><span class="co">#&gt; [153] "Medicated Bar Soap"                         </span></span>
+<span><span class="co">#&gt; [154] "Drug Implant"                               </span></span>
+<span><span class="co">#&gt; [155] "Medicated Pad"                              </span></span>
+<span><span class="co">#&gt; [156] "Extended Release Suspension"                </span></span>
+<span><span class="co">#&gt; [157] "Medicated Nail Polish"                      </span></span>
+<span><span class="co">#&gt; [158] "Vaginal Suppository"                        </span></span>
+<span><span class="co">#&gt; [159] "Pen Injector"                               </span></span>
+<span><span class="co">#&gt; [160] "Chewable Extended Release Oral Tablet"      </span></span>
+<span><span class="co">#&gt; [161] "Ophthalmic Cream"                           </span></span>
+<span><span class="co">#&gt; [162] "Paint"                                      </span></span>
+<span><span class="co">#&gt; [163] "Vaginal Tablet"                             </span></span>
+<span><span class="co">#&gt; [164] "Vaginal delivery system"                    </span></span>
+<span><span class="co">#&gt; [165] "Intramuscular Solution"                     </span></span>
+<span><span class="co">#&gt; [166] "Rectal Suspension"                          </span></span>
+<span><span class="co">#&gt; [167] "Suspension"                                 </span></span>
+<span><span class="co">#&gt; [168] "Nasal Inhalant"                             </span></span>
+<span><span class="co">#&gt; [169] "Urethral Suppository"                       </span></span>
+<span><span class="co">#&gt; [170] "Oral Wafer"                                 </span></span>
+<span><span class="co">#&gt; [171] "Oral Foam"                                  </span></span>
+<span><span class="co">#&gt; [172] "Augmented Topical Cream"                    </span></span>
+<span><span class="co">#&gt; [173] "Sublingual Powder"                          </span></span>
+<span><span class="co">#&gt; [174] "Cement"                                     </span></span>
+<span><span class="co">#&gt; [175] "Nasal Cream"                                </span></span>
+<span><span class="co">#&gt; [176] "Injectable Foam"                            </span></span>
+<span><span class="co">#&gt; [177] "Subcutaneous Gel"                           </span></span>
+<span><span class="co">#&gt; [178] "Vaginal Mechanical Pessaries with Substance"</span></span>
+<span><span class="co">#&gt; [179] "Medicated Swab"                             </span></span>
+<span><span class="co">#&gt; [180] "Medicated Cottonball"                       </span></span>
+<span><span class="co">#&gt; [181] "Medicated Guaze"                            </span></span>
+<span><span class="co">#&gt; [182] "Soft Tissue Injection Suspension"           </span></span>
+<span><span class="co">#&gt; [183] "Poultice"                                   </span></span>
+<span><span class="co">#&gt; [184] "Topical Liquefied Gas"                      </span></span>
+<span><span class="co">#&gt; [185] "Subcutaneous Powder"</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="restrict-on-concept-class">Restrict on concept class<a class="anchor" aria-label="anchor" href="#restrict-on-concept-class"></a>
 </h2>
 <p>We can also restrict on concept class, in this case only identifying
 codes with a concept class of “Quant Clinical Drug”</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">acetaminophen3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>  cdm <span class="op">=</span> <span class="va">cdm_arrow</span>,</span>
+<span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"drug"</span>,</span>
 <span>  conceptClassId <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Quant Clinical Drug"</span><span class="op">)</span>,</span>
@@ -194,7 +422,7 @@ codes with a concept class of “Quant Clinical Drug”</p>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">acetaminophen3</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 5</span></span>
 <span><span class="co">#&gt; Columns: 15</span></span>
@@ -213,6 +441,16 @@ codes with a concept class of “Quant Clinical Drug”</p>
 <span><span class="co">#&gt; $ denominator_unit_concept_id <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 8587, 8587, 8587, 8587, 8587</span></span>
 <span><span class="co">#&gt; $ box_size                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> NA, NA, NA, NA, NA</span></span>
 <span><span class="co">#&gt; $ dose_form                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Injection", "Injection", "Intravenous Sol…</span></span></code></pre></div>
+<p>We can see all the concept classes for drugs like so</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getconceptClassId.html">getConceptClassId</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, domain <span class="op">=</span> <span class="st">"drug"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;  [1] "Ingredient"          "Clinical Drug Comp"  "Clinical Drug"      </span></span>
+<span><span class="co">#&gt;  [4] "Quant Branded Drug"  "Quant Clinical Drug" "Branded Drug"       </span></span>
+<span><span class="co">#&gt;  [7] "Marketed Product"    "Branded Drug Box"    "Branded Drug Comp"  </span></span>
+<span><span class="co">#&gt; [10] "Quant Clinical Box"  "Clinical Drug Box"   "Clinical Drug Form" </span></span>
+<span><span class="co">#&gt; [13] "Quant Branded Box"   "Branded Drug Form"   "Branded Pack"       </span></span>
+<span><span class="co">#&gt; [16] "Clinical Pack"       "Branded Pack Box"    "Clinical Pack Box"  </span></span>
+<span><span class="co">#&gt; [19] "HCPCS"</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
