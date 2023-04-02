@@ -86,7 +86,7 @@ getMappings <- function(candidateCodelist,
     checkmate::assertTRUE(nonStandardVocabulariesCheck, add = errorMessage)
     if (!isTRUE(nonStandardVocabulariesCheck)) {
       errorMessage$push(
-        glue::glue("- Vocabulary {nonStandardVocabularies[i]} not found in concept table")
+        glue::glue("- Vocabulary {nonStandardVocabularies[i]} not found")
       )
     }
   }
