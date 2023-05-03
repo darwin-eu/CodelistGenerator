@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU®
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -23,12 +23,15 @@ checkDbType <- function(cdm, type = "cdm_reference", messageStore) {
   }
 }
 
-checkTableExists <- function(cdm, tableName, messageStore) {
-  tableExists <- inherits(cdm[[tableName]], c("tbl_dbi",
-                                               "ArrowObject", "ArrowTabular",
-                                               "tbl",  "data.frame"))
+assertTablesExist <- function(cdm, tableName, messageStore) {
+
+  for(i in seq_along(tableName)){
+  tableExists <- inherits(cdm[[tableName[[i]]]], c("tbl_dbi",
+                                              "ArrowObject", "ArrowTabular",
+                                              "tbl",  "data.frame"))
   checkmate::assertTRUE(tableExists, add = messageStore)
   if (!isTRUE(tableExists)) {
-    messageStore$push(glue::glue("- {tableName} is not found in the cdm reference"))
+    messageStore$push(glue::glue("- {tableName[[i]]} is not found in the cdm reference"))
+  }
   }
 }

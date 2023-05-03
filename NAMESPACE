@@ -2,11 +2,13 @@
 
 export("%>%")
 export(compareCodelists)
+export(getATCCodes)
 export(getCandidateCodes)
 export(getConceptClassId)
 export(getDescendants)
 export(getDomains)
 export(getDoseForm)
+export(getDrugIngredientCodes)
 export(getMappings)
 export(getVocabVersion)
 export(getVocabularies)

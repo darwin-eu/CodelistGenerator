@@ -224,7 +224,7 @@ test_that("tests with mock db", {
       domains = "Drug",
       searchInSynonyms = TRUE,
       searchViaSynonyms = TRUE,
-      includeDescendants = TRUE,
+      includeDescendants = FALSE,
       includeAncestor = TRUE
     )
     expect_true(all(c(

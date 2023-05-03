@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU®
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -44,18 +44,20 @@ getMappings <- function(candidateCodelist,
                            "RxNorm", "RxNorm Extension",
                            "SNOMED"
                          )) {
+
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   checkmate::assertVector(nonStandardVocabularies, add = errorMessage)
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
-  # in addition, now will check we have the required tables
+
   errorMessage <- checkmate::makeAssertCollection()
-  checkTableExists(cdm, "concept", errorMessage)
-  checkTableExists(cdm, "concept_relationship", errorMessage)
-  checkTableExists(cdm, "concept_ancestor", errorMessage)
-  checkTableExists(cdm, "concept_synonym", errorMessage)
-  checkTableExists(cdm, "vocabulary", errorMessage)
+  assertTablesExist(cdm, tableName = c("concept",
+                                       "concept_relationship",
+                                       "concept_ancestor",
+                                       "concept_synonym",
+                                       "vocabulary"),
+                    messageStore = errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
 
   conceptDb <- cdm$concept
