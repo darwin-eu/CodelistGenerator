@@ -5,7 +5,7 @@
 \title{Generate candidate codelist for the OMOP CDM}
 \usage{
 getCandidateCodes(
-  cdm = NULL,
+  cdm,
   keywords,
   exclude = NULL,
   domains = "Condition",

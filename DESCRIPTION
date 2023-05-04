@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Generate Code Lists for the OMOP Common Data Model
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: 
     person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9286-1128"))
@@ -19,7 +19,8 @@ Imports:
     glue (>= 1.5.0),
     stringr (>= 1.4.0),
     tidyselect (>= 1.2.0),
-    tidyr  (>= 1.2.0)
+    tidyr (>= 1.2.0),
+    cli (>= 3.1.0)
 Suggests: 
     arrow (>= 9.0.0),
     covr,

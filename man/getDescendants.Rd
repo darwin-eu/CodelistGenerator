@@ -4,12 +4,19 @@
 \alias{getDescendants}
 \title{getDescendants}
 \usage{
-getDescendants(cdm, conceptId)
+getDescendants(cdm, conceptId, withAncestor = FALSE, doseForm = NULL)
 }
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
 
 \item{conceptId}{concpet_id to search}
+
+\item{withAncestor}{If TRUE, return column with ancestor. In case of multiple
+ancestors, concepts will be separated by ";"}
+
+\item{doseForm}{Only descendants codes with the specified drug dose form
+will be returned. If NULL, descendant codes will be returned regardless
+of dose form.}
 }
 \value{
 The descendants of a given concept id

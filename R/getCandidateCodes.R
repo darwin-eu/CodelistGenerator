@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU®
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -77,7 +77,7 @@
 #'   keywords = "osteoarthritis"
 #'  )
 #' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
-getCandidateCodes <- function(cdm = NULL,
+getCandidateCodes <- function(cdm,
                               keywords,
                               exclude = NULL,
                               domains = "Condition",
@@ -162,13 +162,18 @@ getCandidateCodes <- function(cdm = NULL,
   checkmate::assert_numeric(maxDistanceCost, add = errorMessage)
   checkmate::assert_logical(verbose, add = errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
-  # in addition, now will check we have the required tables
+
   errorMessage <- checkmate::makeAssertCollection()
-  checkTableExists(cdm, "concept", errorMessage)
-  checkTableExists(cdm, "concept_relationship", errorMessage)
-  checkTableExists(cdm, "concept_ancestor", errorMessage)
-  checkTableExists(cdm, "concept_synonym", errorMessage)
-  checkTableExists(cdm, "vocabulary", errorMessage)
+  assertTablesExist(cdm, tableName = c("concept",
+                                       "concept_relationship",
+                                       "concept_ancestor",
+                                       "concept_synonym",
+                                       "vocabulary"),
+                    messageStore = errorMessage)
+  if ("drug" %in% tolower(domains)) {
+    assertTablesExist(cdm, tableName = c("drug_strength"),
+                      messageStore = errorMessage)
+  }
   checkmate::reportAssertions(collection = errorMessage)
 
   errorMessage <- checkmate::makeAssertCollection()

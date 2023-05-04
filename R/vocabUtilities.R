@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU®
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -287,6 +287,11 @@ getDoseForm <- function(cdm) {
 #'
 #' @param cdm cdm_reference via CDMConnector
 #' @param conceptId concpet_id to search
+#' @param withAncestor If TRUE, return column with ancestor. In case of multiple
+#' ancestors, concepts will be separated by ";"
+#' @param doseForm Only descendants codes with the specified drug dose form
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose form.
 #'
 #' @return The descendants of a given concept id
 #' @export
@@ -295,11 +300,16 @@ getDoseForm <- function(cdm) {
 #' cdm <- mockVocabRef()
 #' getDescendants(cdm = cdm, conceptId = 1)
 #' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
-getDescendants <- function(cdm, conceptId) {
+
+getDescendants <- function(cdm,
+                           conceptId,
+                           withAncestor = FALSE,
+                           doseForm = NULL) {
+
   errorMessage <- checkmate::makeAssertCollection()
   cdmInheritsCheck <- inherits(cdm, "cdm_reference")
   checkmate::assertTRUE(cdmInheritsCheck,
-    add = errorMessage
+                        add = errorMessage
   )
   if (!isTRUE(cdmInheritsCheck)) {
     errorMessage$push(
@@ -307,28 +317,145 @@ getDescendants <- function(cdm, conceptId) {
     )
   }
   checkmate::assert_numeric(conceptId,
-    add = errorMessage
+                            add = errorMessage
   )
   checkmate::reportAssertions(collection = errorMessage)
 
+if(isFALSE(withAncestor)){
+  descendants <- getDescendantsOnly(cdm, conceptId, doseForm)}
+
+  if(isTRUE(withAncestor)){
+    descendants <- getDescendantsAndAncestor(cdm, conceptId, doseForm)}
+
+  return(descendants)
+}
+
+getDescendantsOnly <- function(cdm, conceptId, doseForm) {
   descendants <- cdm$concept_ancestor %>%
     dplyr::filter(.data$ancestor_concept_id %in% .env$conceptId) %>%
     dplyr::select("descendant_concept_id") %>%
     dplyr::distinct() %>%
     dplyr::rename("concept_id" = "descendant_concept_id") %>%
     dplyr::left_join(cdm$concept,
-      by = "concept_id"
-    ) %>%
-    dplyr::collect()
-  # return concept_id used along with descendants
-  all <- dplyr::bind_rows(
-    cdm$concept %>%
-      dplyr::filter(.data$concept_id %in% .env$conceptId) %>%
-      dplyr::collect(),
-    descendants
-  ) %>%
-    dplyr::distinct() %>%
-    dplyr::arrange("concept_id")
+                     by = "concept_id")
 
-  return(all)
+  if(!is.null(doseForm)){
+    descendantDoseForms <- getPresentDoseForms(cdm, concepts = descendants)
+  }
+
+  descendants <- descendants  %>%
+    dplyr::collect()
+
+  if(!is.null(doseForm)){
+    descendants <-  filterOnDoseForm(concepts = descendants,
+                       conceptDoseForms = descendantDoseForms,
+                     doseForm = doseForm)
+  }
+
+  # nb conceptId will also be a descendant of itself (if we don't specify dose)
+  return(descendants)
+}
+
+getDescendantsAndAncestor <- function(cdm, conceptId, doseForm) {
+
+  descendants <- cdm$concept_ancestor %>%
+    dplyr::inner_join(dplyr::tibble(ancestor_concept_id = as.integer(conceptId)),
+                      by = "ancestor_concept_id",
+                      copy = TRUE) %>%
+    dplyr::rename("concept_id" = "descendant_concept_id") %>%
+    dplyr::left_join(cdm$concept,
+                     by = "concept_id") %>%
+    dplyr::mutate(name = paste0("concept_", .data$ancestor_concept_id))
+
+  if(!is.null(doseForm)){
+    descendantDoseForms <- getPresentDoseForms(cdm, concepts = descendants)
+  }
+
+  descendants <- descendants %>%
+    dplyr::collect()
+
+    if(nrow(descendants)>0){
+descendants <- descendants %>%
+        tidyr::pivot_wider(names_from = "name",
+                           values_from = "ancestor_concept_id")
+
+  # one row per concept, with ancestor (of which there may be multiple)
+  working_cols <- stringr::str_subset(string = colnames(descendants),
+                                      pattern = paste(c(colnames(cdm$concept),
+                                                        colnames(cdm$concept_ancestor)),
+                                                      collapse = "|"),
+                                      negate = TRUE)
+
+descendants <- descendants %>%
+     tidyr::unite(col="ancestor_concept_id",
+                  working_cols, sep=";")
+# quicker to replace NAs afterwards rather than inside unite
+# (especially when there are many columns)
+descendants$ancestor_concept_id <- stringr::str_replace_all(
+  string = descendants$ancestor_concept_id,
+  pattern = ";NA|NA;",
+  replacement = ""
+)
+    }
+
+  if(!is.null(doseForm)){
+    descendants <-  filterOnDoseForm(concepts = descendants,
+                                     conceptDoseForms = descendantDoseForms,
+                                     doseForm = doseForm)
+  }
+
+  # nb conceptId will also be a descendant of itself
+  return(descendants)
+
+}
+
+getPresentDoseForms <- function(cdm, concepts){
+
+  presentDoseForms <- concepts %>%
+    dplyr::left_join(
+      cdm$concept_relationship %>%
+        dplyr::filter(.data$relationship_id == "RxNorm has dose form") %>%
+        dplyr::select("concept_id_1", "concept_id_2") %>%
+        dplyr::rename("concept_id" = "concept_id_2") %>%
+        dplyr::distinct() %>%
+        dplyr::left_join(cdm$concept, by = "concept_id") %>%
+        dplyr::select("concept_id_1", "concept_name") %>%
+        dplyr::rename("concept_id"="concept_id_1",
+                      "dose_form"="concept_name")  ,
+      by ="concept_id"
+    ) %>%
+    dplyr::select("concept_id", "dose_form") %>%
+    dplyr::collect()
+
+  presentDoseForms <- presentDoseForms %>%
+    dplyr::group_by(.data$concept_id) %>%
+    dplyr::mutate(seq = dplyr::row_number()) %>%
+    tidyr::pivot_wider(
+      names_from = "seq",
+      values_from = "dose_form"
+    )
+  presentDoseForms <- presentDoseForms %>%
+    tidyr::unite(
+      col = "dose_form", 2:ncol(presentDoseForms), sep = "; ",
+      na.rm = TRUE
+    )
+  return(presentDoseForms)
+
+}
+
+filterOnDoseForm <- function(concepts, conceptDoseForms, doseForm){
+  concepts <- concepts %>%
+    dplyr::inner_join(
+      conceptDoseForms %>%
+        dplyr::filter(stringr::str_detect(
+          string = tolower(.data$dose_form),
+          pattern = paste(tolower(.env$doseForm),
+                          collapse = "|"
+          )
+        )) %>%
+        dplyr::select("concept_id"),
+      by = "concept_id")
+
+  return(concepts)
+
 }

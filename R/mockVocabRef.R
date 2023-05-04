@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU®
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -33,7 +33,7 @@ mockVocabRef <- function(backend = "database") {
 
   # tables
   concept <- data.frame(
-    concept_id = 1:11,
+    concept_id = 1:14,
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
@@ -45,27 +45,43 @@ mockVocabRef <- function(backend = "database") {
       "Knee osteoarthritis",
       "H/O osteoarthritis",
       "Adalimumab",
-      "Injection"
+      "Injection",
+      "ALIMENTARY TRACT AND METABOLISM",
+      "Descendant drug",
+      "Injectable"
     ),
-    domain_id = c(rep("Condition", 8), "Observation", "Drug", "Drug"),
+    domain_id = c(rep("Condition", 8), "Observation",rep("Drug", 5)),
     vocabulary_id = c(
       rep("SNOMED", 6),
       rep("Read", 2),
-      "LOINC", "RxNorm", "OMOP"
+      "LOINC", "RxNorm", "OMOP",
+      "ATC",
+      "RxNorm", "OMOP"
     ),
     standard_concept = c(
       rep("S", 6),
       rep(NA, 2),
-      "S", "S", NA
+      "S", "S", NA,
+      NA, "S", NA
     ),
     concept_class_id = c(
       rep("Clinical Finding", 6),
       rep("Diagnosis", 2),
-      "Observation", "Ingredient", "Dose Form"
+      "Observation", "Ingredient", "Dose Form",
+      "ATC 1st", "Drug", "Dose Form"
     ),
-    concept_code = "1234"
+    concept_code = "1234",
+    valid_start_date = NA,
+    valid_end_date = NA,
+    invalid_reason = NA
   )
   conceptAncestor <- dplyr::bind_rows(
+    data.frame(
+      ancestor_concept_id = 1L,
+      descendant_concept_id = 1L,
+      min_levels_of_separation = 1,
+      max_levels_of_separation = 1
+    ),
     data.frame(
       ancestor_concept_id = 1L,
       descendant_concept_id = 2L,
@@ -101,6 +117,30 @@ mockVocabRef <- function(backend = "database") {
       descendant_concept_id = 5L,
       min_levels_of_separation = 1,
       max_levels_of_separation = 1
+    ),
+    data.frame(
+      ancestor_concept_id = 10L,
+      descendant_concept_id = 10L,
+      min_levels_of_separation = 1,
+      max_levels_of_separation = 1
+    ),
+    data.frame(
+      ancestor_concept_id = 10L,
+      descendant_concept_id = 13L,
+      min_levels_of_separation = 1,
+      max_levels_of_separation = 1
+    ),
+    data.frame(
+      ancestor_concept_id = 12L,
+      descendant_concept_id = 12L,
+      min_levels_of_separation = 1,
+      max_levels_of_separation = 1
+    ),
+    data.frame(
+      ancestor_concept_id = 12L,
+      descendant_concept_id = 13L,
+      min_levels_of_separation = 1,
+      max_levels_of_separation = 1
     )
   )
   conceptSynonym <- dplyr::bind_rows(
@@ -112,7 +152,8 @@ mockVocabRef <- function(backend = "database") {
       concept_id = 3L,
       concept_synonym_name = "Osteoarthrosis"
     )
-  )
+  )%>%
+    dplyr::mutate(language_concept_id  = NA)
   conceptRelationship <- dplyr::bind_rows(
     data.frame(
       concept_id_1 = 2L,
@@ -133,8 +174,16 @@ mockVocabRef <- function(backend = "database") {
       concept_id_1 = 3L,
       concept_id_2 = 6L,
       relationship_id = "Due to of"
+    ),
+    data.frame(
+      concept_id_1 = 13L,
+      concept_id_2 = 14L,
+      relationship_id = "RxNorm has dose form"
     )
-  )
+  ) %>%
+    dplyr::mutate(valid_start_date = NA,
+                  valid_end_date = NA,
+                  invalid_reason = NA)
   vocabulary <- dplyr::bind_rows(
     data.frame(
       vocabulary_id = "SNOMED",

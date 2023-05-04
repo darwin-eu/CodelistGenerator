@@ -26,15 +26,52 @@ test_that("tests with mock db", {
     )
     expect_true(is.character(conceptClasses))
 
-    descendants <- getDescendants(
+    descendants1 <- getDescendants(
       cdm = cdm,
-      conceptId = 1
+      conceptId = 1,
+      withAncestor = FALSE
     )
-    expect_true(all(descendants$concept_id == c(1, 2, 3, 4, 5)))
+    expect_true(all(descendants1$concept_id == c(1, 2, 3, 4, 5)))
+    expect_true("concept_name" %in% colnames(descendants1))
+
+    descendants2 <- getDescendants(
+      cdm = cdm,
+      conceptId = 1,
+      withAncestor = TRUE
+    )
+    expect_true(all(descendants2$concept_id == c(1, 2, 3, 4, 5)))
+    expect_true("ancestor_concept_id" %in% colnames(descendants2))
+    expect_true(all(descendants2$ancestor_concept_id == 1))
+
+    descendants3 <- getDescendants(
+      cdm = cdm,
+      conceptId = 10,
+      withAncestor = FALSE,
+      doseForm = c("Injection", "Injectable")
+    )
+    expect_true(all(descendants3$concept_id == c(10, 13)))
+
+    descendants4 <- getDescendants(
+      cdm = cdm,
+      conceptId = 10,
+      withAncestor = TRUE,
+      doseForm = c("Injection", "Injectable")
+    )
+    expect_true(all(descendants4$concept_id == c(10, 13)))
+
+
+    descendants5 <- getDescendants(
+      cdm = cdm,
+      conceptId = 10,
+      withAncestor = TRUE,
+      doseForm = c("Injectable")
+    )
+    expect_true(all(descendants5$concept_id == c(13)))
+
 
 
     doseForms <- getDoseForm(cdm = cdm)
-    expect_true(doseForms == "Injection")
+    expect_true(all(doseForms == c("Injection", "Injectable")))
 
     # expected errors
     expect_error(getVocabVersion(cdm = "a"))
