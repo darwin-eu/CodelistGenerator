@@ -43,6 +43,9 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getATCCodes.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc>
   </url>
   <url>
@@ -53,6 +56,9 @@
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDoseForm.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDrugIngredientCodes.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getMappings.html</loc>
