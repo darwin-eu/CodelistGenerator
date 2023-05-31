@@ -33,7 +33,7 @@ mockVocabRef <- function(backend = "database") {
 
   # tables
   concept <- data.frame(
-    concept_id = 1:14,
+    concept_id = 1:17,
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
@@ -48,27 +48,33 @@ mockVocabRef <- function(backend = "database") {
       "Injection",
       "ALIMENTARY TRACT AND METABOLISM",
       "Descendant drug",
-      "Injectable"
+      "Injectable",
+      "Diseases of the musculoskeletal system and connective tissue",
+      "Arthropathies",
+      "OA"
     ),
-    domain_id = c(rep("Condition", 8), "Observation",rep("Drug", 5)),
+    domain_id = c(rep("Condition", 8), "Observation",rep("Drug", 5),
+                  rep("Condition", 3)),
     vocabulary_id = c(
       rep("SNOMED", 6),
       rep("Read", 2),
       "LOINC", "RxNorm", "OMOP",
       "ATC",
-      "RxNorm", "OMOP"
+      "RxNorm", "OMOP",
+      "ICD10", "ICD10", "ICD10"
     ),
     standard_concept = c(
       rep("S", 6),
       rep(NA, 2),
       "S", "S", NA,
-      NA, "S", NA
+      NA, "S", NA, NA, NA, NA
     ),
     concept_class_id = c(
       rep("Clinical Finding", 6),
       rep("Diagnosis", 2),
       "Observation", "Ingredient", "Dose Form",
-      "ATC 1st", "Drug", "Dose Form"
+      "ATC 1st", "Drug", "Dose Form",
+      "ICD10 Chapter", "ICD10 SubChapter", "ICD Code"
     ),
     concept_code = "1234",
     valid_start_date = NA,
@@ -79,6 +85,12 @@ mockVocabRef <- function(backend = "database") {
     data.frame(
       ancestor_concept_id = 1L,
       descendant_concept_id = 1L,
+      min_levels_of_separation = 1,
+      max_levels_of_separation = 1
+    ),
+    data.frame(
+      ancestor_concept_id = 3L,
+      descendant_concept_id = 3L,
       min_levels_of_separation = 1,
       max_levels_of_separation = 1
     ),
@@ -179,6 +191,21 @@ mockVocabRef <- function(backend = "database") {
       concept_id_1 = 13L,
       concept_id_2 = 14L,
       relationship_id = "RxNorm has dose form"
+    ),
+    data.frame(
+      concept_id_1 = 15L,
+      concept_id_2 = 16L,
+      relationship_id = "Subsumes"
+    ),
+    data.frame(
+      concept_id_1 = 16L,
+      concept_id_2 = 17L,
+      relationship_id = "Subsumes"
+    ),
+    data.frame(
+      concept_id_1 = 17L,
+      concept_id_2 = 3L,
+      relationship_id = "Maps to"
     )
   ) %>%
     dplyr::mutate(valid_start_date = NA,
