@@ -61,6 +61,9 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDrugIngredientCodes.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getICD10StandardCodes.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getMappings.html</loc>
   </url>
   <url>

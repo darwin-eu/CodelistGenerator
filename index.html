@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,12 +115,12 @@
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 2</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; $ concept_id       &lt;dbl&gt; 317009, 4051466</span></span>
-<span><span class="co">#&gt; $ concept_name     &lt;chr&gt; "Asthma", "Childhood asthma"</span></span>
+<span><span class="co">#&gt; $ concept_id       &lt;dbl&gt; 4051466, 317009</span></span>
+<span><span class="co">#&gt; $ concept_name     &lt;chr&gt; "Childhood asthma", "Asthma"</span></span>
 <span><span class="co">#&gt; $ domain_id        &lt;chr&gt; "condition", "condition"</span></span>
 <span><span class="co">#&gt; $ concept_class_id &lt;chr&gt; "clinical finding", "clinical finding"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    &lt;chr&gt; "snomed", "snomed"</span></span>
-<span><span class="co">#&gt; $ found_from       &lt;chr&gt; "From initial search", "From descendants"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ found_from       &lt;chr&gt; "From initial search", "From initial search"</span></span></code></pre></div>
 <p>Perhaps we want to exclude certain concepts as part of the search strategy, in which case this can be added like so</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">asthma_codes2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
@@ -145,8 +145,8 @@
 <span><span class="co">#&gt; # A tibble: 2 × 3</span></span>
 <span><span class="co">#&gt;   concept_id concept_name     codelist       </span></span>
 <span><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;          </span></span>
-<span><span class="co">#&gt; 1     317009 Asthma           Both           </span></span>
-<span><span class="co">#&gt; 2    4051466 Childhood asthma Only codelist 1</span></span></code></pre></div>
+<span><span class="co">#&gt; 1    4051466 Childhood asthma Only codelist 1</span></span>
+<span><span class="co">#&gt; 2     317009 Asthma           Both</span></span></code></pre></div>
 <p>We can then also see non-standard codes these are mapped from, for example here we can see the non-standard ICD10 code that maps to a standard snomed code for gastrointestinal hemorrhage returned by our search</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Gastrointestinal_hemorrhage</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
@@ -223,7 +223,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=CodelistGenerator" class="external-link"><img src="https://www.r-pkg.org/badges/version/CodelistGenerator" alt="CRAN status"></a></li>
-<li><a href="https://codecov.io/github/darwin-eu/CodelistGenerator?branch=main" class="external-link"><img src="https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main" alt="codecov.io"></a></li>
+<li><a href="https://app.codecov.io/github/darwin-eu/CodelistGenerator?branch=main" class="external-link"><img src="https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main" alt="codecov.io"></a></li>
 <li><a href="https://github.com/darwin-eu/CodelistGenerator/actions" class="external-link"><img src="https://github.com/darwin-eu/CodelistGenerator/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/Lifecycle-Stable-97ca00" alt="Lifecycle:Stable"></a></li>
 </ul>
