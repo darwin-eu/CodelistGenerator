@@ -4,7 +4,7 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/CodelistGenerator)](https://CRAN.R-project.org/package=CodelistGenerator)
-[![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
+[![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
 [![R-CMD-check](https://github.com/darwin-eu/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CodelistGenerator/actions)
 [![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](https://lifecycle.r-lib.org/articles/stages.html)
 <!-- badges: end -->
@@ -82,12 +82,12 @@ asthma_codes1 %>%
   glimpse()
 #> Rows: 2
 #> Columns: 6
-#> $ concept_id       <dbl> 317009, 4051466
-#> $ concept_name     <chr> "Asthma", "Childhood asthma"
+#> $ concept_id       <dbl> 4051466, 317009
+#> $ concept_name     <chr> "Childhood asthma", "Asthma"
 #> $ domain_id        <chr> "condition", "condition"
 #> $ concept_class_id <chr> "clinical finding", "clinical finding"
 #> $ vocabulary_id    <chr> "snomed", "snomed"
-#> $ found_from       <chr> "From initial search", "From descendants"
+#> $ found_from       <chr> "From initial search", "From initial search"
 ```
 
 Perhaps we want to exclude certain concepts as part of the search
@@ -119,8 +119,8 @@ compareCodelists(asthma_codes1, asthma_codes2)
 #> # A tibble: 2 × 3
 #>   concept_id concept_name     codelist       
 #>        <dbl> <chr>            <chr>          
-#> 1     317009 Asthma           Both           
-#> 2    4051466 Childhood asthma Only codelist 1
+#> 1    4051466 Childhood asthma Only codelist 1
+#> 2     317009 Asthma           Both
 ```
 
 We can then also see non-standard codes these are mapped from, for
