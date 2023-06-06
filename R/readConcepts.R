@@ -103,8 +103,11 @@ formatConceptList <- function(conceptList, cdm) {
       by = c("cohort_name","drug_concept_id")
     )
   conceptFinalList <- list()
-  for(n in conceptList$cohort_name %>% unique()) {
-    conceptFinalList[[n]] <- conceptList %>% dplyr::filter(.data$cohort_name == n) %>% dplyr::select("drug_concept_id") %>% dplyr::pull()
+  for(n in conceptList[["cohort_name"]] %>% unique()) {
+    conceptFinalList[[n]] <- conceptList %>%
+      dplyr::filter(.data$cohort_name == n) %>%
+      dplyr::select("drug_concept_id") %>%
+      dplyr::pull()
   }
   return(conceptFinalList)
 }
@@ -145,9 +148,15 @@ readConceptSet <- function(conceptSets) {
     # Add columns missing from the read file with default values
     conceptSet[setdiff(names, names(conceptSet))] <- as.character(NA)
     conceptSet <- conceptSet %>%
-      dplyr::mutate(isExcluded = ifelse(is.na(.data$isExcluded), FALSE, .data$isExcluded),
-                    includeMapped = ifelse(is.na(.data$includeMapped), FALSE, .data$includeMapped),
-                    includeDescendants = ifelse(is.na(.data$includeDescendants), FALSE, .data$includeDescendants),)
+      dplyr::mutate(
+        isExcluded = ifelse(is.na(.data$isExcluded), FALSE, .data$isExcluded),
+        includeMapped = ifelse(
+          is.na(.data$includeMapped), FALSE, .data$includeMapped
+        ),
+        includeDescendants = ifelse(
+          is.na(.data$includeDescendants), FALSE, .data$includeDescendants
+        )
+      )
 
     if (k == 1) {
       conceptList <- conceptSet
