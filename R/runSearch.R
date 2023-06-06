@@ -102,8 +102,9 @@ runSearch <- function(keywords,
         dplyr::select("ancestor_concept_id", "domain_id", "standard_concept"),
       by = "ancestor_concept_id"
     ) %>%
-    dplyr::filter(.data$domain_id %in% .env$domains) %>%
-    dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
+    CDMConnector::compute_query() %>%
+    dplyr::filter(.data$domain_id %in% .env$domains &
+                  .data$standard_concept %in% .env$standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept"))
 
   conceptAncestor <- conceptAncestorDb %>%
@@ -113,25 +114,27 @@ runSearch <- function(keywords,
         dplyr::select("descendant_concept_id", "domain_id", "standard_concept"),
       by = "descendant_concept_id"
     ) %>%
-    dplyr::filter(.data$domain_id %in% .env$domains) %>%
-    dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
+    CDMConnector::compute_query() %>%
+    dplyr::filter(.data$domain_id %in% .env$domains &
+                  .data$standard_concept %in% .env$standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept")) %>%
     dplyr::collect() %>%
     dplyr::rename_with(tolower)
 
   # will only collect conceptSynonym later if needed
+  if (searchInSynonyms == TRUE ||
+      searchViaSynonyms == TRUE) {
   conceptSynonymDb <- conceptSynonymDb %>%
     dplyr::left_join(
       conceptDb %>%
         dplyr::select("concept_id", "domain_id", "standard_concept"),
       by = "concept_id"
     ) %>%
-    dplyr::filter(.data$domain_id %in% .env$domains) %>%
-    dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
+    CDMConnector::compute_query() %>%
+    dplyr::filter(.data$domain_id %in% .env$domains &
+                  .data$standard_concept %in% .env$standardConceptFlags) %>%
     dplyr::select(-c("domain_id", "standard_concept"))
 
-  if (searchInSynonyms == TRUE ||
-    searchViaSynonyms == TRUE) {
     conceptSynonym <- conceptSynonymDb %>%
       dplyr::collect() %>%
       dplyr::rename_with(tolower)
@@ -146,8 +149,8 @@ runSearch <- function(keywords,
           dplyr::select("drug_concept_id", "domain_id", "standard_concept"),
         by = "drug_concept_id"
       ) %>%
-      dplyr::filter(.data$domain_id %in% .env$domains) %>%
-      dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags) %>%
+      dplyr::filter(.data$domain_id %in% .env$domains &
+                    .data$standard_concept %in% .env$standardConceptFlags) %>%
       dplyr::collect() %>%
       dplyr::rename_with(tolower)
   }

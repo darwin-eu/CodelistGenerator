@@ -1,4 +1,7 @@
 # CodelistGenerator 1.3.0
+* Added function summariseCodeUse.
+
+# CodelistGenerator 1.3.0
 * Added function getICD10StandardCodes.
 
 # CodelistGenerator 1.2.0
