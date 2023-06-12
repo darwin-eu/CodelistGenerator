@@ -18,24 +18,22 @@ tibble
 Compare two codelists
 }
 \examples{
-\dontrun{
-library(DBI)
-library(CodelistGenerator)
-db <- DBI::dbConnect(" Your database connection here ")
-vocabularyDatabaseSchema <- " Your vocabulary schema here "
-asthmaCodes <- getCandidateCodes(
-  keywords = "asthma",
-  db = db,
-  vocabularyDatabaseSchema = " Your vocabulary schema here "
+cdm <- mockVocabRef()
+codes1 <- getCandidateCodes(
+ cdm = cdm,
+ keywords = "Arthritis",
+ domains = "Condition",
+ includeDescendants = TRUE
 )
-persistantAsthmaCodes <- getCandidateCodes(
-  keywords = "Persistent asthma",
-  db = db,
-  vocabularyDatabaseSchema = " Your vocabulary schema here "
+codes2 <- getCandidateCodes(
+ cdm = cdm,
+ keywords = c("knee osteoarthritis", "arthrosis"),
+ domains = "Condition",
+ includeDescendants = TRUE
 )
 compareCodelists(
-  codelist1 = asthmaCodes,
-  codelist2 = persistantAsthmaCodes
+ codelist1 = codes1,
+ codelist2 = codes2
 )
-}
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 }

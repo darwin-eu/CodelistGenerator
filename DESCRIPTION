@@ -1,36 +1,46 @@
 Package: CodelistGenerator
-Title: Generate Candidate Codelists for the OMOP CDM
-Version: 0.9.1
+Title: Generate Code Lists for the OMOP Common Data Model
+Version: 1.4.0
 Authors@R: 
     person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9286-1128"))
-Description: Generate a candidate codelist for the OMOP CDM based on string matching. For a given search strategy, a candidate codelist will be returned.
+Description: Generate a candidate code list for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate code list will be returned.
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Imports:
+    CDMConnector (>= 0.5.1),
     checkmate (>= 2.0.0),
-    dbplyr (>= 2.2.1),
+    DBI (>= 1.1.0),
     dplyr (>= 1.0.0),
-    stringr (>= 1.4.0),
     magrittr (>= 2.0.0),
     rlang (>= 1.0.0),
-    DBI (>= 1.1.0),
-    arrow,
-    glue
+    glue (>= 1.5.0),
+    stringr (>= 1.4.0),
+    tidyselect (>= 1.2.0),
+    tidyr (>= 1.2.0),
+    cli (>= 3.1.0),
+    purrr,
+    lubridate,
+    PatientProfiles
 Suggests: 
+    arrow (>= 9.0.0),
     covr,
+    dbplyr (>= 2.2.1),
     knitr,
     readr (>= 2.1.0),
-    RSQLite (>= 2.2.0),
     duckdb,
     DT,
     rmarkdown,
     here (>= 1.0.0),
     testthat (>= 3.0.0),
     kableExtra (>= 1.0.0),
-    RPostgres
+    RPostgres,
+    odbc,
+    spelling,
+    tibble
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
+Language: en-US

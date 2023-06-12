@@ -4,7 +4,6 @@
 # will create the data for vignettes here
 library(readr)
 library(DBI)
-library(RSQLite)
 library(here)
 library(dplyr)
 library(dbplyr)
@@ -13,57 +12,71 @@ library(DT)
 library(kableExtra)
 devtools::load_all()
 
-db<-dbConnect(RSQLite::SQLite(), paste0(Sys.getenv("omop_cdm_vocab_path"),".sqlite"))
-vocabularyDatabaseSchema <- "main"
+# example with postgres database connection details
+db <- DBI::dbConnect(RPostgres::Postgres(),
+                     dbname = Sys.getenv("DB_SERVER_cdm_aurum_202106_dbi"),
+                     port = Sys.getenv("DB_PORT"),
+                     host = Sys.getenv("DB_HOST"),
+                     user = Sys.getenv("DB_USER"),
+                     password = Sys.getenv("DB_PASSWORD")
+)
+# name of vocabulary schema
+vocabularyDatabaseSchema <- Sys.getenv("DB_VOCAB_SCHEMA")
 
+# create cdm reference
+cdm <- CDMConnector::cdm_from_con(con = db,
+                                  cdm_schema = vocabularyDatabaseSchema,
+                                  cdm_tables = tidyselect::all_of(c("concept",
+                                                                    "concept_relationship",
+                                                                    "concept_ancestor",
+                                                                    "concept_synonym",
+                                                                    "drug_strength",
+                                                                    "vocabulary")))
+# vocab to arrow
+# save in temp folder for this example
+dOut<-here(tempdir(), "db_vocab")
+dir.create(dOut)
+CDMConnector::stow(cdm, dOut)
 
+# new cdm reference using arrow
+cdm_arrow <- CDMConnector::cdm_from_files(path = dOut,
+                                          as_data_frame = FALSE)
+
+rm(cdm)
 
 # intro vignette ----
-vocabVersion <- dplyr::tbl(db, dplyr::sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".vocabulary"
-    ))) %>%
-    dplyr::rename_with(tolower) %>%
-    dplyr::filter(.data$vocabulary_id == "None") %>%
-    dplyr::select("vocabulary_version") %>%
-    dplyr::collect() %>%
-    dplyr::pull()
+vocabVersion <- getVocabVersion(cdm = cdm_arrow)
+
 saveRDS(
   vocabVersion,
   here("vignettes", "introVocab.RData")
 )
 
-codesFromDescendants <- tbl(db, sql(paste0(
-  "SELECT * FROM ",
-  vocabularyDatabaseSchema,
-  ".concept_ancestor"
-))) %>%
-  filter(ancestor_concept_id == "4182210") %>%
+
+codesFromDescendants <- cdm_arrow$concept_ancestor %>%
+  filter(.data$ancestor_concept_id == 4182210) %>%
   select("descendant_concept_id") %>%
   rename("concept_id" = "descendant_concept_id") %>%
-  left_join(tbl(db, sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".concept"
-  )))) %>%
+  select("concept_id")   %>%
+  left_join(cdm_arrow$concept,
+            by="concept_id")  %>%
   select("concept_id", "concept_name", "domain_id", "vocabulary_id") %>%
   collect()
+
 saveRDS(
   codesFromDescendants,
   here("vignettes", "introData01.RData")
 )
 
-dementiaCodes1 <- getCandidateCodes(
+dementiaCodes1 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "dementia",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   exclude = NULL,
   includeDescendants = TRUE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  verbose=TRUE
 )
 saveRDS(
   dementiaCodes1,
@@ -77,22 +90,18 @@ saveRDS(
   here("vignettes", "introData03.RData")
 )
 
-icdMappings <- showMappings(
+icdMappings <- getMappings(cdm = cdm_arrow,
   candidateCodelist = dementiaCodes1,
-  nonStandardVocabularies = "ICD10CM",
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  nonStandardVocabularies = "ICD10CM"
 )
 saveRDS(
   icdMappings,
   here("vignettes", "introData04.RData")
 )
 
-readMappings <- showMappings(
+readMappings <- getMappings(cdm = cdm_arrow,
   candidateCodelist = dementiaCodes1,
-  nonStandardVocabularies = "Read",
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  nonStandardVocabularies = "Read"
 )
 saveRDS(
   readMappings,
@@ -101,10 +110,10 @@ saveRDS(
 
 
 # options vignette ------
-oaCodes1 <- getCandidateCodes(
+oaCodes1 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
@@ -112,8 +121,7 @@ oaCodes1 <- getCandidateCodes(
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  verbose = TRUE
 )
 saveRDS(
   oaCodes1,
@@ -121,19 +129,17 @@ saveRDS(
 )
 
 # include desc
-oaCodes2 <- getCandidateCodes(
+oaCodes2 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
     "post-traumatic"
   ),
   includeDescendants = TRUE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes2,
@@ -141,10 +147,10 @@ saveRDS(
 )
 
 # include obs
-oaCodes3 <- getCandidateCodes(
+oaCodes3 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
   exclude = c(
@@ -152,9 +158,7 @@ oaCodes3 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes3,
@@ -162,10 +166,11 @@ saveRDS(
 )
 
 # search syn
-oaCodes4 <- getCandidateCodes(
+oaCodes4 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = TRUE,
+  searchInSynonyms = TRUE,
+  searchViaSynonyms = TRUE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
   exclude = c(
@@ -173,9 +178,7 @@ oaCodes4 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes4,
@@ -183,7 +186,7 @@ saveRDS(
 )
 
 # search source
-oaCodes5 <- getCandidateCodes(
+oaCodes5 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchNonStandard = TRUE,
@@ -192,9 +195,7 @@ oaCodes5 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes5,
@@ -204,10 +205,10 @@ saveRDS(
 
 
 # fuzzy search
-oaCodes6 <- getCandidateCodes(
+oaCodes6 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.1,
   exclude = c(
@@ -215,9 +216,7 @@ oaCodes6 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes6,
@@ -225,10 +224,10 @@ saveRDS(
 )
 
 # fuzzy search 0.2
-oaCodes7 <- getCandidateCodes(
+oaCodes7 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.2,
   exclude = c(
@@ -236,9 +235,7 @@ oaCodes7 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 saveRDS(
   oaCodes7,
@@ -246,10 +243,10 @@ saveRDS(
 )
 
 # include ancestor
-oaCodes8 <- getCandidateCodes(
+oaCodes8 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.2,
   exclude = c(
@@ -257,116 +254,70 @@ oaCodes8 <- getCandidateCodes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = TRUE
 )
 saveRDS(
   oaCodes8,
   here("vignettes", "optionsData07.RData")
 )
 
-# colonoscopy vignette ------
-codesFromDescendants<-tbl(db,
-  sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept_ancestor"))) %>%
-  filter(ancestor_concept_id %in% c("4249893", "937652", "40480729")) %>%
-  select("descendant_concept_id") %>%
-  rename("concept_id"="descendant_concept_id") %>%
-  inner_join(tbl(db, sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept"))))%>%
-  select("concept_id", "concept_name",
-         "domain_id", "vocabulary_id") %>%
-  collect()
-
-saveRDS(
-  codesFromDescendants,
-  here("vignettes", "procData01.RData")
-)
-
-
-
-colonoscopyCodes2<-getCandidateCodes(keywords="colonoscopy",
-                    domains=c("Procedure", "Measurement"),
-                    searchSynonyms = FALSE,
-                    fuzzyMatch = FALSE,
-                    exclude = NULL,
-                    includeDescendants = FALSE,
-                    includeAncestor = FALSE,
-                    verbose = TRUE ,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
-saveRDS(
-  colonoscopyCodes2,
-  here("vignettes", "procData02.RData")
-)
-
-
-
 # medication vignette ------
-codesFromDescendants<-tbl(db,
-  sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept_ancestor"))) %>%
-  filter(ancestor_concept_id %in% c("1503297")) %>%
-  select("descendant_concept_id") %>%
-  rename("concept_id"="descendant_concept_id") %>%
-  inner_join(tbl(db, sql(paste0("SELECT * FROM ",
-     vocabularyDatabaseSchema,
-     ".concept"))))%>%
-  select("concept_id", "concept_name",
-         "domain_id", "vocabulary_id") %>%
-  collect()
-
+ac_codes_1 <- getCandidateCodes(cdm = cdm_arrow,
+                                     keywords="acetaminophen",
+                                     domains="drug",
+                                     standardConcept="standard",
+                                     includeDescendants = TRUE,
+                                     verbose = TRUE)
 saveRDS(
-  codesFromDescendants,
+  ac_codes_1,
   here("vignettes", "medData01.RData")
 )
 
-
-
-metforminCodes2<-getCandidateCodes(keywords="metformin",
-                    domains=c("Drug"),
-                    standardConcept=c("Standard", "Classification"),
-                    conceptClassId="Ingredient",
-                    searchSynonyms = FALSE,
-                    fuzzyMatch = FALSE,
-                    exclude = NULL,
-                    includeDescendants = TRUE,
-                    includeAncestor = FALSE,
-                    verbose = TRUE ,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+ac_codes_2a <- getCandidateCodes(cdm = cdm_arrow,
+                                 keywords= c("acetaminophen injection",
+                                             "acetaminophen intravenous"),
+                                 domains="drug",
+                                 standardConcept="standard",
+                                 includeDescendants = TRUE,
+                                 verbose = TRUE)
 saveRDS(
-  metforminCodes2,
-  here("vignettes", "metforminCodes2.RData")
+  ac_codes_2a,
+  here("vignettes", "medData02a.RData")
 )
 
+ac_codes_2b <- getCandidateCodes(cdm = cdm_arrow,
+                                keywords="acetaminophen",
+                                domains="drug",
+                                doseForm = c("injection", "intravenous"),
+                                standardConcept="standard",
+                                includeDescendants = TRUE,
+                                verbose = TRUE )
+saveRDS(
+  ac_codes_2b,
+  here("vignettes", "medData02b.RData")
+)
 
-getCandidateCodes(keywords="metformin",
-                    domains=c("Drug"),
-                    standardConcept=c("Standard", "Classification"),
-                    conceptClassId="Ingredient",
-                    searchSynonyms = FALSE,
-                    fuzzyMatch = FALSE,
-                    exclude = NULL,
-                    includeDescendants = TRUE,
-                    includeAncestor = FALSE,
-                    verbose = TRUE ,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
-getCandidateCodes(keywords="metformin",
-                    domains=c("Drug"),
-                    standardConcept=c("Standard", "Classification"),
-                    conceptClassId="Prescription Drug",
-                    searchSynonyms = FALSE,
-                    fuzzyMatch = FALSE,
-                    exclude = NULL,
-                    includeDescendants = TRUE,
-                    includeAncestor = FALSE,
-                    verbose = TRUE ,
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
+ac_dose_forms <- CodelistGenerator::getDoseForm(cdm = cdm_arrow)
+saveRDS(
+  ac_dose_forms,
+  here("vignettes", "medDataDoseForms.RData"))
 
+c <- compareCodelists(ac_codes_2, ac_codes_2a)
+ac_codes_3 <- getCandidateCodes(cdm = cdm_arrow,
+                                keywords="acetaminophen",
+                                domains="drug",
+                                conceptClassId = c("Quant Clinical Drug"),
+                                doseForm = c("injection", "intravenous"),
+                                standardConcept="standard",
+                                includeDescendants = TRUE,
+                                verbose = TRUE)
+saveRDS(
+  ac_codes_3,
+  here("vignettes", "medData03.RData")
+)
+
+ac_concept_class <- CodelistGenerator::getConceptClassId(cdm = cdm_arrow,
+                                                         domain = "drug")
+saveRDS(
+  ac_concept_class,
+  here("vignettes", "medDataConceptClass.RData"))

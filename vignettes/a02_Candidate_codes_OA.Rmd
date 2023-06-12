@@ -1,8 +1,8 @@
 ---
-title: "02 Options for CodelistGenerator(with full vocabulary)"
+title: "CodelistGenerator search options: codes for osteoarthritis"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{02b_Options_for_CodelistGenerator}
+  %\VignetteIndexEntry{a02_Candidate_codes_OA}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -16,13 +16,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Set up 
-
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 library(here)
 library(readr)
 library(DBI)
-library(RSQLite)
 library(here)
 library(dplyr)
 library(dbplyr)
@@ -30,13 +27,13 @@ library(stringr)
 library(DT)
 library(kableExtra)
 library(CodelistGenerator)
+library(CDMConnector)
 ```
 
 
 ## Creating a codelist for osteoarthritis
 For this example we are going to generate a candidate codelist for osteoarthritis, looking at the impact of alternative search strategies.
 
-## Set up 
 ```{r, eval=FALSE}
 library(DBI)
 library(RPostgres)
@@ -60,11 +57,25 @@ db <- dbConnect(RPostgres::Postgres(),
 
 # name of vocabulary schema
 vocabularyDatabaseSchema <- "vocabulary"
+
+# create cdm reference
+cdm <- CDMConnector::cdm_from_con(
+  con = db,
+  cdm_schema = vocabularyDatabaseSchema,
+  cdm_tables = tidyselect::all_of(c(
+    "concept",
+    "concept_relationship",
+    "concept_ancestor",
+    "concept_synonym",
+    "drug_strength",
+    "vocabulary"
+  ))
+)
 ```
 
 
 ## Search strategies
-### Condition domain, without searching synonyms, without fuzzy match, with exclusions, without including descendants or ancestor
+### Condition domain, without searching via or in synonyms, without fuzzy match, with exclusions, without including descendants or ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oaCodes1 <- readRDS(here("vignettes", "optionsData01.RData"))
 ```
@@ -72,10 +83,12 @@ oaCodes1 <- readRDS(here("vignettes", "optionsData01.RData"))
 To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, without fuzzy matching, and without including descendants or the direct ancestor of the included concepts.
 
 ```{r, eval=FALSE}
-oaCodes1 <- get_candidate_codes(
+oaCodes1 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchInSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -83,15 +96,14 @@ oaCodes1 <- get_candidate_codes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 ```
 
 What is the candidate codelist?
 ```{r,  message=FALSE, warning=FALSE }  
 datatable(oaCodes1,
+  rownames = FALSE,
   options = list(
     pageLength = 10,
     lengthMenu = c(10, 20, 250)
@@ -107,10 +119,12 @@ oaCodes2 <- readRDS(here("vignettes", "optionsData02.RData"))
 
 Now we will also include the descendants of included concepts.
 ```{r, eval=FALSE}
-oaCodes2 <- get_candidate_codes(
+oaCodes2 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchInSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -118,9 +132,7 @@ oaCodes2 <- get_candidate_codes(
     "post-traumatic"
   ),
   includeDescendants = TRUE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 ```
 
@@ -146,10 +158,12 @@ oaCodes3 <- readRDS(here("vignettes", "optionsData03.RData"))
 
 Now we will search the observation domain as well as the condition domain.
 ```{r, eval=FALSE}
-oaCodes3 <- get_candidate_codes(
+oaCodes3 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
-  searchSynonyms = FALSE,
+  searchInSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -157,9 +171,7 @@ oaCodes3 <- get_candidate_codes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 ```
 
@@ -178,17 +190,19 @@ datatable(newCodes1To3,
 )
 ```
 
-### Search synonyms
+### Search synonyms (both in and via)
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oaCodes4 <- readRDS(here("vignettes", "optionsData04.RData"))
 ```
 
 Now we will search the concept synonym table to identify concepts to include.
 ```{r, eval=FALSE}
-oaCodes4 <- get_candidate_codes(
+oaCodes4 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = TRUE,
+  searchInSynonyms = TRUE,
+  searchViaSynonyms = TRUE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -196,9 +210,7 @@ oaCodes4 <- get_candidate_codes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 ```
 
@@ -224,10 +236,12 @@ oaCodes5 <- readRDS(here("vignettes", "optionsData04.RData"))
 
 Now we will search the concept synonym table to identify concepts to include.
 ```{r, eval=FALSE}
-oaCodes5 <- get_candidate_codes(
+oaCodes5 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchInSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = TRUE,
   fuzzyMatch = FALSE,
   exclude = c(
@@ -235,9 +249,7 @@ oaCodes5 <- get_candidate_codes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 ```
 
@@ -263,10 +275,12 @@ oaCodes6 <- readRDS(here("vignettes", "optionsData05.RData"))
 
 Now we will use an approximate search. See https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/agrep for further details (as this is what is running under the hood). Note, using the defaults of 0.1 for for substitutions, deletions, and insertions.
 ```{r, eval=FALSE}
-oaCodes6 <- get_candidate_codes(
+oaCodes6 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchInSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.1,
@@ -275,9 +289,7 @@ oaCodes6 <- get_candidate_codes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 ```
 
@@ -303,10 +315,12 @@ oaCodes7 <- readRDS(here("vignettes", "optionsData06.RData"))
 
 Here we widen the approximate searching, increasing the maximum distance allowed for a match to 0.2 for substitutions, deletions, and insertions.
 ```{r, eval=FALSE}
-oaCodes7 <- get_candidate_codes(
+oaCodes7 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchInSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = TRUE,
   maxDistanceCost = 0.2,
@@ -315,9 +329,7 @@ oaCodes7 <- get_candidate_codes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = FALSE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = FALSE
 )
 ```
 
@@ -343,10 +355,12 @@ oaCodes8 <- readRDS(here("vignettes", "optionsData07.RData"))
 
 Now we include the direct ancestor of included terms.
 ```{r, eval=FALSE}
-oaCodes8 <- get_candidate_codes(
+oaCodes8 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchSynonyms = FALSE,
+  searchInSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
   fuzzyMatch = FALSE,
   maxDistanceCost = 0.1,
@@ -355,9 +369,7 @@ oaCodes8 <- get_candidate_codes(
     "post-traumatic"
   ),
   includeDescendants = FALSE,
-  includeAncestor = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeAncestor = TRUE
 )
 ```
 

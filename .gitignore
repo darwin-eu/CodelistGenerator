@@ -12,3 +12,5 @@ extras/arrow_vocab/*
 extras/SQLite/vocab.sqlite
 tests/testthat/vocab.sqlite
 /work/
+*.jar
+GiBleed_5.3.zip

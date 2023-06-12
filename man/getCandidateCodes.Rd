@@ -5,51 +5,83 @@
 \title{Generate candidate codelist for the OMOP CDM}
 \usage{
 getCandidateCodes(
-  vocref,
+  cdm,
   keywords,
   exclude = NULL,
   domains = "Condition",
   conceptClassId = NULL,
+  doseForm = NULL,
+  vocabularyId = NULL,
   standardConcept = "Standard",
-  searchSynonyms = FALSE,
+  exactMatch = FALSE,
+  searchInSynonyms = FALSE,
+  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
-  maxDistanceCost = 0.1,
+  includeSequela = FALSE,
   includeDescendants = TRUE,
   includeAncestor = FALSE,
+  fuzzyMatch = FALSE,
+  maxDistanceCost = 0.1,
   verbose = FALSE
 )
 }
 \arguments{
+<<<<<<< HEAD
 \item{vocref}{A "VocabReference" object containing references to vocab tables
 created using \code{vocabRefFromDatabase} or \code{vocabRefFromFiles}}
+=======
+\item{cdm}{cdm_reference via CDMConnector}
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 
 \item{keywords}{Character vector of words to search for.
 Where more than one word is given (e.g. "knee osteoarthritis"),
 all combinations of those words should be identified
 positions (e.g. "osteoarthritis of knee") should be identified.}
 
+<<<<<<< HEAD
 \item{exclude}{Character vector of words to identify concepts to exclude.}
+=======
+\item{exclude}{Character vector of words
+to identify concepts to exclude.}
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
 \item{conceptClassId}{Character vector with one or more concept class of the Concept}
 
+\item{doseForm}{The dose form associated with a drug}
+
+\item{vocabularyId}{Character vector with one or more vocabulary
+of the Concept}
+
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.}
 
-\item{searchSynonyms}{Either TRUE or FALSE. If TRUE the code will also
+\item{exactMatch}{Either TRUE or FALSE. If TRUE only exact matches of
+keywords will be identified when running the initial search.}
+
+\item{searchInSynonyms}{Either TRUE or FALSE. If TRUE the code will also
+search using both the primary name in the concept table and synonyms from
+the concept synonym table.}
+
+\item{searchViaSynonyms}{Either TRUE or FALSE. If TRUE the code will also
 search via the concept synonym table.}
 
 \item{searchNonStandard}{Either TRUE or FALSE. If TRUE the code will also
 search via non-standard concepts.}
 
+<<<<<<< HEAD
 \item{fuzzyMatch}{Either TRUE or FALSE. If TRUE the fuzzy matching
 will be used, with approximate matches identified.}
 
 \item{maxDistanceCost}{The maximum number/fraction of match cost (generalized Levenshtein distance)
 for fuzzy matching (see ??base::agrep for further details).}
+=======
+\item{includeSequela}{Either TRUE or FALSE. If TRUE, codes associated via
+a concept relationship of 'Due to of' or 'Occurs before' will also be
+identified.}
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 
 \item{includeDescendants}{Either TRUE or FALSE.
 If TRUE descendant concepts of identified concepts
@@ -59,7 +91,19 @@ will be included in the candidate codelist.}
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.}
 
+<<<<<<< HEAD
 \item{verbose}{Either TRUE or FALSE. If TRUE, progress will be reported.}
+=======
+\item{fuzzyMatch}{Either TRUE or FALSE. If TRUE the fuzzy matching
+will be used, with approximate matches identified.}
+
+\item{maxDistanceCost, }{The
+maximum number/fraction of match cost (generalized Levenshtein distance)
+for fuzzy matching (see ??base::agrep for further details).}
+
+\item{verbose}{Either TRUE or FALSE.
+If TRUE, progress will be reported.}
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 }
 \value{
 tibble
@@ -70,6 +114,7 @@ can be considered for creating a phenotype
 using the OMOP CDM.
 }
 \examples{
+<<<<<<< HEAD
 \dontrun{
 library(CodelistGenerator)
 con <- DBI::dbConnect(RPostgres::Postgres(),
@@ -95,4 +140,12 @@ vocab <- vocabRefFromFiles(here::here("vocab"))
 
 getCandidateCodes(vocab, keywords = "asthma")
 }
+=======
+cdm <- CodelistGenerator::mockVocabRef()
+CodelistGenerator::getCandidateCodes(
+  cdm = cdm,
+  keywords = "osteoarthritis"
+ )
+DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 }

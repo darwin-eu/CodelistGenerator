@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -18,39 +18,25 @@
 #' Show mappings from non-standard vocabularies to standard
 #'
 #' @param candidateCodelist Dataframe
-#' @param db Database connection via DBI::dbConnect()
-#' @param vocabularyDatabaseSchema Name of database
-#' schema with vocab tables
-#' @param arrowDirectory Path to folder containing output of
-#' Codelist_generator::importVocab() - five parquet files: 'concept',
-#' 'concept_ancestor', 'concept_relationship', 'concept_synonym', and
-#' 'vocabulary. Required if db is NULL
+#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
 #' @param nonStandardVocabularies Character vector
 #'
 #' @return tibble
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' library(DBI)
-#' library(CodelistGenerator)
-#' db <- DBI::dbConnect(" Your database connection here ")
-#' vocabularyDatabaseSchema <- " Your vocabulary schema here "
-#' asthma_codes <- get_candidate_codes(
-#'   keywords = "asthma",
-#'   db = db,
-#'   vocabularyDatabaseSchema = " Your vocabulary schema here "
+#' cdm <- CodelistGenerator::mockVocabRef()
+#' codes <- CodelistGenerator::getCandidateCodes(
+#'   cdm = cdm,
+#'   keywords = "osteoarthritis"
 #' )
-#' showMappings(
-#'   candidateCodelist = asthma_codes,
-#'   db = db,
-#'   vocabularyDatabaseSchema = " Your vocabulary schema here "
-#' )
-#' }
-showMappings <- function(candidateCodelist,
-                         db= NULL,
-                         vocabularyDatabaseSchema = NULL,
-                         arrowDirectory=NULL,
+#' CodelistGenerator::getMappings(
+#'   cdm = cdm,
+#'   candidateCodelist = codes,
+#'   nonStandardVocabularies = "READ"
+#')
+getMappings <- function(candidateCodelist,
+                         cdm = NULL,
                          nonStandardVocabularies = c(
                            "ATC", "ICD10CM", "ICD10PCS",
                            "ICD9CM", "ICD9Proc",
@@ -58,38 +44,24 @@ showMappings <- function(candidateCodelist,
                            "RxNorm", "RxNorm Extension",
                            "SNOMED"
                          )) {
+
   errorMessage <- checkmate::makeAssertCollection()
+  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   checkmate::assertVector(nonStandardVocabularies, add = errorMessage)
   checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
-  if(!is.null(db)){
-  dbInherits <- inherits(db, "DBIConnection")
-  if (!isTRUE(dbInherits)) {
-    errorMessage$push("db must be a database connection via DBI::dbConnect()")
-  }}
   checkmate::reportAssertions(collection = errorMessage)
 
-    if(is.null(arrowDirectory)){
-    if (!is.null(vocabularyDatabaseSchema)) {
-    conceptDb <- dplyr::tbl(db, dplyr::sql(glue::glue(
-      "SELECT * FROM {vocabularyDatabaseSchema}.concept"
-    )))
-    conceptRelationshipDb <- dplyr::tbl(db, dplyr::sql(paste0(
-      "SELECT * FROM ",
-      vocabularyDatabaseSchema,
-      ".concept_relationship"
-    )))
-    } else {
-    conceptDb <- dplyr::tbl(db, "concept")
-    conceptRelationshipDb <- dplyr::tbl(db, "concept_relationship")
-    }}
-    if(!is.null(arrowDirectory)){
-    conceptDb <- arrow::read_parquet(paste0(arrowDirectory,
-                       "/concept.parquet"),
-                                   as_data_frame = FALSE)
-    conceptRelationshipDb <-  arrow::read_parquet(paste0(arrowDirectory,
-                       "/concept_relationship.parquet"),
-                                   as_data_frame = FALSE)
-  }
+  errorMessage <- checkmate::makeAssertCollection()
+  assertTablesExist(cdm, tableName = c("concept",
+                                       "concept_relationship",
+                                       "concept_ancestor",
+                                       "concept_synonym",
+                                       "vocabulary"),
+                    messageStore = errorMessage)
+  checkmate::reportAssertions(collection = errorMessage)
+
+  conceptDb <- cdm$concept
+  conceptRelationshipDb <- cdm$concept_relationship
 
   # lowercase names
   conceptDb <- dplyr::rename_with(conceptDb, tolower)
@@ -106,16 +78,17 @@ showMappings <- function(candidateCodelist,
   # check nonStandardVocabularies exist
   errorMessage <- checkmate::makeAssertCollection()
   nonStandardVocabulariesInDb <- conceptDb %>%
-    dplyr::select(.data$vocabulary_id) %>%
+    dplyr::select("vocabulary_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
     dplyr::pull()
   for (i in seq_along(nonStandardVocabularies)) {
-    nonStandardVocabulariesCheck <- nonStandardVocabularies[i] %in% nonStandardVocabulariesInDb
+    nonStandardVocabulariesCheck <- nonStandardVocabularies[i] %in%
+      nonStandardVocabulariesInDb
     checkmate::assertTRUE(nonStandardVocabulariesCheck, add = errorMessage)
     if (!isTRUE(nonStandardVocabulariesCheck)) {
       errorMessage$push(
-        glue::glue("- Vocabulary {nonStandardVocabularies[i]} not found in concept table")
+        glue::glue("- Vocabulary {nonStandardVocabularies[i]} not found")
       )
     }
   }
@@ -162,7 +135,7 @@ showMappings <- function(candidateCodelist,
     dplyr::rename("non_standard_concept_name" = "concept_name") %>%
     dplyr::rename("non_standard_vocabulary_id" = "vocabulary_id")
 
-  mappedCodes<-mappedCodes %>%
+  mappedCodes <- mappedCodes %>%
     dplyr::distinct() %>%
     dplyr::arrange(.data$standard_concept_id)
 

@@ -4,9 +4,9 @@
 \name{CodelistGenerator-package}
 \alias{CodelistGenerator}
 \alias{CodelistGenerator-package}
-\title{CodelistGenerator: Generate Candidate Codelists for the OMOP CDM}
+\title{CodelistGenerator: Generate Code Lists for the OMOP Common Data Model}
 \description{
-Generate a candidate codelist for the OMOP CDM based on string matching. For a given search strategy, a candidate codelist will be returned.
+Generate a candidate code list for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate code list will be returned.
 }
 \seealso{
 Useful links:

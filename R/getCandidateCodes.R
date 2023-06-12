@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2023 DARWIN EU®
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,39 +20,78 @@
 #' can be considered for creating a phenotype
 #' using the OMOP CDM.
 #'
+<<<<<<< HEAD
 #' @param vocref A "VocabReference" object containing references to vocab tables
 #' created using `vocabRefFromDatabase` or `vocabRefFromFiles`
+=======
+#' @param cdm cdm_reference via CDMConnector
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 #' @param keywords Character vector of words to search for.
 #' Where more than one word is given (e.g. "knee osteoarthritis"),
 #' all combinations of those words should be identified
 #' positions (e.g. "osteoarthritis of knee") should be identified.
+<<<<<<< HEAD
 #' @param exclude Character vector of words to identify concepts to exclude.
 #' @param domains Character vector with one or more of the OMOP CDM domain.
 #' @param conceptClassId Character vector with one or more concept class of the Concept
+=======
+#' @param exclude  Character vector of words
+#' to identify concepts to exclude.
+#' @param domains Character vector with one or more of the OMOP CDM domain.
+#' @param conceptClassId Character vector with one or more concept class
+#' of the Concept
+#' @param doseForm The dose form associated with a drug
+#' @param vocabularyId Character vector with one or more vocabulary
+#' of the Concept
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 #' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
-#' @param searchSynonyms Either TRUE or FALSE. If TRUE the code will also
+#' @param exactMatch Either TRUE or FALSE. If TRUE only exact matches of
+#' keywords will be identified when running the initial search.
+#' @param searchInSynonyms Either TRUE or FALSE. If TRUE the code will also
+#' search using both the primary name in the concept table and synonyms from
+#' the concept synonym table.
+#' @param searchViaSynonyms Either TRUE or FALSE. If TRUE the code will also
 #' search via the concept synonym table.
 #' @param searchNonStandard Either TRUE or FALSE. If TRUE the code will also
 #' search via non-standard concepts.
+<<<<<<< HEAD
 #' @param fuzzyMatch Either TRUE or FALSE. If TRUE the fuzzy matching
 #' will be used, with approximate matches identified.
 #' @param maxDistanceCost The maximum number/fraction of match cost (generalized Levenshtein distance)
 #' for fuzzy matching (see ??base::agrep for further details).
+=======
+#' @param includeSequela Either TRUE or FALSE. If TRUE, codes associated via
+#' a concept relationship of 'Due to of' or 'Occurs before' will also be
+#' identified.
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 #' @param includeDescendants Either TRUE or FALSE.
 #' If TRUE descendant concepts of identified concepts
 #' will be included in the candidate codelist.
 #' @param includeAncestor Either TRUE or FALSE.
 #' If TRUE the direct ancestor concepts of identified concepts
+<<<<<<< HEAD
 #' will be included in the candidate codelist.
 #' @param verbose Either TRUE or FALSE. If TRUE, progress will be reported.
+=======
+#'  will be included in the candidate codelist.
+#' @param fuzzyMatch Either TRUE or FALSE. If TRUE the fuzzy matching
+#' will be used, with approximate matches identified.
+#' @param maxDistanceCost, The
+#' maximum number/fraction of match cost (generalized Levenshtein distance)
+#' for fuzzy matching (see ??base::agrep for further details).
+#' @param verbose Either TRUE or FALSE.
+#' If TRUE, progress will be reported.
+
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
 #'
 #' @return tibble
 #' @importFrom rlang .data
 #' @export
 #'
 #' @examples
+<<<<<<< HEAD
 #' \dontrun{
 #' library(CodelistGenerator)
 #' con <- DBI::dbConnect(RPostgres::Postgres(),
@@ -79,22 +118,36 @@
 #' getCandidateCodes(vocab, keywords = "asthma")
 #' }
 getCandidateCodes <- function(vocref,
+=======
+#' cdm <- CodelistGenerator::mockVocabRef()
+#' CodelistGenerator::getCandidateCodes(
+#'   cdm = cdm,
+#'   keywords = "osteoarthritis"
+#'  )
+#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+getCandidateCodes <- function(cdm,
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
                               keywords,
                               exclude = NULL,
                               domains = "Condition",
                               conceptClassId = NULL,
+                              doseForm = NULL,
+                              vocabularyId = NULL,
                               standardConcept = "Standard",
-                              searchSynonyms = FALSE,
+                              exactMatch = FALSE,
+                              searchInSynonyms = FALSE,
+                              searchViaSynonyms = FALSE,
                               searchNonStandard = FALSE,
-                              fuzzyMatch = FALSE,
-                              maxDistanceCost = 0.1,
+                              includeSequela = FALSE,
                               includeDescendants = TRUE,
                               includeAncestor = FALSE,
+                              fuzzyMatch = FALSE,
+                              maxDistanceCost = 0.1,
                               verbose = FALSE) {
-
   if (verbose == TRUE) {
     # to report time taken at the end
     start <- Sys.time()
+<<<<<<< HEAD
     args <- rlang::fn_fmls_syms()
     m <- purrr::map2_chr(names(args), args, ~glue::glue("-- {.x}: {toString(eval(.y))}"))
     message(paste(m, collapse = "\n"))
@@ -545,119 +598,157 @@ getCandidateCodes <- function(vocref,
       dplyr::select(-"seq")
 
     return(candidateCodes)
+=======
+
+    # summary of search strategy
+    message(glue::glue("Search strategy"))
+    message(glue::glue("-- keywords: {toString(keywords)}"))
+    message(glue::glue("-- domains: {toString(domains)}"))
+    message(glue::glue("-- conceptClassId: {toString(conceptClassId)}"))
+    message(glue::glue("-- vocabularyId: {toString(vocabularyId)}"))
+    message(glue::glue("-- exactMatch: {toString(exactMatch)}"))
+    message(glue::glue("-- standardConcept: {toString(standardConcept)}"))
+    message(glue::glue("-- searchInSynonyms: {toString(searchInSynonyms)}"))
+    message(glue::glue("-- searchViaSynonyms: {toString(searchViaSynonyms)}"))
+    message(glue::glue("-- searchNonStandard: {toString(searchNonStandard)}"))
+    message(glue::glue("-- fuzzyMatch: {toString(fuzzyMatch)}"))
+    message(glue::glue("-- maxDistanceCost: {toString(maxDistanceCost)}"))
+    message(glue::glue("-- exclude: {toString(exclude)}"))
+    message(glue::glue("-- includeDescendants: {toString(includeDescendants)}"))
+    message(glue::glue("-- includeAncestor: {toString(includeAncestor)}"))
+
+    # now we´ll start checking the inputs
+    message("Checking inputs")
+  }
+
+  ## checks for standard types of user error
+  errorMessage <- checkmate::makeAssertCollection()
+  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
+  checkmate::assertVector(keywords, add = errorMessage)
+  checkmate::assertVector(exclude,
+    null.ok = TRUE,
+    add = errorMessage
+  )
+  checkmate::assertVector(domains, add = errorMessage)
+  checkmate::assertVector(conceptClassId,
+    add = errorMessage,
+    null.ok = TRUE
+  )
+  checkmate::assertCharacter(doseForm, add = errorMessage,
+                             null.ok = TRUE)
+  checkmate::assertVector(vocabularyId,
+                          add = errorMessage,
+                          null.ok = TRUE
+  )
+  checkmate::assertVector(standardConcept, add = errorMessage)
+  standardConceptCheck <- all(tolower(standardConcept) %in%
+    c(
+      "standard",
+      "classification",
+      "non-standard"
+    ))
+  if (!isTRUE(standardConceptCheck)) {
+    errorMessage$push(
+      "- standardConcept must be from Standard, Non-stanadard, or Classification"
+    )
+  }
+  checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
+  checkmate::assert_logical(exactMatch, add = errorMessage)
+  checkmate::assert_logical(searchInSynonyms, add = errorMessage)
+  checkmate::assert_logical(searchViaSynonyms, add = errorMessage)
+  checkmate::assert_logical(searchNonStandard, add = errorMessage)
+  checkmate::assert_logical(includeDescendants, add = errorMessage)
+  checkmate::assert_logical(includeAncestor, add = errorMessage)
+  checkmate::assert_logical(fuzzyMatch, add = errorMessage)
+  checkmate::assert_numeric(maxDistanceCost, add = errorMessage)
+  checkmate::assert_logical(verbose, add = errorMessage)
+  checkmate::reportAssertions(collection = errorMessage)
+
+  errorMessage <- checkmate::makeAssertCollection()
+  assertTablesExist(cdm, tableName = c("concept",
+                                       "concept_relationship",
+                                       "concept_ancestor",
+                                       "concept_synonym",
+                                       "vocabulary"),
+                    messageStore = errorMessage)
+  if ("drug" %in% tolower(domains)) {
+    assertTablesExist(cdm, tableName = c("drug_strength"),
+                      messageStore = errorMessage)
+  }
+  checkmate::reportAssertions(collection = errorMessage)
+
+  errorMessage <- checkmate::makeAssertCollection()
+  if(exactMatch == TRUE) {
+    checkmate::assert_false(fuzzyMatch, add = errorMessage)
+  if (!isFALSE(fuzzyMatch)) {
+    errorMessage$push(
+      "- fuzzyMatch must be FALSE if exactMatch is TRUE"
+    )
+>>>>>>> d27aaf5662aedd5f33b203d9f884d232fd1290b2
   }
 }
+  checkmate::reportAssertions(collection = errorMessage)
 
-
-# helper functions for main getCandidateCodes function
-getExactMatches <- function(words,
-                            conceptDf) {
-
-  # because there may be a lot of synonyms, get these from a loop
-  # (stringr::str_detect slows considerably
-  # as more options are added in a single call using "|")
-
-  # note, where one term is multiple words (e.g "knee osteoarthritis"),
-  # split up and search
-  # so that they don´t need to be next to each other
-  # (e.g. to find "osteoarthritis of knee"))
-
-  conceptsFound <- list()
-  for (i in seq_along(words)) {
-    workingExclude <- unlist(strsplit(words[i], " "))
-    workingConcepts <- conceptDf %>% # start with all
-      dplyr::mutate(concept_name = tidyWords(.data$concept_name))
-
-    conceptsFound[[i]] <- workingConcepts %>%
-      dplyr::filter(apply(sapply(
-        X = workingExclude,
-        FUN = grepl, workingConcepts$concept_name
-      ),
-      MARGIN = 1, FUN = all
-      )) %>%
-      dplyr::distinct()
-  }
-  dplyr::bind_rows(conceptsFound)
-}
-
-getFuzzyMatches <- function(words,
-                            conceptDf,
-                            mdCost) {
-  conceptsFound <- list()
-  for (i in seq_along(words)) {
-    workingKeywords <- unlist(strsplit(words[i], " "))
-    # more than one character
-    workingKeywords <- workingKeywords[
-      stringr::str_count(workingKeywords) > 1
-    ]
-    workingConcepts <- conceptDf %>% # start with all
-      dplyr::mutate(concept_name = tidyWords(.data$concept_name))
-    for (j in seq_along(workingKeywords)) {
-      # filter each term within the loop, one after the other
-      indx <- agrep(workingKeywords[j], workingConcepts$concept_name,
-        max.distance = list(
-          cost = mdCost
-        )
-      )
-      workingConcepts <- workingConcepts[indx, ]
-    }
-
-    conceptsFound[[i]] <- workingConcepts
+  if (verbose == TRUE) {
+    message("Starting search")
   }
 
-  dplyr::bind_rows(conceptsFound) %>%
+  # run search by domain
+  searchSpecs <- data.frame(
+    id = seq_along(domains),
+    domain = domains
+  )
+  searchSpecs <- split(
+    searchSpecs,
+    searchSpecs[, c("id")]
+  )
+
+  searchResults <- lapply(searchSpecs, function(x) {
+    result <- runSearch(keywords,
+      cdm = cdm,
+      exclude = exclude,
+      domains = x$domain,
+      conceptClassId = conceptClassId,
+      doseForm = doseForm,
+      vocabularyId = vocabularyId,
+      standardConcept = standardConcept,
+      exactMatch = exactMatch,
+      searchInSynonyms = searchInSynonyms,
+      searchViaSynonyms = searchViaSynonyms,
+      searchNonStandard = searchNonStandard,
+      includeSequela = includeSequela,
+      fuzzyMatch = fuzzyMatch,
+      maxDistanceCost = maxDistanceCost,
+      includeDescendants = includeDescendants,
+      includeAncestor = includeAncestor,
+      verbose = verbose
+    )
+
+    return(result)
+  })
+
+  # drop any empty tibbles
+  searchResults <- searchResults[lapply(searchResults, nrow) > 0]
+
+  # put the results from each domain together
+  searchResults <- dplyr::bind_rows(searchResults,
+    .id = NULL
+  ) %>%
     dplyr::distinct()
-}
 
-addDescendants <- function(workingCandidateCodes,
-                           conceptAncestorDf,
-                           conceptDf) {
-  candidateCodeDescendants <- workingCandidateCodes %>%
-    dplyr::select("concept_id") %>%
-    dplyr::rename("ancestor_concept_id" = "concept_id") %>%
-    dplyr::distinct() %>%
-    dplyr::left_join(conceptAncestorDf %>%
-      dplyr::filter("ancestor_concept_id" != "descendant_concept_id"),
-    by = "ancestor_concept_id"
-    ) %>%
-    dplyr::select("descendant_concept_id") %>%
-    dplyr::distinct() %>%
-    dplyr::rename("concept_id" = "descendant_concept_id")
+  if (nrow(searchResults) == 0) {
+    message(glue::glue("-- No codes found for given search strategy"))
+  }
 
-  candidateCodeDescendants <-
-    candidateCodeDescendants %>%
-    dplyr::left_join(conceptDf, by = "concept_id") %>%
-    dplyr::mutate(concept_name = tidyWords(.data$concept_name))
+  # return results
+  if (verbose == TRUE) {
+    duration <- abs(as.numeric(Sys.time() - start, units = "secs"))
+    message(glue::glue(
+      "Time: {floor(duration/60)} minutes and {duration %% 60 %/% 1} seconds"
+    ))
+  }
 
-  candidateCodeDescendants
-}
-
-addAncestor <- function(workingCandidateCodes,
-                        conceptAncestorDf,
-                        conceptDf) {
-  candidateCodeAncestor <- workingCandidateCodes %>%
-    dplyr::select("concept_id") %>%
-    dplyr::rename("descendant_concept_id" = "concept_id") %>%
-    dplyr::left_join(conceptAncestorDf,
-      by = "descendant_concept_id"
-    ) %>%
-    dplyr::filter(.data$min_levels_of_separation == "1") %>%
-    dplyr::select("ancestor_concept_id") %>%
-    dplyr::rename("concept_id" = "ancestor_concept_id") %>%
-    dplyr::left_join(conceptDf,
-      by = "concept_id"
-    ) %>%
-    dplyr::mutate(concept_name = tidyWords(.data$concept_name))
-
-  # keep if not already in candidateCodes
-  candidateCodeAncestor <- candidateCodeAncestor %>%
-    dplyr::anti_join(workingCandidateCodes %>%
-      dplyr::select("concept_id"),
-    by = "concept_id"
-    ) %>%
-    dplyr::left_join(conceptDf, by = "concept_id")
-
-  return(candidateCodeAncestor)
+  return(searchResults)
 }
 
 

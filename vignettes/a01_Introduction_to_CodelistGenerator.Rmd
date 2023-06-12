@@ -1,5 +1,5 @@
 ---
-title: "01 Introduction to CodelistGenerator"
+title: "Introduction to CodelistGenerator"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{01_Introduction_to_CodelistGenerator}
@@ -16,83 +16,76 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Creating a code list for dementia
+For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain. Let's first load some libraries
+
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 library(here)
 library(readr)
 library(DBI)
-library(RSQLite)
 library(here)
 library(dplyr)
 library(stringr)
 library(DT)
 library(kableExtra)
 library(CodelistGenerator)
+library(CDMConnector)
 ```
 
-
-## Creating a codelist for dementia
-For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain.
-
-## Getting the OMOP CDM vocabularies
-If you do not have ready access to a database with data in the OMOP CDM format (which will necessarily contain the vocabulary tables), you will first need to obtain the OMOP CDM vocabularies from https://athena.ohdsi.org. Once these are downloaded, we can make a vocabulary only database like so:
+## Connect to the OMOP CDM vocabularies
+CodelistGenerator works with a `cdm_reference` to the vocabularies tables of the OMOP CDM using the CDMConnector package. This `cdm_reference` could be to the tables in a database, using an arrow_table, or loaded into R. CodelistGenerator will generally work fastest with an arrow_table so let's first set that up.
 
 ```{r, eval=FALSE}
-library(readr)
-library(DBI)
-library(RSQLite)
-library(here)
+# example with postgres database connection details
+db <- DBI::dbConnect(RPostgres::Postgres(),
+  dbname = Sys.getenv("server"),
+  port = Sys.getenv("port"),
+  host = Sys.getenv("host"),
+  user = Sys.getenv("user"),
+  password = Sys.getenv("password")
+)
+# name of vocabulary schema
+vocabularyDatabaseSchema <- Sys.getenv("vocabulary_schema")
+
+# create cdm reference
+cdm <- CDMConnector::cdm_from_con(
+  con = db,
+  cdm_schema = vocabularyDatabaseSchema,
+  cdm_tables = tidyselect::all_of(c(
+    "concept",
+    "concept_relationship",
+    "concept_ancestor",
+    "concept_synonym",
+    "vocabulary"
+  ))
+)
+# vocab to arrow
+# save in temp folder for this example
+dOut <- here(tempdir(), "db_vocab")
+dir.create(dOut)
+CDMConnector::stow(cdm, dOut)
+
+# new cdm reference using arrow
+cdmArrow <- CDMConnector::cdm_from_files(
+  path = dOut,
+  cdm_tables = tidyselect::all_of(c(
+    "concept",
+    "concept_relationship",
+    "concept_ancestor",
+    "concept_synonym",
+    "vocabulary"
+  )),
+  as_data_frame = FALSE
+)
+
+rm(cdm)
 ```
 
-```{r, eval=FALSE}
-# path to directory of unzipped files
-vocab.folder <- Sys.getenv("omop_cdm_vocab_path") 
-
-concept <- read_delim(paste0(vocab.folder, "/CONCEPT.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-conceptRelationship <- read_delim(paste0(vocab.folder, "/CONCEPT_RELATIONSHIP.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-conceptAncestor <- read_delim(paste0(vocab.folder, "/CONCEPT_ANCESTOR.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-conceptSynonym <- read_delim(paste0(vocab.folder, "/CONCEPT_SYNONYM.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-vocabulary <- read_delim(paste0(vocab.folder, "/VOCABULARY.csv"),
-  "\t",
-  escape_double = FALSE, trim_ws = TRUE
-)
-
-db <- dbConnect(RSQLite::SQLite(), ":memory:")
-dbWriteTable(db, "concept", concept, overwrite = TRUE)
-dbWriteTable(db, "conceptRelationship", conceptRelationship, overwrite = TRUE)
-dbWriteTable(db, "conceptAncestor", conceptAncestor, overwrite = TRUE)
-dbWriteTable(db, "conceptSynonym", conceptSynonym, overwrite = TRUE)
-dbWriteTable(db, "vocabulary", vocabulary)
-rm(concept, conceptRelationship, conceptAncestor, conceptSynonym, vocabulary)
-vocabularyDatabaseSchema <- "main"
-```
-
-The structure of each of these tables is described in detail at: https://ohdsi.github.io/CommonDataModel/cdm53.html#Vocabulary_Tables 
 
 ## Check version of the vocabularies
 It is important to note that the results from CodelistGenerator will be specific to a particular version of the OMOP CDM vocabularies. We can see the version of the vocabulary being used like so
 ```{r, eval=FALSE}
-dplyr::tbl(db, dplyr::sql(paste0(
-  "SELECT * FROM ",
-  vocabularyDatabaseSchema,
-  ".vocabulary"
-))) %>%
-  dplyr::rename_with(tolower) %>%
-  dplyr::filter(.data$vocabulary_id == "None") %>%
-  dplyr::select("vocabulary_version") %>%
-  dplyr::collect() %>%
-  dplyr::pull()
+getVocabVersion(cdm = cdmArrow)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
@@ -100,16 +93,9 @@ vocabVersion <- readRDS(here("vignettes", "introVocab.RData"))
 vocabVersion
 ```
 
-
-## Codelist from "Dementia" (4182210) and its descendants
+## A code list from "Dementia" (4182210) and its descendants
 The simplest approach to identifying potential codes is to take a high-level code and include all its descendants. 
-```{r, eval=FALSE}
-library(dplyr)
-library(dbplyr)
-library(stringr)
-library(DT)
-library(kableExtra)
-```
+
 
 ```{r, eval=FALSE}
 codesFromDescendants <- tbl(
@@ -117,7 +103,7 @@ codesFromDescendants <- tbl(
   sql(paste0(
     "SELECT * FROM ",
     vocabularyDatabaseSchema,
-    ".conceptAncestor"
+    ".concept_ancestor"
   ))
 ) %>%
   filter(ancestor_concept_id == "4182210") %>%
@@ -151,21 +137,16 @@ datatable(codesFromDescendants,
 
 This looks to pick up most relevant codes. But, this approach misses codes that are not a descendant of 4182210. For example, codes such as "Wandering due to dementia" (37312577; https://athena.ohdsi.org/search-terms/terms/37312577) and "Anxiety due to dementia" (37312031; https://athena.ohdsi.org/search-terms/terms/37312031) are not picked up.
 
-## Generating a candidate codelist using Codelist Generator
+## Generating a candidate code list using CodelistGenerator
 To try and include all such terms that could be included we can use CodelistGenerator.
-
-```{r, eval=FALSE }
-library(CodelistGenerator)
-```
 
 First, let's do a simple search for a single keyword of "dementia", including descendants of the identified codes.
 ```{r, eval=FALSE }
 dementiaCodes1 <- getCandidateCodes(
+  cdm = cdm,
   keywords = "dementia",
   domains = "Condition",
-  includeDescendants = TRUE,
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+  includeDescendants = TRUE
 )
 ```
 
@@ -183,7 +164,9 @@ datatable(dementiaCodes1,
 )
 ```
 
-What is the difference between this codelist and the one from 4182210 and its descendants?
+
+## Comparing code lists
+What is the difference between this code list and the one from 4182210 and its descendants?
 ```{r,  eval=FALSE }
 codeComparison <- compareCodelists(
   codesFromDescendants,
@@ -203,29 +186,29 @@ kable(codeComparison %>%
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-datatable(codeComparison %>%
-  filter(codelist == "Only codelist_2"),
-rownames = FALSE,
-options = list(
-  pageLength = 10,
-  lengthMenu = c(10, 20, 50)
-)
+datatable(
+  codeComparison %>%
+    filter(codelist == "Only codelist 2"),
+  rownames = FALSE,
+  options = list(
+    pageLength = 10,
+    lengthMenu = c(10, 20, 50)
+  )
 )
 ```
 
 ## Review mappings from non-standard vocabularies
-Perhaps we want to see what ICD10CM codes map to our candidate codelist. We can get these by running
+Perhaps we want to see what ICD10CM codes map to our candidate code list. We can get these by running
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 icdMappings <- readRDS(here("vignettes", "introData04.RData"))
 ```
 
 ```{r,  eval=FALSE }
-icdMappings <- showMappings(
-  candidateCodelist = dementiaCodes4,
-  nonStandardVocabularies = "ICD10CM",
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+icdMappings <- getMappings(
+  cdm = cdm,
+  candidateCodelist = dementiaCodes1,
+  nonStandardVocabularies = "ICD10CM"
 )
 ```
 
@@ -245,11 +228,10 @@ readMappings <- readRDS(here("vignettes", "introData05.RData"))
 ```
 
 ```{r,  eval=FALSE }
-readMappings <- showMappings(
-  candidateCodelist = dementiaCodes4,
-  nonStandardVocabularies = "Read",
-  db = db,
-  vocabularyDatabaseSchema = vocabularyDatabaseSchema
+readMappings <- getMappings(
+  cdm = cdm,
+  candidateCodelist = dementiaCodes1,
+  nonStandardVocabularies = "Read"
 )
 ```
 

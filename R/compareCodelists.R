@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2023 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -24,26 +24,24 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' library(DBI)
-#' library(CodelistGenerator)
-#' db <- DBI::dbConnect(" Your database connection here ")
-#' vocabularyDatabaseSchema <- " Your vocabulary schema here "
-#' asthmaCodes <- getCandidateCodes(
-#'   keywords = "asthma",
-#'   db = db,
-#'   vocabularyDatabaseSchema = " Your vocabulary schema here "
+#' cdm <- mockVocabRef()
+#' codes1 <- getCandidateCodes(
+#'  cdm = cdm,
+#'  keywords = "Arthritis",
+#'  domains = "Condition",
+#'  includeDescendants = TRUE
 #' )
-#' persistantAsthmaCodes <- getCandidateCodes(
-#'   keywords = "Persistent asthma",
-#'   db = db,
-#'   vocabularyDatabaseSchema = " Your vocabulary schema here "
-#' )
+#' codes2 <- getCandidateCodes(
+#'  cdm = cdm,
+#'  keywords = c("knee osteoarthritis", "arthrosis"),
+#'  domains = "Condition",
+#'  includeDescendants = TRUE
+#')
 #' compareCodelists(
-#'   codelist1 = asthmaCodes,
-#'   codelist2 = persistantAsthmaCodes
+#'  codelist1 = codes1,
+#'  codelist2 = codes2
 #' )
-#' }
+#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 compareCodelists <- function(codelist1,
                               codelist2) {
 
@@ -69,7 +67,8 @@ compareCodelists <- function(codelist1,
   checkmate::reportAssertions(collection = errorMessage)
 
 
-  all <- dplyr::bind_rows(codelist1, codelist2)
+  all <- dplyr::bind_rows(codelist1, codelist2) %>%
+    dplyr::select(c("concept_id", "concept_name"))
   duplicates <- all[duplicated(all), ]
   unique <- unique(all)
 
@@ -79,13 +78,13 @@ compareCodelists <- function(codelist1,
   # in both codelists
   unique$codelist <- dplyr::if_else(is.na(
     match(
-      paste0(unique$concept_id, unique$concept_name),
-      paste0(duplicates$concept_id, duplicates$concept_name)
+      glue::glue("{unique$concept_id};{unique$concept_name}"),
+      glue::glue("{duplicates$concept_id};{duplicates$concept_name}")
     )
   ), dplyr::if_else(is.na(
     match(
-      paste0(unique$concept_id, unique$concept_name),
-      paste0(codelist1$concept_id, codelist1$concept_name)
+      glue::glue("{unique$concept_id};{unique$concept_name}"),
+      glue::glue("{codelist1$concept_id};{codelist1$concept_name}")
     )
   ),
   "Only codelist 2",

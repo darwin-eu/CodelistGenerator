@@ -1,11 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
-[![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/CodelistGenerator)](https://CRAN.R-project.org/package=CodelistGenerator)
+[![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
 [![R-CMD-check](https://github.com/darwin-eu/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CodelistGenerator/actions)
-[![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](https://lifecycle.r-lib.org/articles/stages.html)
 <!-- badges: end -->
 
 # CodelistGenerator
@@ -28,1314 +29,137 @@ install.packages("remotes")
 remotes::install_github("darwin-eu/CodelistGenerator")
 ```
 
-## Connecting to the OMOP CDM vocabularies
+## Example usage
 
 ``` r
-# First load required libraries
-library(DBI)
 library(dplyr)
-library(dbplyr)
+library(CDMConnector)
 library(CodelistGenerator)
-
-# Note that you will also need another library, like RPostgres, to make your database connection
+library(kableExtra)
 ```
 
+In this example we’ll use the Eunomia dataset (which only contains a
+subset of the OMOP CDM vocabularies)
+
 ``` r
-# example with postgres database connection details
-serverDbi<-Sys.getenv("server")
-user<-Sys.getenv("user")
-password<- Sys.getenv("password")
-port<-Sys.getenv("port")
-host<-Sys.getenv("host")
-
-db <- DBI::dbConnect(RPostgres::Postgres(),
-                dbname = serverDbi,
-                port = port,
-                host = host,
-                user = user,
-                password = password)
-
-# name of vocabulary schema
-vocabularyDatabaseSchema<-Sys.getenv("vocabulary_schema")
+db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
+cdm <- cdm_from_con(db, cdm_schema = "main")
 ```
 
-## Example search
-
-Every codelist is specific to a version of the OMOP CDM vocabularies, so
-we can first check the version.
+Although we can run the search using vocabulary tables in the database
+or loaded into R, the fastest approach is using arrow. So let’s create a
+new cdm reference using arrow (in this example saved to the temp
+directory, but in practice you could of course save files elsewhere for
+reuse).
 
 ``` r
-dplyr::tbl(db, dplyr::sql(paste0(
-    "SELECT * FROM ",
-    vocabularyDatabaseSchema,
-    ".vocabulary"
-    ))) %>%
-    dplyr::rename_with(tolower) %>%
-    dplyr::filter(.data$vocabulary_id == "None") %>%
-    dplyr::select("vocabulary_version") %>%
-    dplyr::collect() %>%
-    dplyr::pull()
-#> [1] "v5.0 13-JUL-21"
+# save cdm vocabulary tables to temp directory
+dOut<-here::here(tempdir(), "db_vocab")
+dir.create(dOut)
+CDMConnector::stow(cdm, dOut)
+# new cdm reference using arrow
+cdm_arrow <- CDMConnector::cdm_from_files(path = dOut, 
+                                          as_data_frame = FALSE)
+```
+
+Every code list is specific to a version of the OMOP CDM vocabularies,
+so we can first check the version for Eunomia.
+
+``` r
+getVocabVersion(cdm = cdm_arrow)
+#> [1] "v5.0 18-JAN-19"
 ```
 
 We can then search for asthma like so
 
 ``` r
-asthma1<-getCandidateCodes(keywords="asthma",
-                    domains = "Condition",
-                    db=db,
-                    vocabularyDatabaseSchema = vocabularyDatabaseSchema)
-head(asthma1, 10)
+asthma_codes1 <- getCandidateCodes(
+  cdm = cdm_arrow,
+  keywords = "asthma",
+  domains = "Condition"
+) 
+asthma_codes1 %>% 
+  glimpse()
+#> Rows: 2
+#> Columns: 6
+#> $ concept_id       <dbl> 4051466, 317009
+#> $ concept_name     <chr> "Childhood asthma", "Asthma"
+#> $ domain_id        <chr> "condition", "condition"
+#> $ concept_class_id <chr> "clinical finding", "clinical finding"
+#> $ vocabulary_id    <chr> "snomed", "snomed"
+#> $ found_from       <chr> "From initial search", "From initial search"
 ```
-
-<table>
-
-<thead>
-
-<tr>
-
-<th style="text-align:right;">
-
-concept\_id
-
-</th>
-
-<th style="text-align:left;">
-
-concept\_name
-
-</th>
-
-<th style="text-align:left;">
-
-domain\_id
-
-</th>
-
-<th style="text-align:left;">
-
-concept\_class\_id
-
-</th>
-
-<th style="text-align:left;">
-
-vocabulary\_id
-
-</th>
-
-<th style="text-align:left;">
-
-found\_from
-
-</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td style="text-align:right;">
-
-252658
-
-</td>
-
-<td style="text-align:left;">
-
-Intrinsic asthma without status asthmaticus
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-252942
-
-</td>
-
-<td style="text-align:left;">
-
-Asthmatic pulmonary eosinophilia
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-256448
-
-</td>
-
-<td style="text-align:left;">
-
-Chronic asthmatic bronchitis
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-257581
-
-</td>
-
-<td style="text-align:left;">
-
-Exacerbation of asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-312950
-
-</td>
-
-<td style="text-align:left;">
-
-IgE-mediated allergic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-313236
-
-</td>
-
-<td style="text-align:left;">
-
-Cough variant asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-316577
-
-</td>
-
-<td style="text-align:left;">
-
-Poisoning by antiasthmatic
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-317009
-
-</td>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-443801
-
-</td>
-
-<td style="text-align:left;">
-
-Exercise-induced asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-761844
-
-</td>
-
-<td style="text-align:left;">
-
-Inhaled steroid-dependent asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
 
 Perhaps we want to exclude certain concepts as part of the search
 strategy, in which case this can be added like so
 
 ``` r
-asthma2<-getCandidateCodes(keywords="asthma",
-                    domains = "Condition",
-                    exclude = "Poisoning by antiasthmatic",
-                    db=db,
-                    vocabularyDatabaseSchema = vocabularyDatabaseSchema)
-head(asthma2, 10)
+asthma_codes2 <- getCandidateCodes(
+  cdm = cdm_arrow,
+  keywords = "asthma",
+  exclude = "childhood",
+  domains = "Condition"
+) 
+asthma_codes2 %>% 
+  glimpse()
+#> Rows: 1
+#> Columns: 6
+#> $ concept_id       <dbl> 317009
+#> $ concept_name     <chr> "Asthma"
+#> $ domain_id        <chr> "condition"
+#> $ concept_class_id <chr> "clinical finding"
+#> $ vocabulary_id    <chr> "snomed"
+#> $ found_from       <chr> "From initial search"
 ```
 
-<table>
-
-<thead>
-
-<tr>
-
-<th style="text-align:right;">
-
-concept\_id
-
-</th>
-
-<th style="text-align:left;">
-
-concept\_name
-
-</th>
-
-<th style="text-align:left;">
-
-domain\_id
-
-</th>
-
-<th style="text-align:left;">
-
-concept\_class\_id
-
-</th>
-
-<th style="text-align:left;">
-
-vocabulary\_id
-
-</th>
-
-<th style="text-align:left;">
-
-found\_from
-
-</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td style="text-align:right;">
-
-252658
-
-</td>
-
-<td style="text-align:left;">
-
-Intrinsic asthma without status asthmaticus
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-252942
-
-</td>
-
-<td style="text-align:left;">
-
-Asthmatic pulmonary eosinophilia
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-256448
-
-</td>
-
-<td style="text-align:left;">
-
-Chronic asthmatic bronchitis
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-257581
-
-</td>
-
-<td style="text-align:left;">
-
-Exacerbation of asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-312950
-
-</td>
-
-<td style="text-align:left;">
-
-IgE-mediated allergic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-313236
-
-</td>
-
-<td style="text-align:left;">
-
-Cough variant asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-317009
-
-</td>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-443801
-
-</td>
-
-<td style="text-align:left;">
-
-Exercise-induced asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-761844
-
-</td>
-
-<td style="text-align:left;">
-
-Inhaled steroid-dependent asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:right;">
-
-764677
-
-</td>
-
-<td style="text-align:left;">
-
-Persistent asthma
-
-</td>
-
-<td style="text-align:left;">
-
-condition
-
-</td>
-
-<td style="text-align:left;">
-
-clinical finding
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-From initial search
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-We can then also see non-standard codes these are mapped from, for
-example
+We can compare these two code lists like so
 
 ``` r
-asthmaIcdMappings<-showMappings(candidateCodelist=asthma2,
-                     nonStandardVocabularies="ICD10CM",
-                    db=db,
-                    vocabularyDatabaseSchema =  vocabularyDatabaseSchema)
-head(asthmaIcdMappings %>% 
-       select(standard_concept_name,
-              standard_vocabulary_id,
-              non_standard_concept_name,
-              non_standard_vocabulary_id),
-     10)
+compareCodelists(asthma_codes1, asthma_codes2)
+#> # A tibble: 2 × 3
+#>   concept_id concept_name     codelist       
+#>        <dbl> <chr>            <chr>          
+#> 1    4051466 Childhood asthma Only codelist 1
+#> 2     317009 Asthma           Both
 ```
 
-<table>
-
-<thead>
-
-<tr>
-
-<th style="text-align:left;">
-
-standard\_concept\_name
-
-</th>
-
-<th style="text-align:left;">
-
-standard\_vocabulary\_id
-
-</th>
-
-<th style="text-align:left;">
-
-non\_standard\_concept\_name
-
-</th>
-
-<th style="text-align:left;">
-
-non\_standard\_vocabulary\_id
-
-</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td style="text-align:left;">
-
-Eosinophilic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Pulmonary eosinophilia, not elsewhere classified
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Eosinophilic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Eosinophilic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Eosinophilic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Other pulmonary eosinophilia, not elsewhere classified
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Eosinophilic asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Pulmonary eosinophilia, not elsewhere classified
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Cryptogenic pulmonary eosinophilia
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Chronic eosinophilic pneumonia
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Simple pulmonary eosinophilia
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Acute eosinophilic pneumonia
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Other and unspecified asthma
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Unspecified asthma
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-Asthma
-
-</td>
-
-<td style="text-align:left;">
-
-SNOMED
-
-</td>
-
-<td style="text-align:left;">
-
-Other asthma
-
-</td>
-
-<td style="text-align:left;">
-
-ICD10CM
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
+We can then also see non-standard codes these are mapped from, for
+example here we can see the non-standard ICD10 code that maps to a
+standard snomed code for gastrointestinal hemorrhage returned by our
+search
+
+``` r
+Gastrointestinal_hemorrhage <- getCandidateCodes(
+  cdm = cdm_arrow,
+  keywords = "Gastrointestinal hemorrhage",
+  domains = "Condition"
+)
+Gastrointestinal_hemorrhage %>% 
+  glimpse()
+#> Rows: 1
+#> Columns: 6
+#> $ concept_id       <dbl> 192671
+#> $ concept_name     <chr> "Gastrointestinal hemorrhage"
+#> $ domain_id        <chr> "condition"
+#> $ concept_class_id <chr> "clinical finding"
+#> $ vocabulary_id    <chr> "snomed"
+#> $ found_from       <chr> "From initial search"
+```
+
+``` r
+getMappings(
+  cdm = cdm_arrow,
+  candidateCodelist = Gastrointestinal_hemorrhage,
+  nonStandardVocabularies = "ICD10CM"
+) %>% 
+  glimpse()
+#> Rows: 1
+#> Columns: 7
+#> $ standard_concept_id        <dbl> 192671
+#> $ standard_concept_name      <chr> "Gastrointestinal hemorrhage"
+#> $ standard_vocabulary_id     <chr> "SNOMED"
+#> $ non_standard_concept_id    <dbl> 35208414
+#> $ non_standard_concept_name  <chr> "Gastrointestinal hemorrhage, unspecified"
+#> $ non_standard_concept_code  <chr> "K92.2"
+#> $ non_standard_vocabulary_id <chr> "ICD10CM"
+```
