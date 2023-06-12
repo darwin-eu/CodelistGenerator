@@ -10,9 +10,11 @@ editor_options:
 ---
 
 ```{r, include = FALSE}
+library(CDMConnector)
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval =  (substring(packageVersion("CDMConnector"), 1, 1) != "1") # only run code if v1 is installed
 )
 ```
 
@@ -51,30 +53,24 @@ vocabularyDatabaseSchema <- Sys.getenv("vocabulary_schema")
 cdm <- CDMConnector::cdm_from_con(
   con = db,
   cdm_schema = vocabularyDatabaseSchema,
-  cdm_tables = tidyselect::all_of(c(
-    "concept",
-    "concept_relationship",
-    "concept_ancestor",
-    "concept_synonym",
-    "vocabulary"
-  ))
-)
+) %>% 
+   cdm_select_tbl("concept",
+                 "concept_relationship",
+                 "concept_ancestor",
+                 "concept_synonym",
+                 "vocabulary") 
 # vocab to arrow
 # save in temp folder for this example
 dOut <- here(tempdir(), "db_vocab")
 dir.create(dOut)
-CDMConnector::stow(cdm, dOut)
+
+cdm %>% 
+ %>% 
+  CDMConnector::stow(dOut)
 
 # new cdm reference using arrow
 cdmArrow <- CDMConnector::cdm_from_files(
   path = dOut,
-  cdm_tables = tidyselect::all_of(c(
-    "concept",
-    "concept_relationship",
-    "concept_ancestor",
-    "concept_synonym",
-    "vocabulary"
-  )),
   as_data_frame = FALSE
 )
 

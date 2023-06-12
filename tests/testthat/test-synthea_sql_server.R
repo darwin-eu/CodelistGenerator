@@ -1,5 +1,6 @@
 test_that("test with synthea on sql server", {
   skip_if(Sys.getenv("darwinDbDatabaseServer") == "")
+  skip_if_not_installed("CDMConnector", minimum_version = "1.0.0")
 
   db <- DBI::dbConnect(odbc::odbc(),
     Driver   = "ODBC Driver 11 for SQL Server",
@@ -12,14 +13,7 @@ test_that("test with synthea on sql server", {
 
   cdm <- CDMConnector::cdm_from_con(
     con = db,
-    cdm_schema = "cdm_synthea_100k",
-    cdm_tables = tidyselect::all_of(c(
-      "concept",
-      "concept_relationship",
-      "concept_ancestor",
-      "concept_synonym",
-      "vocabulary"
-    ))
+    cdm_schema = "cdm_synthea_100k"
   )
   vocabVersion <- getVocabVersion(cdm = cdm)
   expect_true(length(vocabVersion) == 1)

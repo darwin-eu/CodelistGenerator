@@ -282,16 +282,20 @@ mockVocabRef <- function(backend = "database") {
       overwrite = TRUE
     )
   })
-  cdm <- CDMConnector::cdm_from_con(db,
-    cdm_tables = tidyselect::all_of(c(
-      "concept",
-      "concept_relationship",
-      "concept_ancestor",
-      "concept_synonym",
-      "vocabulary",
-      "drug_strength"
-    ))
-  )
+  if (substr(packageVersion("CDMConnector"), 1, 1) == "1") {
+    cdm <- CDMConnector::cdm_from_con(db, cdm_schema = "main")
+  } else {
+    cdm <- CDMConnector::cdm_from_con(db,
+      cdm_tables = tidyselect::all_of(c(
+        "concept",
+        "concept_relationship",
+        "concept_ancestor",
+        "concept_synonym",
+        "vocabulary",
+        "drug_strength"
+      ))
+    )
+  }
   if (backend == "database") {
     return(cdm)
   }

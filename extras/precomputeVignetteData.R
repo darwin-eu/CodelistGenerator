@@ -24,14 +24,17 @@ db <- DBI::dbConnect(RPostgres::Postgres(),
 vocabularyDatabaseSchema <- Sys.getenv("DB_VOCAB_SCHEMA")
 
 # create cdm reference
+stopifnot(substring(packageVersion("CDMConnector"), 1, 1) == "1")
+
 cdm <- CDMConnector::cdm_from_con(con = db,
-                                  cdm_schema = vocabularyDatabaseSchema,
-                                  cdm_tables = tidyselect::all_of(c("concept",
-                                                                    "concept_relationship",
-                                                                    "concept_ancestor",
-                                                                    "concept_synonym",
-                                                                    "drug_strength",
-                                                                    "vocabulary")))
+                                  cdm_schema = vocabularyDatabaseSchema) %>%
+  CDMConnector::cdm_select_tbl("concept",
+                               "concept_relationship",
+                               "concept_ancestor",
+                               "concept_synonym",
+                               "drug_strength",
+                               "vocabulary")
+
 # vocab to arrow
 # save in temp folder for this example
 dOut<-here(tempdir(), "db_vocab")
