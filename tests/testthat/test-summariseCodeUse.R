@@ -33,7 +33,7 @@ test_that("summarise code use", {
                       "strata_name", "strata_level",
                       "variable_name", "variable_level",
                       "variable_type",
-                      "estimate",
+                      "estimate_type", "estimate",
                       "estimate_suppressed")
                 ))
 

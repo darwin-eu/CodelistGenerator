@@ -82,13 +82,14 @@ summariseCodeUse <- function(x,
                                         paste0(.data$concept_name, " (",
                                                .data$concept_id, ")"),
                                         "Overall")) %>%
-    dplyr::mutate(variable_type = "Categorical",
+    dplyr::mutate(variable_type = "Numeric",
                   variable_level = "Overall",
                   estimate_type = "Count") %>%
     dplyr::select(dplyr::all_of(c("group_name", "group_level",
                                 "strata_name", "strata_level",
                                 "variable_name", "variable_level",
                                 "variable_type",
+                                "estimate_type",
                                 "estimate",
                                 "estimate_suppressed")))
 

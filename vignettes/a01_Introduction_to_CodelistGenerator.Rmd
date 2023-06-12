@@ -33,7 +33,7 @@ library(CDMConnector)
 ```
 
 ## Connect to the OMOP CDM vocabularies
-CodelistGenerator works with a `cdm_reference` to the vocabularies tables of the OMOP CDM using the CDMConnector package. This `cdm_reference` could be to the tables in a database, using an arrow_table, or loaded into R. CodelistGenerator will generally work fastest with an arrow_table so let's first set that up.
+CodelistGenerator works with a `cdm_reference` to the vocabularies tables of the OMOP CDM using the CDMConnector package. 
 
 ```{r, eval=FALSE}
 # example with postgres database connection details
@@ -44,48 +44,19 @@ db <- DBI::dbConnect(RPostgres::Postgres(),
   user = Sys.getenv("user"),
   password = Sys.getenv("password")
 )
-# name of vocabulary schema
-vocabularyDatabaseSchema <- Sys.getenv("vocabulary_schema")
 
 # create cdm reference
 cdm <- CDMConnector::cdm_from_con(
   con = db,
-  cdm_schema = vocabularyDatabaseSchema,
-  cdm_tables = tidyselect::all_of(c(
-    "concept",
-    "concept_relationship",
-    "concept_ancestor",
-    "concept_synonym",
-    "vocabulary"
-  ))
+  cdm_schema = Sys.getenv("vocabulary_schema")
 )
-# vocab to arrow
-# save in temp folder for this example
-dOut <- here(tempdir(), "db_vocab")
-dir.create(dOut)
-CDMConnector::stow(cdm, dOut)
-
-# new cdm reference using arrow
-cdmArrow <- CDMConnector::cdm_from_files(
-  path = dOut,
-  cdm_tables = tidyselect::all_of(c(
-    "concept",
-    "concept_relationship",
-    "concept_ancestor",
-    "concept_synonym",
-    "vocabulary"
-  )),
-  as_data_frame = FALSE
-)
-
-rm(cdm)
 ```
 
 
 ## Check version of the vocabularies
 It is important to note that the results from CodelistGenerator will be specific to a particular version of the OMOP CDM vocabularies. We can see the version of the vocabulary being used like so
 ```{r, eval=FALSE}
-getVocabVersion(cdm = cdmArrow)
+getVocabVersion(cdm = cdm)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}

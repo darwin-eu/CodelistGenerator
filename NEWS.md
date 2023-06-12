@@ -1,4 +1,7 @@
-# CodelistGenerator 1.3.0
+# CodelistGenerator 1.5.0
+* Require CDMConnector v1.0.0 or above.
+
+# CodelistGenerator 1.4.0
 * Added function summariseCodeUse.
 
 # CodelistGenerator 1.3.0

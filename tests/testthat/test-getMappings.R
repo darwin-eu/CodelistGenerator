@@ -1,5 +1,5 @@
 test_that("tests with mock", {
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database", "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db
