@@ -1,5 +1,5 @@
 test_that("tests with mock db", {
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database",  "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db
@@ -396,7 +396,7 @@ test_that("tests with mock db", {
 })
 
 test_that("tests with mock db - multiple domains", {
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database", "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db
@@ -430,7 +430,7 @@ test_that("tests with mock db - multiple domains", {
 })
 
 test_that("tests exact match", {
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database", "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db

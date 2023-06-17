@@ -364,15 +364,15 @@ getDescendantsAndAncestor <- function(cdm, conceptId, doseForm) {
                       copy = TRUE) %>%
     dplyr::rename("concept_id" = "descendant_concept_id") %>%
     dplyr::left_join(cdm$concept,
-                     by = "concept_id") %>%
-    dplyr::mutate(name = paste0("concept_", .data$ancestor_concept_id))
+                     by = "concept_id")
 
   if(!is.null(doseForm)){
     descendantDoseForms <- getPresentDoseForms(cdm, concepts = descendants)
   }
 
   descendants <- descendants %>%
-    dplyr::collect()
+    dplyr::collect() %>%
+    dplyr::mutate(name = paste0("concept_", .data$ancestor_concept_id))
 
     if(nrow(descendants)>0){
 descendants <- descendants %>%
