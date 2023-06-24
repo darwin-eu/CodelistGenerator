@@ -7,9 +7,19 @@ test_that("db without icd10 codes loaded", {
                                  ))
   expect_true(length(codes) == 2)
   # we should pick up mapping and descendants
-  expect_true(all(codes[[1]] %in% c(3,4,5)))
-  expect_true(all(codes[[2]] %in% c(3,4,5)))
+  expect_true(all(c(3,4,5) %in% codes[[1]]))
+  expect_true(all(c(3,4,5) %in% codes[[2]]))
 
+  # without descendants
+  codes <- getICD10StandardCodes(cdm = cdm,
+                                 level = c(
+                                   "ICD10 Chapter",
+                                   "ICD10 SubChapter"
+                                 ), includeDescendants = FALSE)
+  expect_true(length(codes) == 2)
+  # we should pick up mapping and descendants
+  expect_true(all(c(3) %in% codes[[1]]))
+  expect_true(all(c(3) %in% codes[[2]]))
 
   # with only sub-chapter
   codes2 <- getICD10StandardCodes(cdm = cdm,

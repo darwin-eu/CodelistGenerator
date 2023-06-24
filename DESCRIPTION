@@ -13,7 +13,7 @@ Imports:
     CDMConnector (>= 1.0.0),
     checkmate (>= 2.0.0),
     DBI (>= 1.1.0),
-    dplyr (>= 1.0.0),
+    dplyr (>= 1.1.0),
     magrittr (>= 2.0.0),
     rlang (>= 1.0.0),
     glue (>= 1.5.0),

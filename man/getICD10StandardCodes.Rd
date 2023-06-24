@@ -4,12 +4,20 @@
 \alias{getICD10StandardCodes}
 \title{Get corresponding standard codes for ICD-10 chapters and sub-chapters}
 \usage{
-getICD10StandardCodes(cdm, level = c("ICD10 Chapter", "ICD10 SubChapter"))
+getICD10StandardCodes(
+  cdm,
+  level = c("ICD10 Chapter", "ICD10 SubChapter"),
+  includeDescendants = TRUE
+)
 }
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
 
 \item{level}{Can be either "ICD10 Chapter" or "ICD10 SubChapter"}
+
+\item{includeDescendants}{If FALSE only direct mappings from ICD-10 codes
+to standard codes will be returned. If TRUE descendants of standard concepts
+will also be included.}
 }
 \value{
 A named list, with each element containing the corresponding
