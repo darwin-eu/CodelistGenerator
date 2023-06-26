@@ -26,6 +26,17 @@ test_that("db without icd10 codes loaded", {
                                  level = "ICD10 SubChapter")
   expect_true(length(codes2) == 1)
 
+  # specific name
+  codes3 <- getICD10StandardCodes(cdm = cdm,
+                                  level = "ICD10 SubChapter",
+                                  name = "Arthropathies")
+  expect_true(length(codes3) == 1)
+
+  codes4 <- getICD10StandardCodes(cdm = cdm,
+                                  level = "ICD10 SubChapter",
+                                  name = "XYZ")
+  expect_true(length(codes4) == 0)
+
   DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 })
 

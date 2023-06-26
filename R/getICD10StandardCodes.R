@@ -2,6 +2,8 @@
 #'
 #' @param cdm cdm_reference via CDMConnector
 #' @param level Can be either "ICD10 Chapter" or "ICD10 SubChapter"
+#' @param name Name of chapter or sub-chapter of interest. If NULL, all
+#' will be considered.
 #' @param includeDescendants If FALSE only direct mappings from ICD-10 codes
 #' to standard codes will be returned. If TRUE descendants of standard concepts
 #' will also be included.
@@ -22,6 +24,7 @@ getICD10StandardCodes <- function(cdm,
                                     "ICD10 Chapter",
                                     "ICD10 SubChapter"
                                   ),
+                                  name = NULL,
                                   includeDescendants = TRUE) {
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
@@ -41,7 +44,8 @@ getICD10StandardCodes <- function(cdm,
   # first get non standard codes
   ICD10NonStandardCodes <- getICD10NonStandardCodes(
     cdm = cdm,
-    level = level
+    level = level,
+    name = name
   )
 
   if (!length(ICD10NonStandardCodes) > 0) {
@@ -117,10 +121,20 @@ getICD10NonStandardCodes <- function(cdm,
                                      level = c(
                                        "ICD10 Chapter",
                                        "ICD10 SubChapter"
-                                     )) {
+                                     ),
+                                     name) {
+
+
+  if(!is.null(name)){
+    conceptDb <- cdm[["concept"]] %>%
+      dplyr::filter(tolower(.data$concept_name) == tolower(.env$name))
+  } else {
+    conceptDb <- cdm[["concept"]]
+  }
+
   if ("ICD10 SubChapter" %in% level) {
     # go down two levels to get specific codes
-    icd_sub <- cdm[["concept"]] %>%
+    icd_sub <- conceptDb %>%
       dplyr::filter(.data$vocabulary_id == "ICD10") %>%
       dplyr::filter(.data$concept_class_id %in% "ICD10 SubChapter") %>%
       dplyr::select("concept_id", "concept_name", "concept_code") %>%
@@ -156,7 +170,7 @@ getICD10NonStandardCodes <- function(cdm,
 
   if ("ICD10 Chapter" %in% level) {
     # go down three levels to get specific codes
-    icd_ch <- cdm[["concept"]] %>%
+    icd_ch <- conceptDb %>%
       dplyr::filter(.data$vocabulary_id == "ICD10") %>%
       dplyr::filter(.data$concept_class_id %in% "ICD10 Chapter") %>%
       dplyr::select("concept_id", "concept_name", "concept_code") %>%
