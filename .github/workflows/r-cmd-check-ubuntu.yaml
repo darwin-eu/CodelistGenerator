@@ -13,14 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      CDM5_REDSHIFT_DBNAME: ${{ secrets.CDM5_REDSHIFT_DBNAME }}
-      CDM5_REDSHIFT_HOST: ${{ secrets.CDM5_REDSHIFT_HOST }}
-      CDM5_REDSHIFT_OHDSI_SCHEMA: ${{ secrets.CDM5_REDSHIFT_OHDSI_SCHEMA }}
-      CDM5_REDSHIFT_PASSWORD: ${{ secrets.CDM5_REDSHIFT_PASSWORD }}
-      CDM5_REDSHIFT_PORT: ${{ secrets.CDM5_REDSHIFT_PORT }}
-      CDM5_REDSHIFT_CDM_SCHEMA : ${{ secrets.CDM5_REDSHIFT_CDM_SCHEMA }}
-      CDM5_REDSHIFT_SCRATCH_SCHEMA: ${{ secrets.CDM5_REDSHIFT_SCRATCH_SCHEMA }}
-      CDM5_REDSHIFT_USER: ${{ secrets.CDM5_REDSHIFT_USER }}
       R_KEEP_PKG_SOURCE: yes
     steps:
       - uses: actions/checkout@v3
