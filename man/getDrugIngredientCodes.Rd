@@ -4,7 +4,12 @@
 \alias{getDrugIngredientCodes}
 \title{Get descendant codes for drug ingredients}
 \usage{
-getDrugIngredientCodes(cdm, name = NULL, doseForm = NULL)
+getDrugIngredientCodes(
+  cdm,
+  name = NULL,
+  doseForm = NULL,
+  withConceptDetails = FALSE
+)
 }
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
@@ -16,6 +21,10 @@ concepts for these two particular drug ingredients.}
 \item{doseForm}{Only descendants codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
+
+\item{withConceptDetails}{If FALSE a vector of concept IDs will be returned
+for each ingredient. If TRUE a tibble will be returned with additional
+information on the identified concepts.}
 }
 \value{
 A named list, with each item containing descendant concepts of

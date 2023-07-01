@@ -7,6 +7,9 @@
 #' @param includeDescendants If FALSE only direct mappings from ICD-10 codes
 #' to standard codes will be returned. If TRUE descendants of standard concepts
 #' will also be included.
+#' @param withConceptDetails If FALSE a vector of concept IDs will be returned
+#' for each ICD group If TRUE a tibble will be returned with additional
+#' information on the identified concepts.
 #'
 #' @return A named list, with each element containing the corresponding
 #' standard codes (and descendants) of ICD chapters and sub-chapters
@@ -25,7 +28,8 @@ getICD10StandardCodes <- function(cdm,
                                     "ICD10 SubChapter"
                                   ),
                                   name = NULL,
-                                  includeDescendants = TRUE) {
+                                  includeDescendants = TRUE,
+                                  withConceptDetails = FALSE) {
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   levelCheck <- all(level %in%
@@ -102,15 +106,29 @@ getICD10StandardCodes <- function(cdm,
       CDMConnector::compute_query()
   }
 
-  # split into list
-  ICD10StandardCodes <- ICD10MapsTo %>%
-    dplyr::select("name", "concept_id") %>%
-    dplyr::collect()
-
-  ICD10StandardCodes <- split(
-    x = ICD10StandardCodes$concept_id,
-    f = ICD10StandardCodes$name
-  )
+  if(isTRUE(withConceptDetails)) {
+    ICD10MapsTo <- ICD10MapsTo %>%
+      dplyr::left_join(cdm[["concept"]] %>%
+                         dplyr::select(c("concept_id", "concept_name",
+                                         "domain_id", "vocabulary_id")),
+                       by = "concept_id")
+    # split into list
+    ICD10StandardCodes <- ICD10MapsTo %>%
+      dplyr::collect()
+    ICD10StandardCodes <- split(
+      x = ICD10StandardCodes,
+      f = as.factor(ICD10StandardCodes$name),
+      drop = TRUE
+    )
+  } else {
+    # split into list (only returning vector of concept ids)
+    ICD10StandardCodes <- ICD10MapsTo %>%
+      dplyr::collect()
+    ICD10StandardCodes <- split(
+      x = ICD10StandardCodes$concept_id,
+      f = ICD10StandardCodes$name
+    )
+  }
 
   return(ICD10StandardCodes)
 }

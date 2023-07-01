@@ -8,7 +8,8 @@ getICD10StandardCodes(
   cdm,
   level = c("ICD10 Chapter", "ICD10 SubChapter"),
   name = NULL,
-  includeDescendants = TRUE
+  includeDescendants = TRUE,
+  withConceptDetails = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,10 @@ will be considered.}
 \item{includeDescendants}{If FALSE only direct mappings from ICD-10 codes
 to standard codes will be returned. If TRUE descendants of standard concepts
 will also be included.}
+
+\item{withConceptDetails}{If FALSE a vector of concept IDs will be returned
+for each ICD group If TRUE a tibble will be returned with additional
+information on the identified concepts.}
 }
 \value{
 A named list, with each element containing the corresponding

@@ -10,6 +10,12 @@ test_that("getATCCodes working", {
                            name = "ALIMENTARY TRACT AND METABOLISM")
   expect_true(all(atcCodes2[[1]] == c(12,13)))
 
+  atcCodes3 <- getATCCodes(cdm, level = "ATC 1st",
+                           name = "ALIMENTARY TRACT AND METABOLISM",
+                           withConceptDetails = TRUE)
+  expect_true(!is.null(atcCodes3[[1]]$concept_name))
+
+
   if (backends[[i]] == "database") {
     DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
   }
@@ -54,6 +60,12 @@ test_that("getDrugIngredientCodes working", {
                                          name = "Adalimumab",
                                          doseForm = "injection")
     expect_true(all(ing_codes4[[1]] == c(10)))
+
+    ing_codes5 <- getDrugIngredientCodes(cdm,
+                                         name = "Adalimumab",
+                                         doseForm = "injection",
+                                         withConceptDetails = TRUE)
+    expect_true(!is.null(ing_codes5[[1]]$concept_name))
 
     if (backends[[i]] == "database") {
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)

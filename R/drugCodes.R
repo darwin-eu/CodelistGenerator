@@ -25,6 +25,9 @@
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
+#' @param withConceptDetails If FALSE a vector of concept IDs will be returned
+#' for each ATC group If TRUE a tibble will be returned with additional
+#' information on the identified concepts.
 #'
 #' @return A named list, with each element containing the descendant
 #' concepts for a particular ATC group
@@ -37,7 +40,8 @@
 getATCCodes <- function(cdm,
                         level = c("ATC 1st"),
                         name = NULL,
-                        doseForm = NULL) {
+                        doseForm = NULL,
+                        withConceptDetails = FALSE) {
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   levelCheck <- all(level %in%
@@ -58,6 +62,7 @@ getATCCodes <- function(cdm,
     add = errorMessage,
     null.ok = TRUE
   )
+  checkmate::assertLogical(withConceptDetails, len = 1)
   checkmate::reportAssertions(collection = errorMessage)
 
   atc_groups <- cdm$concept %>%
@@ -89,7 +94,9 @@ getATCCodes <- function(cdm,
   )
   if (nrow(atc_descendants) > 0) {
     atc_descendants <- atc_descendants %>%
-      dplyr::select(c("concept_id", "ancestor_concept_id")) %>%
+      dplyr::select(c("concept_id", "concept_name",
+                      "domain_id", "vocabulary_id",
+                      "ancestor_concept_id")) %>%
       # split different ancestors into multiple cols
       tidyr::separate_wider_delim(
         cols = "ancestor_concept_id",
@@ -100,7 +107,8 @@ getATCCodes <- function(cdm,
 
     atc_descendants <- atc_descendants %>%
       # one row per concept + ancestor
-      tidyr::pivot_longer(!"concept_id",
+      tidyr::pivot_longer(cols = !c("concept_id", "concept_name",
+                             "domain_id", "vocabulary_id"),
         names_to = NULL,
         values_to = "ancestor_concept_id",
         values_drop_na = TRUE
@@ -123,10 +131,15 @@ getATCCodes <- function(cdm,
         dplyr::filter(.data$concept_id == names(atc_descendants)[i]) %>%
         dplyr::pull("concept_name")
 
+      if(isFALSE(withConceptDetails)){
       atc_descendants[[i]] <- atc_descendants[[i]] %>%
         dplyr::select("concept_id") %>%
         dplyr::distinct() %>%
         dplyr::pull()
+      } else {
+        atc_descendants[[i]] <- atc_descendants[[i]] %>%
+          dplyr::select(!"ancestor_concept_id")
+      }
 
       names(atc_descendants)[i] <- paste0(
         workingLevel, ": ", workingName,
@@ -146,6 +159,9 @@ getATCCodes <- function(cdm,
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
+#' @param withConceptDetails If FALSE a vector of concept IDs will be returned
+#' for each ingredient. If TRUE a tibble will be returned with additional
+#' information on the identified concepts.
 #'
 #' @return A named list, with each item containing descendant concepts of
 #' an ingredient
@@ -155,13 +171,17 @@ getATCCodes <- function(cdm,
 #'cdm <- mockVocabRef()
 #'getDrugIngredientCodes(cdm = cdm, name = "Adalimumab")
 #'DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
-getDrugIngredientCodes <- function(cdm, name = NULL, doseForm = NULL) {
+getDrugIngredientCodes <- function(cdm,
+                                   name = NULL,
+                                   doseForm = NULL,
+                                   withConceptDetails = FALSE) {
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   checkmate::assertVector(name,
     add = errorMessage,
     null.ok = TRUE
   )
+  checkmate::assertLogical(withConceptDetails, len = 1)
   checkmate::reportAssertions(collection = errorMessage)
 
   ingredientConcepts <- cdm$concept %>%
@@ -194,8 +214,10 @@ getDrugIngredientCodes <- function(cdm, name = NULL, doseForm = NULL) {
     )
   }
 
-      ingredientCodes <- ingredientCodes %>%
-      dplyr::select(c("concept_id", "ancestor_concept_id")) %>%
+      ingredientCodes <- ingredientCodes  %>%
+        dplyr::select(c("concept_id", "concept_name",
+                        "domain_id", "vocabulary_id",
+                        "ancestor_concept_id")) %>%
       # split different ancestors into multiple cols
       tidyr::separate_wider_delim(
         cols = "ancestor_concept_id",
@@ -206,7 +228,8 @@ getDrugIngredientCodes <- function(cdm, name = NULL, doseForm = NULL) {
 
     ingredientCodes <- ingredientCodes %>%
       # one row per concept + ancestor
-      tidyr::pivot_longer(!"concept_id",
+      tidyr::pivot_longer(cols = !c("concept_id", "concept_name",
+                                    "domain_id", "vocabulary_id"),
         names_to = NULL,
         values_to = "ancestor_concept_id",
         values_drop_na = TRUE
@@ -226,10 +249,15 @@ getDrugIngredientCodes <- function(cdm, name = NULL, doseForm = NULL) {
         dplyr::filter(.data$concept_id == names(ingredientCodes)[[i]]) %>%
         dplyr::pull("concept_name")
 
-      ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
-        dplyr::select("concept_id") %>%
-        dplyr::distinct() %>%
-        dplyr::pull()
+      if(isFALSE(withConceptDetails)){
+        ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
+          dplyr::select("concept_id") %>%
+          dplyr::distinct() %>%
+          dplyr::pull()
+      } else {
+        ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
+          dplyr::select(!"ancestor_concept_id")
+      }
 
       names(ingredientCodes)[[i]] <- paste0(
         "Ingredient", ": ", workingName,

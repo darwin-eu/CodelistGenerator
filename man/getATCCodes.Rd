@@ -4,7 +4,13 @@
 \alias{getATCCodes}
 \title{Get descendant codes for ATC levels}
 \usage{
-getATCCodes(cdm, level = c("ATC 1st"), name = NULL, doseForm = NULL)
+getATCCodes(
+  cdm,
+  level = c("ATC 1st"),
+  name = NULL,
+  doseForm = NULL,
+  withConceptDetails = FALSE
+)
 }
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
@@ -19,6 +25,10 @@ concepts for these two particular ATC groups.}
 \item{doseForm}{Only descendants codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
+
+\item{withConceptDetails}{If FALSE a vector of concept IDs will be returned
+for each ATC group If TRUE a tibble will be returned with additional
+information on the identified concepts.}
 }
 \value{
 A named list, with each element containing the descendant
