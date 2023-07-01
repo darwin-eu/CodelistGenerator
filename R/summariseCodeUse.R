@@ -199,14 +199,12 @@ if(length(tableName)>0){
                             dplyr::filter(.data$table_name == tableName[[i+1]]) %>%
                             dplyr::select("concept_id"),
                           by = "concept_id",
-                          copy = TRUE) %>%
-        CDMConnector::compute_query()
+                          copy = TRUE)
       codeRecords <- codeRecords %>%
         dplyr::union_all(workingRecords) %>%
         CDMConnector::compute_query()
     }
   }
-
 
   return(codeRecords)
 
