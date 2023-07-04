@@ -2,7 +2,6 @@ test_that("summarise code use", {
 
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
 
-
   db <-  DBI::dbConnect(RPostgres::Redshift(),
                  dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
                  host     = Sys.getenv("CDM5_REDSHIFT_HOST"),
@@ -10,10 +9,8 @@ test_that("summarise code use", {
                  user     = Sys.getenv("CDM5_REDSHIFT_USER"),
                  password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
-
   cdm <- CDMConnector::cdm_from_con(con = db,
-                                    cdm_schema = "cdmv531",
-                                    write_schema = "public")
+                                    cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"))
 
   asthma <- c(317009, 257581)
 
@@ -24,7 +21,6 @@ test_that("summarise code use", {
                               ageGroup = list(c(0,17),
                                               c(18,65),
                                               c(66, 100)))
-
   # column names
   expect_true(tibble::is_tibble(results))
 
@@ -145,28 +141,30 @@ test_that("summarise code use", {
                 dplyr::tally() %>%
                 dplyr::pull("n"))
 
-  CDMConnector::cdm_disconnect(cdm)
-
-})
-
-test_that("check min cell count ", {
-
-  testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
-
-  db <-  DBI::dbConnect(RPostgres::Redshift(),
-                        dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
-                        host     = Sys.getenv("CDM5_REDSHIFT_HOST"),
-                        port     = Sys.getenv("CDM5_REDSHIFT_PORT"),
-                        user     = Sys.getenv("CDM5_REDSHIFT_USER"),
-                        password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
 
-  cdm <- CDMConnector::cdm_from_con(con = db,
-                                    cdm_schema = "cdmv531",
-                                    write_schema = "public")
 
-  asthma <- c(317009, 257581)
+  results <- summariseCodeUse(asthma,
+                              cdm = cdm, countBy = "person",
+                              byYear = FALSE,
+                              bySex = FALSE,
+                              ageGroup = NULL)
+  expect_true(nrow(results %>%
+    dplyr::filter(variable_name == "Person count")) > 0)
+  expect_true(nrow(results %>%
+    dplyr::filter(variable_name == "Record count")) == 0)
 
+  results <- summariseCodeUse(asthma,
+                              cdm = cdm, countBy = "record",
+                              byYear = FALSE,
+                              bySex = FALSE,
+                              ageGroup = NULL)
+  expect_true(nrow(results %>%
+                     dplyr::filter(variable_name == "Person count")) == 0)
+  expect_true(nrow(results %>%
+                     dplyr::filter(variable_name == "Record count")) > 0)
+
+  # check min cell count
   results <- summariseCodeUse(asthma,
                               cdm = cdm,
                               byYear = FALSE,
@@ -175,25 +173,7 @@ test_that("check min cell count ", {
                               minCellCount = 75)
   expect_true(max(results$estimate, na.rm = TRUE) >=75)
 
-  CDMConnector::cdm_disconnect(cdm)
-
-})
-
-test_that("domains covered", {
-
-  testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
-
-  db <-  DBI::dbConnect(RPostgres::Redshift(),
-                        dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
-                        host     = Sys.getenv("CDM5_REDSHIFT_HOST"),
-                        port     = Sys.getenv("CDM5_REDSHIFT_PORT"),
-                        user     = Sys.getenv("CDM5_REDSHIFT_USER"),
-                        password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
-
-
-  cdm <- CDMConnector::cdm_from_con(con = db,
-                                    cdm_schema = "cdmv531",
-                                    write_schema = "public")
+# domains covered
 
   # condition
   expect_true(nrow(summariseCodeUse(c(317009),
@@ -223,34 +203,24 @@ expect_true(nrow(summariseCodeUse(2212542,
                             bySex = FALSE,
                             ageGroup = NULL))>1)
 
-# procedure
-expect_true(nrow(summariseCodeUse(4261206,
+# procedure and condition
+expect_true(nrow(summariseCodeUse(c(4261206,317009),
                             cdm = cdm,
                             byYear = FALSE,
                             bySex = FALSE,
                             ageGroup = NULL))>1)
 
-
-CDMConnector::cdm_disconnect(cdm)
-
-})
-
-test_that("expected errors", {
-
-  testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
-
-  db <-  DBI::dbConnect(RPostgres::Redshift(),
-                        dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
-                        host     = Sys.getenv("CDM5_REDSHIFT_HOST"),
-                        port     = Sys.getenv("CDM5_REDSHIFT_PORT"),
-                        user     = Sys.getenv("CDM5_REDSHIFT_USER"),
-                        password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
+# no records
+expect_message(results <- summariseCodeUse(c(999999),
+                 cdm = cdm,
+                 byYear = FALSE,
+                 bySex = FALSE,
+                 ageGroup = NULL))
+expect_true(nrow(results) == 0)
 
 
-  cdm <- CDMConnector::cdm_from_con(con = db,
-                                    cdm_schema = "cdmv531",
-                                    write_schema = "public")
 
+# expected errors
   expect_error(summariseCodeUse("not a concept",
                    cdm = cdm,
                    byYear = FALSE,
@@ -276,6 +246,18 @@ test_that("expected errors", {
                    byYear = FALSE,
                    bySex = FALSE,
                    ageGroup = 25))
+  expect_error(summariseCodeUse(123,
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = list(c(18,17))))
+  expect_error(summariseCodeUse(123,
+                  cdm = cdm,
+                  byYear = FALSE,
+                  bySex = FALSE,
+                  ageGroup = list(c(0,17),
+                                  c(15,20))))
+
 
   CDMConnector::cdmDisconnect(cdm)
 

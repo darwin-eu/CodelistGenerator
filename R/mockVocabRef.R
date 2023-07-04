@@ -33,7 +33,7 @@ mockVocabRef <- function(backend = "database") {
 
   # tables
   concept <- data.frame(
-    concept_id = 1:17,
+    concept_id = 1:18,
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
@@ -51,35 +51,38 @@ mockVocabRef <- function(backend = "database") {
       "Injectable",
       "Diseases of the musculoskeletal system and connective tissue",
       "Arthropathies",
+      "Arthritis",
       "OA"
     ),
     domain_id = c(rep("Condition", 8), "Observation",rep("Drug", 5),
-                  rep("Condition", 3)),
+                  rep("Condition", 4)),
     vocabulary_id = c(
       rep("SNOMED", 6),
       rep("Read", 2),
       "LOINC", "RxNorm", "OMOP",
       "ATC",
       "RxNorm", "OMOP",
-      "ICD10", "ICD10", "ICD10"
+      "ICD10", "ICD10", "ICD10", "ICD10"
     ),
     standard_concept = c(
       rep("S", 6),
       rep(NA, 2),
       "S", "S", NA,
-      NA, "S", NA, NA, NA, NA
+      NA, "S", NA, NA, NA, NA, NA
     ),
     concept_class_id = c(
       rep("Clinical Finding", 6),
       rep("Diagnosis", 2),
       "Observation", "Ingredient", "Dose Form",
       "ATC 1st", "Drug", "Dose Form",
-      "ICD10 Chapter", "ICD10 SubChapter", "ICD Code"
+      "ICD10 Chapter", "ICD10 SubChapter",
+      "ICD Code","ICD Code"
     ),
     concept_code = "1234",
     valid_start_date = NA,
     valid_end_date = NA,
-    invalid_reason = NA
+    invalid_reason =
+      NA
   )
   conceptAncestor <- dplyr::bind_rows(
     data.frame(
@@ -204,6 +207,11 @@ mockVocabRef <- function(backend = "database") {
     ),
     data.frame(
       concept_id_1 = 17L,
+      concept_id_2 = 18L,
+      relationship_id = "Subsumes"
+    ),
+    data.frame(
+      concept_id_1 = 18L,
       concept_id_2 = 3L,
       relationship_id = "Maps to"
     )

@@ -89,8 +89,8 @@ test_that("tests with mock db", {
       includeDescendants = TRUE,
       searchViaSynonyms = FALSE
     )
-    expect_true((nrow(codes) == 4 &
-      all(codes$concept_id %in% c(3, 4, 5, 8)) &
+    expect_true((nrow(codes) == 5 &
+      all(codes$concept_id %in% c(3, 4, 5, 8, 17)) &
       all(!codes$concept_id %in% c(1, 2, 7))))
 
 

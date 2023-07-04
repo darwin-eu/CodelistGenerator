@@ -2,6 +2,10 @@
 #'
 #' @param x Vector of concept IDs
 #' @param cdm cdm_reference via CDMConnector::cdm_from_con()
+#' @param countBy Either "record" for record-level counts or "person" for
+#' person-level counts
+#' @param byConcept TRUE or FALSE. If TRUE code use will be summarised by
+#'
 #' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
 #' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
 #' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
@@ -14,6 +18,8 @@
 #' @examples
 summariseCodeUse <- function(x,
                              cdm,
+                             countBy = c("record", "person"),
+                             byConcept = TRUE,
                              byYear = TRUE,
                              bySex = TRUE,
                              ageGroup = list(c(0,17),
@@ -24,7 +30,9 @@ summariseCodeUse <- function(x,
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
+  checkmate::assertTRUE(all(countBy %in% c("record", "person")))
   checkmate::assertIntegerish(x, add = errorMessage)
+  checkmate::assert_logical(byConcept, add = errorMessage)
   checkmate::assert_logical(byYear, add = errorMessage)
   checkmate::assert_logical(bySex, add = errorMessage)
   checkmate::assert_numeric(minCellCount, len = 1,
@@ -66,6 +74,8 @@ summariseCodeUse <- function(x,
   byAgeGroup <- !is.null(ageGroup)
   codeCounts <- getSummaryCounts(records = records,
                                  cdm = cdm,
+                                 countBy = countBy,
+                                 byConcept = byConcept,
                                  byYear = byYear,
                                  bySex = bySex,
                                  byAgeGroup = byAgeGroup)
@@ -76,6 +86,12 @@ summariseCodeUse <- function(x,
     dplyr::mutate(estimate = dplyr::if_else(
       .data$estimate_suppressed == "TRUE",
       NA, .data$estimate))
+
+  if(!"record" %in% countBy){
+    codeCounts <- codeCounts %>%
+      dplyr::mutate(concept_name= NA,
+                    concept_id =NA)
+  }
 
   codeCounts <- codeCounts %>%
     dplyr::mutate(group_level = dplyr::if_else(.data$group_name == "By concept",
@@ -183,14 +199,12 @@ if(length(tableName)>0){
                             dplyr::filter(.data$table_name == tableName[[i+1]]) %>%
                             dplyr::select("concept_id"),
                           by = "concept_id",
-                          copy = TRUE) %>%
-        CDMConnector::compute_query()
+                          copy = TRUE)
       codeRecords <- codeRecords %>%
         dplyr::union_all(workingRecords) %>%
         CDMConnector::compute_query()
     }
   }
-
 
   return(codeRecords)
 
@@ -199,35 +213,47 @@ if(length(tableName)>0){
 
 getSummaryCounts <- function(records,
                              cdm,
+                             countBy,
+                             byConcept,
                              byYear,
                              bySex,
                              byAgeGroup){
 
-# always return overall counts
-recordSummary <- dplyr::bind_rows(records %>%
+if("record" %in% countBy){
+recordSummary <- records %>%
     dplyr::tally(name = "estimate") %>%
     dplyr::mutate(estimate = as.integer(.data$estimate),
                   group_name = "Codelist") %>%
-    dplyr::collect(),
-  records %>%
+    dplyr::collect()
+if(isTRUE(byConcept)) {
+  recordSummary <- dplyr::bind_rows(recordSummary,
+                   records %>%
     dplyr::group_by(.data$concept_id, .data$concept_name) %>%
     dplyr::tally(name = "estimate") %>%
     dplyr::mutate(estimate = as.integer(.data$estimate),
                   group_name = "By concept") %>%
-    dplyr::collect()) %>%
+    dplyr::collect())
+}
+recordSummary <- recordSummary %>%
   dplyr::mutate(
     strata_name = "Overall",
     strata_level = "Overall",
     variable_name = "Record count")
+} else {
+  recordSummary <- dplyr::tibble()
+}
 
-personSummary <- dplyr::bind_rows(
-  records %>%
+if("person" %in% countBy){
+personSummary <- records %>%
     dplyr::select("person_id") %>%
     dplyr::distinct() %>%
     dplyr::tally(name = "estimate") %>%
     dplyr::mutate(estimate = as.integer(.data$estimate),
                   group_name = "Codelist") %>%
-    dplyr::collect(),
+    dplyr::collect()
+
+if(isTRUE(byConcept)) {
+personSummary <- dplyr::bind_rows(personSummary,
   records %>%
     dplyr::select("person_id", "concept_id", "concept_name") %>%
     dplyr::distinct() %>%
@@ -235,21 +261,26 @@ personSummary <- dplyr::bind_rows(
     dplyr::tally(name = "estimate") %>%
     dplyr::mutate(estimate = as.integer(.data$estimate),
                   group_name = "By concept") %>%
-    dplyr::collect()) %>%
+    dplyr::collect())
+  }
+personSummary <- personSummary %>%
   dplyr::mutate(
     strata_name = "Overall",
     strata_level = "Overall",
     variable_name = "Person count")
+} else {
+  personSummary <- dplyr::tibble()
+}
 
 
-
-
-if(byYear == TRUE){
+if("record" %in% countBy & byYear == TRUE){
   recordSummary <- dplyr::bind_rows(recordSummary,
                                     getGroupedRecordCount(records = records,
                                                           cdm = cdm,
                                                           groupBy = "year",
                                                           groupName = "Year"))
+}
+  if("person" %in% countBy & byYear == TRUE){
   personSummary <- dplyr::bind_rows(personSummary,
                                     getGroupedPersonCount(records = records,
                                                           cdm = cdm,
@@ -258,12 +289,15 @@ if(byYear == TRUE){
 
   }
 
-if(bySex == TRUE){
+if("record" %in% countBy & bySex == TRUE){
   recordSummary <- dplyr::bind_rows(recordSummary,
                                     getGroupedRecordCount(records = records,
                                                           cdm = cdm,
                                                           groupBy = "sex",
                                                           groupName = "Sex"))
+}
+
+if("person" %in% countBy & bySex == TRUE){
   personSummary <- dplyr::bind_rows(personSummary,
                                     getGroupedPersonCount(records = records,
                                                           cdm = cdm,
@@ -271,12 +305,16 @@ if(bySex == TRUE){
                                                           groupName = "Sex"))
 }
 
-if(byAgeGroup == TRUE){
+
+  if("record" %in% countBy & byAgeGroup == TRUE){
   recordSummary <- dplyr::bind_rows(recordSummary,
                                     getGroupedRecordCount(records = records,
                                                           cdm = cdm,
                                                           groupBy = "age_group",
                                                           groupName = "Age group"))
+  }
+
+  if("person" %in% countBy & byAgeGroup == TRUE){
   personSummary <- dplyr::bind_rows(personSummary,
                                     getGroupedPersonCount(records = records,
                                                           cdm = cdm,
@@ -284,13 +322,16 @@ if(byAgeGroup == TRUE){
                                                           groupName = "Age group"))
 }
 
-if(byAgeGroup == TRUE && bySex == TRUE){
+if("record" %in% countBy && byAgeGroup == TRUE && bySex == TRUE){
   recordSummary <- dplyr::bind_rows(recordSummary,
                                     getGroupedRecordCount(records = records,
                                                           cdm = cdm,
                                                           groupBy = c("age_group",
                                                                       "sex"),
                                                           groupName = "Age group and sex"))
+}
+
+  if("person" %in% countBy && byAgeGroup == TRUE && bySex == TRUE){
   personSummary <- dplyr::bind_rows(personSummary,
                                     getGroupedPersonCount(records = records,
                                                           cdm = cdm,

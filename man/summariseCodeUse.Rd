@@ -7,6 +7,8 @@
 summariseCodeUse(
   x,
   cdm,
+  countBy = c("record", "person"),
+  byConcept = TRUE,
   byYear = TRUE,
   bySex = TRUE,
   ageGroup = list(c(0, 17), c(18, 65), c(66, 120)),
@@ -17,6 +19,11 @@ summariseCodeUse(
 \item{x}{Vector of concept IDs}
 
 \item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
+
+\item{countBy}{Either "record" for record-level counts or "person" for
+person-level counts}
+
+\item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by}
 
 \item{byYear}{TRUE or FALSE. If TRUE code use will be summarised by year.}
 
