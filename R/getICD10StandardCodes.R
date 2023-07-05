@@ -109,8 +109,8 @@ getICD10StandardCodes <- function(cdm,
   if(isTRUE(withConceptDetails)) {
     ICD10MapsTo <- ICD10MapsTo %>%
       dplyr::left_join(cdm[["concept"]] %>%
-                         dplyr::select(c("concept_id", "concept_name",
-                                         "domain_id", "vocabulary_id")),
+                         dplyr::select("concept_id", "concept_name",
+                                       "domain_id", "vocabulary_id"),
                        by = "concept_id")
     # split into list
     ICD10StandardCodes <- ICD10MapsTo %>%

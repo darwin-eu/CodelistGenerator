@@ -68,7 +68,7 @@ compareCodelists <- function(codelist1,
 
 
   all <- dplyr::bind_rows(codelist1, codelist2) %>%
-    dplyr::select(c("concept_id", "concept_name"))
+    dplyr::select("concept_id", "concept_name")
   duplicates <- all[duplicated(all), ]
   unique <- unique(all)
 

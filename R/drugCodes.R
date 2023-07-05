@@ -94,9 +94,9 @@ getATCCodes <- function(cdm,
   )
   if (nrow(atc_descendants) > 0) {
     atc_descendants <- atc_descendants %>%
-      dplyr::select(c("concept_id", "concept_name",
-                      "domain_id", "vocabulary_id",
-                      "ancestor_concept_id")) %>%
+      dplyr::select("concept_id", "concept_name",
+                    "domain_id", "vocabulary_id",
+                    "ancestor_concept_id") %>%
       # split different ancestors into multiple cols
       tidyr::separate_wider_delim(
         cols = "ancestor_concept_id",
@@ -215,9 +215,9 @@ getDrugIngredientCodes <- function(cdm,
   }
 
       ingredientCodes <- ingredientCodes  %>%
-        dplyr::select(c("concept_id", "concept_name",
-                        "domain_id", "vocabulary_id",
-                        "ancestor_concept_id")) %>%
+        dplyr::select("concept_id", "concept_name",
+                      "domain_id", "vocabulary_id",
+                      "ancestor_concept_id") %>%
       # split different ancestors into multiple cols
       tidyr::separate_wider_delim(
         cols = "ancestor_concept_id",
