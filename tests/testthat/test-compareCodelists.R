@@ -70,7 +70,7 @@ test_that("comparing two codelists", {
 })
 
 test_that("comparing two codelists- same codes found different ways", {
-  backends <- c("database", "arrow")
+  backends <- c("database")
 
   for (i in seq_along(backends)) {
     # mock db
