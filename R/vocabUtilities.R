@@ -388,7 +388,7 @@ descendants <- descendants %>%
 
 descendants <- descendants %>%
      tidyr::unite(col="ancestor_concept_id",
-                  working_cols, sep=";")
+                  dplyr::all_of(working_cols), sep=";")
 # quicker to replace NAs afterwards rather than inside unite
 # (especially when there are many columns)
 descendants$ancestor_concept_id <- stringr::str_replace_all(
