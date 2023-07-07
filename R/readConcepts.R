@@ -161,7 +161,7 @@ readConceptSet <- function(conceptSets) {
     if (k == 1) {
       conceptList <- conceptSet
     } else {
-      conceptList <- rbind(conceptList, conceptSet)
+      conceptList <- dplyr::bind_rows(conceptList, conceptSet)
     }
   }
   conceptList <- conceptList %>%
