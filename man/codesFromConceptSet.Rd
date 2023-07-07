@@ -7,7 +7,7 @@
 codesFromConceptSet(path, cdm, withConceptDetails = FALSE)
 }
 \arguments{
-\item{path}{path to a file or folder containing jsons to be read}
+\item{path}{Path to a file or folder containing JSONs of concept sets}
 
 \item{cdm}{A cdm reference created with CDMConnector}
 
@@ -16,7 +16,7 @@ for each concept set. If TRUE a tibble will be returned with additional
 information on the identified concepts.}
 }
 \value{
-list of concept_ids and respective concept_ids of interest
+Named list with concept_ids for each concept set
 }
 \description{
 Get concept ids from a provided path to json files

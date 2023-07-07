@@ -1,9 +1,13 @@
 Package: CodelistGenerator
 Title: Generate Code Lists for the OMOP Common Data Model
-Version: 1.5.0
-Authors@R: 
-    person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-9286-1128"))
+Version: 1.6.0
+Authors@R: c(
+    person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-9286-1128")),
+    person("Marti", "Catala", email = "marti.catalasabate@ndorms.ox.ac.uk", 
+    role = c("ctb"), 
+    comment = c(ORCID = "0000-0003-3308-9905")))
 Description: Generate a candidate code list for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate code list will be returned.
 License: Apache License (>= 2)
 Encoding: UTF-8
