@@ -11,12 +11,6 @@ test_that("test inputs - mock", {
   # we currently don´t support the use of mapped in a concept set
   expect_error(codesFromConceptSet(
     cdm = cdm, path =  system.file(package = "CodelistGenerator",
-                                   "concepts_for_mock_with_exclude")
-  ))
-
-  # we currently don´t support the use of mapped in a concept set
-  expect_error(codesFromConceptSet(
-    cdm = cdm, path =  system.file(package = "CodelistGenerator",
                                    "concepts_for_mock_with_mapped")
   ))
 
@@ -27,6 +21,13 @@ test_that("test inputs - mock", {
   )
   expect_true(x$oa_no_desc == "3")
   expect_true(all(c("3", "4", "5") %in% x$oa_desc))
+
+  x <- codesFromConceptSet(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "concepts_for_mock_with_exclude")
+  )
+  expect_true(all(c("3", "5") %in% x$oa_with_excluded))
+  expect_true(!c("4") %in% x$oa_with_excluded)
 
   # withDetails
   x <- codesFromConceptSet(
@@ -66,6 +67,14 @@ test_that("test inputs - redshift", {
   expect_true(x$influenza == 4266367)
   expect_true(all(1125315 %in% x$acetaminophen))
   expect_true(length(x$acetaminophen) > 1)
+
+  x <- codesFromConceptSet(
+    cdm = cdm,
+    path =  system.file(package = "CodelistGenerator",
+                        "concepts"),
+    withConceptDetails = TRUE
+  )
+  expect_true("Influenza" %in% x$influenza$concept_name)
 
   CDMConnector::cdmDisconnect(cdm)
 })

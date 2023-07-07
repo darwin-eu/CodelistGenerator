@@ -16,13 +16,13 @@
 
 #' Get concept ids from a provided path to json files
 #'
-#' @param path path to a file or folder containing jsons to be read
+#' @param path Path to a file or folder containing JSONs of concept sets
 #' @param cdm A cdm reference created with CDMConnector
 #' @param withConceptDetails If FALSE a vector of concept IDs will be returned
 #' for each concept set. If TRUE a tibble will be returned with additional
 #' information on the identified concepts.
 #'
-#' @return list of concept_ids and respective concept_ids of interest
+#' @return Named list with concept_ids for each concept set
 #' @export
 #'
 #' @examples
@@ -59,14 +59,6 @@ codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
       )
     }
   )
-
-  if(any(conceptList$is_excluded == TRUE)){
-    exc <- paste(conceptList %>%
-      dplyr::filter(.data$is_excluded == TRUE) %>%
-      dplyr::pull("cohort_name"), collapse = "; ")
-    cli::cli_abort(
-      glue::glue("Excluded as TRUE not supported (found in {exc})"))
-  }
 
   if(any(conceptList$include_mapped == TRUE)){
     exc <- paste(conceptList %>%
@@ -105,7 +97,7 @@ addDetails <- function(conceptList, cdm){
                      copy = TRUE)
 
    conceptList <- split(
-    x = conceptList,
+    x = conceptList %>% dplyr::select(!"concept_set"),
     f = as.factor(conceptList$concept_set)
   )
 
