@@ -40,6 +40,9 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/CodelistGenerator-package.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesFromConceptSet.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
   </url>
   <url>
@@ -83,9 +86,6 @@
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/readConceptList.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCodeUse.html</loc>
