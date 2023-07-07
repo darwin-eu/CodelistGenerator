@@ -18,13 +18,16 @@
 #'
 #' @param path path to a file or folder containing jsons to be read
 #' @param cdm A cdm reference created with CDMConnector
+#' @param withConceptDetails If FALSE a vector of concept IDs will be returned
+#' for each concept set. If TRUE a tibble will be returned with additional
+#' information on the identified concepts.
 #'
 #' @return list of concept_ids and respective concept_ids of interest
 #' @export
 #'
 #' @examples
 #'
-readConceptList <- function(path, cdm) {
+codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
   # initial checks
   checkInputs(path = path, cdm = cdm)
 
@@ -57,12 +60,62 @@ readConceptList <- function(path, cdm) {
     }
   )
 
+  if(any(conceptList$is_excluded == TRUE)){
+    exc <- paste(conceptList %>%
+      dplyr::filter(.data$is_excluded == TRUE) %>%
+      dplyr::pull("cohort_name"), collapse = "; ")
+    cli::cli_abort(
+      glue::glue("Excluded as TRUE not supported (found in {exc})"))
+  }
+
+  if(any(conceptList$include_mapped == TRUE)){
+    exc <- paste(conceptList %>%
+                   dplyr::filter(.data$include_mapped == TRUE) %>%
+                   dplyr::pull("cohort_name"), collapse = "; ")
+    cli::cli_abort(
+      glue::glue("Mapped as TRUE not supported (found in {exc})"))
+  }
+
   # second part: produce output list
   conceptFinalList <- formatConceptList(conceptList, cdm)
+
+  if(isTRUE(withConceptDetails)){
+    conceptFinalList <- addDetails(conceptList = conceptFinalList,
+               cdm = cdm)
+  }
 
   # return list
   return(conceptFinalList)
 }
+
+
+
+addDetails <- function(conceptList, cdm){
+
+  for(i in seq_along(conceptList)){
+    conceptList[[i]] <- dplyr::tibble(concept_id = conceptList[[i]],
+                                      concept_set = names(conceptList)[i])
+  }
+
+  conceptList <- dplyr::bind_rows(conceptList) %>%
+    dplyr::left_join(cdm[["concept"]] %>%
+      dplyr::select("concept_id", "concept_name",
+                "domain_id", "vocabulary_id"),
+                     by = "concept_id",
+                     copy = TRUE)
+
+   conceptList <- split(
+    x = conceptList,
+    f = as.factor(conceptList$concept_set)
+  )
+
+   return(conceptList)
+
+}
+
+
+
+
 
 #' Put concept ids from all cohorts of interest in the required list format
 #'
@@ -161,7 +214,7 @@ readConceptSet <- function(conceptSets) {
     if (k == 1) {
       conceptList <- conceptSet
     } else {
-      conceptList <- rbind(conceptList, conceptSet)
+      conceptList <- dplyr::bind_rows(conceptList, conceptSet)
     }
   }
   conceptList <- conceptList %>%
@@ -169,7 +222,9 @@ readConceptSet <- function(conceptSets) {
       "cohort_name",
       "concept_id" = "CONCEPT_ID",
       "is_excluded" = "isExcluded",
-      "include_descendants" = "includeDescendants"
+      "include_descendants" = "includeDescendants",
+      "include_mapped" = "includeMapped"
     )
+
   return(conceptList)
 }
