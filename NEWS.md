@@ -1,3 +1,7 @@
+# CodelistGenerator 1.6.0
+* Improved getICD10StandardCodes function.
+* Added function codesFromConceptSet.
+
 # CodelistGenerator 1.5.0
 * Require CDMConnector v1.0.0 or above.
 
