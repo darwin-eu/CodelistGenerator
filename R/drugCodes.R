@@ -89,7 +89,7 @@ getATCCodes <- function(cdm,
   atc_descendants <- getDescendants(
     cdm = cdm,
     conceptId = atc_groups$concept_id,
-    withAncestor = TRUE,
+    withAncestor = FALSE,
     doseForm = doseForm
   )
   if (nrow(atc_descendants) > 0) {
