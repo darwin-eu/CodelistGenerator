@@ -137,10 +137,11 @@ extractCodes <- function(file, unknown) {
     if (is.null(name)) {
       name <- paste0("unkown concept set ", unknown)
       unknown <- unknown + 1
-    } else if (name %in% names(codes)) {
-      basefile <- basename(file)
-      name <- paste0(name, " (", substr(basefile, 1, nchar(basefile) - 5), ")")
     }
+    #else if (name %in% names(codes)) {
+    #  basefile <- basename(file)
+    #  name <- paste0(name, " (", substr(basefile, 1, nchar(basefile) - 5), ")")
+    #}
     concepts <- json[[k]][["expression"]][["items"]]
     conceptId <- NULL
     includeDescendants <- NULL
