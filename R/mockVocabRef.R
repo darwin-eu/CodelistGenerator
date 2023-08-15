@@ -250,6 +250,21 @@ mockVocabRef <- function(backend = "database") {
     )
   )
 
+  cdmSource <- dplyr::as_tibble(
+    data.frame(
+      cdm_source_name  = "mock",
+      cdm_source_abbreviation = NA,
+      cdm_holder = NA,
+      source_description = NA,
+      source_documentation_reference = NA,
+      cdm_etl_reference = NA,
+      source_release_date = NA,
+      cdm_release_date = NA,
+      cdm_version = NA,
+      vocabulary_version  = NA
+    )
+  )
+
   # into in-memory duckdb
   db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
 
@@ -289,7 +304,14 @@ mockVocabRef <- function(backend = "database") {
       overwrite = TRUE
     )
   })
-  cdm <- CDMConnector::cdm_from_con(db, cdm_name = "mock_vocab")
+  DBI::dbWithTransaction(db, {
+    DBI::dbWriteTable(db, "cdm_source",
+                      cdmSource,
+                      overwrite = TRUE
+    )
+  })
+
+  cdm <- CDMConnector::cdm_from_con(db)
   if (backend == "database") {
     return(cdm)
   }
@@ -300,19 +322,34 @@ mockVocabRef <- function(backend = "database") {
     CDMConnector::stow(cdm, dOut)
 
     if (backend == "arrow") {
+      if(packageVersion("CDMConnector")<"1.1.0"){
       cdmArrow <- CDMConnector::cdm_from_files(
-        path = dOut, cdm_name = "mock_vocab",
+        path = dOut,
         as_data_frame = FALSE
       )
+      } else {
+        cdmArrow <- CDMConnector::cdm_from_files(
+          path = dOut, cdm_name = "mock",
+          as_data_frame = FALSE
+        )
+      }
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
       return(cdmArrow)
     }
 
     if (backend == "data_frame") {
-      cdmDF <- CDMConnector::cdm_from_files(
-        path = dOut, cdm_name = "mock_vocab",
-        as_data_frame = TRUE
-      )
+      if(packageVersion("CDMConnector")<"1.1.0"){
+        cdmDF <- CDMConnector::cdm_from_files(
+          path = dOut,
+          as_data_frame = TRUE
+        )
+      } else {
+        cdmDF <- CDMConnector::cdm_from_files(
+          path = dOut, cdm_name = "mock",
+          as_data_frame = TRUE
+        )
+      }
+
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
       return(cdmDF)
     }
