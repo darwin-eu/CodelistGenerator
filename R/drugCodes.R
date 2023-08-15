@@ -85,13 +85,14 @@ getATCCodes <- function(cdm,
   checkmate::assertTRUE(atcCheck, add = errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
 
+  # to avoid potential memory problems will batch
+  if (nrow(atc_groups) > 0) {
+    atc_descendants <- fetchBatchedDescendants(cdm = cdm,
+                                  codes = atc_groups$concept_id,
+                                  batchSize = 500,
+                                  doseForm = doseForm)
+}
 
-  atc_descendants <- getDescendants(
-    cdm = cdm,
-    conceptId = atc_groups$concept_id,
-    withAncestor = TRUE,
-    doseForm = doseForm
-  )
   if (nrow(atc_descendants) > 0) {
     atc_descendants <- atc_descendants %>%
       dplyr::select("concept_id", "concept_name",
@@ -207,7 +208,7 @@ getDrugIngredientCodes <- function(cdm,
 
   # to avoid potential memory problems will batch
   if (nrow(ingredientConcepts) > 0) {
-    ingredientCodes <- fetchBatchedDrugIngredientCodes(cdm,
+    ingredientCodes <- fetchBatchedDescendants(cdm,
       codes = ingredientConcepts$concept_id,
       batchSize = 500,
       doseForm = doseForm
@@ -267,7 +268,7 @@ getDrugIngredientCodes <- function(cdm,
     return(ingredientCodes)
 }
 
-fetchBatchedDrugIngredientCodes <- function(cdm, codes, batchSize, doseForm) {
+fetchBatchedDescendants <- function(cdm, codes, batchSize, doseForm) {
   codeBatches <- split(
     codes,
     ceiling(seq_along(codes) / batchSize)
@@ -277,7 +278,7 @@ fetchBatchedDrugIngredientCodes <- function(cdm, codes, batchSize, doseForm) {
 
   cli::cli_progress_bar(
     total = length(descendants),
-    format = " -- getting descendants {cli::pb_bar} {cli::pb_current} of {cli::pb_total} ingredient groups"
+    format = " -- getting descendants {cli::pb_bar} {cli::pb_current} of {cli::pb_total} batched groups"
   )
   for (i in seq_along(descendants)) {
     cli::cli_progress_update()

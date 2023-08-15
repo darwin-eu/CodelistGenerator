@@ -322,7 +322,7 @@ mockVocabRef <- function(backend = "database") {
     CDMConnector::stow(cdm, dOut)
 
     if (backend == "arrow") {
-      if(utils::packageVersion("CDMConnector")<"1.10"){
+      if(utils::packageVersion("CDMConnector")<"1.1.0"){
       cdmArrow <- CDMConnector::cdm_from_files(
         path = dOut,
         as_data_frame = FALSE
@@ -338,7 +338,7 @@ mockVocabRef <- function(backend = "database") {
     }
 
     if (backend == "data_frame") {
-      if(utils::packageVersion("CDMConnector")<"1.10"){
+      if(utils::packageVersion("CDMConnector")<"1.1.0"){
         cdmDF <- CDMConnector::cdm_from_files(
           path = dOut,
           as_data_frame = TRUE

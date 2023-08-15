@@ -87,12 +87,6 @@ summariseCodeUse <- function(x,
       .data$estimate_suppressed == "TRUE",
       NA, .data$estimate))
 
-  if(!"record" %in% countBy){
-    codeCounts <- codeCounts %>%
-      dplyr::mutate(concept_name= NA,
-                    concept_id =NA)
-  }
-
   codeCounts <- codeCounts %>%
     dplyr::mutate(group_level = dplyr::if_else(.data$group_name == "By concept",
                                         paste0(.data$concept_name, " (",
