@@ -27,7 +27,7 @@ Imports:
     cli (>= 3.1.0),
     purrr,
     lubridate,
-    PatientProfiles,
+    PatientProfiles (>= 0.3.0),
     RJSONIO
 Suggests: 
     arrow (>= 9.0.0),

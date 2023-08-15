@@ -283,14 +283,13 @@ mockVocabRef <- function(backend = "database") {
       overwrite = TRUE
     )
   })
-
   DBI::dbWithTransaction(db, {
     DBI::dbWriteTable(db, "drug_strength",
       drugStrength,
       overwrite = TRUE
     )
   })
-  cdm <- CDMConnector::cdm_from_con(db)
+  cdm <- CDMConnector::cdm_from_con(db, cdm_name = "mock_vocab")
   if (backend == "database") {
     return(cdm)
   }
@@ -302,7 +301,7 @@ mockVocabRef <- function(backend = "database") {
 
     if (backend == "arrow") {
       cdmArrow <- CDMConnector::cdm_from_files(
-        path = dOut,
+        path = dOut, cdm_name = "mock_vocab",
         as_data_frame = FALSE
       )
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
@@ -311,7 +310,7 @@ mockVocabRef <- function(backend = "database") {
 
     if (backend == "data_frame") {
       cdmDF <- CDMConnector::cdm_from_files(
-        path = dOut,
+        path = dOut, cdm_name = "mock_vocab",
         as_data_frame = TRUE
       )
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)

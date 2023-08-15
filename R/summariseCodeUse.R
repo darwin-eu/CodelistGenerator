@@ -66,7 +66,7 @@ summariseCodeUse <- function(x,
                                        age = !is.null(ageGroup),
                                        ageGroup = ageGroup,
                                        sex = bySex,
-                                       priorHistory = FALSE,
+                                       priorObservation = FALSE,
                                        futureObservation =  FALSE,
                                        indexDate = "date")
   }
