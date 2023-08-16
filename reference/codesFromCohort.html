@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,17 +54,23 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">codesFromCohort</span><span class="op">(</span><span class="va">path</span>, <span class="va">cdm</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">codesFromCohort</span><span class="op">(</span><span class="va">path</span>, <span class="va">cdm</span>, withConceptDetails <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>path</dt>
-<dd><p>Path to a file or folder containing JSONs of concept sets</p></dd>
+<dd><p>Path to a file or folder containing JSONs of cohort definitions</p></dd>
 
 
 <dt>cdm</dt>
 <dd><p>A cdm reference created with CDMConnector</p></dd>
+
+
+<dt>withConceptDetails</dt>
+<dd><p>If FALSE a vector of concept IDs will be returned
+for each concept set. If TRUE a tibble will be returned with additional
+information on the identified concepts.</p></dd>
 
 </dl></div>
     <div class="section level2">
