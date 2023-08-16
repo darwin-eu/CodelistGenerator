@@ -8,13 +8,36 @@ test_that("test inputs - mock", {
   expect_error(codesFromConceptSet(cdm = cdm, path = 1))
   expect_error(codesFromConceptSet(cdm = cdm, path = "not/a/path"))
 
+  expect_error(codesFromCohort())
+  expect_error(codesFromCohort(cdm = cdm))
+  expect_error(codesFromCohort(cdm = cdm, path = 1))
+  expect_error(codesFromCohort(cdm = cdm, path = "not/a/path"))
+
+
+  # codesFromCohort won´t work with concept sets
+  expect_error( codesFromCohort(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "concepts_for_mock")
+  ))
+  # codesFromConceptSet won´t work with cohorts
+  expect_error( codesFromConceptSet(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "cohorts_for_mock")
+  ))
+
+
+
   # we currently don´t support the use of mapped in a concept set
   expect_error(codesFromConceptSet(
     cdm = cdm, path =  system.file(package = "CodelistGenerator",
                                    "concepts_for_mock_with_mapped")
   ))
+  expect_error(codesFromCohort(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "cohorts_for_mock_with_mapped")
+  ))
 
-  # working example with mock
+  # working concept set example with mock
   x <- codesFromConceptSet(
     cdm = cdm, path =  system.file(package = "CodelistGenerator",
                                    "concepts_for_mock")
@@ -38,6 +61,31 @@ test_that("test inputs - mock", {
   )
   expect_true("Arthritis" %in% x$oa_no_desc$concept_name)
   expect_true(3 %in% x$oa_no_desc$concept_id)
+
+
+  # working cohort set example with mock
+  x <- codesFromCohort(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "cohorts_for_mock")
+  )
+  expect_true(all(c("3", "4", "5") %in% x[["OA"]]))
+  expect_true(x[["OA no descendants"]] == 3)
+
+  x <- codesFromCohort(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "cohorts_for_mock_with_exclude")
+  )
+  expect_true(all(c("3", "5") %in% x[["OA"]]))
+  expect_true(!c("4") %in% x[["OA"]])
+
+
+  # we´ll get an error if we have the same name concept set in multiple cohorts,
+  # but with different definitions
+  expect_error(codesFromCohort(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "cohorts_for_mock_dups")
+  ))
+
 
   CDMConnector::cdmDisconnect(cdm)
 
@@ -72,6 +120,14 @@ test_that("test inputs - redshift", {
     cdm = cdm,
     path =  system.file(package = "CodelistGenerator",
                         "concepts"),
+    withConceptDetails = TRUE
+  )
+  expect_true("Influenza" %in% x$influenza$concept_name)
+
+  x <- codesFromCohort(
+    cdm = cdm,
+    path =  system.file(package = "CodelistGenerator",
+                        "cohorts"),
     withConceptDetails = TRUE
   )
   expect_true("Influenza" %in% x$influenza$concept_name)

@@ -82,15 +82,18 @@ codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
 
 #' Get concept ids from a provided path to cohort json files
 #'
-#' @param path Path to a file or folder containing JSONs of concept sets
+#' @param path Path to a file or folder containing JSONs of cohort definitions
 #' @param cdm A cdm reference created with CDMConnector
+#' @param withConceptDetails If FALSE a vector of concept IDs will be returned
+#' for each concept set. If TRUE a tibble will be returned with additional
+#' information on the identified concepts.
 #'
 #' @return Named list with concept_ids for each concept set
 #' @export
 #'
-codesFromCohort <- function(path, cdm) {
+codesFromCohort <- function(path, cdm, withConceptDetails = FALSE) {
   # initial checks
-  #checkInput(path = path, cdm = cdm)
+  checkInputs(path = path, cdm = cdm)
 
   # list jsons
   files <- listJsonFromPath(path)
@@ -111,6 +114,11 @@ codesFromCohort <- function(path, cdm) {
 
   # split into list
   codelist <- tibbleToList(codelistTibble)
+
+  if(isTRUE(withConceptDetails)){
+    codelist <- addDetails(conceptList = codelist,
+                                   cdm = cdm)
+  }
 
   # return
   return(codelist)
@@ -146,7 +154,12 @@ extractCodes <- function(file, unknown) {
     conceptId <- NULL
     includeDescendants <- NULL
     isExcluded <- NULL
+
     for (j in seq_along(concepts)) {
+       if(!is.null(concepts[[j]][["includeMapped"]])){
+        cli::cli_abort(
+          glue::glue("Mapped as TRUE not supported (found in {name})"))
+      }
       conceptId <- c(conceptId, concepts[[j]][["concept"]][["CONCEPT_ID"]])
       exc <- concepts[[j]][["isExcluded"]]
       isExcluded <- c(
@@ -161,7 +174,8 @@ extractCodes <- function(file, unknown) {
       dplyr::union_all(dplyr::tibble(
         codelist_name = name, concept_id = conceptId,
         include_descendants = includeDescendants, is_excluded = isExcluded
-      ))
+      ) %>%
+        dplyr::mutate(filename = file))
   }
   return(codelistTibble)
 }
@@ -198,15 +212,40 @@ excludeCodes <- function(codelistTibble) {
 }
 
 tibbleToList <- function(codelistTibble) {
-  nam <- unique(codelistTibble$codelist_name)
+
+  codelistTibble <- codelistTibble %>%
+    dplyr::mutate(nam = paste0(.data$codelist_name, "; ",
+                               .data$filename))
+
+  nam <- unique(codelistTibble$nam)
   codelist <- lapply(nam, function(x) {
     codelistTibble %>%
-      dplyr::filter(.data$codelist_name == .env$x) %>%
+      dplyr::filter(.data$nam == .env$x) %>%
       dplyr::pull("concept_id") %>%
       unique()
   })
   names(codelist) <- nam
-  return(codelist)
+
+
+  # check if we have any concept sets with the same name but different definitions
+  # keep first for each name
+  cs_names <- stringr::str_extract(names(codelist), "^[^;]*")
+  cs_names_unique <- unique(cs_names)
+
+  codelist_dedup <- list()
+
+  for(i in seq_along(cs_names_unique)){
+   same_name_cs <- codelist[which(cs_names_unique[i] == cs_names)]
+   check_consistent <- all(sapply(same_name_cs, identical, same_name_cs[[1]]))
+
+   if(isFALSE(check_consistent)){
+     cli::cli_abort(message = "Different definitions for concept set {cs_names_unique[i]} found")
+   }
+   # keep first
+   codelist_dedup[[cs_names_unique[i]]] <- same_name_cs[[1]]
+  }
+
+  return(codelist_dedup)
 }
 
 addDetails <- function(conceptList, cdm){

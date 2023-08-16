@@ -1,3 +1,6 @@
+# CodelistGenerator 1.7.0
+* Added function codesFromCohort.
+
 # CodelistGenerator 1.6.0
 * Improved getICD10StandardCodes function.
 * Added function codesFromConceptSet.
