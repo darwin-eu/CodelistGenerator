@@ -156,7 +156,8 @@ extractCodes <- function(file, unknown) {
     isExcluded <- NULL
 
     for (j in seq_along(concepts)) {
-       if(!is.null(concepts[[j]][["includeMapped"]])){
+       if(!is.null(concepts[[j]][["includeMapped"]]) &&
+          concepts[[j]][["includeMapped"]] == TRUE ){
         cli::cli_abort(
           glue::glue("Mapped as TRUE not supported (found in {name})"))
       }
