@@ -27,6 +27,9 @@ summariseCodeUse <- function(x,
 
   getCodeUse(x,
              cdm = cdm,
+             cohort = NULL,
+             cohortId = NULL,
+             timing = "any",
              countBy = countBy,
              byConcept = byConcept,
              byYear = byYear,
@@ -37,19 +40,82 @@ summariseCodeUse <- function(x,
 }
 
 
+#' Summarise code use among a cohort in the cdm reference
+#'
+#' @param x Vector of concept IDs
+#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
+#' @param cohortTable A cohort table from the cdm reference.
+#' @param cohortId A vector of cohort IDs to include
+#' @param timing When to assess the code use relative cohort dates. This can
+#' be "any"(code use any time by individuals in the cohort) or  "entry" (code
+#' use on individuals' cohort start date).
+#' @param countBy Either "record" for record-level counts or "person" for
+#' person-level counts
+#' @param byConcept TRUE or FALSE. If TRUE code use will be summarised by
+#'
+#' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
+#' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
+#' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
+#' @param minCellCount The minimum number of counts to reported, below which
+#' results will be suppressed. If 0, all results will be reported.
+#'
+#' @return A tibble with results overall and, if specified, by strata
+#' @export
+#'
+#' @examples
+summariseCohortCodeUse <- function(x,
+                                   cdm,
+                                   cohortTable,
+                                   cohortId = NULL,
+                                   timing = "any",
+                                   countBy = c("record", "person"),
+                                   byConcept = TRUE,
+                                   byYear = FALSE,
+                                   bySex = FALSE,
+                                   ageGroup = NULL,
+                                   minCellCount = 5){
+
+  getCodeUse(x,
+             cdm = cdm,
+             cohortTable = cohortTable,
+             cohortId = cohortId,
+             timing = timing,
+             countBy = countBy,
+             byConcept = byConcept,
+             byYear = byYear,
+             bySex = bySex,
+             ageGroup = ageGroup,
+             minCellCount = minCellCount)
+
+
+}
+
 getCodeUse <- function(x,
                        cdm,
+                       cohortTable,
+                       cohortId,
+                       timing,
                        countBy,
                        byConcept,
                        byYear,
                        bySex,
                        ageGroup,
-                       minCellCount){
+                       minCellCount,
+                       call = parent.frame()){
 
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  checkmate::assertTRUE(all(countBy %in% c("record", "person")))
+  if(!is.null(cohortTable)){
+    checkmate::assertTRUE(all(c("cohort_definition_id", "subject_id", "cohort_start_date",
+                                "cohort_end_date") %in%  colnames(cdm[[cohortTable]])))
+  }
+  checkmate::assertCharacter(timing, len = 1,
+                             add = errorMessage)
+  checkmate::assertTRUE(all(timing %in% c("any","entry")),
+                        add = errorMessage)
+  checkmate::assertTRUE(all(countBy %in% c("record", "person")),
+                        add = errorMessage)
   checkmate::assertIntegerish(x, add = errorMessage)
   checkmate::assert_logical(byConcept, add = errorMessage)
   checkmate::assert_logical(byYear, add = errorMessage)
@@ -59,6 +125,16 @@ getCodeUse <- function(x,
   checkmate::reportAssertions(collection = errorMessage)
 
   checkAgeGroup(ageGroup = ageGroup)
+
+
+  if(is.null(attr(cdm, "write_schema"))){
+    cli::cli_abort("cdm must have a write_schema specified",
+                   call = call)
+  }
+
+  intermediateTable <- paste0("cg_",
+                              tolower(paste0(sample(LETTERS, 4, replace = TRUE),
+                                             collapse = "")))
 
 
   codes <- dplyr::tibble(concept_id = x) %>%
@@ -71,7 +147,11 @@ getCodeUse <- function(x,
     addDomainInfo(cdm = cdm)
 
   records <- getRelevantRecords(codes = codes,
-                                cdm = cdm)
+                                cdm = cdm,
+                                cohortTable = cohortTable,
+                                cohortId = cohortId,
+                                timing = timing,
+                                intermediateTable = intermediateTable)
 
   if(!is.null(records)) {
     records <- records %>%
@@ -130,6 +210,12 @@ getCodeUse <- function(x,
       ))
   }
 
+  CDMConnector::dropTable(
+    cdm = cdm,
+    name = tidyselect::starts_with(intermediateTable)
+  )
+
+
   return(codeCounts)
 }
 
@@ -175,15 +261,44 @@ addDomainInfo <- function(codes,
 
 
 getRelevantRecords <- function(codes,
-                               cdm){
+                               cdm,
+                               cohortTable,
+                               cohortId,
+                               timing,
+                               intermediateTable){
 
   tableName <- purrr::discard(unique(codes$table_name), is.na)
   conceptIdName <- purrr::discard(unique(codes$concept_id_name), is.na)
   dateName <- purrr::discard(unique(codes$date_name), is.na)
 
-  # filter to relevant records
+  if(!is.null(cohortTable)){
+    if(is.null(cohortId)){
+      cohortSubjects <- cdm[[cohortTable]] %>%
+        dplyr::select("subject_id", "cohort_start_date") %>%
+        dplyr::rename("person_id" = "subject_id") %>%
+        dplyr::distinct()
+    } else {
+      cohortSubjects <- cdm[[cohortTable]] %>%
+        dplyr::filter(cohort_definition_id %in% cohortId) %>%
+        dplyr::select("subject_id", "cohort_start_date") %>%
+        dplyr::rename("person_id" = "subject_id") %>%
+        dplyr::distinct()
+    }
+  }
+
 if(length(tableName)>0){
-  codeRecords <- cdm[[tableName[[1]]]] %>%
+  codeRecords <- cdm[[tableName[[1]]]]
+  if(!is.null(cohortTable)){
+    # keep only records of those in the cohorts of interest
+    codeRecords <- codeRecords %>%
+      dplyr::inner_join(cohortSubjects,
+                        by = "person_id")
+    if(timing == "entry"){
+      codeRecords <- codeRecords %>%
+        dplyr::filter(.data$cohort_start_date == !!dplyr::sym(dateName[[1]]))
+    }
+  }
+  codeRecords <- codeRecords %>%
     dplyr::mutate(date = !!dplyr::sym(dateName[[1]])) %>%
     dplyr::mutate(year = lubridate::year(date)) %>%
     dplyr::select(dplyr::all_of(c("person_id", conceptIdName[[1]],
@@ -194,7 +309,13 @@ if(length(tableName)>0){
                         dplyr::select("concept_id"),
                       by = "concept_id",
                       copy = TRUE) %>%
-    CDMConnector::compute_query()
+    CDMConnector::computeQuery(
+      name = paste0(intermediateTable,"_grr"),
+      temporary = FALSE,
+      schema = attr(cdm, "write_schema"),
+      overwrite = TRUE
+    )
+
 } else {
   codeRecords <- NULL
 }
@@ -202,7 +323,18 @@ if(length(tableName)>0){
   # get for any additional domains and union
   if(length(tableName) > 1) {
     for(i in 1:(length(tableName)-1)) {
-      workingRecords <-  cdm[[tableName[[i+1]]]] %>%
+      workingRecords <-  cdm[[tableName[[i+1]]]]
+      if(!is.null(cohortTable)){
+        # keep only records of those in the cohorts of interest
+        workingRecords <- workingRecords %>%
+          dplyr::inner_join(cohortSubjects,
+                            by = "person_id")
+        if(timing == "entry"){
+          workingRecords <- workingRecords %>%
+            dplyr::filter(.data$cohort_start_date == !!dplyr::sym(dateName[[i+1]]))
+        }
+      }
+      workingRecords <-  workingRecords %>%
         dplyr::mutate(date = !!dplyr::sym(dateName[[i+1]])) %>%
         dplyr::mutate(year = lubridate::year(date)) %>%
         dplyr::select(dplyr::all_of(c("person_id", conceptIdName[[i+1]],
@@ -214,8 +346,13 @@ if(length(tableName)>0){
                           by = "concept_id",
                           copy = TRUE)
       codeRecords <- codeRecords %>%
-        dplyr::union_all(workingRecords) %>%
-        CDMConnector::compute_query()
+        dplyr::union_all(workingRecords)  %>%
+        CDMConnector::computeQuery(
+          name = paste0(intermediateTable,"_grr_i"),
+          temporary = FALSE,
+          schema = attr(cdm, "write_schema"),
+          overwrite = TRUE
+        )
     }
   }
 
