@@ -25,6 +25,27 @@ summariseCodeUse <- function(x,
                              ageGroup = NULL,
                              minCellCount = 5){
 
+  getCodeUse(x,
+             cdm = cdm,
+             countBy = countBy,
+             byConcept = byConcept,
+             byYear = byYear,
+             bySex = bySex,
+             ageGroup = ageGroup,
+             minCellCount = minCellCount)
+
+}
+
+
+getCodeUse <- function(x,
+                       cdm,
+                       countBy,
+                       byConcept,
+                       byYear,
+                       bySex,
+                       ageGroup,
+                       minCellCount){
+
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
@@ -53,63 +74,63 @@ summariseCodeUse <- function(x,
                                 cdm = cdm)
 
   if(!is.null(records)) {
-  records <- records %>%
-    dplyr::left_join(cdm[["concept"]] %>%
-                       dplyr::select("concept_id", "concept_name"),
-                     by = "concept_id")
-
-  if(bySex == TRUE | !is.null(ageGroup)){
     records <- records %>%
-      PatientProfiles::addDemographics(cdm = cdm,
-                                       age = !is.null(ageGroup),
-                                       ageGroup = ageGroup,
-                                       sex = bySex,
-                                       priorObservation = FALSE,
-                                       futureObservation =  FALSE,
-                                       indexDate = "date")
+      dplyr::left_join(cdm[["concept"]] %>%
+                         dplyr::select("concept_id", "concept_name"),
+                       by = "concept_id")
+
+    if(bySex == TRUE | !is.null(ageGroup)){
+      records <- records %>%
+        PatientProfiles::addDemographics(cdm = cdm,
+                                         age = !is.null(ageGroup),
+                                         ageGroup = ageGroup,
+                                         sex = bySex,
+                                         priorObservation = FALSE,
+                                         futureObservation =  FALSE,
+                                         indexDate = "date")
+    }
+
+    byAgeGroup <- !is.null(ageGroup)
+    codeCounts <- getSummaryCounts(records = records,
+                                   cdm = cdm,
+                                   countBy = countBy,
+                                   byConcept = byConcept,
+                                   byYear = byYear,
+                                   bySex = bySex,
+                                   byAgeGroup = byAgeGroup)
+
+    codeCounts <-  codeCounts %>%
+      dplyr::mutate(estimate_suppressed = dplyr::if_else(
+        .data$estimate < .env$minCellCount, "TRUE", "FALSE")) %>%
+      dplyr::mutate(estimate = dplyr::if_else(
+        .data$estimate_suppressed == "TRUE",
+        NA, .data$estimate))
+
+    codeCounts <- codeCounts %>%
+      dplyr::mutate(group_level = dplyr::if_else(.data$group_name == "By concept",
+                                                 paste0(.data$concept_name, " (",
+                                                        .data$concept_id, ")"),
+                                                 "Overall")) %>%
+      dplyr::mutate(variable_type = "Numeric",
+                    variable_level = "Overall",
+                    estimate_type = "Count") %>%
+      dplyr::select(dplyr::all_of(c("group_name", "group_level",
+                                    "strata_name", "strata_level",
+                                    "variable_name", "variable_level",
+                                    "variable_type",
+                                    "estimate_type",
+                                    "estimate",
+                                    "estimate_suppressed")))
+
+  } else {
+    codeCounts <- dplyr::tibble()
+    cli::cli_inform(
+      c(
+        "i" = "No records found in the cdm for the concepts provided."
+      ))
   }
 
-  byAgeGroup <- !is.null(ageGroup)
-  codeCounts <- getSummaryCounts(records = records,
-                                 cdm = cdm,
-                                 countBy = countBy,
-                                 byConcept = byConcept,
-                                 byYear = byYear,
-                                 bySex = bySex,
-                                 byAgeGroup = byAgeGroup)
-
-  codeCounts <-  codeCounts %>%
-    dplyr::mutate(estimate_suppressed = dplyr::if_else(
-      .data$estimate < .env$minCellCount, "TRUE", "FALSE")) %>%
-    dplyr::mutate(estimate = dplyr::if_else(
-      .data$estimate_suppressed == "TRUE",
-      NA, .data$estimate))
-
-  codeCounts <- codeCounts %>%
-    dplyr::mutate(group_level = dplyr::if_else(.data$group_name == "By concept",
-                                        paste0(.data$concept_name, " (",
-                                               .data$concept_id, ")"),
-                                        "Overall")) %>%
-    dplyr::mutate(variable_type = "Numeric",
-                  variable_level = "Overall",
-                  estimate_type = "Count") %>%
-    dplyr::select(dplyr::all_of(c("group_name", "group_level",
-                                "strata_name", "strata_level",
-                                "variable_name", "variable_level",
-                                "variable_type",
-                                "estimate_type",
-                                "estimate",
-                                "estimate_suppressed")))
-
-} else {
-  codeCounts <- dplyr::tibble()
-  cli::cli_inform(
-    c(
-      "i" = "No records found in the cdm for the concepts provided."
-    ))
-}
-
-return(codeCounts)
+  return(codeCounts)
 }
 
 addDomainInfo <- function(codes,
