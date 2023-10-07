@@ -9,9 +9,9 @@ summariseCodeUse(
   cdm,
   countBy = c("record", "person"),
   byConcept = TRUE,
-  byYear = TRUE,
-  bySex = TRUE,
-  ageGroup = list(c(0, 17), c(18, 65), c(66, 120)),
+  byYear = FALSE,
+  bySex = FALSE,
+  ageGroup = NULL,
   minCellCount = 5
 )
 }

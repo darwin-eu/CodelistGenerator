@@ -1,5 +1,5 @@
 test_that("tests with mock db", {
-  backends <- c("database")
+  backends <- c("database", "arrow", "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db
@@ -34,21 +34,6 @@ test_that("tests with mock db", {
     expect_true((nrow(codes) == 2 &
       codes$concept_name[1] == "Osteoarthritis of knee" &
       codes$concept_name[2] == "Osteoarthritis of hip"))
-
-    # test keywords search - fuzzy
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = c("Arthritis"),
-      fuzzyMatch = TRUE,
-      maxDistanceCost = 0.2,
-      domains = "Condition",
-      includeDescendants = FALSE
-    )
-    expect_true(any(codes$concept_name %in% "Arthritis"))
-    expect_true(any(codes$concept_name %in% "Osteoarthritis of knee"))
-    expect_true(any(codes$concept_name %in% "Osteoarthritis of hip"))
-    # with fuzzy, should pick up arthrosis
-    expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
     # test include descendants
     codes <- getCandidateCodes(
@@ -86,8 +71,7 @@ test_that("tests with mock db", {
       keywords = "Arthritis",
       domains = "Condition",
       standardConcept = c("Standard", "Non-standard"),
-      includeDescendants = TRUE,
-      searchViaSynonyms = FALSE
+      includeDescendants = TRUE
     )
     expect_true((nrow(codes) == 5 &
       all(codes$concept_id %in% c(3, 4, 5, 8, 17)) &
@@ -102,15 +86,6 @@ test_that("tests with mock db", {
       searchInSynonyms = TRUE
     )
     expect_true(any(codes$concept_name %in% "Arthritis"))
-
-    # test searchViaSynonyms
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "arthritis",
-      domains = "Condition",
-      searchViaSynonyms = TRUE
-    )
-    expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
     # test exclusion
     codes <- getCandidateCodes(
@@ -135,95 +110,32 @@ test_that("tests with mock db", {
       cdm = cdm,
       keywords = c("Degenerative arthropathy"),
       searchNonStandard = TRUE,
-      fuzzyMatch = TRUE,
       includeDescendants = FALSE,
       domains = "Condition"
     )
     expect_true(any(codes$concept_name %in% "Osteoarthrosis"))
 
-    # test vocabularyId
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = c("arthritis"),
-      standardConcept = c("standard", "non-standard"),
-      vocabularyId = "SNOMED",
-      searchNonStandard = TRUE,
-      domains = "Condition"
-    )
-    expect_true(all(codes$vocabulary_id %in% "snomed"))
-
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = c("arthritis"),
-      standardConcept = c("standard", "non-standard"),
-      vocabularyId = "Read",
-      searchNonStandard = TRUE,
-      domains = "Condition"
-    )
-    expect_true(all(codes$vocabulary_id %in% "read"))
-
-    # test sequalae
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = c("arthritis"),
-      includeSequela = TRUE,
-      domains = "Condition"
-    )
-    expect_true("Osteonecrosis" %in% codes$concept_name)
-
-    # test verbose
-    expect_message(getCandidateCodes(
-      cdm = cdm,
-      keywords = "arthritis",
-      domains = "Condition",
-      verbose = TRUE
-    ))
-
-    # all options used with exact
+    # all options
     codes <- getCandidateCodes(
       cdm = cdm,
       keywords = "arthritis",
       domains = "Condition",
-      conceptClassId = "Clinical Finding",
       standardConcept = "Standard",
       searchInSynonyms = TRUE,
-      searchViaSynonyms = TRUE,
       searchNonStandard = TRUE,
-      fuzzyMatch = FALSE,
       exclude = "Childhood asthma",
       includeDescendants = TRUE,
-      includeAncestor = TRUE,
-      verbose = TRUE
+      includeAncestor = TRUE
     )
     expect_true(nrow(codes) >= 1)
 
-    # all options used with fuzzy
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "Arthritis",
-      exclude = "Osteoarthritis of hip",
-      domains = "Condition",
-      conceptClassId = "Clinical Finding",
-      standardConcept = "Standard",
-      searchInSynonyms = TRUE,
-      searchViaSynonyms = TRUE,
-      searchNonStandard = TRUE,
-      fuzzyMatch = TRUE,
-      maxDistanceCost = 0.1,
-      includeDescendants = TRUE,
-      includeAncestor = TRUE,
-      verbose = TRUE
-    )
-    expect_true(nrow(codes) >= 1)
 
     # test search in drug
     codes <- getCandidateCodes(
       cdm = cdm,
       keywords = "adalimumab",
-      fuzzyMatch = TRUE,
       domains = "Drug",
       searchInSynonyms = TRUE,
-      searchViaSynonyms = TRUE,
       includeDescendants = FALSE,
       includeAncestor = TRUE
     )
@@ -237,28 +149,12 @@ test_that("tests with mock db", {
       names(codes)))
     expect_true(codes$concept_id == "10")
 
-    # restrict on dose form
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "adalimumab",
-      fuzzyMatch = TRUE,
-      domains = "Drug",
-      doseForm = "injection",
-      searchInSynonyms = TRUE,
-      searchViaSynonyms = TRUE,
-      includeDescendants = TRUE,
-      includeAncestor = TRUE
-    )
-    expect_true(codes$concept_id == "10")
-
     # search for drug and condition
     codes <- getCandidateCodes(
       cdm = cdm,
       keywords = c("arthritis", "adalimumab"),
-      fuzzyMatch = TRUE,
       domains = c("Condition", "Drug"),
       searchInSynonyms = TRUE,
-      searchViaSynonyms = TRUE,
       includeDescendants = TRUE,
       includeAncestor = TRUE
     )
@@ -274,7 +170,7 @@ test_that("tests with mock db", {
 
     ## Edge cases
     # check empty candidate set
-    codes <- getCandidateCodes(
+   codes <- getCandidateCodes(
       cdm = cdm,
       keywords = "asthmaX",
       domains = "Condition"
@@ -290,44 +186,10 @@ test_that("tests with mock db", {
     )
     expect_true("1" %in% codes$concept_id)
 
-    codes <- getCandidateCodes(
+   codes <- getCandidateCodes(
       cdm = cdm,
       keywords = "XXXXX",
       standardConcept = c("Standard"),
-      includeDescendants = FALSE
-    )
-    expect_true(nrow(codes) == 0)
-
-    # conceptClassId that doesn´t exist
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "Musculoskeletal disorder",
-      conceptClassId = c("clinical finding", "Something that doesn´t exist"),
-      includeDescendants = FALSE
-    )
-    expect_true("1" %in% codes$concept_id)
-
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "Musculoskeletal disorder",
-      conceptClassId = "Something that doesn´t exist",
-      includeDescendants = FALSE
-    )
-    expect_true(nrow(codes) == 0)
-
-    # vocabularyID that doesn´t exist
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "Musculoskeletal disorder",
-      vocabularyId = c("SNOMED", "Something that doesn´t exist"),
-      includeDescendants = FALSE
-    )
-    expect_true("1" %in% codes$concept_id)
-
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "Musculoskeletal disorder",
-      vocabularyId = c("Something that doesn´t exist"),
       includeDescendants = FALSE
     )
     expect_true(nrow(codes) == 0)
@@ -360,8 +222,6 @@ test_that("tests with mock db", {
     expect_error(getCandidateCodes(
       cdm = "Not a cdm ref",
       keywords = "a",
-      searchViaSynonyms = TRUE,
-      fuzzyMatch = TRUE,
       exclude = NULL,
       includeDescendants = TRUE,
       includeAncestor = FALSE
@@ -427,50 +287,4 @@ test_that("tests with mock db - multiple domains", {
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
     }
   }
-})
-
-test_that("tests exact match", {
-  backends <- c("database")
-
-  for (i in seq_along(backends)) {
-    # mock db
-    cdm <- mockVocabRef(backends[[i]])
-
-    # tests
-    # test keywords search - exact
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "arthritis",
-      exactMatch = TRUE,
-      domains = c("Condition", "Observation"),
-      includeDescendants = FALSE
-    )
-    expect_true((nrow(codes) == 1 &
-                   codes$concept_id == 3 &
-                   !codes$concept_id %in% c(1, 2, 4:8)))
-
-    # without exact match
-    codes1 <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "arthriti",
-      exactMatch = TRUE,
-      domains = c("Condition", "Observation"),
-      includeDescendants = FALSE
-    )
-    expect_true(nrow(codes1) == 0)
-
-    # expect error if fuzzy and exact
-    expect_error(getCandidateCodes(
-      cdm = cdm,
-      keywords = "arthritis",
-      exactMatch = TRUE,
-      fuzzyMatch = TRUE
-    ))
-
-    if (backends[[i]] == "database") {
-      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
-    }
-  }
-
-
 })

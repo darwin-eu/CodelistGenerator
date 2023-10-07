@@ -9,20 +9,11 @@ getCandidateCodes(
   keywords,
   exclude = NULL,
   domains = "Condition",
-  conceptClassId = NULL,
-  doseForm = NULL,
-  vocabularyId = NULL,
   standardConcept = "Standard",
-  exactMatch = FALSE,
   searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
-  includeSequela = FALSE,
   includeDescendants = TRUE,
-  includeAncestor = FALSE,
-  fuzzyMatch = FALSE,
-  maxDistanceCost = 0.1,
-  verbose = FALSE
+  includeAncestor = FALSE
 )
 }
 \arguments{
@@ -38,34 +29,16 @@ to identify concepts to exclude.}
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain.}
 
-\item{conceptClassId}{Character vector with one or more concept class
-of the Concept}
-
-\item{doseForm}{The dose form associated with a drug}
-
-\item{vocabularyId}{Character vector with one or more vocabulary
-of the Concept}
-
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.}
-
-\item{exactMatch}{Either TRUE or FALSE. If TRUE only exact matches of
-keywords will be identified when running the initial search.}
 
 \item{searchInSynonyms}{Either TRUE or FALSE. If TRUE the code will also
 search using both the primary name in the concept table and synonyms from
 the concept synonym table.}
 
-\item{searchViaSynonyms}{Either TRUE or FALSE. If TRUE the code will also
-search via the concept synonym table.}
-
 \item{searchNonStandard}{Either TRUE or FALSE. If TRUE the code will also
 search via non-standard concepts.}
-
-\item{includeSequela}{Either TRUE or FALSE. If TRUE, codes associated via
-a concept relationship of 'Due to of' or 'Occurs before' will also be
-identified.}
 
 \item{includeDescendants}{Either TRUE or FALSE.
 If TRUE descendant concepts of identified concepts
@@ -74,16 +47,6 @@ will be included in the candidate codelist.}
 \item{includeAncestor}{Either TRUE or FALSE.
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.}
-
-\item{fuzzyMatch}{Either TRUE or FALSE. If TRUE the fuzzy matching
-will be used, with approximate matches identified.}
-
-\item{maxDistanceCost, }{The
-maximum number/fraction of match cost (generalized Levenshtein distance)
-for fuzzy matching (see ??base::agrep for further details).}
-
-\item{verbose}{Either TRUE or FALSE.
-If TRUE, progress will be reported.}
 }
 \value{
 tibble

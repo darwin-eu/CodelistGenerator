@@ -11,18 +11,15 @@ status](https://www.r-pkg.org/badges/version/CodelistGenerator)](https://CRAN.R-
 
 # CodelistGenerator
 
-## Introduction
-
-CodelistGenerator is used to create a candidate set of codes for helping
-to define patient cohorts in data mapped to the OMOP common data model.
-A little like the process for a systematic review, the idea is that for
-a specified search strategy, CodelistGenerator will identify a set of
-concepts that may be relevant, with these then being screened to remove
-any irrelevant codes.
-
 ## Installation
 
-You can install the development version of CodelistGenerator like so:
+You can install CodelistGenerator from CRAN
+
+``` r
+install.packages("CodelistGenerator")
+```
+
+Or you can also install the development version of CodelistGenerator
 
 ``` r
 install.packages("remotes")
@@ -38,6 +35,8 @@ library(CodelistGenerator)
 library(kableExtra)
 ```
 
+## Exploring the OMOP CDM Vocabulary tables
+
 In this example we’ll use the Eunomia dataset (which only contains a
 subset of the OMOP CDM vocabularies)
 
@@ -46,35 +45,79 @@ db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
 cdm <- cdm_from_con(db, cdm_schema = "main")
 ```
 
-Although we can run the search using vocabulary tables in the database
-or loaded into R, the fastest approach is using arrow. So let’s create a
-new cdm reference using arrow (in this example saved to the temp
-directory, but in practice you could of course save files elsewhere for
-reuse).
+OMOP CDM vocabularies are frequently updated, and we can identify the
+version of the vocabulary of our Eunomia data
 
 ``` r
-# save cdm vocabulary tables to temp directory
-dOut<-here::here(tempdir(), "db_vocab")
-dir.create(dOut)
-CDMConnector::stow(cdm, dOut)
-# new cdm reference using arrow
-cdm_arrow <- CDMConnector::cdm_from_files(path = dOut, 
-                                          as_data_frame = FALSE)
-```
-
-Every code list is specific to a version of the OMOP CDM vocabularies,
-so we can first check the version for Eunomia.
-
-``` r
-getVocabVersion(cdm = cdm_arrow)
+getVocabVersion(cdm = cdm)
 #> [1] "v5.0 18-JAN-19"
 ```
 
-We can then search for asthma like so
+CodelistGenerator provides various other functions to explore the
+vocabulary tables. For example, we can see the the different concept
+classes of standard concepts used for drugs
+
+``` r
+getConceptClassId(cdm,
+                  standardConcept = "Standard",
+                  domain = "Drug")
+#> [1] "Ingredient"          "Quant Clinical Drug" "Quant Branded Drug" 
+#> [4] "Clinical Drug Comp"  "Branded Drug"        "CVX"                
+#> [7] "Clinical Drug"       "Branded Pack"        "Branded Drug Comp"
+```
+
+## Vocabulary based codelists using CodelistGenerator
+
+CodelistGenerator provides functions to extract code lists based on
+vocabulary hierarchies. One example is getDrugIngredientCodes, which we
+can use to get all the concept IDs used to represent aspirin.
+
+``` r
+getDrugIngredientCodes(cdm = cdm, name = "aspirin")
+#> $aspirin
+#> [1] 19059056  1112807
+```
+
+If we also want the details of these concept IDs we can get these like
+so.
+
+``` r
+getDrugIngredientCodes(cdm = cdm, name = "aspirin", withConceptDetails = TRUE)
+#> $aspirin
+#> # A tibble: 2 × 4
+#>   concept_id concept_name              domain_id vocabulary_id
+#>        <int> <chr>                     <chr>     <chr>        
+#> 1   19059056 Aspirin 81 MG Oral Tablet Drug      RxNorm       
+#> 2    1112807 Aspirin                   Drug      RxNorm
+```
+
+If we want codelists for all drug ingredients we can simply omit the
+name argument.
+
+``` r
+ing <- getDrugIngredientCodes(cdm = cdm)
+ing$aspirin
+#> [1] 19059056  1112807
+ing$diclofenac
+#> [1] 1124300
+ing$celecoxib
+#> [1] 1118084
+```
+
+## Systematic search using CodelistGenerator
+
+CodelistGenerator can also support systematic searches of the vocabulary
+tables to support codelist development. A little like the process for a
+systematic review, the idea is that for a specified search strategy,
+CodelistGenerator will identify a set of concepts that may be relevant,
+with these then being screened to remove any irrelevant codes by
+clinical experts.
+
+We can do a simple search for asthma
 
 ``` r
 asthma_codes1 <- getCandidateCodes(
-  cdm = cdm_arrow,
+  cdm = cdm,
   keywords = "asthma",
   domains = "Condition"
 ) 
@@ -82,20 +125,20 @@ asthma_codes1 %>%
   glimpse()
 #> Rows: 2
 #> Columns: 6
-#> $ concept_id       <dbl> 4051466, 317009
+#> $ concept_id       <int> 4051466, 317009
 #> $ concept_name     <chr> "Childhood asthma", "Asthma"
 #> $ domain_id        <chr> "condition", "condition"
-#> $ concept_class_id <chr> "clinical finding", "clinical finding"
-#> $ vocabulary_id    <chr> "snomed", "snomed"
+#> $ concept_class_id <chr> "Clinical Finding", "Clinical Finding"
+#> $ vocabulary_id    <chr> "SNOMED", "SNOMED"
 #> $ found_from       <chr> "From initial search", "From initial search"
 ```
 
-Perhaps we want to exclude certain concepts as part of the search
-strategy, in which case this can be added like so
+But perhaps we want to exclude certain concepts as part of the search
+strategy, in this case we can add these like so
 
 ``` r
 asthma_codes2 <- getCandidateCodes(
-  cdm = cdm_arrow,
+  cdm = cdm,
   keywords = "asthma",
   exclude = "childhood",
   domains = "Condition"
@@ -104,11 +147,11 @@ asthma_codes2 %>%
   glimpse()
 #> Rows: 1
 #> Columns: 6
-#> $ concept_id       <dbl> 317009
+#> $ concept_id       <int> 317009
 #> $ concept_name     <chr> "Asthma"
 #> $ domain_id        <chr> "condition"
-#> $ concept_class_id <chr> "clinical finding"
-#> $ vocabulary_id    <chr> "snomed"
+#> $ concept_class_id <chr> "Clinical Finding"
+#> $ vocabulary_id    <chr> "SNOMED"
 #> $ found_from       <chr> "From initial search"
 ```
 
@@ -118,19 +161,19 @@ We can compare these two code lists like so
 compareCodelists(asthma_codes1, asthma_codes2)
 #> # A tibble: 2 × 3
 #>   concept_id concept_name     codelist       
-#>        <dbl> <chr>            <chr>          
+#>        <int> <chr>            <chr>          
 #> 1    4051466 Childhood asthma Only codelist 1
 #> 2     317009 Asthma           Both
 ```
 
 We can then also see non-standard codes these are mapped from, for
 example here we can see the non-standard ICD10 code that maps to a
-standard snomed code for gastrointestinal hemorrhage returned by our
+standard snowmed code for gastrointestinal hemorrhage returned by our
 search
 
 ``` r
 Gastrointestinal_hemorrhage <- getCandidateCodes(
-  cdm = cdm_arrow,
+  cdm = cdm,
   keywords = "Gastrointestinal hemorrhage",
   domains = "Condition"
 )
@@ -138,28 +181,28 @@ Gastrointestinal_hemorrhage %>%
   glimpse()
 #> Rows: 1
 #> Columns: 6
-#> $ concept_id       <dbl> 192671
+#> $ concept_id       <int> 192671
 #> $ concept_name     <chr> "Gastrointestinal hemorrhage"
 #> $ domain_id        <chr> "condition"
-#> $ concept_class_id <chr> "clinical finding"
-#> $ vocabulary_id    <chr> "snomed"
+#> $ concept_class_id <chr> "Clinical Finding"
+#> $ vocabulary_id    <chr> "SNOMED"
 #> $ found_from       <chr> "From initial search"
 ```
 
+## Summarising code use
+
 ``` r
-getMappings(
-  cdm = cdm_arrow,
-  candidateCodelist = Gastrointestinal_hemorrhage,
-  nonStandardVocabularies = "ICD10CM"
-) %>% 
-  glimpse()
-#> Rows: 1
-#> Columns: 7
-#> $ standard_concept_id        <dbl> 192671
-#> $ standard_concept_name      <chr> "Gastrointestinal hemorrhage"
-#> $ standard_vocabulary_id     <chr> "SNOMED"
-#> $ non_standard_concept_id    <dbl> 35208414
-#> $ non_standard_concept_name  <chr> "Gastrointestinal hemorrhage, unspecified"
-#> $ non_standard_concept_code  <chr> "K92.2"
-#> $ non_standard_vocabulary_id <chr> "ICD10CM"
+summariseCodeUse(asthma_codes1$concept_id,  
+                 cdm = cdm)
+#> # A tibble: 6 × 10
+#>   group_name group_level   strata_name strata_level variable_name variable_level
+#>   <chr>      <chr>         <chr>       <chr>        <chr>         <chr>         
+#> 1 Codelist   Overall       Overall     Overall      Record count  Overall       
+#> 2 By concept Childhood as… Overall     Overall      Record count  Overall       
+#> 3 By concept Asthma (3170… Overall     Overall      Record count  Overall       
+#> 4 Codelist   Overall       Overall     Overall      Person count  Overall       
+#> 5 By concept Asthma (3170… Overall     Overall      Person count  Overall       
+#> 6 By concept Childhood as… Overall     Overall      Person count  Overall       
+#> # ℹ 4 more variables: variable_type <chr>, estimate_type <chr>, estimate <int>,
+#> #   estimate_suppressed <chr>
 ```

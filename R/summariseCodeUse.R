@@ -20,11 +20,9 @@ summariseCodeUse <- function(x,
                              cdm,
                              countBy = c("record", "person"),
                              byConcept = TRUE,
-                             byYear = TRUE,
-                             bySex = TRUE,
-                             ageGroup = list(c(0,17),
-                                             c(18,65),
-                                             c(66, 120)),
+                             byYear = FALSE,
+                             bySex = FALSE,
+                             ageGroup = NULL,
                              minCellCount = 5){
 
 
@@ -369,7 +367,7 @@ groupedCounts <- dplyr::bind_rows(
   dplyr::mutate(strata_name = groupName,
                 strata_level = as.character(.data$groupvar),
                 variable_name = "Record count") %>%
-  dplyr::select(!c(groupBy, "groupvar"))
+  dplyr::select(!dplyr::all_of(c(groupBy, "groupvar")))
 
 return(groupedCounts)
 

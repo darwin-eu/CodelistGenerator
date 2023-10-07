@@ -15,7 +15,7 @@
 # limitations under the License.
 
 checkDbType <- function(cdm, type = "cdm_reference", messageStore) {
-  dbInheritsCheck <- inherits(cdm, type)
+  dbInheritsCheck <-  "cdm_reference" %in% class(cdm)
   checkmate::assertTRUE(dbInheritsCheck,
                         add = messageStore)
   if (!isTRUE(dbInheritsCheck)) {
@@ -24,11 +24,8 @@ checkDbType <- function(cdm, type = "cdm_reference", messageStore) {
 }
 
 assertTablesExist <- function(cdm, tableName, messageStore) {
-
   for(i in seq_along(tableName)){
-  tableExists <- inherits(cdm[[tableName[[i]]]], c("tbl_dbi",
-                                              "ArrowObject", "ArrowTabular",
-                                              "tbl",  "data.frame"))
+  tableExists <- tableName[[i]] %in%   names(cdm)
   checkmate::assertTRUE(tableExists, add = messageStore)
   if (!isTRUE(tableExists)) {
     messageStore$push(glue::glue("- {tableName[[i]]} is not found in the cdm reference"))

@@ -1,5 +1,5 @@
 test_that("tests with mock db", {
-  backends <- c("database")
+  backends <- c("database", "arrow", "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db
@@ -31,7 +31,7 @@ test_that("tests with mock db", {
       conceptId = 1,
       withAncestor = FALSE
     )
-    expect_true(all(descendants1$concept_id == c(1, 2, 3, 4, 5)))
+    expect_true(all(sort(descendants1$concept_id) == c(1, 2, 3, 4, 5)))
     expect_true("concept_name" %in% colnames(descendants1))
 
     descendants2 <- getDescendants(
@@ -39,7 +39,7 @@ test_that("tests with mock db", {
       conceptId = 1,
       withAncestor = TRUE
     )
-    expect_true(all(descendants2$concept_id == c(1, 2, 3, 4, 5)))
+    expect_true(all(sort(descendants2$concept_id) == c(1, 2, 3, 4, 5)))
     expect_true("ancestor_concept_id" %in% colnames(descendants2))
     expect_true(all(descendants2$ancestor_concept_id == 1))
 
@@ -49,7 +49,7 @@ test_that("tests with mock db", {
       withAncestor = FALSE,
       doseForm = c("Injection", "Injectable")
     )
-    expect_true(all(descendants3$concept_id == c(10, 13)))
+    expect_true(all(sort(descendants3$concept_id) == c(10, 13)))
 
     descendants4 <- getDescendants(
       cdm = cdm,
@@ -57,7 +57,7 @@ test_that("tests with mock db", {
       withAncestor = TRUE,
       doseForm = c("Injection", "Injectable")
     )
-    expect_true(all(descendants4$concept_id == c(10, 13)))
+    expect_true(all(sort(descendants4$concept_id) == c(10, 13)))
 
 
     descendants5 <- getDescendants(

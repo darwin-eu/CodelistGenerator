@@ -171,38 +171,6 @@ codes <- getCandidateCodes(
 kable(codes)
 ```
 
-Or, in this case, we can get the same result by searching via synonyms. In this case when using searchViaSynonyms=TRUE, "Arthritis" (which gets identified first) has a synonym of "Osteoarthrosis", and based on this synonym we can also include the "Osteoarthrosis" concept.
-
-```{r}
-codes <- getCandidateCodes(
-  cdm = cdm,
-  keywords = "arthritis",
-  domains = "Condition",
-  searchViaSynonyms = TRUE
-)
-
-kable(codes)
-```
-
-## Fuzzy matches instead of only exact matches 
-```{r, echo=FALSE}
-knitr::include_graphics("mock_db_fig6.png")
-```
-
-We could have also picked up "Osteoarthrosis" by doing fuzzy matching which allows for some differences in spelling.
-
-```{r}
-codes <- getCandidateCodes(
-  cdm = cdm,
-  keywords = "arthritis",
-  domains = "Condition",
-  fuzzyMatch = TRUE,
-  maxDistanceCost = 0.2
-)
-
-kable(codes)
-```
-
 ## Search via non-standard
 Or we could have also picked up "Osteoarthrosis" by searching via non-standard.
 
