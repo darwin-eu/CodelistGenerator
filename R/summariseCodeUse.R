@@ -25,7 +25,7 @@ summariseCodeUse <- function(x,
                              ageGroup = NULL,
                              minCellCount = 5){
 
-  getCodeUse(x,
+ codeUse <- getCodeUse(x,
              cdm = cdm,
              cohort = NULL,
              cohortId = NULL,
@@ -36,6 +36,8 @@ summariseCodeUse <- function(x,
              bySex = bySex,
              ageGroup = ageGroup,
              minCellCount = minCellCount)
+
+ return(codeUse)
 
 }
 
@@ -75,19 +77,38 @@ summariseCohortCodeUse <- function(x,
                                    ageGroup = NULL,
                                    minCellCount = 5){
 
-  getCodeUse(x,
+
+  checkDbType(cdm = cdm, type = "cdm_reference")
+  checkmate::assertTRUE("GeneratedCohortSet" %in% class(cdm[[cohortTable]]))
+  checkmate::assertTRUE(all(c("cohort_definition_id", "subject_id", "cohort_start_date",
+                                "cohort_end_date") %in%  colnames(cdm[[cohortTable]])))
+
+ if(is.null(cohortId)){
+  cohortId <- sort(CDMConnector::cohort_set(cdm[[cohortTable]]) %>%
+    dplyr::pull("cohort_definition_id"))
+ }
+
+  cohortCodeUse <- list()
+  for(i in seq_along(cohortId)){
+  workingCohortName <- CDMConnector::cohort_set(cdm[[cohortTable]]) %>%
+    dplyr::filter(cohort_definition_id == cohortId[[i]]) %>%
+    dplyr::pull("cohort_name")
+  cohortCodeUse[[i]] <- getCodeUse(x,
              cdm = cdm,
              cohortTable = cohortTable,
-             cohortId = cohortId,
+             cohortId = cohortId[[i]],
              timing = timing,
              countBy = countBy,
              byConcept = byConcept,
              byYear = byYear,
              bySex = bySex,
              ageGroup = ageGroup,
-             minCellCount = minCellCount)
+             minCellCount = minCellCount) %>%
+    dplyr::mutate(cohort_name = workingCohortName)
+  }
+  cohortCodeUse <- dplyr::bind_rows(cohortCodeUse)
 
-
+  return(cohortCodeUse)
 }
 
 getCodeUse <- function(x,
@@ -106,10 +127,6 @@ getCodeUse <- function(x,
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  if(!is.null(cohortTable)){
-    checkmate::assertTRUE(all(c("cohort_definition_id", "subject_id", "cohort_start_date",
-                                "cohort_end_date") %in%  colnames(cdm[[cohortTable]])))
-  }
   checkmate::assertCharacter(timing, len = 1,
                              add = errorMessage)
   checkmate::assertTRUE(all(timing %in% c("any","entry")),

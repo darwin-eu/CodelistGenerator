@@ -294,6 +294,16 @@ test_that("summarise cohort code use - eunomia", {
                                            cohortTable = "pharyngitis",
                                            timing = "any", minCellCount = 0)
 
+  expect_true(tibble::is_tibble(results_cohort))
+  expect_true(all(colnames(results_cohort) %in%
+                    c("group_name", "group_level",
+                      "strata_name", "strata_level",
+                      "variable_name", "variable_level",
+                      "variable_type",
+                      "estimate_type", "estimate",
+                      "estimate_suppressed",
+                      "cohort_name")
+  ))
 
 
   expect_true(results_cohort %>%
@@ -394,6 +404,31 @@ test_that("summarise cohort code use - eunomia", {
                index_260139)
 
 
+  # multiple cohorts
+  cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
+                                                conceptSet = list(a = 260139,
+                                                                  b = 1127433 ),
+                                                name = "cohorts",
+                                                end = "observation_period_end_date",
+                                                overwrite = TRUE)
+
+  results_cohort_mult <- summariseCohortCodeUse(c(260139,19133873,1127433),
+                                                                  cdm = cdm,
+                                                                  cohortTable = "cohorts",
+                                                                  timing = "entry",
+                                                                 minCellCount = 0)
+  expect_true(nrow(results_cohort_mult %>%
+    dplyr::filter(group_level == "Acute bronchitis (260139)" &
+                    strata_name == "Overall" &
+                    strata_level == "Overall" &
+                    variable_name == "Person count")) == 2)
+
+  expect_equal(c("a", "b"),  results_cohort_mult %>%
+   dplyr::filter(group_level == "Acute bronchitis (260139)" &
+                   strata_name == "Overall" &
+                   strata_level == "Overall" &
+                   variable_name == "Person count") %>%
+   dplyr::pull("cohort_name"))
 
 
   # empty cohort - no results
