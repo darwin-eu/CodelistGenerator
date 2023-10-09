@@ -82,7 +82,8 @@ getICD10StandardCodes <- function(cdm,
       cdm[["concept_relationship"]] %>%
         dplyr::filter(.data$relationship_id == "Maps to"),
       by = c("concept_id" = "concept_id_1"),
-      copy = TRUE
+      copy = TRUE,
+      relationship = "many-to-many"
     ) %>%
     dplyr::select("concept_id_2", "name") %>%
     dplyr::rename("concept_id" = "concept_id_2")
@@ -93,8 +94,12 @@ getICD10StandardCodes <- function(cdm,
       by = "concept_id",
       copy = TRUE
     ) %>%
-    dplyr::distinct() %>%
-    CDMConnector::compute_query()
+    dplyr::distinct()
+  if(!is.null(attr(cdm, "dbcon"))){
+    ICD10MapsTo <- ICD10MapsTo %>%
+      CDMConnector::compute_query()
+  }
+
   # add descendants
   if (isTRUE(includeDescendants)) {
     ICD10MapsTo <- ICD10MapsTo %>%
@@ -102,8 +107,12 @@ getICD10StandardCodes <- function(cdm,
         by = c("concept_id" = "ancestor_concept_id")
       ) %>%
       dplyr::select("name", "descendant_concept_id") %>%
-      dplyr::rename("concept_id" = "descendant_concept_id") %>%
+      dplyr::rename("concept_id" = "descendant_concept_id")
+
+    if(!is.null(attr(cdm, "dbcon"))){
+      ICD10MapsTo <- ICD10MapsTo  %>%
       CDMConnector::compute_query()
+      }
   }
 
   if(isTRUE(withConceptDetails)) {
@@ -155,8 +164,11 @@ getICD10NonStandardCodes <- function(cdm,
     icd_sub <- conceptDb %>%
       dplyr::filter(.data$vocabulary_id == "ICD10") %>%
       dplyr::filter(.data$concept_class_id %in% "ICD10 SubChapter") %>%
-      dplyr::select("concept_id", "concept_name", "concept_code") %>%
+      dplyr::select("concept_id", "concept_name", "concept_code")
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_sub <- icd_sub %>%
       CDMConnector::computeQuery()
+      }
 
     icd_sub1 <- get_subsumed_concepts(
       cdm = cdm,
@@ -165,21 +177,25 @@ getICD10NonStandardCodes <- function(cdm,
           "concept_id_1" =
             "concept_id"
         )
-    ) %>%
+    )
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_sub1 <- icd_sub1  %>%
       CDMConnector::computeQuery()
+      }
     # one more level down
     icd_sub2 <- get_subsumed_concepts(
       cdm = cdm,
       concepts = icd_sub1
-    ) %>%
-      CDMConnector::computeQuery()
+    )
+
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_sub2 <-  icd_sub2 %>%
+      CDMConnector::computeQuery()}
 
     icd_subchapter <- icd_sub2 %>%
       dplyr::collect() %>%
-      dplyr::mutate(name = paste0(
-        .data$concept_name,
-        " [", .data$concept_code, "]"
-      )) %>%
+      dplyr::mutate(name = stringr::str_to_lower(.data$concept_name)) %>%
+      dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) %>%
       dplyr::select("concept_id_1", "name") %>%
       dplyr::distinct()
   } else {
@@ -191,8 +207,11 @@ getICD10NonStandardCodes <- function(cdm,
     icd_ch <- conceptDb %>%
       dplyr::filter(.data$vocabulary_id == "ICD10") %>%
       dplyr::filter(.data$concept_class_id %in% "ICD10 Chapter") %>%
-      dplyr::select("concept_id", "concept_name", "concept_code") %>%
+      dplyr::select("concept_id", "concept_name", "concept_code")
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_ch <-icd_ch  %>%
       CDMConnector::computeQuery()
+      }
 
     icd_ch1 <- get_subsumed_concepts(
       cdm = cdm,
@@ -201,27 +220,33 @@ getICD10NonStandardCodes <- function(cdm,
           "concept_id_1" =
             "concept_id"
         )
-    ) %>%
+    )
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_ch1 <- icd_ch1 %>%
       CDMConnector::computeQuery()
+    }
     # one more level down
     icd_ch2 <- get_subsumed_concepts(
       cdm = cdm,
       concepts = icd_ch1
-    ) %>%
+    )
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_ch2 <- icd_ch2 %>%
       CDMConnector::computeQuery()
+    }
     # and one more level down
     icd_ch3 <- get_subsumed_concepts(
       cdm = cdm,
       concepts = icd_ch2
-    ) %>%
-      CDMConnector::computeQuery()
+    )
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_ch3 <-icd_ch3 %>%
+      CDMConnector::computeQuery()}
 
     icd_chapter <- icd_ch3 %>%
       dplyr::collect() %>%
-      dplyr::mutate(name = paste0(
-        .data$concept_name,
-        " [", .data$concept_code, "]"
-      )) %>%
+      dplyr::mutate(name = stringr::str_to_lower(.data$concept_name)) %>%
+      dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) %>%
       dplyr::select("concept_id_1", "name") %>%
       dplyr::distinct()
   } else {

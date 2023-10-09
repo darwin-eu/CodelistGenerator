@@ -1,11 +1,16 @@
 test_that("db without icd10 codes loaded", {
-  cdm <- mockVocabRef()
-  codes <- getICD10StandardCodes(cdm = cdm,
+  backends <- c("database", "arrow", "data_frame")
+  for (i in seq_along(backends)) {
+    cdm <- mockVocabRef(backend = backends[i])
+    codes <- getICD10StandardCodes(cdm = cdm,
                                  level = c(
                                    "ICD10 Chapter",
                                    "ICD10 SubChapter"
                                  ))
   expect_true(length(codes) == 2)
+  expect_true("arthropathies" %in% names(codes))
+  expect_true("diseases_of_the_musculoskeletal_system_and_connective_tissue" %in%
+                names(codes))
   # we should pick up mapping and descendants
   expect_true(all(c(3,4,5) %in% codes[[1]]))
   expect_true(all(c(3,4,5) %in% codes[[2]]))
@@ -43,7 +48,11 @@ test_that("db without icd10 codes loaded", {
                                   withConceptDetails = TRUE)
   expect_true(!is.null(codes5[[1]]$concept_name))
 
-  DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  if (backends[[i]] == "database") {
+    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  }
+
+  }
 })
 
 test_that("db without icd10 codes loaded", {

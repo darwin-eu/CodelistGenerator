@@ -11,18 +11,15 @@ status](https://www.r-pkg.org/badges/version/CodelistGenerator)](https://CRAN.R-
 
 # CodelistGenerator
 
-## Introduction
-
-CodelistGenerator is used to create a candidate set of codes for helping
-to define patient cohorts in data mapped to the OMOP common data model.
-A little like the process for a systematic review, the idea is that for
-a specified search strategy, CodelistGenerator will identify a set of
-concepts that may be relevant, with these then being screened to remove
-any irrelevant codes.
-
 ## Installation
 
-You can install the development version of CodelistGenerator like so:
+You can install CodelistGenerator from CRAN
+
+``` r
+install.packages("CodelistGenerator")
+```
+
+Or you can also install the development version of CodelistGenerator
 
 ``` r
 install.packages("remotes")
@@ -35,46 +32,92 @@ remotes::install_github("darwin-eu/CodelistGenerator")
 library(dplyr)
 library(CDMConnector)
 library(CodelistGenerator)
-library(kableExtra)
 ```
 
-In this example we’ll use the Eunomia dataset (which only contains a
+For this example we’ll use the Eunomia dataset (which only contains a
 subset of the OMOP CDM vocabularies)
 
 ``` r
 db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
-cdm <- cdm_from_con(db, cdm_schema = "main")
+cdm <- cdm_from_con(db, cdm_schema = "main", write_schema = c(prefix = "cg_", schema = "main"))
 ```
 
-Although we can run the search using vocabulary tables in the database
-or loaded into R, the fastest approach is using arrow. So let’s create a
-new cdm reference using arrow (in this example saved to the temp
-directory, but in practice you could of course save files elsewhere for
-reuse).
+## Exploring the OMOP CDM Vocabulary tables
+
+OMOP CDM vocabularies are frequently updated, and we can identify the
+version of the vocabulary of our Eunomia data
 
 ``` r
-# save cdm vocabulary tables to temp directory
-dOut<-here::here(tempdir(), "db_vocab")
-dir.create(dOut)
-CDMConnector::stow(cdm, dOut)
-# new cdm reference using arrow
-cdm_arrow <- CDMConnector::cdm_from_files(path = dOut, 
-                                          as_data_frame = FALSE)
-```
-
-Every code list is specific to a version of the OMOP CDM vocabularies,
-so we can first check the version for Eunomia.
-
-``` r
-getVocabVersion(cdm = cdm_arrow)
+getVocabVersion(cdm = cdm)
 #> [1] "v5.0 18-JAN-19"
 ```
 
-We can then search for asthma like so
+CodelistGenerator provides various other functions to explore the
+vocabulary tables. For example, we can see the the different concept
+classes of standard concepts used for drugs
+
+``` r
+getConceptClassId(cdm,
+                  standardConcept = "Standard",
+                  domain = "Drug")
+#> [1] "Branded Drug"        "CVX"                 "Ingredient"         
+#> [4] "Clinical Drug"       "Branded Pack"        "Quant Branded Drug" 
+#> [7] "Quant Clinical Drug" "Branded Drug Comp"   "Clinical Drug Comp"
+```
+
+## Vocabulary based codelists using CodelistGenerator
+
+CodelistGenerator provides functions to extract code lists based on
+vocabulary hierarchies. One example is \`getDrugIngredientCodes, which
+we can use, for example, to get all the concept IDs used to represent
+aspirin.
+
+``` r
+getDrugIngredientCodes(cdm = cdm, name = "aspirin")
+#> $`Ingredient: Aspirin (1112807)`
+#> [1]  1112807 19059056
+```
+
+If we also want the details of these concept IDs we can get these like
+so.
+
+``` r
+getDrugIngredientCodes(cdm = cdm, name = "aspirin", withConceptDetails = TRUE)
+#> $`Ingredient: Aspirin (1112807)`
+#> # A tibble: 2 × 4
+#>   concept_id concept_name              domain_id vocabulary_id
+#>        <dbl> <chr>                     <chr>     <chr>        
+#> 1    1112807 Aspirin                   Drug      RxNorm       
+#> 2   19059056 Aspirin 81 MG Oral Tablet Drug      RxNorm
+```
+
+And if we want codelists for all drug ingredients we can simply omit the
+name argument and all ingredients will be returned.
+
+``` r
+ing <- getDrugIngredientCodes(cdm = cdm)
+ing$aspirin
+#> NULL
+ing$diclofenac
+#> NULL
+ing$celecoxib
+#> NULL
+```
+
+## Systematic search using CodelistGenerator
+
+CodelistGenerator can also support systematic searches of the vocabulary
+tables to support codelist development. A little like the process for a
+systematic review, the idea is that for a specified search strategy,
+CodelistGenerator will identify a set of concepts that may be relevant,
+with these then being screened to remove any irrelevant codes by
+clinical experts.
+
+We can do a simple search for asthma
 
 ``` r
 asthma_codes1 <- getCandidateCodes(
-  cdm = cdm_arrow,
+  cdm = cdm,
   keywords = "asthma",
   domains = "Condition"
 ) 
@@ -90,12 +133,12 @@ asthma_codes1 %>%
 #> $ found_from       <chr> "From initial search", "From initial search"
 ```
 
-Perhaps we want to exclude certain concepts as part of the search
-strategy, in which case this can be added like so
+But perhaps we want to exclude certain concepts as part of the search
+strategy, in this case we can add these like so
 
 ``` r
 asthma_codes2 <- getCandidateCodes(
-  cdm = cdm_arrow,
+  cdm = cdm,
   keywords = "asthma",
   exclude = "childhood",
   domains = "Condition"
@@ -125,12 +168,12 @@ compareCodelists(asthma_codes1, asthma_codes2)
 
 We can then also see non-standard codes these are mapped from, for
 example here we can see the non-standard ICD10 code that maps to a
-standard snomed code for gastrointestinal hemorrhage returned by our
+standard snowmed code for gastrointestinal hemorrhage returned by our
 search
 
 ``` r
 Gastrointestinal_hemorrhage <- getCandidateCodes(
-  cdm = cdm_arrow,
+  cdm = cdm,
   keywords = "Gastrointestinal hemorrhage",
   domains = "Condition"
 )
@@ -146,20 +189,22 @@ Gastrointestinal_hemorrhage %>%
 #> $ found_from       <chr> "From initial search"
 ```
 
+## Summarising code use
+
 ``` r
-getMappings(
-  cdm = cdm_arrow,
-  candidateCodelist = Gastrointestinal_hemorrhage,
-  nonStandardVocabularies = "ICD10CM"
-) %>% 
+summariseCodeUse(asthma_codes1$concept_id,  
+                 cdm = cdm) %>% 
   glimpse()
-#> Rows: 1
-#> Columns: 7
-#> $ standard_concept_id        <dbl> 192671
-#> $ standard_concept_name      <chr> "Gastrointestinal hemorrhage"
-#> $ standard_vocabulary_id     <chr> "SNOMED"
-#> $ non_standard_concept_id    <dbl> 35208414
-#> $ non_standard_concept_name  <chr> "Gastrointestinal hemorrhage, unspecified"
-#> $ non_standard_concept_code  <chr> "K92.2"
-#> $ non_standard_vocabulary_id <chr> "ICD10CM"
+#> Rows: 230
+#> Columns: 10
+#> $ group_name          <chr> "Codelist", "By concept", "By concept", "Codelist"…
+#> $ group_level         <chr> "Overall", "Childhood asthma (4051466)", "Asthma (…
+#> $ strata_name         <chr> "Overall", "Overall", "Overall", "Year", "Year", "…
+#> $ strata_level        <chr> "Overall", "Overall", "Overall", "1914", "1915", "…
+#> $ variable_name       <chr> "Record count", "Record count", "Record count", "R…
+#> $ variable_level      <chr> "Overall", "Overall", "Overall", "Overall", "Overa…
+#> $ variable_type       <chr> "Numeric", "Numeric", "Numeric", "Numeric", "Numer…
+#> $ estimate_type       <chr> "Count", "Count", "Count", "Count", "Count", "Coun…
+#> $ estimate            <int> 101, 96, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+#> $ estimate_suppressed <chr> "FALSE", "FALSE", "FALSE", "TRUE", "TRUE", "TRUE",…
 ```

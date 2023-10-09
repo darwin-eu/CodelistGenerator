@@ -1,3 +1,7 @@
+# CodelistGenerator 2.0.0
+* Simplified the interface of getCandidateCodes, with a number of arguments removed.
+* Added function summariseCohortCodeUse.
+
 # CodelistGenerator 1.7.0
 * Added function codesFromCohort.
 

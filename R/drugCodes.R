@@ -131,6 +131,8 @@ getATCCodes <- function(cdm,
       workingName <- atc_groups %>%
         dplyr::filter(.data$concept_id == names(atc_descendants)[i]) %>%
         dplyr::pull("concept_name")
+      workingName <- stringr::str_to_lower(workingName)
+      workingName <- stringr::str_replace_all(workingName, " ", "_")
 
       if(isFALSE(withConceptDetails)){
       atc_descendants[[i]] <- atc_descendants[[i]] %>%
@@ -142,10 +144,7 @@ getATCCodes <- function(cdm,
           dplyr::select(!"ancestor_concept_id")
       }
 
-      names(atc_descendants)[i] <- paste0(
-        workingLevel, ": ", workingName,
-        " (", names(atc_descendants)[i], ")"
-      )
+      names(atc_descendants)[i] <- workingName
     }
   }
   return(atc_descendants)
@@ -249,6 +248,9 @@ getDrugIngredientCodes <- function(cdm,
       workingName <- ingredientConcepts %>%
         dplyr::filter(.data$concept_id == names(ingredientCodes)[[i]]) %>%
         dplyr::pull("concept_name")
+      workingName <- stringr::str_to_lower(workingName)
+      workingName <- stringr::str_replace_all(workingName, " ", "_")
+
 
       if(isFALSE(withConceptDetails)){
         ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
@@ -260,10 +262,7 @@ getDrugIngredientCodes <- function(cdm,
           dplyr::select(!"ancestor_concept_id")
       }
 
-      names(ingredientCodes)[[i]] <- paste0(
-        "Ingredient", ": ", workingName,
-        " (", names(ingredientCodes)[[i]], ")"
-      )
+      names(ingredientCodes)[[i]] <- workingName
     }
     return(ingredientCodes)
 }

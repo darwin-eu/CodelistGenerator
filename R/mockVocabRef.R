@@ -322,17 +322,10 @@ mockVocabRef <- function(backend = "database") {
     CDMConnector::stow(cdm, dOut)
 
     if (backend == "arrow") {
-      if(utils::packageVersion("CDMConnector")<"1.1.0"){
       cdmArrow <- CDMConnector::cdm_from_files(
         path = dOut,
-        as_data_frame = FALSE
+        as_data_frame = FALSE, cdm_name = "mock_vocab"
       )
-      } else {
-        cdmArrow <- CDMConnector::cdm_from_files(
-          path = dOut, cdm_name = "mock",
-          as_data_frame = FALSE
-        )
-      }
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
       return(cdmArrow)
     }
