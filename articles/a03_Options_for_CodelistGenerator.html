@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,8 +95,13 @@ concepts and relationships.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -129,10 +134,10 @@ Musculoskeletal disorder
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -147,8 +152,13 @@ From initial search
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -181,10 +191,10 @@ Musculoskeletal disorder
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -199,12 +209,18 @@ From initial search
 <p>To include descendants of an identified code, we can set
 includeDescendants to TRUE</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 5 candidate concepts identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -238,10 +254,10 @@ Musculoskeletal disorder
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -258,10 +274,10 @@ Osteoarthrosis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From descendants
@@ -278,10 +294,10 @@ Arthritis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From descendants
@@ -298,10 +314,10 @@ Osteoarthritis of knee
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From descendants
@@ -318,10 +334,10 @@ Osteoarthritis of hip
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From descendants
@@ -346,8 +362,13 @@ have picked these all up with the following search</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 5 candidate concepts identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -381,10 +402,10 @@ Musculoskeletal disorder
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -401,10 +422,10 @@ Arthritis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -421,10 +442,10 @@ Osteoarthritis of knee
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -441,10 +462,10 @@ Osteoarthritis of hip
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -461,10 +482,10 @@ Osteoarthrosis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -486,8 +507,15 @@ can set includeAncestor to TRUE</p>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; condition domain: Adding ancestor</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -521,10 +549,10 @@ Osteoarthritis of knee
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -541,10 +569,10 @@ Arthritis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From ancestor
@@ -567,8 +595,14 @@ pick up “Osteoarthritis of knee”.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -601,10 +635,10 @@ Osteoarthritis of knee
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -624,8 +658,14 @@ From initial search
 <span>  exclude <span class="op">=</span> <span class="st">"Hip osteoarthritis"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -659,10 +699,10 @@ Arthritis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -679,10 +719,10 @@ Osteoarthritis of knee
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -706,8 +746,15 @@ pick up this synonym and it would be included.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  searchInSynonyms <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; condition domain: Adding concepts using synonymns</span></span>
+<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -741,10 +788,10 @@ Osteoarthrosis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -761,10 +808,10 @@ Arthritis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 In synonyms
@@ -781,113 +828,15 @@ Osteoarthritis of knee
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
-</td>
-<td style="text-align:left;">
-From descendants
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Osteoarthritis of hip
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-clinical finding
-</td>
-<td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From descendants
 </td>
 </tr>
-</tbody>
-</table>
-<p>Or, in this case, we can get the same result by searching via
-synonyms. In this case when using searchViaSynonyms=TRUE, “Arthritis”
-(which gets identified first) has a synonym of “Osteoarthrosis”, and
-based on this synonym we can also include the “Osteoarthrosis”
-concept.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
-<span>  keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
-<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
-<span>  searchViaSynonyms <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-clinical finding
-</td>
-<td style="text-align:left;">
-snomed
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-clinical finding
-</td>
-<td style="text-align:left;">
-snomed
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
 <tr>
 <td style="text-align:right;">
 5
@@ -899,154 +848,13 @@ Osteoarthritis of hip
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-Osteoarthrosis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-clinical finding
-</td>
-<td style="text-align:left;">
-snomed
-</td>
-<td style="text-align:left;">
-Via synonyms
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level2">
-<h2 id="fuzzy-matches-instead-of-only-exact-matches">Fuzzy matches instead of only exact matches<a class="anchor" aria-label="anchor" href="#fuzzy-matches-instead-of-only-exact-matches"></a>
-</h2>
-<p><img src="mock_db_fig6.png"><!-- --></p>
-<p>We could have also picked up “Osteoarthrosis” by doing fuzzy matching
-which allows for some differences in spelling.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
-<span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
-<span>  keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
-<span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
-<span>  fuzzyMatch <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  maxDistanceCost <span class="op">=</span> <span class="fl">0.2</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-Osteoarthrosis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-clinical finding
-</td>
-<td style="text-align:left;">
-snomed
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-clinical finding
-</td>
-<td style="text-align:left;">
-snomed
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-clinical finding
-</td>
-<td style="text-align:left;">
-snomed
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Osteoarthritis of hip
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-clinical finding
-</td>
-<td style="text-align:left;">
-snomed
-</td>
-<td style="text-align:left;">
-From initial search
+From descendants
 </td>
 </tr>
 </tbody>
@@ -1057,15 +865,22 @@ From initial search
 </h2>
 <p>Or we could have also picked up “Osteoarthrosis” by searching via
 non-standard.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"arthritis"</span>, <span class="st">"arthropathy"</span><span class="op">)</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; condition domain: Adding codes from non-standard</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -1099,10 +914,10 @@ Arthritis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1119,10 +934,10 @@ Osteoarthritis of knee
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1139,10 +954,10 @@ Osteoarthritis of hip
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1159,10 +974,10 @@ Osteoarthrosis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From non-standard
@@ -1176,7 +991,7 @@ From non-standard
 </h2>
 <p><img src="mock_db_fig8.png"><!-- --></p>
 <p>We can also include non-standard codes in our results like so</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -1188,8 +1003,14 @@ From non-standard
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  standardConcept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Standard"</span>, <span class="st">"Non-standard"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 8 candidate concepts identified</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr>
 <th style="text-align:right;">
@@ -1223,10 +1044,10 @@ Musculoskeletal disorder
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1243,10 +1064,10 @@ Arthritis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1263,10 +1084,10 @@ Osteoarthritis of knee
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1283,10 +1104,10 @@ Osteoarthritis of hip
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1303,10 +1124,10 @@ Knee osteoarthritis
 condition
 </td>
 <td style="text-align:left;">
-diagnosis
+Diagnosis
 </td>
 <td style="text-align:left;">
-read
+Read
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1323,10 +1144,10 @@ Arthritis
 condition
 </td>
 <td style="text-align:left;">
-icd code
+ICD Code
 </td>
 <td style="text-align:left;">
-icd10
+ICD10
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1343,10 +1164,10 @@ Degenerative arthropathy
 condition
 </td>
 <td style="text-align:left;">
-diagnosis
+Diagnosis
 </td>
 <td style="text-align:left;">
-read
+Read
 </td>
 <td style="text-align:left;">
 From initial search
@@ -1363,10 +1184,10 @@ Osteoarthrosis
 condition
 </td>
 <td style="text-align:left;">
-clinical finding
+Clinical Finding
 </td>
 <td style="text-align:left;">
-snomed
+SNOMED
 </td>
 <td style="text-align:left;">
 From initial search

@@ -14,7 +14,7 @@ using the OMOP CDM."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
     
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,20 +65,11 @@ using the OMOP CDM.</p>
 <span>  <span class="va">keywords</span>,</span>
 <span>  exclude <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
-<span>  conceptClassId <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  doseForm <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  vocabularyId <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  standardConcept <span class="op">=</span> <span class="st">"Standard"</span>,</span>
-<span>  exactMatch <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchInSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  searchViaSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  includeSequela <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  fuzzyMatch <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  maxDistanceCost <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -104,29 +95,10 @@ to identify concepts to exclude.</p></dd>
 <dd><p>Character vector with one or more of the OMOP CDM domain.</p></dd>
 
 
-<dt>conceptClassId</dt>
-<dd><p>Character vector with one or more concept class
-of the Concept</p></dd>
-
-
-<dt>doseForm</dt>
-<dd><p>The dose form associated with a drug</p></dd>
-
-
-<dt>vocabularyId</dt>
-<dd><p>Character vector with one or more vocabulary
-of the Concept</p></dd>
-
-
 <dt>standardConcept</dt>
 <dd><p>Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.</p></dd>
-
-
-<dt>exactMatch</dt>
-<dd><p>Either TRUE or FALSE. If TRUE only exact matches of
-keywords will be identified when running the initial search.</p></dd>
 
 
 <dt>searchInSynonyms</dt>
@@ -135,20 +107,9 @@ search using both the primary name in the concept table and synonyms from
 the concept synonym table.</p></dd>
 
 
-<dt>searchViaSynonyms</dt>
-<dd><p>Either TRUE or FALSE. If TRUE the code will also
-search via the concept synonym table.</p></dd>
-
-
 <dt>searchNonStandard</dt>
 <dd><p>Either TRUE or FALSE. If TRUE the code will also
 search via non-standard concepts.</p></dd>
-
-
-<dt>includeSequela</dt>
-<dd><p>Either TRUE or FALSE. If TRUE, codes associated via
-a concept relationship of 'Due to of' or 'Occurs before' will also be
-identified.</p></dd>
 
 
 <dt>includeDescendants</dt>
@@ -161,22 +122,6 @@ will be included in the candidate codelist.</p></dd>
 <dd><p>Either TRUE or FALSE.
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.</p></dd>
-
-
-<dt>fuzzyMatch</dt>
-<dd><p>Either TRUE or FALSE. If TRUE the fuzzy matching
-will be used, with approximate matches identified.</p></dd>
-
-
-<dt>maxDistanceCost, </dt>
-<dd><p>The
-maximum number/fraction of match cost (generalized Levenshtein distance)
-for fuzzy matching (see ??base::agrep for further details).</p></dd>
-
-
-<dt>verbose</dt>
-<dd><p>Either TRUE or FALSE.
-If TRUE, progress will be reported.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -193,11 +138,16 @@ If TRUE, progress will be reported.</p></dd>
 <span class="r-in"><span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span></span>
 <span class="r-in"><span>  keywords <span class="op">=</span> <span class="st">"osteoarthritis"</span></span></span>
 <span class="r-in"><span> <span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> condition domain: Limiting to domains of interest</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> condition: Getting concepts to include</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> condition domain: Adding descendants</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Time taken: 0 minutes and 1 seconds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   concept_id concept_name    domain_id concept_class_id vocabulary_id found_from</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>          4 Osteoarthritis… condition clinical finding snomed        From init…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>          5 Osteoarthritis… condition clinical finding snomed        From init…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>          4 Osteoarthritis… condition Clinical Finding SNOMED        From init…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>          5 Osteoarthritis… condition Clinical Finding SNOMED        From init…</span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">cdm</span>, <span class="st">"dbcon"</span><span class="op">)</span>, shutdown <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
