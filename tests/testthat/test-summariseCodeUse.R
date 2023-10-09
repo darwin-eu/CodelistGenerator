@@ -24,14 +24,13 @@ skip_on_cran()
   # column names
   expect_true(tibble::is_tibble(results))
 
-  expect_true(all(colnames(results) %in%
+  expect_equal(colnames(results),
                     c("group_name", "group_level",
                       "strata_name", "strata_level",
                       "variable_name", "variable_level",
                       "variable_type",
                       "estimate_type", "estimate",
-                      "estimate_suppressed")
-  ))
+                      "estimate_suppressed", "cohort_name"))
 
 
   # overall record count

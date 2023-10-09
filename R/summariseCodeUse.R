@@ -35,7 +35,8 @@ summariseCodeUse <- function(x,
              byYear = byYear,
              bySex = bySex,
              ageGroup = ageGroup,
-             minCellCount = minCellCount)
+             minCellCount = minCellCount) %>%
+   dplyr::mutate(cohort_name = NA)
 
  return(codeUse)
 
