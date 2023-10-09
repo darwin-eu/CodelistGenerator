@@ -27,7 +27,7 @@ summariseCodeUse <- function(x,
 
  codeUse <- getCodeUse(x,
              cdm = cdm,
-             cohort = NULL,
+             cohortTable = NULL,
              cohortId = NULL,
              timing = "any",
              countBy = countBy,
@@ -91,7 +91,7 @@ summariseCohortCodeUse <- function(x,
   cohortCodeUse <- list()
   for(i in seq_along(cohortId)){
   workingCohortName <- CDMConnector::cohort_set(cdm[[cohortTable]]) %>%
-    dplyr::filter(cohort_definition_id == cohortId[[i]]) %>%
+    dplyr::filter(.data$cohort_definition_id == cohortId[[i]]) %>%
     dplyr::pull("cohort_name")
   cohortCodeUse[[i]] <- getCodeUse(x,
              cdm = cdm,
@@ -296,7 +296,7 @@ getRelevantRecords <- function(codes,
         dplyr::distinct()
     } else {
       cohortSubjects <- cdm[[cohortTable]] %>%
-        dplyr::filter(cohort_definition_id %in% cohortId) %>%
+        dplyr::filter(.data$cohort_definition_id %in% cohortId) %>%
         dplyr::select("subject_id", "cohort_start_date") %>%
         dplyr::rename("person_id" = "subject_id") %>%
         dplyr::distinct()

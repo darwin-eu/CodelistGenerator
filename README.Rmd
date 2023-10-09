@@ -40,16 +40,15 @@ remotes::install_github("darwin-eu/CodelistGenerator")
 library(dplyr)
 library(CDMConnector)
 library(CodelistGenerator)
-library(kableExtra)
+```
+
+For this example we'll use the Eunomia dataset (which only contains a subset of the OMOP CDM vocabularies)
+```{r}
+db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
+cdm <- cdm_from_con(db, cdm_schema = "main", write_schema = c(prefix = "cg_", schema = "main"))
 ```
 
 ## Exploring the OMOP CDM Vocabulary tables
-In this example we'll use the Eunomia dataset (which only contains a subset of the OMOP CDM vocabularies)
-```{r}
-db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
-cdm <- cdm_from_con(db, cdm_schema = "main")
-```
-
 OMOP CDM vocabularies are frequently updated, and we can identify the version of the vocabulary of our Eunomia data
 ```{r}
 getVocabVersion(cdm = cdm)
@@ -63,7 +62,7 @@ getConceptClassId(cdm,
 ```
 
 ## Vocabulary based codelists using CodelistGenerator
-CodelistGenerator provides functions to extract code lists based on vocabulary hierarchies. One example is getDrugIngredientCodes, which we can use to get all the concept IDs used to represent aspirin. 
+CodelistGenerator provides functions to extract code lists based on vocabulary hierarchies. One example is `getDrugIngredientCodes, which we can use, for example, to get all the concept IDs used to represent aspirin. 
 ```{r}
 getDrugIngredientCodes(cdm = cdm, name = "aspirin")
 ```
@@ -73,7 +72,7 @@ If we also want the details of these concept IDs we can get these like so.
 getDrugIngredientCodes(cdm = cdm, name = "aspirin", withConceptDetails = TRUE)
 ```
 
-If we want codelists for all drug ingredients we can simply omit the name argument.
+And if we want codelists for all drug ingredients we can simply omit the name argument and all ingredients will be returned.
 ```{r}
 ing <- getDrugIngredientCodes(cdm = cdm)
 ing$aspirin
@@ -124,9 +123,11 @@ Gastrointestinal_hemorrhage %>%
 ```
 
 ## Summarising code use
+
 ```{r}
 summariseCodeUse(asthma_codes1$concept_id,  
-                 cdm = cdm)
+                 cdm = cdm) %>% 
+  glimpse()
 
 ```
 

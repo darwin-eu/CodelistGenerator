@@ -32,18 +32,17 @@ remotes::install_github("darwin-eu/CodelistGenerator")
 library(dplyr)
 library(CDMConnector)
 library(CodelistGenerator)
-library(kableExtra)
 ```
 
-## Exploring the OMOP CDM Vocabulary tables
-
-In this example we’ll use the Eunomia dataset (which only contains a
+For this example we’ll use the Eunomia dataset (which only contains a
 subset of the OMOP CDM vocabularies)
 
 ``` r
 db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
-cdm <- cdm_from_con(db, cdm_schema = "main")
+cdm <- cdm_from_con(db, cdm_schema = "main", write_schema = c(prefix = "cg_", schema = "main"))
 ```
+
+## Exploring the OMOP CDM Vocabulary tables
 
 OMOP CDM vocabularies are frequently updated, and we can identify the
 version of the vocabulary of our Eunomia data
@@ -61,21 +60,22 @@ classes of standard concepts used for drugs
 getConceptClassId(cdm,
                   standardConcept = "Standard",
                   domain = "Drug")
-#> [1] "Ingredient"          "Quant Clinical Drug" "Quant Branded Drug" 
-#> [4] "Clinical Drug Comp"  "Branded Drug"        "CVX"                
-#> [7] "Clinical Drug"       "Branded Pack"        "Branded Drug Comp"
+#> [1] "Branded Drug"        "CVX"                 "Ingredient"         
+#> [4] "Clinical Drug"       "Branded Pack"        "Quant Branded Drug" 
+#> [7] "Quant Clinical Drug" "Branded Drug Comp"   "Clinical Drug Comp"
 ```
 
 ## Vocabulary based codelists using CodelistGenerator
 
 CodelistGenerator provides functions to extract code lists based on
-vocabulary hierarchies. One example is getDrugIngredientCodes, which we
-can use to get all the concept IDs used to represent aspirin.
+vocabulary hierarchies. One example is \`getDrugIngredientCodes, which
+we can use, for example, to get all the concept IDs used to represent
+aspirin.
 
 ``` r
 getDrugIngredientCodes(cdm = cdm, name = "aspirin")
-#> $aspirin
-#> [1] 19059056  1112807
+#> $`Ingredient: Aspirin (1112807)`
+#> [1]  1112807 19059056
 ```
 
 If we also want the details of these concept IDs we can get these like
@@ -83,25 +83,25 @@ so.
 
 ``` r
 getDrugIngredientCodes(cdm = cdm, name = "aspirin", withConceptDetails = TRUE)
-#> $aspirin
+#> $`Ingredient: Aspirin (1112807)`
 #> # A tibble: 2 × 4
 #>   concept_id concept_name              domain_id vocabulary_id
-#>        <int> <chr>                     <chr>     <chr>        
-#> 1   19059056 Aspirin 81 MG Oral Tablet Drug      RxNorm       
-#> 2    1112807 Aspirin                   Drug      RxNorm
+#>        <dbl> <chr>                     <chr>     <chr>        
+#> 1    1112807 Aspirin                   Drug      RxNorm       
+#> 2   19059056 Aspirin 81 MG Oral Tablet Drug      RxNorm
 ```
 
-If we want codelists for all drug ingredients we can simply omit the
-name argument.
+And if we want codelists for all drug ingredients we can simply omit the
+name argument and all ingredients will be returned.
 
 ``` r
 ing <- getDrugIngredientCodes(cdm = cdm)
 ing$aspirin
-#> [1] 19059056  1112807
+#> NULL
 ing$diclofenac
-#> [1] 1124300
+#> NULL
 ing$celecoxib
-#> [1] 1118084
+#> NULL
 ```
 
 ## Systematic search using CodelistGenerator
@@ -125,11 +125,11 @@ asthma_codes1 %>%
   glimpse()
 #> Rows: 2
 #> Columns: 6
-#> $ concept_id       <int> 4051466, 317009
+#> $ concept_id       <dbl> 4051466, 317009
 #> $ concept_name     <chr> "Childhood asthma", "Asthma"
 #> $ domain_id        <chr> "condition", "condition"
-#> $ concept_class_id <chr> "Clinical Finding", "Clinical Finding"
-#> $ vocabulary_id    <chr> "SNOMED", "SNOMED"
+#> $ concept_class_id <chr> "clinical finding", "clinical finding"
+#> $ vocabulary_id    <chr> "snomed", "snomed"
 #> $ found_from       <chr> "From initial search", "From initial search"
 ```
 
@@ -147,11 +147,11 @@ asthma_codes2 %>%
   glimpse()
 #> Rows: 1
 #> Columns: 6
-#> $ concept_id       <int> 317009
+#> $ concept_id       <dbl> 317009
 #> $ concept_name     <chr> "Asthma"
 #> $ domain_id        <chr> "condition"
-#> $ concept_class_id <chr> "Clinical Finding"
-#> $ vocabulary_id    <chr> "SNOMED"
+#> $ concept_class_id <chr> "clinical finding"
+#> $ vocabulary_id    <chr> "snomed"
 #> $ found_from       <chr> "From initial search"
 ```
 
@@ -161,7 +161,7 @@ We can compare these two code lists like so
 compareCodelists(asthma_codes1, asthma_codes2)
 #> # A tibble: 2 × 3
 #>   concept_id concept_name     codelist       
-#>        <int> <chr>            <chr>          
+#>        <dbl> <chr>            <chr>          
 #> 1    4051466 Childhood asthma Only codelist 1
 #> 2     317009 Asthma           Both
 ```
@@ -181,11 +181,11 @@ Gastrointestinal_hemorrhage %>%
   glimpse()
 #> Rows: 1
 #> Columns: 6
-#> $ concept_id       <int> 192671
+#> $ concept_id       <dbl> 192671
 #> $ concept_name     <chr> "Gastrointestinal hemorrhage"
 #> $ domain_id        <chr> "condition"
-#> $ concept_class_id <chr> "Clinical Finding"
-#> $ vocabulary_id    <chr> "SNOMED"
+#> $ concept_class_id <chr> "clinical finding"
+#> $ vocabulary_id    <chr> "snomed"
 #> $ found_from       <chr> "From initial search"
 ```
 
@@ -193,16 +193,18 @@ Gastrointestinal_hemorrhage %>%
 
 ``` r
 summariseCodeUse(asthma_codes1$concept_id,  
-                 cdm = cdm)
-#> # A tibble: 6 × 10
-#>   group_name group_level   strata_name strata_level variable_name variable_level
-#>   <chr>      <chr>         <chr>       <chr>        <chr>         <chr>         
-#> 1 Codelist   Overall       Overall     Overall      Record count  Overall       
-#> 2 By concept Childhood as… Overall     Overall      Record count  Overall       
-#> 3 By concept Asthma (3170… Overall     Overall      Record count  Overall       
-#> 4 Codelist   Overall       Overall     Overall      Person count  Overall       
-#> 5 By concept Asthma (3170… Overall     Overall      Person count  Overall       
-#> 6 By concept Childhood as… Overall     Overall      Person count  Overall       
-#> # ℹ 4 more variables: variable_type <chr>, estimate_type <chr>, estimate <int>,
-#> #   estimate_suppressed <chr>
+                 cdm = cdm) %>% 
+  glimpse()
+#> Rows: 230
+#> Columns: 10
+#> $ group_name          <chr> "Codelist", "By concept", "By concept", "Codelist"…
+#> $ group_level         <chr> "Overall", "Childhood asthma (4051466)", "Asthma (…
+#> $ strata_name         <chr> "Overall", "Overall", "Overall", "Year", "Year", "…
+#> $ strata_level        <chr> "Overall", "Overall", "Overall", "1914", "1915", "…
+#> $ variable_name       <chr> "Record count", "Record count", "Record count", "R…
+#> $ variable_level      <chr> "Overall", "Overall", "Overall", "Overall", "Overa…
+#> $ variable_type       <chr> "Numeric", "Numeric", "Numeric", "Numeric", "Numer…
+#> $ estimate_type       <chr> "Count", "Count", "Count", "Count", "Count", "Coun…
+#> $ estimate            <int> 101, 96, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+#> $ estimate_suppressed <chr> "FALSE", "FALSE", "FALSE", "TRUE", "TRUE", "TRUE",…
 ```

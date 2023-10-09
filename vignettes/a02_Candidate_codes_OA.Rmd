@@ -67,12 +67,12 @@ cdm <- CDMConnector::cdm_from_con(
 
 
 ## Search strategies
-### Condition domain, without searching via or in synonyms, without fuzzy match, with exclusions, without including descendants or ancestor
+### Condition domain, without searching synonyms, with exclusions, without including descendants or ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oaCodes1 <- readRDS(here("vignettes", "optionsData01.RData"))
 ```
 
-To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, without fuzzy matching, and without including descendants or the direct ancestor of the included concepts.
+To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, and without including descendants or the direct ancestor of the included concepts.
 
 ```{r, eval=FALSE}
 oaCodes1 <- getCandidateCodes(
@@ -80,9 +80,7 @@ oaCodes1 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -116,9 +114,7 @@ oaCodes2 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -155,9 +151,7 @@ oaCodes3 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
   searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -182,7 +176,7 @@ datatable(newCodes1To3,
 )
 ```
 
-### Search synonyms (both in and via)
+### Search synonyms
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oaCodes4 <- readRDS(here("vignettes", "optionsData04.RData"))
 ```
@@ -194,9 +188,7 @@ oaCodes4 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = TRUE,
-  searchViaSynonyms = TRUE,
   searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -233,9 +225,7 @@ oaCodes5 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
   searchNonStandard = TRUE,
-  fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -260,86 +250,6 @@ datatable(newCodes1To5,
 )
 ```
 
-### Using a fuzzy search
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes6 <- readRDS(here("vignettes", "optionsData05.RData"))
-```
-
-Now we will use an approximate search. See https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/agrep for further details (as this is what is running under the hood). Note, using the defaults of 0.1 for for substitutions, deletions, and insertions.
-```{r, eval=FALSE}
-oaCodes6 <- getCandidateCodes(
-  cdm = cdm,
-  keywords = "osteoarthritis",
-  domains = "Condition",
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = TRUE,
-  maxDistanceCost = 0.1,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
-  includeDescendants = FALSE,
-  includeAncestor = FALSE
-)
-```
-
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To6 <- compareCodelists(oaCodes1, oaCodes6) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
-
-datatable(newCodes1To6,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
-```
-
-### Using a more generous fuzzy search
-```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes7 <- readRDS(here("vignettes", "optionsData06.RData"))
-```
-
-Here we widen the approximate searching, increasing the maximum distance allowed for a match to 0.2 for substitutions, deletions, and insertions.
-```{r, eval=FALSE}
-oaCodes7 <- getCandidateCodes(
-  cdm = cdm,
-  keywords = "osteoarthritis",
-  domains = "Condition",
-  searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
-  searchNonStandard = FALSE,
-  fuzzyMatch = TRUE,
-  maxDistanceCost = 0.2,
-  exclude = c(
-    "post-infection",
-    "post-traumatic"
-  ),
-  includeDescendants = FALSE,
-  includeAncestor = FALSE
-)
-```
-
-What new codes do we pick up?
-```{r,  message=FALSE, warning=FALSE }  
-newCodes1To7 <- compareCodelists(oaCodes1, oaCodes7) %>%
-  filter(codelist == "Only codelist 2") %>%
-  select(-"codelist")
-
-datatable(newCodes1To7,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
-```
-
 ### Include ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oaCodes8 <- readRDS(here("vignettes", "optionsData07.RData"))
@@ -352,10 +262,7 @@ oaCodes8 <- getCandidateCodes(
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = FALSE,
-  searchViaSynonyms = FALSE,
   searchNonStandard = FALSE,
-  fuzzyMatch = FALSE,
-  maxDistanceCost = 0.1,
   exclude = c(
     "post-infection",
     "post-traumatic"
