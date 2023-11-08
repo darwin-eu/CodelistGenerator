@@ -249,7 +249,8 @@ addDomainInfo <- function(codes,
                stringr::str_detect(domain_id,"observation") ~ "observation",
                stringr::str_detect(domain_id,"measurement") ~ "measurement",
                stringr::str_detect(domain_id,"visit") ~ "visit_occurrence",
-               stringr::str_detect(domain_id,"procedure") ~ "procedure_occurrence"
+               stringr::str_detect(domain_id,"procedure") ~ "procedure_occurrence",
+               stringr::str_detect(domain_id,"device") ~ "device_exposure"
              )
     ) %>%
     dplyr::mutate(concept_id_name =
@@ -259,7 +260,8 @@ addDomainInfo <- function(codes,
                stringr::str_detect(domain_id,"observation") ~ "observation_concept_id",
                stringr::str_detect(domain_id,"measurement") ~ "measurement_concept_id",
                stringr::str_detect(domain_id,"visit") ~ "visit_concept_id",
-               stringr::str_detect(domain_id,"procedure") ~ "procedure_concept_id"
+               stringr::str_detect(domain_id,"procedure") ~ "procedure_concept_id",
+               stringr::str_detect(domain_id,"device") ~ "device_concept_id"
              )
     ) %>%
     dplyr::mutate(date_name =
@@ -269,9 +271,19 @@ addDomainInfo <- function(codes,
                stringr::str_detect(domain_id,"observation") ~ "observation_date",
                stringr::str_detect(domain_id,"measurement") ~ "measurement_date",
                stringr::str_detect(domain_id,"visit") ~ "visit_start_date",
-               stringr::str_detect(domain_id,"procedure") ~ "procedure_date"
+               stringr::str_detect(domain_id,"procedure") ~ "procedure_date",
+               stringr::str_detect(domain_id,"device") ~ "device_exposure_start_date"
              )
     )
+
+  unsupported_domains <- codes %>%
+    dplyr::filter(is.na(.data$table_name)) %>%
+    dplyr::pull("domain_id")
+
+  if(length(unsupported_domains)>0){
+    cli::cli_warn("Concepts included from non-supported domains
+                   ({unsupported_domains})")
+  }
 
   return(codes)
 

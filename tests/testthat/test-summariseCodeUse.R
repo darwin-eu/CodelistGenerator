@@ -490,7 +490,7 @@ test_that("summarise code use - redshift", {
                       "variable_name", "variable_level",
                       "variable_type",
                       "estimate_type", "estimate",
-                      "estimate_suppressed")
+                      "estimate_suppressed", "cohort_name")
                 ))
 
 
