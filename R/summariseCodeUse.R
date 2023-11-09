@@ -25,18 +25,33 @@ summariseCodeUse <- function(x,
                              ageGroup = NULL,
                              minCellCount = 5){
 
- codeUse <- getCodeUse(x,
-             cdm = cdm,
-             cohortTable = NULL,
-             cohortId = NULL,
-             timing = "any",
-             countBy = countBy,
-             byConcept = byConcept,
-             byYear = byYear,
-             bySex = bySex,
-             ageGroup = ageGroup,
-             minCellCount = minCellCount) %>%
-   dplyr::mutate(cohort_name = NA)
+  checkmate::assertList(x)
+  if(length(names(x)) != length(x)){
+    cli::cli_abort("Must be a named list")
+  }
+
+  codeUse <- list()
+  cli::cli_progress_bar("Getting code use", total = length(x))
+  for(i in seq_along(x)){
+  cli::cli_progress_update()
+  codeUse[[i]] <- getCodeUse(x[[i]],
+                          cdm = cdm,
+                          cohortTable = NULL,
+                          cohortId = NULL,
+                          timing = "any",
+                          countBy = countBy,
+                          byConcept = byConcept,
+                          byYear = byYear,
+                          bySex = bySex,
+                          ageGroup = ageGroup,
+                          minCellCount = minCellCount) %>%
+      dplyr::mutate(codelist_name = names(x)[i]) %>%
+      dplyr::mutate(cohort_name = NA)
+  }
+  cli::cli_progress_done()
+  codeUse <- dplyr::bind_rows(codeUse)
+
+
 
  return(codeUse)
 
@@ -78,7 +93,10 @@ summariseCohortCodeUse <- function(x,
                                    ageGroup = NULL,
                                    minCellCount = 5){
 
-
+  checkmate::assertList(x)
+  if(length(names(x)) != length(x)){
+    cli::cli_abort("Must be a named list")
+  }
   checkDbType(cdm = cdm, type = "cdm_reference")
   checkmate::assertTRUE("GeneratedCohortSet" %in% class(cdm[[cohortTable]]))
   checkmate::assertTRUE(all(c("cohort_definition_id", "subject_id", "cohort_start_date",
@@ -90,11 +108,14 @@ summariseCohortCodeUse <- function(x,
  }
 
   cohortCodeUse <- list()
+  cli::cli_progress_bar("Getting code use for cohort", total = length(cohortId))
   for(i in seq_along(cohortId)){
+  cli::cli_progress_update()
+  for(j in seq_along(x)){
   workingCohortName <- CDMConnector::cohort_set(cdm[[cohortTable]]) %>%
     dplyr::filter(.data$cohort_definition_id == cohortId[[i]]) %>%
     dplyr::pull("cohort_name")
-  cohortCodeUse[[i]] <- getCodeUse(x,
+  cohortCodeUse[[paste0(i, "_", j)]] <- getCodeUse(x[[j]],
              cdm = cdm,
              cohortTable = cohortTable,
              cohortId = cohortId[[i]],
@@ -105,8 +126,10 @@ summariseCohortCodeUse <- function(x,
              bySex = bySex,
              ageGroup = ageGroup,
              minCellCount = minCellCount) %>%
+    dplyr::mutate(codelist_name = names(x)[j]) %>%
     dplyr::mutate(cohort_name = workingCohortName)
-  }
+  }}
+  cli::cli_progress_done()
   cohortCodeUse <- dplyr::bind_rows(cohortCodeUse)
 
   return(cohortCodeUse)

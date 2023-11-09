@@ -13,8 +13,12 @@ skip_on_cran()
   cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
 
   acetiminophen <- c(1125315,  1127433, 40229134,
-                     40231925, 40162522, 19133768,  1127078)
-  results <- summariseCodeUse(acetiminophen,
+                    40231925, 40162522, 19133768,  1127078)
+  poliovirus_vaccine <- c(40213160)
+  cs <- list(acetiminophen = acetiminophen,
+             poliovirus_vaccine = poliovirus_vaccine)
+
+  results <- summariseCodeUse(cs,
                               cdm = cdm,
                               byYear = TRUE,
                               bySex = TRUE,
@@ -30,14 +34,17 @@ skip_on_cran()
                       "variable_name", "variable_level",
                       "variable_type",
                       "estimate_type", "estimate",
-                      "estimate_suppressed", "cohort_name"))
+                      "estimate_suppressed",
+                      "codelist_name",
+                      "cohort_name"))
 
 
   # overall record count
   expect_true(results %>%
                 dplyr::filter(group_name == "Codelist" &
                                 strata_name == "Overall" &
-                                strata_level == "Overall",
+                                strata_level == "Overall" &
+                                codelist_name == "acetiminophen" &
                               variable_name == "Record count") %>%
                 dplyr::pull("estimate") ==
                 cdm$drug_exposure %>%
@@ -50,6 +57,7 @@ skip_on_cran()
                 dplyr::filter(group_name == "Codelist" &
                                 strata_name == "Overall" &
                                 strata_level == "Overall" &
+                                codelist_name == "acetiminophen" &
                                 variable_name == "Person count") %>%
                 dplyr::pull("estimate") ==
                 cdm$drug_exposure %>%
@@ -64,7 +72,8 @@ skip_on_cran()
   expect_true(results %>%
                 dplyr::filter(group_name == "Codelist" &
                                 strata_name == "Year" &
-                                strata_level == "2008",
+                                strata_level == "2008" &
+                              codelist_name == "acetiminophen" &
                               variable_name == "Record count") %>%
                 dplyr::pull("estimate") ==
                 cdm$drug_exposure %>%
@@ -77,7 +86,8 @@ skip_on_cran()
   expect_true(results %>%
                 dplyr::filter(group_name == "Codelist" &
                                 strata_name == "Year" &
-                                strata_level == "2008",
+                                strata_level == "2008" &
+                                codelist_name == "acetiminophen" &
                               variable_name == "Person count") %>%
                 dplyr::pull("estimate") ==
                 cdm$drug_exposure %>%
@@ -93,7 +103,8 @@ skip_on_cran()
   expect_true(results %>%
                 dplyr::filter(group_name == "Codelist" &
                                 strata_name == "Sex" &
-                                strata_level == "Male",
+                                strata_level == "Male" &
+                                codelist_name == "acetiminophen" &
                               variable_name == "Record count") %>%
                 dplyr::pull("estimate") ==
                 cdm$drug_exposure %>%
@@ -106,7 +117,8 @@ skip_on_cran()
   expect_true(results %>%
                 dplyr::filter(group_name == "Codelist" &
                                 strata_name == "Age group and sex" &
-                                strata_level == "18 to 65 and Male",
+                                strata_level == "18 to 65 and Male" &
+                                codelist_name == "acetiminophen" &
                               variable_name == "Record count") %>%
                 dplyr::pull("estimate") ==
                 cdm$drug_exposure %>%
@@ -124,7 +136,8 @@ skip_on_cran()
   expect_true(results %>%
                 dplyr::filter(group_name == "Codelist" &
                                 strata_name == "Age group and sex" &
-                                strata_level == "18 to 65 and Male",
+                                strata_level == "18 to 65 and Male" &
+                                codelist_name == "acetiminophen" &
                               variable_name == "Person count") %>%
                 dplyr::pull("estimate") ==
                 cdm$drug_exposure %>%
@@ -140,10 +153,7 @@ skip_on_cran()
                 dplyr::tally() %>%
                 dplyr::pull("n"))
 
-
-
-
-  results <- summariseCodeUse(acetiminophen,
+  results <- summariseCodeUse(list("acetiminophen" = acetiminophen),
                               cdm = cdm, countBy = "person",
                               byYear = FALSE,
                               bySex = FALSE,
@@ -153,7 +163,7 @@ skip_on_cran()
   expect_true(nrow(results %>%
                      dplyr::filter(variable_name == "Record count")) == 0)
 
-  results <- summariseCodeUse(acetiminophen,
+  results <- summariseCodeUse(list("acetiminophen" = acetiminophen),
                               cdm = cdm, countBy = "record",
                               byYear = FALSE,
                               bySex = FALSE,
@@ -164,7 +174,7 @@ skip_on_cran()
                      dplyr::filter(variable_name == "Record count")) > 0)
 
   # check min cell count
-  results <- summariseCodeUse(acetiminophen,
+  results <- summariseCodeUse(list("acetiminophen" = acetiminophen),
                               cdm = cdm,
                               byYear = FALSE,
                               bySex = FALSE,
@@ -173,44 +183,43 @@ skip_on_cran()
   expect_true(max(results$estimate, na.rm = TRUE) >=75)
 
   # domains covered
-
   # condition
-  expect_true(nrow(summariseCodeUse(c(4112343),
+  expect_true(nrow(summariseCodeUse(list(cs= c(4112343)),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # visit
-  expect_true(nrow(summariseCodeUse(9201,
+  expect_true(nrow(summariseCodeUse(list(cs= c(9201)),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # drug
-  expect_true(nrow(summariseCodeUse(40213160,
+  expect_true(nrow(summariseCodeUse(list(cs= c(40213160)),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # measurement
-  expect_true(nrow(summariseCodeUse(3006322,
+  expect_true(nrow(summariseCodeUse(list(cs= c(3006322)),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # procedure and condition
-  expect_true(nrow(summariseCodeUse(c(4107731,4112343),
+  expect_true(nrow(summariseCodeUse(list(cs= c(4107731,4112343)),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # no records
-  expect_message(results <- summariseCodeUse(c(999999),
+  expect_warning(results <- summariseCodeUse(list(cs= c(999999)),
                                              cdm = cdm,
                                              byYear = FALSE,
                                              bySex = FALSE,
@@ -225,38 +234,47 @@ skip_on_cran()
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse("123",
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = NULL))
+  expect_error(summariseCodeUse(list("123"), # not named
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = NULL))
+  expect_error(summariseCodeUse(list(a = 123),
                                 cdm = "not a cdm",
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(a = 123),
                                 cdm = cdm,
                                 byYear = "Maybe",
                                 bySex = FALSE,
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(a = 123),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = "Maybe",
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(a = 123),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = 25))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(a = 123),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = list(c(18,17))))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(a = 123),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = list(c(0,17),
                                                 c(15,20))))
-
 
   CDMConnector::cdmDisconnect(cdm)
 
@@ -286,9 +304,9 @@ test_that("summarise cohort code use - eunomia", {
                                                 overwrite = TRUE)
 
   # any
-  results_all <- summariseCodeUse(4134304,
+  results_all <- summariseCodeUse(list(cs = 4134304),
                                   cdm = cdm, minCellCount = 0)
-  results_cohort <- summariseCohortCodeUse(4134304,
+  results_cohort <- summariseCohortCodeUse(list(cs = 4134304),
                                            cdm = cdm,
                                            cohortTable = "pharyngitis",
                                            timing = "any", minCellCount = 0)
@@ -301,6 +319,7 @@ test_that("summarise cohort code use - eunomia", {
                       "variable_type",
                       "estimate_type", "estimate",
                       "estimate_suppressed",
+                      "codelist_name",
                       "cohort_name")
   ))
 
@@ -322,7 +341,7 @@ test_that("summarise cohort code use - eunomia", {
 
 
   # at entry - everyone in the cohort should have the code
-  results_cohort <- summariseCohortCodeUse(pharyngitis,
+  results_cohort <- summariseCohortCodeUse(list(pharyngitis = pharyngitis),
                                            cdm = cdm,
                                            cohortTable = "pharyngitis",
                                            timing = "entry",
@@ -350,7 +369,7 @@ test_that("summarise cohort code use - eunomia", {
     dplyr::count() %>%
     dplyr::pull()
 
-  results_cohort_260139 <- summariseCohortCodeUse(260139,
+  results_cohort_260139 <- summariseCohortCodeUse(list(cs = 260139),
                                                   cdm = cdm,
                                                   cohortTable = "pharyngitis",
                                                   timing = "entry",
@@ -381,7 +400,7 @@ test_that("summarise cohort code use - eunomia", {
     dplyr::count() %>%
     dplyr::pull()
 
-  results_cohort_260139_19133873_1127433<- summariseCohortCodeUse(c(260139,19133873,1127433),
+  results_cohort_260139_19133873_1127433<- summariseCohortCodeUse(list(cs = c(260139,19133873,1127433)),
                                                                   cdm = cdm,
                                                                   cohortTable = "pharyngitis",
                                                                   timing = "entry",
@@ -411,7 +430,7 @@ test_that("summarise cohort code use - eunomia", {
                                                 end = "observation_period_end_date",
                                                 overwrite = TRUE)
 
-  results_cohort_mult <- summariseCohortCodeUse(c(260139,19133873,1127433),
+  results_cohort_mult <- summariseCohortCodeUse(list(cs = c(260139,19133873,1127433)),
                                                                   cdm = cdm,
                                                                   cohortTable = "cohorts",
                                                                   timing = "entry",
@@ -433,7 +452,7 @@ test_that("summarise cohort code use - eunomia", {
   # empty cohort - no results
   cdm$pharyngitis <-  cdm$pharyngitis %>%
     dplyr::filter(cohort_definition_id == 99)
-  expect_true(max(summariseCohortCodeUse(4134304,
+  expect_true(max(summariseCohortCodeUse(list(cs = 4134304),
                                          cdm = cdm,
                                          cohortTable = "pharyngitis",
                                          timing = "any", minCellCount = 0) %>%
@@ -444,11 +463,19 @@ test_that("summarise cohort code use - eunomia", {
                                       cdm = cdm,
                                       cohortTable = "not_a_cohort",
                                       timing = "any"))
-  expect_error(summariseCohortCodeUse(4134304,
+  expect_error(summariseCohortCodeUse(list(4134304),
+                                      cdm = cdm,
+                                      cohortTable = "not_a_cohort",
+                                      timing = "any"))
+  expect_error(summariseCohortCodeUse(list(cs = 4134304),
+                                      cdm = cdm,
+                                      cohortTable = "not_a_cohort",
+                                      timing = "any"))
+  expect_error(summariseCohortCodeUse(list(cs = 4134304),
                                       cdm = cdm,
                                       cohortTable = "pharyngitis",
                                       timing = "not_a_option"))
-  expect_error(summariseCohortCodeUse(4134304,
+  expect_error(summariseCohortCodeUse(list(cs = 4134304),
                                       cdm = cdm,
                                       cohortTable = "pharyngitis",
                                       timing = c("any", "entry")))
@@ -472,7 +499,7 @@ test_that("summarise code use - redshift", {
                                     cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
                                     write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
-  asthma <- c(317009, 257581)
+  asthma <- list(asthma = c(317009, 257581))
 
   results <- summariseCodeUse(asthma,
                               cdm = cdm,
@@ -490,7 +517,9 @@ test_that("summarise code use - redshift", {
                       "variable_name", "variable_level",
                       "variable_type",
                       "estimate_type", "estimate",
-                      "estimate_suppressed", "cohort_name")
+                      "estimate_suppressed",
+                      "codelist_name",
+                      "cohort_name")
                 ))
 
 
@@ -502,7 +531,7 @@ test_that("summarise code use - redshift", {
                   variable_name == "Record count") %>%
     dplyr::pull("estimate") ==
   cdm$condition_occurrence %>%
-    dplyr::filter(condition_concept_id %in%  asthma) %>%
+    dplyr::filter(condition_concept_id %in%  !!asthma[[1]]) %>%
     dplyr::tally() %>%
     dplyr::pull("n"))
 
@@ -514,7 +543,7 @@ test_that("summarise code use - redshift", {
                               variable_name == "Person count") %>%
                 dplyr::pull("estimate") ==
                 cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% asthma) %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
                 dplyr::select("person_id") %>%
                 dplyr::distinct() %>%
                 dplyr::tally() %>%
@@ -529,7 +558,7 @@ test_that("summarise code use - redshift", {
                               variable_name == "Record count") %>%
                 dplyr::pull("estimate") ==
                 cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% asthma) %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
                 dplyr::filter(year(condition_start_date) == 2008) %>%
                 dplyr::tally() %>%
                 dplyr::pull("n"))
@@ -542,7 +571,7 @@ test_that("summarise code use - redshift", {
                               variable_name == "Person count") %>%
                 dplyr::pull("estimate") ==
                 cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% asthma) %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
                 dplyr::filter(year(condition_start_date) == 2008) %>%
                 dplyr::select("person_id") %>%
                 dplyr::distinct() %>%
@@ -558,7 +587,7 @@ test_that("summarise code use - redshift", {
                               variable_name == "Record count") %>%
                 dplyr::pull("estimate") ==
                 cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% asthma) %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
                 PatientProfiles::addSex(cdm) %>%
                 dplyr::filter(sex == "Male") %>%
                 dplyr::tally() %>%
@@ -571,7 +600,7 @@ test_that("summarise code use - redshift", {
                               variable_name == "Record count") %>%
                 dplyr::pull("estimate") ==
                 cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% asthma) %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
                 PatientProfiles::addAge(cdm,
                                         indexDate = "condition_start_date") %>%
                 PatientProfiles::addSex(cdm) %>%
@@ -589,7 +618,7 @@ test_that("summarise code use - redshift", {
                               variable_name == "Person count") %>%
                 dplyr::pull("estimate") ==
                 cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% asthma) %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
                 PatientProfiles::addAge(cdm,
                                         indexDate = "condition_start_date") %>%
                 PatientProfiles::addSex(cdm) %>%
@@ -636,42 +665,42 @@ test_that("summarise code use - redshift", {
 # domains covered
 
   # condition
-  expect_true(nrow(summariseCodeUse(c(317009),
+  expect_true(nrow(summariseCodeUse(list(cs = c(317009)),
                               cdm = cdm,
                               byYear = FALSE,
                               bySex = FALSE,
                               ageGroup = NULL))>1)
 
   # visit
-  expect_true(nrow(summariseCodeUse(9201,
+  expect_true(nrow(summariseCodeUse(list(cs = 9201),
                               cdm = cdm,
                               byYear = FALSE,
                               bySex = FALSE,
                               ageGroup = NULL))>1)
 
 # drug
-expect_true(nrow(summariseCodeUse(19071493,
+expect_true(nrow(summariseCodeUse(list(cs = 19071493),
                              cdm = cdm,
                             byYear = FALSE,
                             bySex = FALSE,
                             ageGroup = NULL))>1)
 
 # measurement
-expect_true(nrow(summariseCodeUse(2212542,
+expect_true(nrow(summariseCodeUse(list(cs = 2212542),
                             cdm = cdm,
                             byYear = FALSE,
                             bySex = FALSE,
                             ageGroup = NULL))>1)
 
 # procedure and condition
-expect_true(nrow(summariseCodeUse(c(4261206,317009),
+expect_true(nrow(summariseCodeUse(list(cs = c(4261206,317009)),
                             cdm = cdm,
                             byYear = FALSE,
                             bySex = FALSE,
                             ageGroup = NULL))>1)
 
 # no records
-expect_message(results <- summariseCodeUse(c(999999),
+expect_message(results <- summariseCodeUse(list(cs = c(999999)),
                  cdm = cdm,
                  byYear = FALSE,
                  bySex = FALSE,
@@ -681,38 +710,38 @@ expect_true(nrow(results) == 0)
 
 
 # expected errors
-  expect_error(summariseCodeUse("not a concept",
+  expect_error(summariseCodeUse(list(cs = "not a concept"),
                    cdm = cdm,
                    byYear = FALSE,
                    bySex = FALSE,
                    ageGroup = NULL))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(cs = 123),
                    cdm = "not a cdm",
                    byYear = FALSE,
                    bySex = FALSE,
                    ageGroup = NULL))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(cs = 123),
                    cdm = cdm,
                    byYear = "Maybe",
                    bySex = FALSE,
                    ageGroup = NULL))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(cs = 123),
                    cdm = cdm,
                    byYear = FALSE,
                    bySex = "Maybe",
                    ageGroup = NULL))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(cs = 123),
                    cdm = cdm,
                    byYear = FALSE,
                    bySex = FALSE,
                    ageGroup = 25))
-  expect_error(summariseCodeUse(123,
+  expect_error(summariseCodeUse(list(cs = 123),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = list(c(18,17))))
-  expect_error(summariseCodeUse(123,
-                  cdm = cdm,
+  expect_error(summariseCodeUse(list(cs = 123),
+                                cdm = cdm,
                   byYear = FALSE,
                   bySex = FALSE,
                   ageGroup = list(c(0,17),
