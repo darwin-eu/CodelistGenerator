@@ -191,16 +191,6 @@ getCodeUse <- function(x,
                                 intermediateTable = intermediateTable)
 
   if(!is.null(records)) {
-    records <- records %>%
-      dplyr::left_join(cdm[["concept"]] %>%
-                         dplyr::select("concept_id", "concept_name"),
-                       by = c("standard_concept_id"="concept_id")) %>%
-      dplyr::rename("standard_concept_name"="concept_name") %>%
-      dplyr::left_join(cdm[["concept"]] %>%
-                         dplyr::select("concept_id", "concept_name"),
-                       by = c("source_concept_id"="concept_id")) %>%
-      dplyr::rename("source_concept_name"="concept_name")
-
     if(bySex == TRUE | !is.null(ageGroup)){
       records <- records %>%
         PatientProfiles::addDemographics(cdm = cdm,
@@ -431,6 +421,24 @@ if(length(tableName)>0){
           overwrite = TRUE
         )
     }
+  }
+
+  if(codeRecords %>% utils::head(1) %>% dplyr::tally() %>% dplyr::pull("n") >0){
+  codeRecords <- codeRecords %>%
+    dplyr::left_join(cdm[["concept"]] %>%
+                       dplyr::select("concept_id", "concept_name"),
+                     by = c("standard_concept_id"="concept_id")) %>%
+    dplyr::rename("standard_concept_name"="concept_name") %>%
+    dplyr::left_join(cdm[["concept"]] %>%
+                       dplyr::select("concept_id", "concept_name"),
+                     by = c("source_concept_id"="concept_id")) %>%
+    dplyr::rename("source_concept_name"="concept_name")  %>%
+    CDMConnector::computeQuery(
+      name = paste0(intermediateTable,"_grr_cr"),
+      temporary = FALSE,
+      schema = attr(cdm, "write_schema"),
+      overwrite = TRUE
+    )
   }
 
   return(codeRecords)
