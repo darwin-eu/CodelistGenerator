@@ -31,9 +31,8 @@ summariseCodeUse <- function(x,
   }
 
   codeUse <- list()
-  cli::cli_progress_bar("Getting code use", total = length(x))
   for(i in seq_along(x)){
-  cli::cli_progress_update()
+  cli::cli_inform("Getting use of codes from {names(x)[i]} ({i} of {length(x)})")
   codeUse[[i]] <- getCodeUse(x[[i]],
                           cdm = cdm,
                           cohortTable = NULL,
@@ -48,7 +47,6 @@ summariseCodeUse <- function(x,
       dplyr::mutate(codelist_name = names(x)[i]) %>%
       dplyr::mutate(cohort_name = NA)
   }
-  cli::cli_progress_done()
   codeUse <- dplyr::bind_rows(codeUse)
 
 
@@ -108,13 +106,13 @@ summariseCohortCodeUse <- function(x,
  }
 
   cohortCodeUse <- list()
-  cli::cli_progress_bar("Getting code use for cohort", total = length(cohortId))
   for(i in seq_along(cohortId)){
-  cli::cli_progress_update()
   for(j in seq_along(x)){
   workingCohortName <- CDMConnector::cohort_set(cdm[[cohortTable]]) %>%
     dplyr::filter(.data$cohort_definition_id == cohortId[[i]]) %>%
     dplyr::pull("cohort_name")
+
+  cli::cli_inform(" Getting counts of {names(x)[j]} codes for cohort {workingCohortName}")
   cohortCodeUse[[paste0(i, "_", j)]] <- getCodeUse(x[[j]],
              cdm = cdm,
              cohortTable = cohortTable,
@@ -129,7 +127,6 @@ summariseCohortCodeUse <- function(x,
     dplyr::mutate(codelist_name = names(x)[j]) %>%
     dplyr::mutate(cohort_name = workingCohortName)
   }}
-  cli::cli_progress_done()
   cohortCodeUse <- dplyr::bind_rows(cohortCodeUse)
 
   return(cohortCodeUse)
@@ -177,7 +174,6 @@ getCodeUse <- function(x,
                               tolower(paste0(sample(LETTERS, 4, replace = TRUE),
                                              collapse = "")))
 
-
   codes <- dplyr::tibble(concept_id = x) %>%
     dplyr::left_join(cdm[["concept"]] %>%
                        dplyr::select("concept_id", "domain_id"),
@@ -198,7 +194,12 @@ getCodeUse <- function(x,
     records <- records %>%
       dplyr::left_join(cdm[["concept"]] %>%
                          dplyr::select("concept_id", "concept_name"),
-                       by = "concept_id")
+                       by = c("standard_concept_id"="concept_id")) %>%
+      dplyr::rename("standard_concept_name"="concept_name") %>%
+      dplyr::left_join(cdm[["concept"]] %>%
+                         dplyr::select("concept_id", "concept_name"),
+                       by = c("source_concept_id"="concept_id")) %>%
+      dplyr::rename("source_concept_name"="concept_name")
 
     if(bySex == TRUE | !is.null(ageGroup)){
       records <- records %>%
@@ -229,8 +230,13 @@ getCodeUse <- function(x,
 
     codeCounts <- codeCounts %>%
       dplyr::mutate(group_level = dplyr::if_else(.data$group_name == "By concept",
-                                                 paste0(.data$concept_name, " (",
-                                                        .data$concept_id, ")"),
+                                                 paste0("Standard concept: ",
+                                                   .data$standard_concept_name, " (",
+                                                        .data$standard_concept_id, ")",
+                                                   " Source concept: ",
+                                                   .data$source_concept_name, " (",
+                                                   .data$source_concept_id, ")",
+                                                   " Domain: ", .data$domain_id),
                                                  "Overall")) %>%
       dplyr::mutate(variable_type = "Numeric",
                     variable_level = "Overall",
@@ -276,7 +282,7 @@ addDomainInfo <- function(codes,
                stringr::str_detect(domain_id,"device") ~ "device_exposure"
              )
     ) %>%
-    dplyr::mutate(concept_id_name =
+    dplyr::mutate(standard_concept_id_name =
                     dplyr::case_when(
                stringr::str_detect(domain_id,"condition") ~ "condition_concept_id",
                stringr::str_detect(domain_id,"drug") ~ "drug_concept_id",
@@ -286,6 +292,17 @@ addDomainInfo <- function(codes,
                stringr::str_detect(domain_id,"procedure") ~ "procedure_concept_id",
                stringr::str_detect(domain_id,"device") ~ "device_concept_id"
              )
+    ) %>%
+    dplyr::mutate(source_concept_id_name =
+                    dplyr::case_when(
+                      stringr::str_detect(domain_id,"condition") ~ "condition_source_concept_id",
+                      stringr::str_detect(domain_id,"drug") ~ "drug_source_concept_id",
+                      stringr::str_detect(domain_id,"observation") ~ "observation_source_concept_id",
+                      stringr::str_detect(domain_id,"measurement") ~ "measurement_source_concept_id",
+                      stringr::str_detect(domain_id,"visit") ~ "visit_source_concept_id",
+                      stringr::str_detect(domain_id,"procedure") ~ "procedure_source_concept_id",
+                      stringr::str_detect(domain_id,"device") ~ "device_source_concept_id"
+                    )
     ) %>%
     dplyr::mutate(date_name =
                     dplyr::case_when(
@@ -321,7 +338,8 @@ getRelevantRecords <- function(codes,
                                intermediateTable){
 
   tableName <- purrr::discard(unique(codes$table_name), is.na)
-  conceptIdName <- purrr::discard(unique(codes$concept_id_name), is.na)
+  standardConceptIdName <- purrr::discard(unique(codes$standard_concept_id_name), is.na)
+  sourceConceptIdName <- purrr::discard(unique(codes$source_concept_id_name), is.na)
   dateName <- purrr::discard(unique(codes$date_name), is.na)
 
   if(!is.null(cohortTable)){
@@ -354,13 +372,16 @@ if(length(tableName)>0){
   codeRecords <- codeRecords %>%
     dplyr::mutate(date = !!dplyr::sym(dateName[[1]])) %>%
     dplyr::mutate(year = lubridate::year(date)) %>%
-    dplyr::select(dplyr::all_of(c("person_id", conceptIdName[[1]],
+    dplyr::select(dplyr::all_of(c("person_id",
+                                  standardConceptIdName[[1]],
+                                  sourceConceptIdName[[1]],
                            "date", "year"))) %>%
-    dplyr::rename("concept_id" = .env$conceptIdName[[1]]) %>%
+    dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[1]],
+                  "source_concept_id" = .env$sourceConceptIdName[[1]]) %>%
     dplyr::inner_join(codes %>%
                         dplyr::filter(.data$table_name == tableName[[1]]) %>%
-                        dplyr::select("concept_id"),
-                      by = "concept_id",
+                        dplyr::select("concept_id", "domain_id"),
+                      by = c("standard_concept_id"="concept_id"),
                       copy = TRUE) %>%
     CDMConnector::computeQuery(
       name = paste0(intermediateTable,"_grr"),
@@ -390,13 +411,16 @@ if(length(tableName)>0){
       workingRecords <-  workingRecords %>%
         dplyr::mutate(date = !!dplyr::sym(dateName[[i+1]])) %>%
         dplyr::mutate(year = lubridate::year(date)) %>%
-        dplyr::select(dplyr::all_of(c("person_id", conceptIdName[[i+1]],
+        dplyr::select(dplyr::all_of(c("person_id",
+                                      standardConceptIdName[[i+1]],
+                                      sourceConceptIdName[[i+1]],
                                       "date", "year"))) %>%
-        dplyr::rename("concept_id" = .env$conceptIdName[[i+1]]) %>%
+        dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[i+1]],
+                      "source_concept_id" = .env$sourceConceptIdName[[i+1]]) %>%
         dplyr::inner_join(codes %>%
                             dplyr::filter(.data$table_name == tableName[[i+1]]) %>%
-                            dplyr::select("concept_id"),
-                          by = "concept_id",
+                            dplyr::select("concept_id", "domain_id"),
+                          by = c("standard_concept_id"="concept_id"),
                           copy = TRUE)
       codeRecords <- codeRecords %>%
         dplyr::union_all(workingRecords)  %>%
@@ -431,7 +455,11 @@ recordSummary <- records %>%
 if(isTRUE(byConcept)) {
   recordSummary <- dplyr::bind_rows(recordSummary,
                    records %>%
-    dplyr::group_by(.data$concept_id, .data$concept_name) %>%
+    dplyr::group_by(.data$standard_concept_id,
+                    .data$standard_concept_name,
+                    .data$source_concept_id,
+                    .data$source_concept_name,
+                    .data$domain_id) %>%
     dplyr::tally(name = "estimate") %>%
     dplyr::mutate(estimate = as.integer(.data$estimate),
                   group_name = "By concept") %>%
@@ -458,9 +486,15 @@ personSummary <- records %>%
 if(isTRUE(byConcept)) {
 personSummary <- dplyr::bind_rows(personSummary,
   records %>%
-    dplyr::select("person_id", "concept_id", "concept_name") %>%
+    dplyr::select("person_id",
+                  "standard_concept_id", "standard_concept_name",
+                  "source_concept_id", "source_concept_name", "domain_id") %>%
     dplyr::distinct() %>%
-    dplyr::group_by(.data$concept_id, .data$concept_name) %>%
+    dplyr::group_by(.data$standard_concept_id,
+                    .data$standard_concept_name,
+                    .data$source_concept_id,
+                    .data$source_concept_name,
+                    .data$domain_id) %>%
     dplyr::tally(name = "estimate") %>%
     dplyr::mutate(estimate = as.integer(.data$estimate),
                   group_name = "By concept") %>%
@@ -566,7 +600,9 @@ groupedCounts <- dplyr::bind_rows(
     dplyr::collect(),
   records %>%
     dplyr::group_by(dplyr::pick(.env$groupBy,
-                                "concept_id", "concept_name")) %>%
+                                "standard_concept_id", "standard_concept_name",
+                                "source_concept_id", "source_concept_name",
+                                "domain_id")) %>%
     dplyr::tally(name = "estimate") %>%
     dplyr::mutate(estimate = as.integer(.data$estimate),
                   group_name = "By concept"
@@ -600,11 +636,15 @@ getGroupedPersonCount <- function(records,
       dplyr::collect(),
     records %>%
       dplyr::select(dplyr::all_of(c("person_id",
-                                    "concept_id", "concept_name",
+                                    "standard_concept_id", "standard_concept_name",
+                                    "source_concept_id", "source_concept_name",
+                                    "domain_id",
                                     .env$groupBy))) %>%
       dplyr::distinct() %>%
       dplyr::group_by(dplyr::pick(.env$groupBy,
-                                  "concept_id", "concept_name")) %>%
+                                  "standard_concept_id", "standard_concept_name",
+                                  "source_concept_id", "source_concept_name",
+                                  "domain_id")) %>%
       dplyr::tally(name = "estimate") %>%
       dplyr::mutate(estimate = as.integer(.data$estimate),
                     group_name = "By concept"

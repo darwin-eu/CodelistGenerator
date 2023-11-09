@@ -414,8 +414,8 @@ test_that("summarise cohort code use - eunomia", {
                index_260139_19133873_1127433)
 
   expect_equal(results_cohort_260139_19133873_1127433 %>%
-                 dplyr::filter(group_level == "Acute bronchitis (260139)" &
-                                 strata_name == "Overall" &
+                 dplyr::filter(stringr::str_detect(group_level, "Acute bronchitis")) %>%
+                 dplyr::filter(strata_name == "Overall" &
                                  strata_level == "Overall" &
                                  variable_name == "Person count") %>%
                  dplyr::pull("estimate"),
@@ -436,14 +436,14 @@ test_that("summarise cohort code use - eunomia", {
                                                                   timing = "entry",
                                                                  minCellCount = 0)
   expect_true(nrow(results_cohort_mult %>%
-    dplyr::filter(group_level == "Acute bronchitis (260139)" &
-                    strata_name == "Overall" &
+                     dplyr::filter(stringr::str_detect(group_level, "Acute bronchitis")) %>%
+    dplyr::filter(strata_name == "Overall" &
                     strata_level == "Overall" &
                     variable_name == "Person count")) == 2)
 
   expect_equal(c("a", "b"),  results_cohort_mult %>%
-   dplyr::filter(group_level == "Acute bronchitis (260139)" &
-                   strata_name == "Overall" &
+                 dplyr::filter(stringr::str_detect(group_level, "Acute bronchitis")) %>%
+   dplyr::filter(strata_name == "Overall" &
                    strata_level == "Overall" &
                    variable_name == "Person count") %>%
    dplyr::pull("cohort_name"))
