@@ -1,6 +1,9 @@
 test_that("test inputs - mock", {
+  backends <- c("database", "arrow", "data_frame")
 
-  cdm <- mockVocabRef()
+  for (i in seq_along(backends)) {
+    # mock db
+    cdm <- mockVocabRef(backends[[i]])
 
   # expected errors
   expect_error(codesFromConceptSet())
@@ -86,8 +89,10 @@ test_that("test inputs - mock", {
                                    "cohorts_for_mock_dups")
   ))
 
+  if (backends[[i]] == "database") {
+  CDMConnector::cdmDisconnect(cdm)}
 
-  CDMConnector::cdmDisconnect(cdm)
+  }
 
 })
 
