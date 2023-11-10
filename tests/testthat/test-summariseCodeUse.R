@@ -34,7 +34,7 @@ skip_on_cran()
                       "variable_name", "variable_level",
                       "variable_type",
                       "estimate_type", "estimate",
-                      "estimate_suppressed", ,
+                      "estimate_suppressed",
                       "standard_concept_name",
                       "standard_concept_id",
                       "source_concept_name",
