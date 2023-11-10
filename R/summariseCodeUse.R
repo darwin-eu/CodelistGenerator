@@ -164,7 +164,6 @@ getCodeUse <- function(x,
 
   checkAgeGroup(ageGroup = ageGroup)
 
-
   if(is.null(attr(cdm, "write_schema"))){
     cli::cli_abort("cdm must have a write_schema specified",
                    call = call)
@@ -190,7 +189,8 @@ getCodeUse <- function(x,
                                 timing = timing,
                                 intermediateTable = intermediateTable)
 
-  if(!is.null(records)) {
+  if(!is.null(records) &&
+     (records %>% utils::head(1) %>% dplyr::tally() %>% dplyr::pull("n") > 0)) {
     if(bySex == TRUE | !is.null(ageGroup)){
       records <- records %>%
         PatientProfiles::addDemographics(cdm = cdm,
@@ -381,7 +381,7 @@ if(length(tableName)>0){
     )
 
 } else {
-  codeRecords <- NULL
+  return(NULL)
 }
 
   # get for any additional domains and union

@@ -452,11 +452,10 @@ test_that("summarise cohort code use - eunomia", {
   # empty cohort - no results
   cdm$pharyngitis <-  cdm$pharyngitis %>%
     dplyr::filter(cohort_definition_id == 99)
-  expect_true(max(summariseCohortCodeUse(list(cs = 4134304),
+  expect_true(nrow(summariseCohortCodeUse(list(cs = 4134304),
                                          cdm = cdm,
                                          cohortTable = "pharyngitis",
-                                         timing = "any", minCellCount = 0) %>%
-                    dplyr::pull("estimate")) == 0)
+                                         timing = "any", minCellCount = 0)) == 0)
 
   # expected errors
   expect_error(summariseCohortCodeUse(4134304,
