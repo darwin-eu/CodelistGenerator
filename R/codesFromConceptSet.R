@@ -184,8 +184,10 @@ extractCodes <- function(file, unknown) {
 appendDescendants <- function(codelistTibble, cdm) {
   cdm[["concept_ancestor"]] %>%
     dplyr::select("ancestor_concept_id", "descendant_concept_id") %>%
+    dplyr::mutate(ancestor_concept_id = as.integer(.data$ancestor_concept_id)) %>%
     dplyr::inner_join(
-      codelistTibble %>%
+      codelistTibble%>%
+        dplyr::mutate(concept_id = as.integer(.data$concept_id)) %>%
         dplyr::filter(.data$include_descendants == TRUE) %>%
         dplyr::rename("ancestor_concept_id" = "concept_id"),
       by = "ancestor_concept_id",
