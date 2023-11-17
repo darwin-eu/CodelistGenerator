@@ -22,13 +22,16 @@ concepts for these two particular drug ingredients.}
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
 
-\item{withConceptDetails}{If FALSE a vector of concept IDs will be returned
-for each ingredient. If TRUE a tibble will be returned with additional
+\item{withConceptDetails}{If FALSE, each item in the list of results (one per
+ingredient) will contain a vector of concept IDs for each ingredient. If
+TRUE each item in the list of results will contain a tibble with additional
 information on the identified concepts.}
 }
 \value{
-A named list, with each item containing descendant concepts of
-an ingredient
+A named list, with each item containing a vector of descendant
+concepts of an ingredient (if withConceptDetails was set as FALSE) or a
+tibble with the descendant concepts along with additional details about them
+(if withConceptDetails was set as TRUE).
 }
 \description{
 Get descendant codes for drug ingredients
