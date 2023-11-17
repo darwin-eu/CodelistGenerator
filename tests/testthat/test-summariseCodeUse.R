@@ -527,6 +527,11 @@ test_that("summarise code use - redshift", {
                       "variable_type",
                       "estimate_type", "estimate",
                       "estimate_suppressed",
+                      "standard_concept_name",
+                      "standard_concept_id",
+                      "source_concept_name",
+                      "source_concept_id",
+                      "domain_id",
                       "codelist_name",
                       "cohort_name")
                 ))

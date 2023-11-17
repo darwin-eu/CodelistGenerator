@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Generate Code Lists for the OMOP Common Data Model
-Version: 2.0.0
+Version: 2.1.0
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
