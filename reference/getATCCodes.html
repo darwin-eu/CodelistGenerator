@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,8 +87,9 @@ of dose form.</p></dd>
 
 
 <dt>withConceptDetails</dt>
-<dd><p>If FALSE a vector of concept IDs will be returned
-for each ATC group If TRUE a tibble will be returned with additional
+<dd><p>If FALSE, each item in the list of results (one per
+ATC group) will contain a vector of concept IDs for each ingredient. If
+TRUE each item in the list of results will contain a tibble with additional
 information on the identified concepts.</p></dd>
 
 </dl></div>
@@ -96,8 +97,10 @@ information on the identified concepts.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A named list, with each element containing the descendant
-concepts for a particular ATC group</p>
+<p>A named list, with each item containing a vector of descendant
+concepts of an ATC group (if withConceptDetails was set as FALSE) or a
+tibble with the descendant concepts along with additional details about them
+(if withConceptDetails was set as TRUE).</p>
     </div>
 
     <div class="section level2">
