@@ -418,6 +418,8 @@ if(length(tableName)>0){
                             dplyr::select("concept_id", "domain_id"),
                           by = c("standard_concept_id"="concept_id"),
                           copy = TRUE)
+
+      if(workingRecords %>% utils::head(1) %>% dplyr::tally() %>% dplyr::pull("n") >0){
       codeRecords <- codeRecords %>%
         dplyr::union_all(workingRecords)  %>%
         CDMConnector::computeQuery(
@@ -426,6 +428,7 @@ if(length(tableName)>0){
           schema = attr(cdm, "write_schema"),
           overwrite = TRUE
         )
+      }
     }
   }
 
