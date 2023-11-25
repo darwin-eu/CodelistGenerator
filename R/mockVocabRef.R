@@ -33,7 +33,7 @@ mockVocabRef <- function(backend = "database") {
 
   # tables
   concept <- data.frame(
-    concept_id = 1:18,
+    concept_id = 1:19,
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
@@ -52,23 +52,24 @@ mockVocabRef <- function(backend = "database") {
       "Diseases of the musculoskeletal system and connective tissue",
       "Arthropathies",
       "Arthritis",
-      "OA"
+      "OA",
+      "Other ingredient"
     ),
-    domain_id = c(rep("Condition", 8), "Observation",rep("Drug", 5),
-                  rep("Condition", 4)),
+    domain_id = c(rep("Condition", 8), "Observation", rep("Drug", 5),
+                  rep("Condition", 4), "Drug"),
     vocabulary_id = c(
       rep("SNOMED", 6),
       rep("Read", 2),
       "LOINC", "RxNorm", "OMOP",
       "ATC",
       "RxNorm", "OMOP",
-      "ICD10", "ICD10", "ICD10", "ICD10"
+      "ICD10", "ICD10", "ICD10", "ICD10", "RxNorm"
     ),
     standard_concept = c(
       rep("S", 6),
       rep(NA, 2),
       "S", "S", NA,
-      NA, "S", NA, NA, NA, NA, NA
+      NA, "S", NA, NA, NA, NA, NA, "S"
     ),
     concept_class_id = c(
       rep("Clinical Finding", 6),
@@ -76,7 +77,7 @@ mockVocabRef <- function(backend = "database") {
       "Observation", "Ingredient", "Dose Form",
       "ATC 1st", "Drug", "Dose Form",
       "ICD10 Chapter", "ICD10 SubChapter",
-      "ICD Code","ICD Code"
+      "ICD Code","ICD Code", "Ingredient"
     ),
     concept_code = "1234",
     valid_start_date = NA,
@@ -153,6 +154,12 @@ mockVocabRef <- function(backend = "database") {
     ),
     data.frame(
       ancestor_concept_id = 12L,
+      descendant_concept_id = 13L,
+      min_levels_of_separation = 1,
+      max_levels_of_separation = 1
+    ),
+    data.frame(
+      ancestor_concept_id = 19L,
       descendant_concept_id = 13L,
       min_levels_of_separation = 1,
       max_levels_of_separation = 1

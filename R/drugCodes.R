@@ -75,7 +75,7 @@ getATCCodes <- function(cdm,
 
   if (!is.null(name)) {
     atc_groups <- atc_groups %>%
-      dplyr::filter(tolower(.data$concept_name) %in% tolower(.env$name))
+      dplyr::filter(tidyWords(.data$concept_name) %in% tidyWords(.env$name))
   }
 
   errorMessage <- checkmate::makeAssertCollection()
@@ -134,7 +134,7 @@ getATCCodes <- function(cdm,
       workingName <- atc_groups %>%
         dplyr::filter(.data$concept_id == names(atc_descendants)[i]) %>%
         dplyr::pull("concept_name")
-      workingName <- stringr::str_to_lower(workingName)
+      workingName <- tidyWords(workingName)
       workingName <- stringr::str_replace_all(workingName, " ", "_")
 
       if(isFALSE(withConceptDetails)){
@@ -162,6 +162,11 @@ getATCCodes <- function(cdm,
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
+#' @param ingredientRange Used to restrict descendant codes to those
+#' associated with a specific number of ingredients. Must be a vector of length
+#' two with the first element the minimum number of ingredients allowed and
+#' the second the maximum. A value of c(2, 2) would restrict to only concepts
+#' associated with two ingredients.
 #' @param withConceptDetails If FALSE, each item in the list of results (one per
 #' ingredient) will contain a vector of concept IDs for each ingredient. If
 #' TRUE each item in the list of results will contain a tibble with additional
@@ -180,6 +185,7 @@ getATCCodes <- function(cdm,
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,
                                    doseForm = NULL,
+                                   ingredientRange = c(1, Inf),
                                    withConceptDetails = FALSE) {
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
@@ -198,7 +204,7 @@ getDrugIngredientCodes <- function(cdm,
 
   if (!is.null(name)) {
     ingredientConcepts <- ingredientConcepts %>%
-      dplyr::filter(tolower(.data$concept_name) %in% tolower(.env$name))
+      dplyr::filter(tidyWords(.data$concept_name) %in% tidyWords(.env$name))
   }
 
   errorMessage <- checkmate::makeAssertCollection()
@@ -215,9 +221,14 @@ getDrugIngredientCodes <- function(cdm,
   if (nrow(ingredientConcepts) > 0) {
     ingredientCodes <- fetchBatchedDescendants(cdm,
       codes = ingredientConcepts$concept_id,
+      ingredientRange = ingredientRange,
       batchSize = 500,
       doseForm = doseForm
     )
+  }
+  if (nrow(ingredientCodes) == 0) {
+    cli::cli_warn("No descendant codes found")
+    return(invisible(list()))
   }
 
       ingredientCodes <- ingredientCodes  %>%
@@ -254,7 +265,7 @@ getDrugIngredientCodes <- function(cdm,
       workingName <- ingredientConcepts %>%
         dplyr::filter(.data$concept_id == names(ingredientCodes)[[i]]) %>%
         dplyr::pull("concept_name")
-      workingName <- stringr::str_to_lower(workingName)
+      workingName <- tidyWords(workingName)
       workingName <- stringr::str_replace_all(workingName, " ", "_")
 
 
@@ -273,7 +284,11 @@ getDrugIngredientCodes <- function(cdm,
     return(ingredientCodes)
 }
 
-fetchBatchedDescendants <- function(cdm, codes, batchSize, doseForm) {
+fetchBatchedDescendants <- function(cdm,
+                                    codes,
+                                    batchSize,
+                                    ingredientRange = c(0, Inf),
+                                    doseForm) {
   codeBatches <- split(
     codes,
     ceiling(seq_along(codes) / batchSize)
@@ -291,6 +306,7 @@ fetchBatchedDescendants <- function(cdm, codes, batchSize, doseForm) {
       cdm = cdm,
       conceptId = codeBatches[[i]],
       withAncestor = TRUE,
+      ingredientRange = ingredientRange,
       doseForm = doseForm
     )
   }

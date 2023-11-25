@@ -38,13 +38,11 @@ getVocabVersion <- function(cdm) {
   }
   checkmate::reportAssertions(collection = errorMessage)
 
-  version <- cdm$vocabulary %>%
+  version <- as.character(cdm$vocabulary %>%
     dplyr::rename_with(tolower) %>%
     dplyr::filter(.data$vocabulary_id == "None") %>%
     dplyr::select("vocabulary_version") %>%
-    dplyr::collect() %>%
-    dplyr::pull()
-
+    dplyr::collect())
   return(version)
 }
 
@@ -289,6 +287,11 @@ getDoseForm <- function(cdm) {
 #' @param conceptId concpet_id to search
 #' @param withAncestor If TRUE, return column with ancestor. In case of multiple
 #' ancestors, concepts will be separated by ";"
+#' @param ingredientRange Used to restrict descendant codes to those
+#' associated with a specific number of drug ingredients. Must be a vector of
+#' length two with the first element the minimum number of ingredients allowed
+#' and the second the maximum. A value of c(2, 2) would restrict to only
+#' concepts associated with two ingredients.
 #' @param doseForm Only descendants codes with the specified drug dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
@@ -304,6 +307,7 @@ getDoseForm <- function(cdm) {
 getDescendants <- function(cdm,
                            conceptId,
                            withAncestor = FALSE,
+                           ingredientRange = c(0, Inf),
                            doseForm = NULL) {
 
   errorMessage <- checkmate::makeAssertCollection()
@@ -319,18 +323,28 @@ getDescendants <- function(cdm,
   checkmate::assert_numeric(conceptId,
                             add = errorMessage
   )
+  checkmate::assert_vector(ingredientRange, len = 2,
+                            add = errorMessage
+  )
   checkmate::reportAssertions(collection = errorMessage)
 
+  if(ingredientRange[2] == Inf){
+    ingredientRange[2] <- 9999999
+  }
+
+  checkmate::assert_integerish(ingredientRange, lower = 0)
+  checkmate::assert_true(ingredientRange[2] >= ingredientRange[1])
+
 if(isFALSE(withAncestor)){
-  descendants <- getDescendantsOnly(cdm, conceptId, doseForm)}
+  descendants <- getDescendantsOnly(cdm, conceptId, ingredientRange, doseForm)}
 
   if(isTRUE(withAncestor)){
-    descendants <- getDescendantsAndAncestor(cdm, conceptId, doseForm)}
+    descendants <- getDescendantsAndAncestor(cdm, conceptId, ingredientRange, doseForm)}
 
   return(descendants)
 }
 
-getDescendantsOnly <- function(cdm, conceptId, doseForm) {
+getDescendantsOnly <- function(cdm, conceptId, ingredientRange, doseForm) {
   descendants <- cdm$concept_ancestor %>%
     dplyr::filter(.data$ancestor_concept_id %in% .env$conceptId) %>%
     dplyr::select("descendant_concept_id") %>%
@@ -338,6 +352,14 @@ getDescendantsOnly <- function(cdm, conceptId, doseForm) {
     dplyr::rename("concept_id" = "descendant_concept_id") %>%
     dplyr::left_join(cdm$concept,
                      by = "concept_id")
+
+  if(ingredientRange[1] != 0 &&
+     ingredientRange[2] != 9999999){
+  descendants <- addIngredientCount(cdm = cdm, concepts = descendants) %>%
+    dplyr::filter(.data$ingredient_count >= !!.env$ingredientRange[1],
+                  .data$ingredient_count <= !!.env$ingredientRange[2]) %>%
+    dplyr::select(!c("ingredient_count"))
+  }
 
   if(!is.null(doseForm)){
     descendantDoseForms <- getPresentDoseForms(cdm, concepts = descendants)
@@ -356,7 +378,7 @@ getDescendantsOnly <- function(cdm, conceptId, doseForm) {
   return(descendants)
 }
 
-getDescendantsAndAncestor <- function(cdm, conceptId, doseForm) {
+getDescendantsAndAncestor <- function(cdm, conceptId, ingredientRange, doseForm) {
 
   descendants <- cdm$concept_ancestor %>%
     dplyr::inner_join(dplyr::tibble(ancestor_concept_id = as.integer(conceptId)),
@@ -366,7 +388,16 @@ getDescendantsAndAncestor <- function(cdm, conceptId, doseForm) {
     dplyr::left_join(cdm$concept,
                      by = "concept_id")
 
-  if(!is.null(doseForm)){
+  descendants <- addIngredientCount(cdm = cdm, concepts = descendants) %>%
+    dplyr::filter(.data$ingredient_count >= !!ingredientRange[1],
+                  .data$ingredient_count <= !!ingredientRange[2]) %>%
+    dplyr::select(!c("ingredient_count"))
+
+  if(!is.null(doseForm) &&
+     nrow(descendants %>%
+     utils::head(5) %>%
+     dplyr::tally() %>%
+     dplyr::collect()) > 0){
     descendantDoseForms <- getPresentDoseForms(cdm, concepts = descendants)
   }
 
@@ -398,7 +429,11 @@ descendants$ancestor_concept_id <- stringr::str_replace_all(
 )
     }
 
-  if(!is.null(doseForm)){
+  if(!is.null(doseForm) &&
+     nrow(descendants %>%
+          utils::head(5) %>%
+          dplyr::tally() %>%
+          dplyr::collect()) > 0){
     descendants <-  filterOnDoseForm(concepts = descendants,
                                      conceptDoseForms = descendantDoseForms,
                                      doseForm = doseForm)
@@ -458,4 +493,32 @@ filterOnDoseForm <- function(concepts, conceptDoseForms, doseForm){
 
   return(concepts)
 
+}
+
+addIngredientCount <- function(cdm, concepts) {
+
+ ingredient_ancestor <- cdm$concept_ancestor %>%
+    dplyr::inner_join(cdm$concept %>%
+                        dplyr::filter(.data$concept_class_id == "Ingredient") %>%
+                        dplyr::select("concept_id"),
+               by = c("ancestor_concept_id" = "concept_id"))
+
+ ingredient_count <- concepts%>%
+   dplyr::select("concept_id") %>%
+   dplyr::distinct() %>%
+   dplyr::left_join(ingredient_ancestor,
+              by = c("concept_id" = "descendant_concept_id")) %>%
+    dplyr::select("concept_id") %>%
+    dplyr::group_by(.data$concept_id) %>%
+    dplyr::tally(name = "ingredient_count") %>%
+    dplyr::mutate(ingredient_count = as.integer(ingredient_count))
+
+ concepts <- concepts %>%
+   dplyr::left_join(ingredient_count,
+             by = "concept_id")
+ if(!is.null(attr(cdm, "dbcon"))){
+   concepts <- concepts %>%
+   CDMConnector::computeQuery()}
+
+ concepts
 }

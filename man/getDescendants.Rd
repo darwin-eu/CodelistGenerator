@@ -4,7 +4,13 @@
 \alias{getDescendants}
 \title{getDescendants}
 \usage{
-getDescendants(cdm, conceptId, withAncestor = FALSE, doseForm = NULL)
+getDescendants(
+  cdm,
+  conceptId,
+  withAncestor = FALSE,
+  ingredientRange = c(0, Inf),
+  doseForm = NULL
+)
 }
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
@@ -13,6 +19,12 @@ getDescendants(cdm, conceptId, withAncestor = FALSE, doseForm = NULL)
 
 \item{withAncestor}{If TRUE, return column with ancestor. In case of multiple
 ancestors, concepts will be separated by ";"}
+
+\item{ingredientRange}{Used to restrict descendant codes to those
+associated with a specific number of drug ingredients. Must be a vector of
+length two with the first element the minimum number of ingredients allowed
+and the second the maximum. A value of c(2, 2) would restrict to only
+concepts associated with two ingredients.}
 
 \item{doseForm}{Only descendants codes with the specified drug dose form
 will be returned. If NULL, descendant codes will be returned regardless
