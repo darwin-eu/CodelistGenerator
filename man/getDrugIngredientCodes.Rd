@@ -8,6 +8,7 @@ getDrugIngredientCodes(
   cdm,
   name = NULL,
   doseForm = NULL,
+  ingredientRange = c(1, Inf),
   withConceptDetails = FALSE
 )
 }
@@ -21,6 +22,12 @@ concepts for these two particular drug ingredients.}
 \item{doseForm}{Only descendants codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
+
+\item{ingredientRange}{Used to restrict descendant codes to those
+associated with a specific number of ingredients. Must be a vector of length
+two with the first element the minimum number of ingredients allowed and
+the second the maximum. A value of c(2, 2) would restrict to only concepts
+associated with two ingredients.}
 
 \item{withConceptDetails}{If FALSE, each item in the list of results (one per
 ingredient) will contain a vector of concept IDs for each ingredient. If
