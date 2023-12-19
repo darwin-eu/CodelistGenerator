@@ -16,7 +16,7 @@ summariseCodeUse(
 )
 }
 \arguments{
-\item{x}{Vector of concept IDs}
+\item{x}{List of concept IDs}
 
 \item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
 

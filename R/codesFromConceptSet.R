@@ -261,9 +261,25 @@ addDetails <- function(conceptList, cdm){
   conceptList <- dplyr::bind_rows(conceptList) %>%
     dplyr::left_join(cdm[["concept"]] %>%
       dplyr::select("concept_id", "concept_name",
-                "domain_id", "vocabulary_id"),
+                "domain_id", "vocabulary_id",
+                "standard_concept"),
                      by = "concept_id",
-                     copy = TRUE)
+                     copy = TRUE)%>%
+    dplyr::mutate(
+      standard_concept = ifelse(is.na(.data$standard_concept),
+                                "non-standard", .data$standard_concept
+      )
+    ) %>%
+    dplyr::mutate(
+      standard_concept = ifelse(.data$standard_concept == "C",
+                                "classification", .data$standard_concept
+      )
+    ) %>%
+    dplyr::mutate(
+      standard_concept = ifelse(.data$standard_concept == "S",
+                                "standard", .data$standard_concept
+      )
+    )
 
    conceptList <- split(
     x = conceptList %>% dplyr::select(!"concept_set"),
