@@ -31,23 +31,23 @@ test_that("achilles code use", {
     dplyr::filter(standard_concept_id == 317009,
                   group_name == "By concept",
                   variable_name == "Record count") %>%
-    pull("estimate"),
+    dplyr::pull("estimate"),
   result_cdm %>%
     dplyr::filter(standard_concept_id == 317009,
                   group_name == "By concept",
                   variable_name == "Record count") %>%
-    pull("estimate"))
+    dplyr::pull("estimate"))
 
  expect_equal(result_achilles %>%
                 dplyr::filter(standard_concept_id == 257581,
                               group_name == "By concept",
                               variable_name == "Record count") %>%
-                pull("estimate"),
+                dplyr::pull("estimate"),
               result_cdm %>%
                 dplyr::filter(standard_concept_id == 257581,
                               group_name == "By concept",
                               variable_name == "Record count") %>%
-                pull("estimate"))
+                dplyr::pull("estimate"))
 
 
  cdm$achilles_results <- cdm$condition_occurrence %>%
@@ -72,27 +72,27 @@ test_that("achilles code use", {
                 dplyr::filter(standard_concept_id == 317009,
                               group_name == "By concept",
                               variable_name == "Person count") %>%
-                pull("estimate"),
+                dplyr::pull("estimate"),
               result_cdm %>%
                 dplyr::filter(standard_concept_id == 317009,
                               group_name == "By concept",
                               variable_name == "Person count") %>%
-                pull("estimate"))
+                dplyr::pull("estimate"))
 
  expect_equal(result_achilles %>%
                 dplyr::filter(standard_concept_id == 257581,
                               group_name == "By concept",
                               variable_name == "Person count") %>%
-                pull("estimate"),
+                dplyr::pull("estimate"),
               result_cdm %>%
                 dplyr::filter(standard_concept_id == 257581,
                               group_name == "By concept",
                               variable_name == "Person count") %>%
-                pull("estimate"))
+                dplyr::pull("estimate"))
 
  # edge cases
  # concept id not in achilles
- expect_warning(achillesCodeUse(list(asthma = 123),
+ expect_message(achillesCodeUse(list(asthma = 123),
                                     cdm = cdm))
 
  # expected errors

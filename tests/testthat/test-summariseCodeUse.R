@@ -224,7 +224,7 @@ skip_on_cran()
                                     ageGroup = NULL))>1)
 
   # no records
-  expect_warning(results <- summariseCodeUse(list(cs= c(999999)),
+  expect_message(results <- summariseCodeUse(list(cs= c(999999)),
                                              cdm = cdm,
                                              byYear = FALSE,
                                              bySex = FALSE,
