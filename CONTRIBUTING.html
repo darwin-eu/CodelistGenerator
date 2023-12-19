@@ -85,9 +85,9 @@
 <h4 id="adhere-to-code-style">Adhere to code style<a class="anchor" aria-label="anchor" href="#adhere-to-code-style"></a></h4>
 <p>Please adhere to the code style when adding any new code. Do not though restyle any code unrelated to your pull request as this will make code review more difficult.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="https://lintr.r-lib.org/reference/lint.html" class="external-link">lint_package</a></span><span class="op">(</span><span class="st">"."</span>,</span>
-<span>                    linters <span class="op">=</span> <span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="https://lintr.r-lib.org/reference/linters_with_defaults.html" class="external-link">linters_with_defaults</a></span><span class="op">(</span></span>
-<span>                      <span class="fu">lintr</span><span class="fu">::</span><span class="fu"><a href="https://lintr.r-lib.org/reference/object_name_linter.html" class="external-link">object_name_linter</a></span><span class="op">(</span>styles <span class="op">=</span> <span class="st">"camelCase"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">lintr</span><span class="fu">::</span><span class="fu">lint_package</span><span class="op">(</span><span class="st">"."</span>,</span>
+<span>                    linters <span class="op">=</span> <span class="fu">lintr</span><span class="fu">::</span><span class="fu">linters_with_defaults</span><span class="op">(</span></span>
+<span>                      <span class="fu">lintr</span><span class="fu">::</span><span class="fu">object_name_linter</span><span class="op">(</span>styles <span class="op">=</span> <span class="st">"camelCase"</span><span class="op">)</span></span>
 <span>                    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -99,7 +99,7 @@
 <p>No warnings should be seen.</p>
 <p>If the package is on CRAN or is close to being submitted to CRAN then please also run:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">rcmdcheck</span><span class="fu">::</span><span class="fu"><a href="http://r-lib.github.io/rcmdcheck/reference/rcmdcheck.html" class="external-link">rcmdcheck</a></span><span class="op">(</span>args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--no-manual"</span>, <span class="st">"--as-cran"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">rcmdcheck</span><span class="fu">::</span><span class="fu">rcmdcheck</span><span class="op">(</span>args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--no-manual"</span>, <span class="st">"--as-cran"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">check_win_devel</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Also it can be worth checking spelling and any urls</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
