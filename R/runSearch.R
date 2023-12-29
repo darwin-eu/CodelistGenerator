@@ -356,19 +356,8 @@ runSearch <- function(keywords,
   if (nrow(candidateCodes) == 0) {
     candidateCodes
   } else {
-    # 8) Finish up
-    # get original names back
-    candidateCodes <- candidateCodes %>%
-      dplyr::filter(!is.na(.data$concept_id)) %>%
-      dplyr::select("concept_id", "found_from") %>%
-      dplyr::left_join(concept,
-        by = c("concept_id")
-      ) %>%
-      dplyr::distinct()
-
-    # if domain = "drug", add drug_strength information and dose form
-
-    if (domains == "drug") {
+  # 8) Finish up
+    if (domains == "drug") { #add drug_strength information and dose form
       candidateCodes <- candidateCodes %>%
         dplyr::left_join(
           drugStrength %>%
@@ -425,21 +414,23 @@ runSearch <- function(keywords,
             by = "concept_id"
           )
       }
-    } else {
-      candidateCodes <- candidateCodes %>%
-        dplyr::select(
-          "concept_id", "concept_name",
-          "domain_id", "concept_class_id",
-          "vocabulary_id", "found_from"
-        )
     }
 
     candidateCodes <- candidateCodes %>%
+      dplyr::select(dplyr::any_of(c("concept_id", "found_from",
+                                    "ingredient_concept_id", "amount_value",
+                                    "amount_unit_concept_id",
+                                    "numerator_value",
+                                    "numerator_unit_concept_id",
+                                    "denominator_value",
+                                    "denominator_unit_concept_id",
+                                    "box_size", "dose_form"))) %>%
       dplyr::distinct()
 
     # remove duplicates (found in different ways)
     # keep first time it was found
-    # for drug,  same concept_id with different ingredient_concept_id will be removed as well.
+    # for drug,  same concept_id with different ingredient_concept_id
+    # will be removed as well (with only the first kept).
     candidateCodes <- candidateCodes %>%
       dplyr::group_by(.data$concept_id) %>%
       dplyr::mutate(seq = dplyr::row_number(.data$concept_id)) %>%

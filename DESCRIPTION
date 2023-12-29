@@ -46,6 +46,7 @@ Suggests:
     spelling,
     tibble
 Config/testthat/edition: 3
+Config/testthat/parallel: true
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
 Language: en-US

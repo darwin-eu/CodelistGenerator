@@ -318,7 +318,10 @@ mockVocabRef <- function(backend = "database") {
     )
   })
 
-  cdm <- CDMConnector::cdm_from_con(db)
+  cdm <- CDMConnector::cdm_from_con(con = db,
+                                    cdm_schema = "main",
+                                    write_schema = "main",
+                                    cdm_name = "mock")
   if (backend == "database") {
     return(cdm)
   }

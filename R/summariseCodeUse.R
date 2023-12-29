@@ -366,6 +366,11 @@ if(length(tableName)>0){
         dplyr::filter(.data$cohort_start_date == !!dplyr::sym(dateName[[1]]))
     }
   }
+
+  if(is.null(codeRecords)){
+    return(NULL)
+  }
+
   codeRecords <- codeRecords %>%
     dplyr::mutate(date = !!dplyr::sym(dateName[[1]])) %>%
     dplyr::mutate(year = lubridate::year(date)) %>%
