@@ -34,10 +34,15 @@ findOrphanCodes <- function(x,
                             includeDescendants = TRUE,
                             includeAncestor = TRUE){
 
+
+x <- addDetails(cdm = cdm, conceptList = x)
+
+orphanConcepts <- list()
 # rerun search
+for(i in seq_along(x)){
 candidateCodes <- getCandidateCodes(
     cdm = cdm,
-    keywords = x$concept_name,
+    keywords = x[[i]]$concept_name,
     domains = domains,
     standardConcept = standardConcept,
     searchInSynonyms = searchInSynonyms,
@@ -47,25 +52,26 @@ candidateCodes <- getCandidateCodes(
 
 cli::cli_inform("Excluding codes that are in the original set of codes")
 candidateCodes <- candidateCodes %>%
-  dplyr::anti_join(x %>%
-  dplyr::select("concept_id"),
-  by = "concept_id")
-
+  dplyr::anti_join(x[[i]] %>%
+                     dplyr::select("concept_id"),
+                   by = "concept_id")
 cli::cli_inform("Keeping only codes that appear in the database")
 dBCandidateCodes <- list("candidate_codes" = candidateCodes %>%
-       dplyr::pull("concept_id")) %>%
-  restrictToCodesInUse(cdm = cdm) %>%
-  purrr::list_c()
-
-if(length(dBCandidateCodes) == 0){
-  cli::cli_inform("-- No orphan codes found")
-  return(dplyr::tibble())
-}
-
-candidateCodes <- candidateCodes %>%
+                           dplyr::pull("concept_id")) %>%
+  restrictToCodesInUse(cdm = cdm)
+if(length(dBCandidateCodes)>0){
+dBCandidateCodes <- dBCandidateCodes  %>%
+    purrr::list_c()
+orphanConcepts[[i]] <- candidateCodes %>%
   dplyr::filter(.data$concept_id %in% .env$dBCandidateCodes)
+} else {
+    cli::cli_inform("-- No orphan codes found")
+  orphanConcepts[[i]] <- dplyr::tibble()
+}
+}
+names(orphanConcepts) <- names(x)
 
-candidateCodes
+orphanConcepts
 
 }
 

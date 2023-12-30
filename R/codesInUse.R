@@ -173,7 +173,7 @@ unmappedSourceCodesInUse <- function(cdm,
       dplyr::select(dplyr::all_of(workingConcept)) %>%
       dplyr::distinct() %>%
       dplyr::pull())
-    codes[[i]] <- na.omit(codes[[i]])
+    codes[[i]] <- stats::na.omit(codes[[i]])
   }
 
   codes <- unlist(codes)

@@ -17,11 +17,11 @@ test_that("tests with mock db", {
 
 })
 
-
 test_that("sql server with achilles", {
 
   testthat::skip_if(Sys.getenv("CDM5_SQL_SERVER_SERVER") == "")
   testthat::skip_if(Sys.getenv("SQL_SERVER_DRIVER") == "")
+  testthat::skip_if(packageVersion("CDMConnector") <= "1.2.0")
 
   db <- DBI::dbConnect(odbc::odbc(),
                        Driver   = Sys.getenv("SQL_SERVER_DRIVER"),
@@ -35,6 +35,8 @@ test_that("sql server with achilles", {
                                     cdm_schema = c("CDMV54", "dbo"),
                                     achilles_schema = c("CDMV54", "dbo"),
                                     write_schema = c("ohdsi", "dbo"))
+
+
 
   asthma_codes <- getCandidateCodes(
     cdm = cdm,
