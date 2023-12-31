@@ -5,13 +5,27 @@ test_that("tests with mock db", {
 
   codes <- getCandidateCodes(
     cdm = cdm,
-    keywords = "Musculoskeletal disorder",
+    keywords = "arthritis",
     domains = "Condition",
     includeDescendants = FALSE
   )
+  expect_true(4 %in%
+                restrictToCodesInUse(list("cs" = codes$concept_id),
+                       cdm = cdm))
 
+  expect_true(length(restrictToCodesInUse(list("cs1" = codes$concept_id,
+                       "cs2" = 999),
+                       cdm = cdm)) == 1) # will just have cs1
+
+  # no codes in db
+  codes <- getCandidateCodes(
+    cdm = cdm,
+    keywords = "hip osteoarthritis",
+    domains = "Condition",
+    includeDescendants = FALSE
+  )
  expect_message(restrictToCodesInUse(list("cs" = codes$concept_id),
-                       cdm = cdm)) # no codes in db
+                       cdm = cdm))
 
   DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 

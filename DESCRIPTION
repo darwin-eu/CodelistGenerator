@@ -28,7 +28,8 @@ Imports:
     purrr,
     lubridate,
     PatientProfiles (>= 0.3.0),
-    RJSONIO
+    RJSONIO,
+    vctrs
 Suggests: 
     arrow (>= 9.0.0),
     covr,

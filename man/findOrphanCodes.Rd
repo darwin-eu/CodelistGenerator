@@ -12,7 +12,8 @@ findOrphanCodes(
   searchInSynonyms = TRUE,
   searchNonStandard = TRUE,
   includeDescendants = TRUE,
-  includeAncestor = TRUE
+  includeAncestor = TRUE,
+  minCellCount = 5
 )
 }
 \arguments{
@@ -40,7 +41,10 @@ will be included in the candidate codelist.}
 
 \item{includeAncestor}{Either TRUE or FALSE.
 If TRUE the direct ancestor concepts of identified concepts
-will be included in the candidate codelist.r}
+will be included in the candidate codelist.}
+
+\item{minCellCount}{The minimum number of counts to reported, below which
+results will be suppressed. If 0, all results will be reported.}
 }
 \value{
 A codelist containing code related to (but not in) the target

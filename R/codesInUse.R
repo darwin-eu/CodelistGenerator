@@ -29,7 +29,16 @@ if(is.null(dbCodes)){
 } else {
   for(i in seq_along(x)){
     x[[i]] <- intersect(x[[i]], dbCodes)
+    if(!length(x[[i]]) >= 1){
+    cli::cli_inform("No codes from codelist {names(x)[i]} found in the database")
+    }
   }
+}
+
+x <- vctrs::list_drop_empty(x)
+
+if(length(x) == 0){
+  return(invisible(NULL))
 }
 
 x

@@ -272,6 +272,21 @@ mockVocabRef <- function(backend = "database") {
     )
   )
 
+
+  # achilles tables
+  # count of 400 records for knee osteoarthritis
+  achillesAnalysis <- dplyr::tibble(analysis_id = 1,
+                                     analysis_name = 1)
+  achillesResults <- dplyr::tibble(analysis_id = 401,
+                             stratum_1 = 4,
+                             stratum_2 = NA,
+                             stratum_3 = NA,
+                             count_value = 100)
+  achillesResultsDist <- dplyr::tibble(analysis_id = 1,
+                                  count_value = 5)
+
+
+
   # into in-memory duckdb
   db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
 
@@ -318,10 +333,34 @@ mockVocabRef <- function(backend = "database") {
     )
   })
 
+  DBI::dbWithTransaction(db, {
+    DBI::dbWriteTable(db, "achilles_analysis",
+                      achillesAnalysis,
+                      overwrite = TRUE
+    )
+  })
+  DBI::dbWithTransaction(db, {
+    DBI::dbWriteTable(db, "achilles_results",
+                      achillesResults,
+                      overwrite = TRUE
+    )
+  })
+  DBI::dbWithTransaction(db, {
+    DBI::dbWriteTable(db, "achilles_results_dist",
+                      achillesResultsDist,
+                      overwrite = TRUE
+    )
+  })
+
   cdm <- CDMConnector::cdm_from_con(con = db,
                                     cdm_schema = "main",
                                     write_schema = "main",
                                     cdm_name = "mock")
+
+  cdm$achilles_analysis <- dplyr::tbl(db, "achilles_analysis")
+  cdm$achilles_results <- dplyr::tbl(db, "achilles_results")
+  cdm$achilles_results_dist <- dplyr::tbl(db, "achilles_results_dist")
+
   if (backend == "database") {
     return(cdm)
   }

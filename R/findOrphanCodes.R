@@ -18,7 +18,9 @@
 #' will be included in the candidate codelist.
 #' @param includeAncestor Either TRUE or FALSE.
 #' If TRUE the direct ancestor concepts of identified concepts
-#'  will be included in the candidate codelist.r
+#'  will be included in the candidate codelist.
+#' @param minCellCount The minimum number of counts to reported, below which
+#' results will be suppressed. If 0, all results will be reported.
 #'
 #' @return A codelist containing code related to (but not in) the target
 #' codelist that are present used in the cdm
@@ -32,7 +34,8 @@ findOrphanCodes <- function(x,
                             searchInSynonyms = TRUE,
                             searchNonStandard = TRUE,
                             includeDescendants = TRUE,
-                            includeAncestor = TRUE){
+                            includeAncestor = TRUE,
+                            minCellCount = 5){
 
 
 x <- addDetails(cdm = cdm, conceptList = x)
@@ -50,29 +53,28 @@ candidateCodes <- getCandidateCodes(
     includeDescendants = includeDescendants,
     includeAncestor = includeAncestor)
 
-cli::cli_inform("Excluding codes that are in the original set of codes")
+# Exclude codes that are in the original set of codes
 candidateCodes <- candidateCodes %>%
   dplyr::anti_join(x[[i]] %>%
                      dplyr::select("concept_id"),
                    by = "concept_id")
-cli::cli_inform("Keeping only codes that appear in the database")
-dBCandidateCodes <- list("candidate_codes" = candidateCodes %>%
-                           dplyr::pull("concept_id")) %>%
-  restrictToCodesInUse(cdm = cdm)
-if(length(dBCandidateCodes)>0){
-dBCandidateCodes <- dBCandidateCodes  %>%
-    purrr::list_c()
-orphanConcepts[[i]] <- candidateCodes %>%
-  dplyr::filter(.data$concept_id %in% .env$dBCandidateCodes)
+# Use achilles counts to summarise code use
+orphanConcepts[[i]] <- achillesCodeUse(
+  x = list("cs" = candidateCodes$concept_id),
+  cdm = cdm,
+  minCellCount = minCellCount
+)
+if(nrow(orphanConcepts[[i]]) >= 1 ){
+  orphanConcepts[[i]] <- orphanConcepts[[i]] %>%
+    dplyr::mutate(codelist = names(x)[i])
 } else {
-    cli::cli_inform("-- No orphan codes found")
-  orphanConcepts[[i]] <- dplyr::tibble()
+  cli::cli_inform("-- No orphan codes found for codelist {names(x)[i]}")
 }
 }
-names(orphanConcepts) <- names(x)
+
+orphanConcepts <- dplyr::bind_rows(orphanConcepts)
 
 orphanConcepts
-
 }
 
 
