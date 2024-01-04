@@ -1,5 +1,6 @@
 test_that("tests with mock db", {
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database",
+                "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db
@@ -31,9 +32,13 @@ test_that("tests with mock db", {
       domains = "Condition",
       includeDescendants = FALSE
     )
-    expect_true((nrow(codes) == 2 &
-      codes$concept_name[1] == "Osteoarthritis of knee" &
-      codes$concept_name[2] == "Osteoarthritis of hip"))
+    expect_true(nrow(codes) == 2)
+    expect_true("Osteoarthritis of knee" %in%
+      (codes %>%
+      dplyr::pull("concept_name")))
+    expect_true("Osteoarthritis of hip" %in%
+                  (codes %>%
+                     dplyr::pull("concept_name")))
 
     # test include descendants
     codes <- getCandidateCodes(
@@ -256,7 +261,8 @@ test_that("tests with mock db", {
 })
 
 test_that("tests with mock db - multiple domains", {
-  backends <- c("database")
+  backends <- c("database",
+                "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db
@@ -276,12 +282,13 @@ test_that("tests with mock db - multiple domains", {
 
     codes <- getCandidateCodes(
       cdm = cdm,
-      keywords = "H/O osteoarthritis",
+      keywords = "h o osteoarthritis",
       domains = c("Condition", "Observation"),
       includeDescendants = FALSE
     )
-    expect_true(all(nrow(codes) == 1 &
-      codes$concept_id == 9))
+    expect_true(all(
+      nrow(codes) == 3 &
+      c(4,5,9) %in% codes$concept_id))
 
     if (backends[[i]] == "database") {
       DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)

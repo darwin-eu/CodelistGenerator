@@ -31,7 +31,6 @@ Imports:
     RJSONIO,
     vctrs
 Suggests: 
-    arrow (>= 9.0.0),
     covr,
     dbplyr (>= 2.2.1),
     knitr,

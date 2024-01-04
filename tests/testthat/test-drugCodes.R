@@ -1,6 +1,6 @@
 test_that("getATCCodes working", {
 
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database", "data_frame")
   for (i in seq_along(backends)) {
   cdm <- mockVocabRef(backend = backends[i])
   atcCodes <- getATCCodes(cdm, level = "ATC 1st")
@@ -28,7 +28,7 @@ test_that("getATCCodes working", {
 
 test_that("getATCCodes expected errors", {
 
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database", "data_frame")
   for (i in seq_along(backends)) {
     cdm <- mockVocabRef(backend = backends[i])
     expect_error(getATCCodes(cdm, level = "Not an ATC level"))
@@ -44,7 +44,7 @@ test_that("getATCCodes expected errors", {
 
 test_that("getDrugIngredientCodes working", {
 
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database", "data_frame")
   for (i in seq_along(backends)) {
     cdm <- mockVocabRef(backend = backends[i])
     ing_codes <- getDrugIngredientCodes(cdm)
@@ -106,7 +106,7 @@ test_that("getDrugIngredientCodes working", {
 
 test_that("getDrugIngredientCodes expected errors", {
 
-  backends <- c("database", "arrow", "data_frame")
+  backends <- c("database","data_frame")
   for (i in seq_along(backends)) {
     cdm <- mockVocabRef(backend = backends[i])
     expect_error(getDrugIngredientCodes(cdm, name = "Not an Ingredient"))

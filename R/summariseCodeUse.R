@@ -50,7 +50,6 @@ summariseCodeUse <- function(x,
   codeUse <- dplyr::bind_rows(codeUse)
 
 
-
  return(codeUse)
 
 }

@@ -68,7 +68,7 @@ getCandidateCodes <- function(cdm,
                               includeDescendants = TRUE,
                               includeAncestor = FALSE) {
 
-    start <- Sys.time()
+  start <- Sys.time()
 
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()

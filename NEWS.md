@@ -1,3 +1,11 @@
+# CodelistGenerator 3.0.0
+* Added functions findOrphanCodes, restrictToCodesInUse, sourceCodesInUse.
+* Speed improvements in getCandidateCodes from doing search in place (e.g. on database side).
+* Dropped support of an Arrow cdm.
+
+# CodelistGenerator 2.1.1
+* Improved support of device domain.
+
 # CodelistGenerator 2.0.0
 * Simplified the interface of getCandidateCodes, with a number of arguments removed.
 * Added function summariseCohortCodeUse.
