@@ -326,7 +326,7 @@ mockVocabRef <- function(backend = "database") {
   if (backend %in% c("arrow", "data_frame")) {
     dOut <- tempfile()
     dir.create(dOut)
-    CDMConnector::stow(cdm, dOut)
+    CDMConnector::stow(cdm = cdm, path = dOut, format = "csv")
 
     if (backend == "arrow") {
       # cdmArrow <- CDMConnector::cdm_from_files(
