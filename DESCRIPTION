@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Generate Code Lists for the OMOP Common Data Model
-Version: 2.1.1
+Version: 2.1.2
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
@@ -30,7 +30,6 @@ Imports:
     PatientProfiles (>= 0.3.0),
     RJSONIO
 Suggests: 
-    arrow (>= 9.0.0),
     covr,
     dbplyr (>= 2.2.1),
     knitr,
@@ -49,3 +48,4 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
 Language: en-US
+Config/testthat/parallel: true

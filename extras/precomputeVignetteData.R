@@ -14,7 +14,7 @@ devtools::load_all()
 
 # example with postgres database connection details
 db <- dbConnect(RPostgres::Postgres(),
-                dbname = "cdm_iqvia_pharmetrics_plus_202203",
+                dbname = "cdm_gold_202301",
                 port = Sys.getenv("DB_PORT") ,
                 host = "163.1.65.51",
                 user = Sys.getenv("DB_USER"),
@@ -46,9 +46,9 @@ rm(cdm)
 # intro vignette ----
 vocabVersion <- getVocabVersion(cdm = cdm_arrow)
 
-saveRDS(
+save(
   vocabVersion,
-  here("vignettes", "introVocab.RData")
+  file = here("vignettes", "introVocab.RData")
 )
 
 
@@ -70,12 +70,12 @@ saveRDS(
 dementiaCodes1 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "dementia",
   domains = "Condition",
-  searchViaSynonyms = FALSE,
-  fuzzyMatch = FALSE,
+  #searchViaSynonyms = FALSE,
+  #fuzzyMatch = FALSE,
   exclude = NULL,
   includeDescendants = TRUE,
   includeAncestor = FALSE,
-  verbose=TRUE
+  #verbose=TRUE
 )
 saveRDS(
   dementiaCodes1,
@@ -112,15 +112,15 @@ saveRDS(
 oaCodes1 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchViaSynonyms = FALSE,
-  fuzzyMatch = FALSE,
+  #searchViaSynonyms = FALSE,
+  #fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
     "post-traumatic"
   ),
   includeDescendants = FALSE,
   includeAncestor = FALSE,
-  verbose = TRUE
+  #verbose = TRUE
 )
 saveRDS(
   oaCodes1,
@@ -131,8 +131,8 @@ saveRDS(
 oaCodes2 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchViaSynonyms = FALSE,
-  fuzzyMatch = FALSE,
+  #searchViaSynonyms = FALSE,
+  #fuzzyMatch = FALSE,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -149,9 +149,9 @@ saveRDS(
 oaCodes3 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = c("Condition", "Observation"),
-  searchViaSynonyms = FALSE,
-  fuzzyMatch = FALSE,
-  maxDistanceCost = 0.1,
+  #searchViaSynonyms = FALSE,
+  #fuzzyMatch = FALSE,
+  #maxDistanceCost = 0.1,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -169,9 +169,9 @@ oaCodes4 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
   searchInSynonyms = TRUE,
-  searchViaSynonyms = TRUE,
-  fuzzyMatch = FALSE,
-  maxDistanceCost = 0.1,
+  #searchViaSynonyms = TRUE,
+  #fuzzyMatch = FALSE,
+  #maxDistanceCost = 0.1,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -201,15 +201,13 @@ saveRDS(
   here("vignettes", "optionsData04.RData")
 )
 
-
-
 # fuzzy search
 oaCodes6 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchViaSynonyms = FALSE,
-  fuzzyMatch = TRUE,
-  maxDistanceCost = 0.1,
+  #searchViaSynonyms = FALSE,
+  #fuzzyMatch = TRUE,
+  #maxDistanceCost = 0.1,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -226,9 +224,9 @@ saveRDS(
 oaCodes7 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchViaSynonyms = FALSE,
-  fuzzyMatch = TRUE,
-  maxDistanceCost = 0.2,
+  #searchViaSynonyms = FALSE,
+  #fuzzyMatch = TRUE,
+  #maxDistanceCost = 0.2,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -245,9 +243,9 @@ saveRDS(
 oaCodes8 <- getCandidateCodes(cdm = cdm_arrow,
   keywords = "osteoarthritis",
   domains = "Condition",
-  searchViaSynonyms = FALSE,
-  fuzzyMatch = FALSE,
-  maxDistanceCost = 0.2,
+  #searchViaSynonyms = FALSE,
+  #fuzzyMatch = FALSE,
+  #maxDistanceCost = 0.2,
   exclude = c(
     "post-infection",
     "post-traumatic"
@@ -265,8 +263,7 @@ ac_codes_1 <- getCandidateCodes(cdm = cdm_arrow,
                                      keywords="acetaminophen",
                                      domains="drug",
                                      standardConcept="standard",
-                                     includeDescendants = TRUE,
-                                     verbose = TRUE)
+                                     includeDescendants = TRUE)
 saveRDS(
   ac_codes_1,
   here("vignettes", "medData01.RData")
@@ -277,8 +274,7 @@ ac_codes_2a <- getCandidateCodes(cdm = cdm_arrow,
                                              "acetaminophen intravenous"),
                                  domains="drug",
                                  standardConcept="standard",
-                                 includeDescendants = TRUE,
-                                 verbose = TRUE)
+                                 includeDescendants = TRUE)
 saveRDS(
   ac_codes_2a,
   here("vignettes", "medData02a.RData")
@@ -287,10 +283,9 @@ saveRDS(
 ac_codes_2b <- getCandidateCodes(cdm = cdm_arrow,
                                 keywords="acetaminophen",
                                 domains="drug",
-                                doseForm = c("injection", "intravenous"),
+                                #doseForm = c("injection", "intravenous"),
                                 standardConcept="standard",
-                                includeDescendants = TRUE,
-                                verbose = TRUE )
+                                includeDescendants = TRUE)
 saveRDS(
   ac_codes_2b,
   here("vignettes", "medData02b.RData")
@@ -305,11 +300,10 @@ c <- compareCodelists(ac_codes_2, ac_codes_2a)
 ac_codes_3 <- getCandidateCodes(cdm = cdm_arrow,
                                 keywords="acetaminophen",
                                 domains="drug",
-                                conceptClassId = c("Quant Clinical Drug"),
-                                doseForm = c("injection", "intravenous"),
+                                #conceptClassId = c("Quant Clinical Drug"),
+                                #doseForm = c("injection", "intravenous"),
                                 standardConcept="standard",
-                                includeDescendants = TRUE,
-                                verbose = TRUE)
+                                includeDescendants = TRUE)
 saveRDS(
   ac_codes_3,
   here("vignettes", "medData03.RData")

@@ -60,7 +60,7 @@ getVocabVersion(cdm = cdm)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-vocabVersion <- readRDS(here("vignettes", "introVocab.RData"))
+vocabVersion <- load(here("vignettes", "introVocab.RData"))
 vocabVersion
 ```
 
