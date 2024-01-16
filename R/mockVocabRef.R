@@ -319,40 +319,39 @@ mockVocabRef <- function(backend = "database") {
   })
 
   cdm <- CDMConnector::cdm_from_con(db)
-  if (backend == "database") {
-    return(cdm)
-  }
-
-  if (backend %in% c("arrow", "data_frame")) {
-    dOut <- tempfile()
-    dir.create(dOut)
-    CDMConnector::stow(cdm = cdm, path = dOut, format = "csv")
-
-    if (backend == "arrow") {
-      # cdmArrow <- CDMConnector::cdm_from_files(
-      #   path = dOut,
-      #   as_data_frame = FALSE, cdm_name = "mock_vocab"
-      # )
-      # DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
-      cdmArrow <- cdm
-      return(cdmArrow)
-    }
-
-    if (backend == "data_frame") {
-      if(utils::packageVersion("CDMConnector")<"1.1.0"){
-        cdmDF <- CDMConnector::cdm_from_files(
-          path = dOut,
-          as_data_frame = TRUE
-        )
-      } else {
-        cdmDF <- CDMConnector::cdm_from_files(
-          path = dOut, cdm_name = "mock",
-          as_data_frame = TRUE
-        )
-      }
-
-      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
-      return(cdmDF)
-    }
-  }
+  return(cdm)
+  # if (backend == "database") {
+  #   return(cdm)
+  # }
+  #
+  # if (backend %in% c("arrow", "data_frame")) {
+  #   dOut <- tempfile()
+  #   dir.create(dOut)
+  #   CDMConnector::stow(cdm = cdm, path = dOut, format = "csv")
+  #
+  #   if (backend == "arrow") {
+  #     cdmArrow <- CDMConnector::cdm_from_files(
+  #       path = dOut,
+  #       as_data_frame = FALSE, cdm_name = "mock_vocab"
+  #     )
+  #     DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  #     return(cdmArrow)
+  #   }
+  #
+  #   if (backend == "data_frame") {
+  #     if(utils::packageVersion("CDMConnector")<"1.1.0"){
+  #       cdmDF <- CDMConnector::cdm_from_files(
+  #         path = dOut,
+  #         as_data_frame = TRUE
+  #       )
+  #     } else {
+  #       cdmDF <- CDMConnector::cdm_from_files(
+  #         path = dOut, cdm_name = "mock",
+  #         as_data_frame = TRUE
+  #       )
+  #     }
+  #     DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  #     return(cdmDF)
+  #   }
+  # }
 }

@@ -48,3 +48,4 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
 Language: en-US
+Config/testthat/parallel: true
