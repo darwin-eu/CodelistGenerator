@@ -1,4 +1,4 @@
-# CodelistGenerator 3.0.0
+# CodelistGenerator 2.2.0
 * Added functions findOrphanCodes, restrictToCodesInUse, sourceCodesInUse.
 * Speed improvements in getCandidateCodes from doing search in place (e.g. on database side).
 * Dropped support of an Arrow cdm.
