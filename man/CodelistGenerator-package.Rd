@@ -4,7 +4,7 @@
 \name{CodelistGenerator-package}
 \alias{CodelistGenerator}
 \alias{CodelistGenerator-package}
-\title{CodelistGenerator: Generate Code Lists for the OMOP Common Data Model}
+\title{CodelistGenerator: Identify Relevant Clinical Codes and Evaluate Their Use}
 \description{
 Generate a candidate code list for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate code list will be returned.
 }

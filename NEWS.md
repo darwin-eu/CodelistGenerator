@@ -1,7 +1,7 @@
 # CodelistGenerator 2.2.0
 * Added functions findOrphanCodes, restrictToCodesInUse, sourceCodesInUse.
 * Speed improvements in getCandidateCodes from doing search in place (e.g. on database side).
-* Dropped support of an Arrow cdm.
+* Dropped explicit support of an Arrow cdm.
 
 # CodelistGenerator 2.1.1
 * Improved support of device domain.
