@@ -388,5 +388,4 @@ mockVocabRef <- function(backend = "database") {
   }
 
   cdm
-
 }
