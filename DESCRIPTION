@@ -17,6 +17,7 @@ Imports:
     CDMConnector (>= 1.1.2),
     checkmate (>= 2.0.0),
     DBI (>= 1.1.0),
+    duckdb,
     dplyr (>= 1.1.0),
     magrittr (>= 2.0.0),
     rlang (>= 1.0.0),
@@ -35,7 +36,6 @@ Suggests:
     dbplyr (>= 2.2.1),
     knitr,
     readr (>= 2.1.0),
-    duckdb,
     DT,
     rmarkdown,
     here (>= 1.0.0),
@@ -50,4 +50,3 @@ Config/testthat/parallel: true
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
 Language: en-US
-Config/testthat/parallel: true
