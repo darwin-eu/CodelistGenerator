@@ -35,14 +35,10 @@ Imports:
     vctrs
 Suggests: 
     covr,
-    dbplyr (>= 2.2.1),
-    knitr,
-    readr (>= 2.1.0),
-    DT,
-    rmarkdown,
     here (>= 1.0.0),
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0),
-    kableExtra (>= 1.0.0),
     RPostgres,
     odbc,
     spelling,

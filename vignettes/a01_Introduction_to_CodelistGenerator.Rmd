@@ -21,13 +21,8 @@ For this example we are going to generate a candidate codelist for dementia, onl
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 library(here)
-library(readr)
 library(DBI)
-library(here)
 library(dplyr)
-library(stringr)
-library(DT)
-library(kableExtra)
 library(CodelistGenerator)
 library(CDMConnector)
 ```
@@ -97,13 +92,8 @@ codesFromDescendants <- readRDS(here("vignettes", "introData01.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
-datatable(codesFromDescendants,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+codesFromDescendants %>% 
+  glimpse()
 ```
 
 This looks to pick up most relevant codes. But, this approach misses codes that are not a descendant of 4182210. For example, codes such as "Wandering due to dementia" (37312577; https://athena.ohdsi.org/search-terms/terms/37312577) and "Anxiety due to dementia" (37312031; https://athena.ohdsi.org/search-terms/terms/37312031) are not picked up.
@@ -126,13 +116,8 @@ dementiaCodes1 <- readRDS(here("vignettes", "introData02.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(dementiaCodes1,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+dementiaCodes1%>% 
+  glimpse()
 ```
 
 
@@ -150,22 +135,16 @@ codeComparison <- readRDS(here("vignettes", "introData03.RData"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE } 
-kable(codeComparison %>%
+codeComparison %>%
   group_by(codelist) %>%
-  tally())
+  tally()
 ```
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-datatable(
-  codeComparison %>%
-    filter(codelist == "Only codelist 2"),
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+codeComparison %>%
+  filter(codelist == "Only codelist 2") %>% 
+  glimpse()
 ```
 
 ## Review mappings from non-standard vocabularies
@@ -184,13 +163,8 @@ icdMappings <- getMappings(
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(icdMappings,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+icdMappings %>% 
+  glimpse()
 ```
 
 
@@ -207,11 +181,6 @@ readMappings <- getMappings(
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(readMappings,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+readMappings %>% 
+  glimpse()
 ```

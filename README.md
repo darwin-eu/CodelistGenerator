@@ -87,7 +87,7 @@ getDrugIngredientCodes(cdm = cdm, name = "aspirin", withConceptDetails = TRUE)
 #> $aspirin
 #> # A tibble: 2 × 4
 #>   concept_id concept_name              domain_id vocabulary_id
-#>        <dbl> <chr>                     <chr>     <chr>        
+#>        <int> <chr>                     <chr>     <chr>        
 #> 1    1112807 Aspirin                   Drug      RxNorm       
 #> 2   19059056 Aspirin 81 MG Oral Tablet Drug      RxNorm
 ```
@@ -126,12 +126,12 @@ asthma_codes1 %>%
   glimpse()
 #> Rows: 2
 #> Columns: 6
-#> $ concept_id       <dbl> 4051466, 317009
-#> $ concept_name     <chr> "Childhood asthma", "Asthma"
-#> $ domain_id        <chr> "condition", "condition"
-#> $ concept_class_id <chr> "Clinical Finding", "Clinical Finding"
-#> $ vocabulary_id    <chr> "SNOMED", "SNOMED"
+#> $ concept_id       <int> 4051466, 317009
 #> $ found_from       <chr> "From initial search", "From initial search"
+#> $ concept_name     <chr> "Childhood asthma", "Asthma"
+#> $ domain_id        <chr> "Condition", "Condition"
+#> $ vocabulary_id    <chr> "SNOMED", "SNOMED"
+#> $ standard_concept <chr> "standard", "standard"
 ```
 
 But perhaps we want to exclude certain concepts as part of the search
@@ -148,12 +148,12 @@ asthma_codes2 %>%
   glimpse()
 #> Rows: 1
 #> Columns: 6
-#> $ concept_id       <dbl> 317009
-#> $ concept_name     <chr> "Asthma"
-#> $ domain_id        <chr> "condition"
-#> $ concept_class_id <chr> "Clinical Finding"
-#> $ vocabulary_id    <chr> "SNOMED"
+#> $ concept_id       <int> 317009
 #> $ found_from       <chr> "From initial search"
+#> $ concept_name     <chr> "Asthma"
+#> $ domain_id        <chr> "Condition"
+#> $ vocabulary_id    <chr> "SNOMED"
+#> $ standard_concept <chr> "standard"
 ```
 
 We can compare these two code lists like so
@@ -162,7 +162,7 @@ We can compare these two code lists like so
 compareCodelists(asthma_codes1, asthma_codes2)
 #> # A tibble: 2 × 3
 #>   concept_id concept_name     codelist       
-#>        <dbl> <chr>            <chr>          
+#>        <int> <chr>            <chr>          
 #> 1    4051466 Childhood asthma Only codelist 1
 #> 2     317009 Asthma           Both
 ```
@@ -182,12 +182,12 @@ Gastrointestinal_hemorrhage %>%
   glimpse()
 #> Rows: 1
 #> Columns: 6
-#> $ concept_id       <dbl> 192671
-#> $ concept_name     <chr> "Gastrointestinal hemorrhage"
-#> $ domain_id        <chr> "condition"
-#> $ concept_class_id <chr> "Clinical Finding"
-#> $ vocabulary_id    <chr> "SNOMED"
+#> $ concept_id       <int> 192671
 #> $ found_from       <chr> "From initial search"
+#> $ concept_name     <chr> "Gastrointestinal hemorrhage"
+#> $ domain_id        <chr> "Condition"
+#> $ vocabulary_id    <chr> "SNOMED"
+#> $ standard_concept <chr> "standard"
 ```
 
 ## Summarising code use
@@ -209,9 +209,9 @@ summariseCodeUse(list("asthma" = asthma_codes1$concept_id),
 #> $ estimate              <int> 101, 96, 5, 101, 96, 5
 #> $ estimate_suppressed   <chr> "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FA…
 #> $ standard_concept_name <chr> NA, "Childhood asthma", "Asthma", NA, "Childhood…
-#> $ standard_concept_id   <dbl> NA, 4051466, 317009, NA, 4051466, 317009
+#> $ standard_concept_id   <int> NA, 4051466, 317009, NA, 4051466, 317009
 #> $ source_concept_name   <chr> NA, "Childhood asthma", "Asthma", NA, "Childhood…
-#> $ source_concept_id     <dbl> NA, 4051466, 317009, NA, 4051466, 317009
+#> $ source_concept_id     <int> NA, 4051466, 317009, NA, 4051466, 317009
 #> $ domain_id             <chr> NA, "condition", "condition", NA, "condition", "…
 #> $ codelist_name         <chr> "asthma", "asthma", "asthma", "asthma", "asthma"…
 #> $ cohort_name           <lgl> NA, NA, NA, NA, NA, NA
