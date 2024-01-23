@@ -20,7 +20,6 @@ knitr::opts_chunk$set(
 For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain. Let's first load some libraries
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-library(here)
 library(DBI)
 library(dplyr)
 library(CodelistGenerator)
@@ -55,7 +54,8 @@ getVocabVersion(cdm = cdm)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-vocabVersion <- load(here("vignettes", "introVocab.RData"))
+vocabVersion <- load(system.file("introVocab.RData", 
+                 package = "CodelistGenerator"))
 vocabVersion
 ```
 
@@ -88,7 +88,8 @@ codesFromDescendants <- tbl(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codesFromDescendants <- readRDS(here("vignettes", "introData01.RData"))
+codesFromDescendants <- readRDS(system.file("introData01.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
@@ -112,7 +113,8 @@ dementiaCodes1 <- getCandidateCodes(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-dementiaCodes1 <- readRDS(here("vignettes", "introData02.RData"))
+dementiaCodes1 <- readRDS(system.file("introData02.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
@@ -131,7 +133,8 @@ codeComparison <- compareCodelists(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codeComparison <- readRDS(here("vignettes", "introData03.RData"))
+codeComparison <- readRDS(system.file("introData03.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE } 
@@ -151,7 +154,8 @@ codeComparison %>%
 Perhaps we want to see what ICD10CM codes map to our candidate code list. We can get these by running
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-icdMappings <- readRDS(here("vignettes", "introData04.RData"))
+icdMappings <- readRDS(system.file("introData04.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  eval=FALSE }
@@ -169,7 +173,8 @@ icdMappings %>%
 
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-readMappings <- readRDS(here("vignettes", "introData05.RData"))
+readMappings <- readRDS(system.file("introData05.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  eval=FALSE }

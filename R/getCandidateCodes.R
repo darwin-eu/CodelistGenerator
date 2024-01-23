@@ -154,7 +154,7 @@ getCandidateCodes <- function(cdm,
   # add concept info
   searchResults <- addDetails(cdm = cdm,
              conceptList = searchResults) %>%
-    dplyr::filter(.data$domain_id %in% .env$domains)
+    dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domains))
 
   cli::cli_alert_success(
     "{nrow(searchResults)} candidate concept{?s} identified"

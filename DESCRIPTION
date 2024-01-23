@@ -35,7 +35,6 @@ Imports:
     vctrs
 Suggests: 
     covr,
-    here (>= 1.0.0),
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
@@ -48,3 +47,4 @@ Config/testthat/parallel: true
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
 Language: en-US
+LazyData: true
