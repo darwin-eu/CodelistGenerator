@@ -17,15 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-library(here)
-library(readr)
 library(DBI)
-library(here)
 library(dplyr)
-library(dbplyr)
-library(stringr)
-library(DT)
-library(kableExtra)
 library(CodelistGenerator)
 library(CDMConnector)
 ```
@@ -69,7 +62,8 @@ cdm <- CDMConnector::cdm_from_con(
 ## Search strategies
 ### Condition domain, without searching synonyms, with exclusions, without including descendants or ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes1 <- readRDS(here("vignettes", "optionsData01.RData"))
+oaCodes1 <- readRDS(system.file("optionsData01.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, and without including descendants or the direct ancestor of the included concepts.
@@ -92,19 +86,15 @@ oaCodes1 <- getCandidateCodes(
 
 What is the candidate codelist?
 ```{r,  message=FALSE, warning=FALSE }  
-datatable(oaCodes1,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 250)
-  )
-)
+oaCodes1 %>% 
+  glimpse()
 ```
 
 
 ### Including descendants
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes2 <- readRDS(here("vignettes", "optionsData02.RData"))
+oaCodes2 <- readRDS(system.file("optionsData02.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 Now we will also include the descendants of included concepts.
@@ -130,18 +120,14 @@ newCodes1To2 <- compareCodelists(oaCodes1, oaCodes2) %>%
   filter(codelist == "Only codelist 2") %>%
   select(-"codelist")
 
-datatable(newCodes1To2,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+newCodes1To2 %>% 
+  glimpse()
 ```
 
 ### Including observation domain
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes3 <- readRDS(here("vignettes", "optionsData03.RData"))
+oaCodes3 <- readRDS(system.file("optionsData03.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 Now we will search the observation domain as well as the condition domain.
@@ -167,18 +153,14 @@ newCodes1To3 <- compareCodelists(oaCodes1, oaCodes3) %>%
   filter(codelist == "Only codelist 2") %>%
   select(-"codelist")
 
-datatable(newCodes1To3,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+newCodes1To3 %>% 
+  glimpse()
 ```
 
 ### Search synonyms
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes4 <- readRDS(here("vignettes", "optionsData04.RData"))
+oaCodes4 <- readRDS(system.file("optionsData04.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 Now we will search the concept synonym table to identify concepts to include.
@@ -204,18 +186,14 @@ newCodes1To4 <- compareCodelists(oaCodes1, oaCodes4) %>%
   filter(codelist == "Only codelist 2") %>%
   select(-"codelist")
 
-datatable(newCodes1To4,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+newCodes1To4 %>% 
+  glimpse()
 ```
 
 ### Search via non-standard
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes5 <- readRDS(here("vignettes", "optionsData04.RData"))
+oaCodes5 <- readRDS(system.file("optionsData05.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 Now we will search the concept synonym table to identify concepts to include.
@@ -241,18 +219,14 @@ newCodes1To5 <- compareCodelists(oaCodes1, oaCodes5) %>%
   filter(codelist == "Only codelist 2") %>%
   select(-"codelist")
 
-datatable(newCodes1To5,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+newCodes1To5 %>% 
+  glimpse()
 ```
 
 ### Include ancestor
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-oaCodes8 <- readRDS(here("vignettes", "optionsData07.RData"))
+oaCodes8 <- readRDS(system.file("optionsData07.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 Now we include the direct ancestor of included terms.
@@ -278,11 +252,6 @@ newCodes1To8 <- compareCodelists(oaCodes1, oaCodes8) %>%
   filter(codelist == "Only codelist 2") %>%
   select(-"codelist")
 
-datatable(newCodes1To8,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+newCodes1To8 %>% 
+  glimpse()
 ```

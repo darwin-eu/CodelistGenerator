@@ -68,7 +68,7 @@ getCandidateCodes <- function(cdm,
                               includeDescendants = TRUE,
                               includeAncestor = FALSE) {
 
-    start <- Sys.time()
+  start <- Sys.time()
 
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()
@@ -148,12 +148,17 @@ getCandidateCodes <- function(cdm,
 
   if (nrow(searchResults) == 0) {
     cli::cli_inform("No codes found for the given search strategy")
-  } else {
-    cli::cli_alert_success(
-      "{nrow(searchResults)} candidate concept{?s} identified"
-    )
+    return(searchResults)
   }
 
+  # add concept info
+  searchResults <- addDetails(cdm = cdm,
+             conceptList = searchResults) %>%
+    dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domains))
+
+  cli::cli_alert_success(
+    "{nrow(searchResults)} candidate concept{?s} identified"
+  )
     duration <- abs(as.numeric(Sys.time() - start, units = "secs"))
     cli::cli_inform(
       "Time taken: {floor(duration/60)} minutes and {duration %% 60 %/% 1} seconds"

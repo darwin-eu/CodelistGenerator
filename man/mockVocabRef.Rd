@@ -7,7 +7,7 @@
 mockVocabRef(backend = "database")
 }
 \arguments{
-\item{backend}{'database' (duckdb), 'arrow' (parquet files), or 'data_frame'}
+\item{backend}{'database' (duckdb) or 'data_frame'}
 }
 \value{
 cdm reference with mock vocabulary

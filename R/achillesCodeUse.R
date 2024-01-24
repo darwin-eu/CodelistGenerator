@@ -47,6 +47,7 @@ achillesCodeUse <- function(x,
 
   if("record" %in% countBy){
   allRecordCount <- getAchillesRecordCounts(cdm = cdm, conceptId = allCodes)
+  if(nrow(allRecordCount)>=1){
   allRecordCount <- allRecordCount %>%
     dplyr::mutate(concept_id = as.character(.data$concept_id)) %>%
     dplyr::left_join(codesWithDetails %>%
@@ -65,12 +66,13 @@ achillesCodeUse <- function(x,
                     standard_concept_id = .data$concept_id
                     ) %>%
       dplyr::mutate(codelist_name = names(x)[i])
-
+    }
   }
   }
 
   if("person" %in% countBy){
   allPersonCount <- getAchillesPersonCounts(cdm = cdm, conceptId = allCodes)
+  if(nrow(allPersonCount)>=1){
   allPersonCount <- allPersonCount %>%
     dplyr::mutate(concept_id = as.character(.data$concept_id)) %>%
     dplyr::left_join(codesWithDetails %>%
@@ -91,7 +93,15 @@ achillesCodeUse <- function(x,
       dplyr::mutate(codelist_name = names(x)[i])
   }
   }
+  }
 
+  if(length(codeUse) == 0){
+    cli::cli_inform(
+      c(
+        "i" = "No achilles counts found for the concepts provided."
+      ))
+    return(dplyr::tibble())
+  } else {
   codeUse <- dplyr::bind_rows(codeUse) %>%
     dplyr::mutate(group_name = "By concept",
            strata_name = "Overall",
@@ -113,12 +123,13 @@ achillesCodeUse <- function(x,
                   "source_concept_id",
                   "domain_id", "codelist_name","cohort_name")
 
+    codeUse <- codeUse %>%
+      dplyr::mutate(estimate = dplyr::if_else(.data$estimate < .env$minCellCount &
+                                                .data$estimate > 0,
+                                              NA, .data$estimate)) %>%
+      dplyr::mutate(standard_concept_id = as.integer(.data$standard_concept_id),
+                    source_concept_id = as.integer(.data$source_concept_id))
 
-  if(nrow(codeUse) == 0){
-    cli::cli_inform(
-      c(
-        "i" = "No achilles counts found for the concepts provided."
-      ))
   }
 
   return(codeUse)

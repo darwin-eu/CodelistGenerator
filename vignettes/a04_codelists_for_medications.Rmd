@@ -15,15 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-library(here)
-library(readr)
 library(DBI)
-library(here)
 library(dplyr)
-library(dbplyr)
-library(stringr)
-library(DT)
-library(kableExtra)
 library(CodelistGenerator)
 ```
 
@@ -57,9 +50,6 @@ First we can follow the approach of identifying high-level codes and include all
 ```{r, eval=FALSE}
 library(dplyr)
 library(CodelistGenerator)
-library(stringr)
-library(DT)
-library(kableExtra)
 ```
 
 ```{r, eval=FALSE}
@@ -73,7 +63,8 @@ acetaminophen1 <- getCandidateCodes(
 ```
 
 ```{r,  message=FALSE, warning=FALSE, echo=FALSE}
-acetaminophen1 <- readRDS(here("vignettes", "medData01.RData"))
+acetaminophen1 <- readRDS(system.file("medData01.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  

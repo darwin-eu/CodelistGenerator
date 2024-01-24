@@ -20,9 +20,6 @@ knitr::opts_chunk$set(
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 library(DBI)
 library(dplyr)
-library(dbplyr)
-library(here)
-library(kableExtra)
 library(CodelistGenerator)
 library(CDMConnector)
 ```
@@ -51,7 +48,8 @@ codes <- getCandidateCodes(
   includeDescendants = FALSE,
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 Note, we would also identify it based on a partial match
@@ -63,7 +61,8 @@ codes <- getCandidateCodes(
   includeDescendants = FALSE
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 ## Add descendants
@@ -73,12 +72,13 @@ knitr::include_graphics("mock_db_fig7.png")
 
 To include descendants of an identified code, we can set includeDescendants to TRUE
 ```{r}
-kable(getCandidateCodes(
+getCandidateCodes(
   cdm = cdm,
   keywords = "Musculoskeletal disorder",
   domains = "Condition",
   includeDescendants = TRUE
-))
+) %>% 
+  glimpse()
 ```
 
 ## Multiple search terms 
@@ -95,7 +95,8 @@ codes <- getCandidateCodes(
   includeDescendants = FALSE
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 ## Add ancestor
@@ -113,7 +114,8 @@ codes <- getCandidateCodes(
   domains = "Condition"
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 ## Searches with multiple words
@@ -131,7 +133,8 @@ codes <- getCandidateCodes(
   includeDescendants = TRUE
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 
@@ -150,7 +153,8 @@ codes <- getCandidateCodes(
   domains = "Condition"
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 ## Search using synonyms
@@ -168,7 +172,8 @@ codes <- getCandidateCodes(
   searchInSynonyms = TRUE
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 ## Search via non-standard
@@ -182,7 +187,8 @@ codes <- getCandidateCodes(
   searchNonStandard = TRUE
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 ## Search for both standard and non-standard concepts
@@ -206,7 +212,8 @@ codes <- getCandidateCodes(
   standardConcept = c("Standard", "Non-standard")
 )
 
-kable(codes)
+codes %>% 
+  glimpse()
 ```
 
 ```{r,echo=FALSE}

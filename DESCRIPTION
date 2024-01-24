@@ -1,6 +1,6 @@
 Package: CodelistGenerator
-Title: Generate Code Lists for the OMOP Common Data Model
-Version: 2.1.2
+Title: Identify Relevant Clinical Codes and Evaluate Their Use
+Version: 2.2.0
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
@@ -13,10 +13,13 @@ License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Depends:
+    R (>= 3.5.0)
 Imports:
     CDMConnector (>= 1.1.2),
     checkmate (>= 2.0.0),
     DBI (>= 1.1.0),
+    duckdb,
     dplyr (>= 1.1.0),
     magrittr (>= 2.0.0),
     rlang (>= 1.0.0),
@@ -28,24 +31,20 @@ Imports:
     purrr,
     lubridate,
     PatientProfiles (>= 0.3.0),
-    RJSONIO
+    RJSONIO,
+    vctrs
 Suggests: 
     covr,
-    dbplyr (>= 2.2.1),
     knitr,
-    readr (>= 2.1.0),
-    duckdb,
-    DT,
     rmarkdown,
-    here (>= 1.0.0),
     testthat (>= 3.0.0),
-    kableExtra (>= 1.0.0),
     RPostgres,
     odbc,
     spelling,
     tibble
 Config/testthat/edition: 3
+Config/testthat/parallel: true
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
 Language: en-US
-Config/testthat/parallel: true
+LazyData: true

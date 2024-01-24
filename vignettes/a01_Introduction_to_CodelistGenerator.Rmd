@@ -20,14 +20,8 @@ knitr::opts_chunk$set(
 For this example we are going to generate a candidate codelist for dementia, only looking for codes in the condition domain. Let's first load some libraries
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-library(here)
-library(readr)
 library(DBI)
-library(here)
 library(dplyr)
-library(stringr)
-library(DT)
-library(kableExtra)
 library(CodelistGenerator)
 library(CDMConnector)
 ```
@@ -60,7 +54,8 @@ getVocabVersion(cdm = cdm)
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-vocabVersion <- load(here("vignettes", "introVocab.RData"))
+vocabVersion <- load(system.file("introVocab.RData", 
+                 package = "CodelistGenerator"))
 vocabVersion
 ```
 
@@ -93,17 +88,13 @@ codesFromDescendants <- tbl(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codesFromDescendants <- readRDS(here("vignettes", "introData01.RData"))
+codesFromDescendants <- readRDS(system.file("introData01.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
-datatable(codesFromDescendants,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+codesFromDescendants %>% 
+  glimpse()
 ```
 
 This looks to pick up most relevant codes. But, this approach misses codes that are not a descendant of 4182210. For example, codes such as "Wandering due to dementia" (37312577; https://athena.ohdsi.org/search-terms/terms/37312577) and "Anxiety due to dementia" (37312031; https://athena.ohdsi.org/search-terms/terms/37312031) are not picked up.
@@ -122,17 +113,13 @@ dementiaCodes1 <- getCandidateCodes(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-dementiaCodes1 <- readRDS(here("vignettes", "introData02.RData"))
+dementiaCodes1 <- readRDS(system.file("introData02.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(dementiaCodes1,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+dementiaCodes1%>% 
+  glimpse()
 ```
 
 
@@ -146,33 +133,29 @@ codeComparison <- compareCodelists(
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-codeComparison <- readRDS(here("vignettes", "introData03.RData"))
+codeComparison <- readRDS(system.file("introData03.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  message=FALSE, warning=FALSE } 
-kable(codeComparison %>%
+codeComparison %>%
   group_by(codelist) %>%
-  tally())
+  tally()
 ```
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-datatable(
-  codeComparison %>%
-    filter(codelist == "Only codelist 2"),
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+codeComparison %>%
+  filter(codelist == "Only codelist 2") %>% 
+  glimpse()
 ```
 
 ## Review mappings from non-standard vocabularies
 Perhaps we want to see what ICD10CM codes map to our candidate code list. We can get these by running
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-icdMappings <- readRDS(here("vignettes", "introData04.RData"))
+icdMappings <- readRDS(system.file("introData04.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  eval=FALSE }
@@ -184,18 +167,14 @@ icdMappings <- getMappings(
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(icdMappings,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+icdMappings %>% 
+  glimpse()
 ```
 
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
-readMappings <- readRDS(here("vignettes", "introData05.RData"))
+readMappings <- readRDS(system.file("introData05.RData", 
+                                            package = "CodelistGenerator"))
 ```
 
 ```{r,  eval=FALSE }
@@ -207,11 +186,6 @@ readMappings <- getMappings(
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-datatable(readMappings,
-  rownames = FALSE,
-  options = list(
-    pageLength = 10,
-    lengthMenu = c(10, 20, 50)
-  )
-)
+readMappings %>% 
+  glimpse()
 ```

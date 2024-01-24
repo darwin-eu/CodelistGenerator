@@ -253,18 +253,25 @@ tibbleToList <- function(codelistTibble) {
 
 addDetails <- function(conceptList, cdm){
 
+  # will accept either a list or tibble
+  # will return the same type as the input
+  inputIsTbl <- inherits(conceptList, "tbl_df")
+
+  if(isFALSE(inputIsTbl)){
   for(i in seq_along(conceptList)){
     conceptList[[i]] <- dplyr::tibble(concept_id = conceptList[[i]],
                                       concept_set = names(conceptList)[i])
   }
+    conceptList <- dplyr::bind_rows(conceptList)
+    }
 
-  conceptList <- dplyr::bind_rows(conceptList) %>%
-    dplyr::left_join(cdm[["concept"]] %>%
+  conceptList <- conceptList %>%
+     dplyr::left_join(cdm[["concept"]] %>%
       dplyr::select("concept_id", "concept_name",
                 "domain_id", "vocabulary_id",
                 "standard_concept"),
                      by = "concept_id",
-                     copy = TRUE)%>%
+                     copy = TRUE) %>%
     dplyr::mutate(
       standard_concept = ifelse(is.na(.data$standard_concept),
                                 "non-standard", .data$standard_concept
@@ -281,10 +288,11 @@ addDetails <- function(conceptList, cdm){
       )
     )
 
+  if(isFALSE(inputIsTbl)){
    conceptList <- split(
     x = conceptList %>% dplyr::select(!"concept_set"),
     f = as.factor(conceptList$concept_set)
-  )
+  )}
 
    return(conceptList)
 
