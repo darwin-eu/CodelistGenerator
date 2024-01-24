@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,49 +101,16 @@ concepts and relationships.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody><tr>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-Musculoskeletal disorder
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr></tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 1</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search"</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Musculoskeletal disorder"</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard"</span></span></code></pre></div>
 <p>Note, we would also identify it based on a partial match</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
@@ -158,49 +125,16 @@ From initial search
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody><tr>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-Musculoskeletal disorder
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr></tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 1</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search"</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Musculoskeletal disorder"</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add-descendants">Add descendants<a class="anchor" aria-label="anchor" href="#add-descendants"></a>
@@ -209,142 +143,27 @@ From initial search
 <p>To include descendants of an identified code, we can set
 includeDescendants to TRUE</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
 <span><span class="co">#&gt; condition: Getting concepts to include</span></span>
 <span><span class="co">#&gt; condition domain: Adding descendants</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 5 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-Musculoskeletal disorder
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-Osteoarthrosis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From descendants
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From descendants
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From descendants
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Osteoarthritis of hip
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From descendants
-</td>
-</tr>
-</tbody>
-</table>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span><span class="co">#&gt; Rows: 5</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 2, 3, 4, 5</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From descendants", "From desc…</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Musculoskeletal disorder", "Osteoarthrosis", "Arthri…</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition", "…</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard", "stan…</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="multiple-search-terms">Multiple search terms<a class="anchor" aria-label="anchor" href="#multiple-search-terms"></a>
@@ -364,135 +183,20 @@ have picked these all up with the following search</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
 <span><span class="co">#&gt; condition: Getting concepts to include</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 5 candidate concepts identified</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-Musculoskeletal disorder
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Osteoarthritis of hip
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-Osteoarthrosis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-</tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 4</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 5, 4, 2, 3</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From initial search", "From i…</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthritis of hip", "Osteoarthritis of knee", "O…</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add-ancestor">Add ancestor<a class="anchor" aria-label="anchor" href="#add-ancestor"></a>
@@ -515,71 +219,16 @@ can set includeAncestor to TRUE</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From ancestor
-</td>
-</tr>
-</tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 2</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 4</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From ancestor", "From initial search"</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthritis of knee"</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="searches-with-multiple-words">Searches with multiple words<a class="anchor" aria-label="anchor" href="#searches-with-multiple-words"></a>
@@ -602,49 +251,16 @@ pick up “Osteoarthritis of knee”.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody><tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr></tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 1</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 4</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search"</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthritis of knee"</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="with-exclusions">With exclusions<a class="anchor" aria-label="anchor" href="#with-exclusions"></a>
@@ -663,73 +279,18 @@ From initial search
 <span><span class="co">#&gt; condition domain: Adding descendants</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-</tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 2</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 4, 3</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From initial search"</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthritis of knee", "Arthritis"</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="search-using-synonyms">Search using synonyms<a class="anchor" aria-label="anchor" href="#search-using-synonyms"></a>
@@ -754,111 +315,16 @@ pick up this synonym and it would be included.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-Osteoarthrosis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-In synonyms
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From descendants
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Osteoarthritis of hip
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From descendants
-</td>
-</tr>
-</tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 4</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 2, 4, 5</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "In synonyms", "From initial search", "From descendan…</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthrosis", "Osteoarthritis of kne…</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="search-via-non-standard">Search via non-standard<a class="anchor" aria-label="anchor" href="#search-via-non-standard"></a>
@@ -880,111 +346,16 @@ non-standard.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Osteoarthritis of hip
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-Osteoarthrosis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From non-standard
-</td>
-</tr>
-</tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 4</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 2, 4, 5</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From non-standard", "From non…</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthrosis", "Osteoarthritis of kne…</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="search-for-both-standard-and-non-standard-concepts">Search for both standard and non-standard concepts<a class="anchor" aria-label="anchor" href="#search-for-both-standard-and-non-standard-concepts"></a>
@@ -1006,195 +377,20 @@ From non-standard
 <span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
 <span><span class="co">#&gt; condition: Getting concepts to include</span></span>
 <span><span class="co">#&gt; condition domain: Adding descendants</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 8 candidate concepts identified</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">codes</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
-<thead><tr>
-<th style="text-align:right;">
-concept_id
-</th>
-<th style="text-align:left;">
-concept_name
-</th>
-<th style="text-align:left;">
-domain_id
-</th>
-<th style="text-align:left;">
-concept_class_id
-</th>
-<th style="text-align:left;">
-vocabulary_id
-</th>
-<th style="text-align:left;">
-found_from
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-Musculoskeletal disorder
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-Osteoarthritis of knee
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Osteoarthritis of hip
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-Knee osteoarthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Diagnosis
-</td>
-<td style="text-align:left;">
-Read
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-17
-</td>
-<td style="text-align:left;">
-Arthritis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-ICD Code
-</td>
-<td style="text-align:left;">
-ICD10
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:left;">
-Degenerative arthropathy
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Diagnosis
-</td>
-<td style="text-align:left;">
-Read
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-Osteoarthrosis
-</td>
-<td style="text-align:left;">
-condition
-</td>
-<td style="text-align:left;">
-Clinical Finding
-</td>
-<td style="text-align:left;">
-SNOMED
-</td>
-<td style="text-align:left;">
-From initial search
-</td>
-</tr>
-</tbody>
-</table>
+<span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 2</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 7, 2</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From initial search"</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Degenerative arthropathy", "Osteoarthrosis"</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Read", "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "non-standard", "standard"</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

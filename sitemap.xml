@@ -49,7 +49,13 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesFromConceptSet.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesInUse.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/findOrphanCodes.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getATCCodes.html</loc>
@@ -92,6 +98,12 @@
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/restrictToCodesInUse.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/sourceCodesInUse.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCodeUse.html</loc>

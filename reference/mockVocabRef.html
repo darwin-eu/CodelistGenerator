@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>backend</dt>
-<dd><p>'database' (duckdb), 'arrow' (parquet files), or 'data_frame'</p></dd>
+<dd><p>'database' (duckdb) or 'data_frame'</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -76,7 +76,7 @@
 <span class="r-in"><span><span class="va">cdm</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # OMOP CDM reference (tbl_duckdb_connection)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tables: cdm_source, concept, vocabulary, concept_relationship, concept_synonym, concept_ancestor, drug_strength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tables: person, observation_period, cdm_source, concept, vocabulary, concept_relationship, concept_synonym, concept_ancestor, drug_strength, achilles_analysis, achilles_results, achilles_results_dist</span>
 <span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">cdm</span>, <span class="st">"dbcon"</span><span class="op">)</span>, shutdown <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
