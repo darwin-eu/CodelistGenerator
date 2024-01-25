@@ -46,5 +46,6 @@ Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr
 URL: https://darwin-eu.github.io/CodelistGenerator/
+BugReports: https://github.com/darwin-eu/CodelistGenerator/issues
 Language: en-US
 LazyData: true
