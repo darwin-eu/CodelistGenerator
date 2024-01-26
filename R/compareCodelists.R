@@ -24,6 +24,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' cdm <- mockVocabRef()
 #' codes1 <- getCandidateCodes(
 #'  cdm = cdm,
@@ -42,6 +43,7 @@
 #'  codelist2 = codes2
 #' )
 #' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' }
 compareCodelists <- function(codelist1,
                               codelist2) {
 

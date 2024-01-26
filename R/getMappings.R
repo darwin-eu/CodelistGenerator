@@ -25,6 +25,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' cdm <- CodelistGenerator::mockVocabRef()
 #' codes <- CodelistGenerator::getCandidateCodes(
 #'   cdm = cdm,
@@ -35,6 +36,8 @@
 #'   candidateCodelist = codes,
 #'   nonStandardVocabularies = "READ"
 #')
+#'DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#'}
 getMappings <- function(candidateCodelist,
                          cdm = NULL,
                          nonStandardVocabularies = c(

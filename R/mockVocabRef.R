@@ -22,9 +22,11 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' cdm <- mockVocabRef()
 #' cdm
 #' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' }
 mockVocabRef <- function(backend = "database") {
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertTRUE(backend %in% c("database", "data_frame"))

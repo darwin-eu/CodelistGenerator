@@ -27,6 +27,25 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' codes <- getCandidateCodes(cdm = cdm,
+#' keywords = "Musculoskeletal disorder",
+#' domains = "Condition",
+#' includeDescendants = FALSE)
+#'
+#' orphan_codes <- findOrphanCodes(x = list("msk" = codes$concept_id),
+#' cdm = cdm,
+#' domains = "Condition",
+#' standardConcept = "Standard",
+#' searchInSynonyms = FALSE,
+#' searchNonStandard = FALSE,
+#' includeDescendants = TRUE,
+#' includeAncestor = FALSE)
+#'
+#' orphan_codes
+#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' }
 findOrphanCodes <- function(x,
                             cdm,
                             domains = "Condition",

@@ -26,7 +26,14 @@
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' x <- codesFromConceptSet(cdm = cdm,
+#'                          path =  system.file(package = "CodelistGenerator",
+#'                          "concepts_for_mock"))
+#' x
+#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' }
 codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
   # initial checks
   checkInputs(path = path, cdm = cdm)
