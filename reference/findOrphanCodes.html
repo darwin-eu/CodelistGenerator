@@ -124,6 +124,29 @@ results will be suppressed. If 0, all results will be reported.</p></dd>
 codelist that are present used in the cdm</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="st">"database"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>,</span></span>
+<span class="r-in"><span>keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span></span>
+<span class="r-in"><span>domains <span class="op">=</span> <span class="st">"Condition"</span>,</span></span>
+<span class="r-in"><span>includeDescendants <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">orphan_codes</span> <span class="op">&lt;-</span> <span class="fu">findOrphanCodes</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"msk"</span> <span class="op">=</span> <span class="va">codes</span><span class="op">$</span><span class="va">concept_id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>cdm <span class="op">=</span> <span class="va">cdm</span>,</span></span>
+<span class="r-in"><span>domains <span class="op">=</span> <span class="st">"Condition"</span>,</span></span>
+<span class="r-in"><span>standardConcept <span class="op">=</span> <span class="st">"Standard"</span>,</span></span>
+<span class="r-in"><span>searchInSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>includeAncestor <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">orphan_codes</span></span></span>
+<span class="r-in"><span><span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmDisconnect.html" class="external-link">cdmDisconnect</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

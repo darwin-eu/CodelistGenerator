@@ -76,7 +76,30 @@
 <dd><p>cdm table</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
 
+<p>A list of integers indicating the codes used in the database</p>
+    </div>
+
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="st">"database"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>,</span></span>
+<span class="r-in"><span>                           keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span></span>
+<span class="r-in"><span>                           domains <span class="op">=</span> <span class="st">"Condition"</span>,</span></span>
+<span class="r-in"><span>                           includeDescendants <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">restrictToCodesInUse</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"cs1"</span> <span class="op">=</span> <span class="va">codes</span><span class="op">$</span><span class="va">concept_id</span>,</span></span>
+<span class="r-in"><span>                               <span class="st">"cs2"</span> <span class="op">=</span> <span class="fl">999</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                cdm <span class="op">=</span> <span class="va">cdm</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-in"><span><span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmDisconnect.html" class="external-link">cdmDisconnect</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
