@@ -44,7 +44,9 @@ tibble with the descendant concepts along with additional details about them
 Get descendant codes for drug ingredients
 }
 \examples{
+\dontrun{
 cdm <- mockVocabRef()
 getDrugIngredientCodes(cdm = cdm, name = "Adalimumab")
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }

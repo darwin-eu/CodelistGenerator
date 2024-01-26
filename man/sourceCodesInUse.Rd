@@ -15,6 +15,17 @@ sourceCodesInUse(
 
 \item{table}{cdm table}
 }
+\value{
+A list of source codes used in the database.
+}
 \description{
 Get source codes used in the database
+}
+\examples{
+\dontrun{
+cdm <- mockVocabRef("database")
+x <- sourceCodesInUse(cdm = cdm)
+x
+CDMConnector::cdmDisconnect(cdm)
+}
 }

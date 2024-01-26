@@ -16,12 +16,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' cdm <- mockVocabRef()
 #' getICD10StandardCodes(cdm = cdm, level = c(
 #'   "ICD10 Chapter",
 #'   "ICD10 SubChapter"
 #' ))
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
+#' }
 getICD10StandardCodes <- function(cdm,
                                   level = c(
                                     "ICD10 Chapter",

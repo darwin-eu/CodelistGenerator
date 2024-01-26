@@ -16,7 +16,9 @@ cdm reference with mock vocabulary
 Generate example vocabulary database
 }
 \examples{
+\dontrun{
 cdm <- mockVocabRef()
 cdm
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }

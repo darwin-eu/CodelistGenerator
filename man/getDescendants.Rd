@@ -37,7 +37,9 @@ The descendants of a given concept id
 getDescendants
 }
 \examples{
+\dontrun{
 cdm <- mockVocabRef()
 getDescendants(cdm = cdm, conceptId = 1)
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }

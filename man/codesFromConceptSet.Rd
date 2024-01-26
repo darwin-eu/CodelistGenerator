@@ -21,3 +21,13 @@ Named list with concept_ids for each concept set
 \description{
 Get concept ids from a provided path to json files
 }
+\examples{
+\dontrun{
+cdm <- mockVocabRef("database")
+x <- codesFromConceptSet(cdm = cdm,
+                         path =  system.file(package = "CodelistGenerator",
+                         "concepts_for_mock"))
+x
+CDMConnector::cdmDisconnect(cdm)
+}
+}

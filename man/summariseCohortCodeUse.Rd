@@ -51,3 +51,28 @@ A tibble with results overall and, if specified, by strata
 \description{
 Summarise code use among a cohort in the cdm reference
 }
+\examples{
+\dontrun{
+con <- DBI::dbConnect(duckdb::duckdb(),
+                      dbdir = CDMConnector::eunomia_dir())
+cdm <- CDMConnector::cdm_from_con(con,
+                                  cdm_schem = "main",
+                                  write_schema = "main")
+cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
+conceptSet = list(a = 260139,
+                  b = 1127433),
+                  name = "cohorts",
+                  end = "observation_period_end_date",
+                  overwrite = TRUE)
+
+results_cohort_mult <-
+summariseCohortCodeUse(list(cs = c(260139,19133873)),
+                      cdm = cdm,
+                      cohortTable = "cohorts",
+                      timing = "entry",
+                      minCellCount = 0)
+
+results_cohort_mult
+CDMConnector::cdmDisconnect(cdm)
+}
+}

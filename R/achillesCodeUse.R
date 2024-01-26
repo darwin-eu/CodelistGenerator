@@ -12,6 +12,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
+#' result_achilles <- achillesCodeUse(list(oa = oa$concept_id), cdm = cdm)
+#' result_achilles
+#' CDMConnector::cdmDisconnect(cdm)
+#' }
+
 achillesCodeUse <- function(x,
                             cdm,
                             countBy = c("record", "person"),

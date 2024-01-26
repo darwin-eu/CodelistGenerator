@@ -22,7 +22,9 @@ The concept class used for a given set of domains
 getConceptClassId
 }
 \examples{
+\dontrun{
 cdm <- mockVocabRef()
 getConceptClassId(cdm = cdm, domain = "drug")
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }

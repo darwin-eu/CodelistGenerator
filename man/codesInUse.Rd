@@ -15,6 +15,17 @@ codesInUse(
 
 \item{table}{cdm table}
 }
+\value{
+A list of integers indicating codes being used in the database.
+}
 \description{
 Get codes used in the database
+}
+\examples{
+\dontrun{
+cdm <- mockVocabRef("database")
+x <- codesInUse(cdm = cdm)
+x
+CDMConnector::cdmDisconnect(cdm)
+}
 }

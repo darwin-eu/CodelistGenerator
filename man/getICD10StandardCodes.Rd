@@ -36,10 +36,12 @@ standard codes (and descendants) of ICD chapters and sub-chapters
 Get corresponding standard codes for ICD-10 chapters and sub-chapters
 }
 \examples{
+\dontrun{
 cdm <- mockVocabRef()
 getICD10StandardCodes(cdm = cdm, level = c(
   "ICD10 Chapter",
   "ICD10 SubChapter"
 ))
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }

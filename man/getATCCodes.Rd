@@ -41,7 +41,9 @@ tibble with the descendant concepts along with additional details about them
 Get descendant codes for ATC levels
 }
 \examples{
+\dontrun{
 cdm <- mockVocabRef()
 getATCCodes(cdm = cdm, level = "ATC 1st")
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }

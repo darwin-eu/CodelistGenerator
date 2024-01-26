@@ -4,10 +4,23 @@
 #' @param cdm cdm_reference via CDMConnector
 #' @param table cdm table
 #'
-#' @return
+#' @return A list of integers indicating the codes used in the database
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' codes <- getCandidateCodes(cdm = cdm,
+#'                            keywords = "arthritis",
+#'                            domains = "Condition",
+#'                            includeDescendants = FALSE)
+#' x <- restrictToCodesInUse(list("cs1" = codes$concept_id,
+#'                                "cs2" = 999),
+#'                                 cdm = cdm)
+#'
+#' x
+#' CDMConnector::cdmDisconnect(cdm)
+#' }
 restrictToCodesInUse <- function(x,
                                cdm,
                                table = c("condition_occurrence",
@@ -50,10 +63,16 @@ x
 #' @param cdm cdm_reference via CDMConnector
 #' @param table cdm table
 #'
-#' @return
+#' @return A list of integers indicating codes being used in the database.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' x <- codesInUse(cdm = cdm)
+#' x
+#' CDMConnector::cdmDisconnect(cdm)
+#' }
 codesInUse <- function(cdm,
                        table = c("condition_occurrence",
                                  "device_exposure",
@@ -101,10 +120,16 @@ if(!is.null(cdm[["achilles_results"]])){
 #' @param cdm cdm_reference via CDMConnector
 #' @param table cdm table
 #'
-#' @return
+#' @return A list of source codes used in the database.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' x <- sourceCodesInUse(cdm = cdm)
+#' x
+#' CDMConnector::cdmDisconnect(cdm)
+#' }
 sourceCodesInUse <- function(cdm,
                                  table = c("condition_occurrence",
                                            "device_exposure",

@@ -16,7 +16,9 @@ Names of available vocabularies
 getVocabularies
 }
 \examples{
+\dontrun{
 cdm <- mockVocabRef()
 getVocabularies(cdm = cdm)
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }

@@ -18,6 +18,7 @@ tibble
 Compare two codelists
 }
 \examples{
+\dontrun{
 cdm <- mockVocabRef()
 codes1 <- getCandidateCodes(
  cdm = cdm,
@@ -35,5 +36,6 @@ compareCodelists(
  codelist1 = codes1,
  codelist2 = codes2
 )
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }

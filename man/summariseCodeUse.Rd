@@ -40,3 +40,21 @@ A tibble with results overall and, if specified, by strata
 \description{
 Summarise code use in patient-level data
 }
+\examples{
+\dontrun{
+con <- DBI::dbConnect(duckdb::duckdb(),
+                      dbdir = CDMConnector::eunomia_dir())
+cdm <- CDMConnector::cdm_from_con(con,
+                                  cdm_schem = "main",
+                                  write_schema = "main")
+acetiminophen <- c(1125315,  1127433, 40229134,
+40231925, 40162522, 19133768,  1127078)
+poliovirus_vaccine <- c(40213160)
+cs <- list(acetiminophen = acetiminophen,
+          poliovirus_vaccine = poliovirus_vaccine)
+results <- summariseCodeUse(cs,cdm = cdm)
+results
+CDMConnector::cdmDisconnect(cdm)
+}
+
+}

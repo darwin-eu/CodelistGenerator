@@ -16,6 +16,22 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' con <- DBI::dbConnect(duckdb::duckdb(),
+#'                       dbdir = CDMConnector::eunomia_dir())
+#' cdm <- CDMConnector::cdm_from_con(con,
+#'                                   cdm_schem = "main",
+#'                                   write_schema = "main")
+#'acetiminophen <- c(1125315,  1127433, 40229134,
+#'40231925, 40162522, 19133768,  1127078)
+#'poliovirus_vaccine <- c(40213160)
+#'cs <- list(acetiminophen = acetiminophen,
+#'           poliovirus_vaccine = poliovirus_vaccine)
+#'results <- summariseCodeUse(cs,cdm = cdm)
+#'results
+#'CDMConnector::cdmDisconnect(cdm)
+#'}
+#'
 summariseCodeUse <- function(x,
                              cdm,
                              countBy = c("record", "person"),
@@ -78,6 +94,30 @@ summariseCodeUse <- function(x,
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' con <- DBI::dbConnect(duckdb::duckdb(),
+#'                       dbdir = CDMConnector::eunomia_dir())
+#' cdm <- CDMConnector::cdm_from_con(con,
+#'                                   cdm_schem = "main",
+#'                                   write_schema = "main")
+
+#' cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
+#' conceptSet = list(a = 260139,
+#'                   b = 1127433),
+#'                   name = "cohorts",
+#'                   end = "observation_period_end_date",
+#'                   overwrite = TRUE)
+#'
+#'results_cohort_mult <-
+#'summariseCohortCodeUse(list(cs = c(260139,19133873)),
+#'                       cdm = cdm,
+#'                       cohortTable = "cohorts",
+#'                       timing = "entry",
+#'                       minCellCount = 0)
+#'
+#'results_cohort_mult
+#'CDMConnector::cdmDisconnect(cdm)
+#'}
 summariseCohortCodeUse <- function(x,
                                    cdm,
                                    cohortTable,

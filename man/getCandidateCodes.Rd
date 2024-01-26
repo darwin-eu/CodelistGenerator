@@ -57,10 +57,12 @@ can be considered for creating a phenotype
 using the OMOP CDM.
 }
 \examples{
+\dontrun{
 cdm <- CodelistGenerator::mockVocabRef()
 CodelistGenerator::getCandidateCodes(
   cdm = cdm,
   keywords = "osteoarthritis"
  )
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
+}
 }
