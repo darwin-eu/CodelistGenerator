@@ -25,7 +25,7 @@
 #' \dontrun{
 #' cdm <- mockVocabRef()
 #' cdm
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 mockVocabRef <- function(backend = "database") {
   errorMessage <- checkmate::makeAssertCollection()

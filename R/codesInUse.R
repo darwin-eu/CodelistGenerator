@@ -19,7 +19,7 @@
 #'                                 cdm = cdm)
 #'
 #' x
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 restrictToCodesInUse <- function(x,
                                cdm,
@@ -71,7 +71,7 @@ x
 #' cdm <- mockVocabRef("database")
 #' x <- codesInUse(cdm = cdm)
 #' x
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 codesInUse <- function(cdm,
                        table = c("condition_occurrence",
@@ -128,7 +128,7 @@ if(!is.null(cdm[["achilles_results"]])){
 #' cdm <- mockVocabRef("database")
 #' x <- sourceCodesInUse(cdm = cdm)
 #' x
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 sourceCodesInUse <- function(cdm,
                                  table = c("condition_occurrence",

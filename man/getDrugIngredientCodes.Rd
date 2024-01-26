@@ -47,6 +47,6 @@ Get descendant codes for drug ingredients
 \dontrun{
 cdm <- mockVocabRef()
 getDrugIngredientCodes(cdm = cdm, name = "Adalimumab")
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

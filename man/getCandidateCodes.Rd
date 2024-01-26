@@ -63,6 +63,6 @@ CodelistGenerator::getCandidateCodes(
   cdm = cdm,
   keywords = "osteoarthritis"
  )
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

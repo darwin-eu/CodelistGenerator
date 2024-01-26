@@ -71,6 +71,6 @@ includeDescendants = TRUE,
 includeAncestor = FALSE)
 
 orphan_codes
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

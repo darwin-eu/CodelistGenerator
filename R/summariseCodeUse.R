@@ -29,7 +29,7 @@
 #'           poliovirus_vaccine = poliovirus_vaccine)
 #'results <- summariseCodeUse(cs,cdm = cdm)
 #'results
-#'DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#'CDMConnector::cdmDisconnect(cdm)
 #'}
 #'
 summariseCodeUse <- function(x,
@@ -116,7 +116,7 @@ summariseCodeUse <- function(x,
 #'                       minCellCount = 0)
 #'
 #'results_cohort_mult
-#'DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#'CDMConnector::cdmDisconnect(cdm)
 #'}
 summariseCohortCodeUse <- function(x,
                                    cdm,

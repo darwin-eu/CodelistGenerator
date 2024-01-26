@@ -40,6 +40,6 @@ getDescendants
 \dontrun{
 cdm <- mockVocabRef()
 getDescendants(cdm = cdm, conceptId = 1)
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

@@ -25,7 +25,7 @@
 #' \dontrun{
 #' cdm <- mockVocabRef()
 #' getVocabVersion(cdm = cdm)
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getVocabVersion <- function(cdm) {
   errorMessage <- checkmate::makeAssertCollection()
@@ -62,7 +62,7 @@ getVocabVersion <- function(cdm) {
 #' \dontrun{
 #' cdm <- mockVocabRef()
 #' getDomains(cdm = cdm)
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getDomains <- function(cdm,
                        standardConcept = "Standard") {
@@ -134,7 +134,7 @@ getDomains <- function(cdm,
 #' \dontrun{
 #' cdm <- mockVocabRef()
 #' getVocabularies(cdm = cdm)
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 
 getVocabularies <- function(cdm) {
@@ -174,7 +174,7 @@ getVocabularies <- function(cdm) {
 #' \dontrun{
 #' cdm <- mockVocabRef()
 #' getConceptClassId(cdm = cdm, domain = "drug")
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 
 getConceptClassId <- function(cdm,
@@ -256,7 +256,7 @@ getConceptClassId <- function(cdm,
 #' \dontrun{
 #' cdm <- mockVocabRef()
 #' getDoseForm(cdm = cdm)
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 
 getDoseForm <- function(cdm) {
@@ -313,7 +313,7 @@ getDoseForm <- function(cdm) {
 #' \dontrun{
 #' cdm <- mockVocabRef()
 #' getDescendants(cdm = cdm, conceptId = 1)
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 
 getDescendants <- function(cdm,

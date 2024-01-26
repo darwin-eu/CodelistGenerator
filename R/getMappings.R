@@ -36,7 +36,7 @@
 #'   candidateCodelist = codes,
 #'   nonStandardVocabularies = "READ"
 #')
-#'DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#'CDMConnector::cdmDisconnect(cdm)
 #'}
 getMappings <- function(candidateCodelist,
                          cdm = NULL,

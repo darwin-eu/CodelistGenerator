@@ -54,7 +54,7 @@ cs <- list(acetiminophen = acetiminophen,
           poliovirus_vaccine = poliovirus_vaccine)
 results <- summariseCodeUse(cs,cdm = cdm)
 results
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 
 }

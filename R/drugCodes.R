@@ -40,7 +40,7 @@
 #' \dontrun{
 #' cdm <- mockVocabRef()
 #' getATCCodes(cdm = cdm, level = "ATC 1st")
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getATCCodes <- function(cdm,
                         level = c("ATC 1st"),
@@ -184,7 +184,7 @@ getATCCodes <- function(cdm,
 #' \dontrun{
 #'cdm <- mockVocabRef()
 #'getDrugIngredientCodes(cdm = cdm, name = "Adalimumab")
-#'DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#'CDMConnector::cdmDisconnect(cdm)
 #'}
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,

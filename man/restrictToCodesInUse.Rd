@@ -36,6 +36,6 @@ x <- restrictToCodesInUse(list("cs1" = codes$concept_id,
                                 cdm = cdm)
 
 x
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

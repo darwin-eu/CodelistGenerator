@@ -44,6 +44,6 @@ Get descendant codes for ATC levels
 \dontrun{
 cdm <- mockVocabRef()
 getATCCodes(cdm = cdm, level = "ATC 1st")
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

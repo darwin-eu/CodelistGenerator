@@ -19,6 +19,6 @@ getVocabVersion
 \dontrun{
 cdm <- mockVocabRef()
 getVocabVersion(cdm = cdm)
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

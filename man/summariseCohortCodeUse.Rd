@@ -73,6 +73,6 @@ summariseCohortCodeUse(list(cs = c(260139,19133873)),
                       minCellCount = 0)
 
 results_cohort_mult
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

@@ -26,6 +26,6 @@ Get source codes used in the database
 cdm <- mockVocabRef("database")
 x <- sourceCodesInUse(cdm = cdm)
 x
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

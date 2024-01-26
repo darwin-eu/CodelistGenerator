@@ -44,7 +44,7 @@
 #' includeAncestor = FALSE)
 #'
 #' orphan_codes
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 findOrphanCodes <- function(x,
                             cdm,

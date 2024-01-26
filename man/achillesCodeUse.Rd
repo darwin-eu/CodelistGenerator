@@ -29,6 +29,6 @@ cdm <- mockVocabRef("database")
 oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
 result_achilles <- achillesCodeUse(list(oa = oa$concept_id), cdm = cdm)
 result_achilles
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdmDisconnect(cdm)
 }
 }

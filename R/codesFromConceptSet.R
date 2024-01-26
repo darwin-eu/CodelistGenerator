@@ -32,7 +32,7 @@
 #'                          path =  system.file(package = "CodelistGenerator",
 #'                          "concepts_for_mock"))
 #' x
-#' DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+#' CDMConnector::cdmDisconnect(cdm)
 #' }
 codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
   # initial checks
