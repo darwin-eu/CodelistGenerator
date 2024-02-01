@@ -49,7 +49,7 @@ test_that("db without icd10 codes loaded", {
   expect_true(!is.null(codes5[[1]]$concept_name))
 
   if (backends[[i]] == "database") {
-    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+    CDMConnector::cdm_disconnect(cdm)
   }
 
   }
@@ -61,7 +61,7 @@ test_that("db without icd10 codes loaded", {
     dplyr::filter(vocabulary_id != "ICD10")
   expect_message(codes <- getICD10StandardCodes(cdm = cdm))
   expect_true(length(codes) == 0)
-  DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  CDMConnector::cdm_disconnect(cdm)
 })
 
 test_that("expected errors", {
@@ -70,5 +70,5 @@ test_that("expected errors", {
   expect_error(getICD10StandardCodes(cdm = cdm, level = c(
     "Not an ICD10 Chapter"
   )))
-  DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  CDMConnector::cdm_disconnect(cdm)
 })

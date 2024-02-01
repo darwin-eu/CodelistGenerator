@@ -217,5 +217,5 @@ codes %>%
 ```
 
 ```{r,echo=FALSE}
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+CDMConnector::cdm_disconnect(cdm)
 ```

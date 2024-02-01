@@ -62,6 +62,6 @@ test_that("tests with mock db", {
    expect_true(is.na(orphan_codes %>%
      dplyr::pull("estimate")))
 
- DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+   CDMConnector::cdm_disconnect(cdm)
 
 })

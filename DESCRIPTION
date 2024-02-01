@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Identify Relevant Clinical Codes and Evaluate Their Use
-Version: 2.2.0
+Version: 2.2.1
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
@@ -22,6 +22,7 @@ Imports:
     duckdb,
     dplyr (>= 1.1.0),
     magrittr (>= 2.0.0),
+    omopgenerics (>= 0.0.2),
     rlang (>= 1.0.0),
     glue (>= 1.5.0),
     stringr (>= 1.4.0),

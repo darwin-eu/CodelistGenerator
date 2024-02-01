@@ -291,103 +291,63 @@ mockVocabRef <- function(backend = "database") {
   # achilles tables
   # count of 400 records for knee osteoarthritis
   achillesAnalysis <- dplyr::tibble(analysis_id = 1,
-                                    analysis_name = 1)
+                                    analysis_name = 1,
+                                    stratum_1_name = NA,
+                                    stratum_2_name = NA,
+                                    stratum_3_name = NA,
+                                    stratum_4_name = NA,
+                                    stratum_5_name = NA,
+                                    is_default = NA,
+                                    category = NA )
   achillesResults <- dplyr::tibble(analysis_id = 401,
                              stratum_1 = 4,
                              stratum_2 = NA,
                              stratum_3 = NA,
+                             stratum_4 = NA,
+                             stratum_5 = NA,
                              count_value = 100)
   achillesResultsDist <- dplyr::tibble(analysis_id = 1,
+                                       stratum_1 = NA,
+                                       stratum_2 = NA,
+                                       stratum_3 = NA,
+                                       stratum_4 = NA,
+                                       stratum_5 = NA,
+                                       min_value = NA,
+                                       max_value = NA,
+                                       avg_value = NA,
+                                       stdev_value = NA,
+                                       median_value = NA,
+                                       p10_value = NA,
+                                       p25_value = NA,
+                                       p75_value = NA,
+                                       p90_value = NA,
                                   count_value = 5)
 
-  # into in-memory duckdb
-  db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "person",
-                      person,
-                      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "observation_period",
-                      observationPeriod,
-                      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "concept",
-      concept,
-      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "concept_ancestor",
-      conceptAncestor,
-      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "concept_synonym",
-      conceptSynonym,
-      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "concept_relationship",
-      conceptRelationship,
-      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "vocabulary",
-      vocabulary,
-      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "drug_strength",
-      drugStrength,
-      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "cdm_source",
-                      cdmSource,
-                      overwrite = TRUE
-    )
-  })
+  cdm_df <- omopgenerics::cdmFromTables(tables = list(person = person,
+                                                      concept = concept,
+                                                      concept_ancestor = conceptAncestor,
+                                                      concept_synonym = conceptSynonym,
+                                                      concept_relationship = conceptRelationship,
+                                                      vocabulary = vocabulary,
+                                                      drug_strength = drugStrength,
+                                                      observation_period = observationPeriod,
+                                                      cdm_source = cdmSource,
+                                                      achilles_analysis = achillesAnalysis,
+                                            achilles_results = achillesResults,
+                                            achilles_results_dist = achillesResultsDist),
+                              cdmName = "mock")
 
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "achilles_analysis",
-                      achillesAnalysis,
-                      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "achilles_results",
-                      achillesResults,
-                      overwrite = TRUE
-    )
-  })
-  DBI::dbWithTransaction(db, {
-    DBI::dbWriteTable(db, "achilles_results_dist",
-                      achillesResultsDist,
-                      overwrite = TRUE
-    )
-  })
-
-  cdm <- CDMConnector::cdm_from_con(con = db,
-                                    cdm_schema = "main",
-                                    write_schema = "main",
-                                    cdm_name = "mock")
-
-  cdm$achilles_analysis <- dplyr::tbl(db, "achilles_analysis")
-  cdm$achilles_results <- dplyr::tbl(db, "achilles_results")
-  cdm$achilles_results_dist <- dplyr::tbl(db, "achilles_results_dist")
-
-  if (backend %in% c("data_frame")) {
-    cdm <- cdm %>% dplyr::collect()
+  if (backend == "data_frame") {
+    return(cdm_df)
   }
+
+  # into db
+  db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
+
+  cdm <- CDMConnector::copyCdmTo(con = db,
+                          cdm = cdm_df,
+                          schema = "main",
+                          overwrite = TRUE)
 
   cdm
 }

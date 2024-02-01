@@ -84,7 +84,7 @@ test_that("tests with mock db", {
     expect_error(getDoseForm(cdm = "a"))
 
     if (backends[[i]] == "database") {
-      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+      CDMConnector::cdm_disconnect(cdm)
     }
   }
 })

@@ -27,7 +27,7 @@ test_that("tests with mock db", {
  expect_message(restrictToCodesInUse(list("cs" = codes$concept_id),
                        cdm = cdm))
 
-  DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+  CDMConnector::cdm_disconnect(cdm)
 
 })
 

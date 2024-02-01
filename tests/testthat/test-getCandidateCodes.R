@@ -255,7 +255,7 @@ test_that("tests with mock db", {
     ))
 
     if (backends[[i]] == "database") {
-      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+      CDMConnector::cdm_disconnect(cdm)
     }
   }
 })
@@ -291,7 +291,7 @@ test_that("tests with mock db - multiple domains", {
       c(4,5,9) %in% codes$concept_id))
 
     if (backends[[i]] == "database") {
-      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+      CDMConnector::cdm_disconnect(cdm)
     }
   }
 })
