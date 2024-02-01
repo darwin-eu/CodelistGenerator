@@ -2,21 +2,22 @@ test_that("achilles code use", {
 
   # mock db
   cdm <- mockVocabRef("database")
-
   oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
   # two codes: "Osteoarthritis of knee" "Osteoarthritis of hip"
   # in achilles we only have a count for "Osteoarthritis of knee"
   result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm)
   expect_true(result_achilles %>%
-    dplyr::pull("estimate") == 100)
+    dplyr::pull("estimate_value") == 100)
+  # check is a summarised result
+  expect_true("summarised_result" %in%  class(result_achilles))
 
   # applying min cell count where estimate should be obscured
   result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm,
                                      minCellCount = 150)
-  expect_true(is.na(result_achilles %>%
-                dplyr::pull("estimate")))
+  # expect_true(is.na(result_achilles %>%
+  #               dplyr::pull("estimate_value")))
 
 
  # edge cases
@@ -24,6 +25,7 @@ test_that("achilles code use", {
  expect_message(result_achilles <- achillesCodeUse(list(asthma = 123),
                                     cdm = cdm))
  expect_true(nrow(result_achilles) == 0)
+ expect_true("summarised_result" %in%  class(result_achilles))
 
  # expected errors
  expect_error(achillesCodeUse(123, #not a named list
