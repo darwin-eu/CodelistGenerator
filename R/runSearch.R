@@ -55,14 +55,6 @@ runSearch <- function(keywords,
       )
     )
 
-  if(!is.null(attr(cdm, "dbcon"))){
-    conceptDb <- conceptDb %>%
-    CDMConnector::computeQuery(name = paste0("cg_",prefix, "_1"),
-                                temporary = FALSE,
-                                schema = attr(cdm, "write_schema"),
-                                overwrite = TRUE)
-  }
-
   cli::cli_inform("{domains} domain: Limiting to domains of interest")
   concept <- conceptDb %>%
     dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags,
@@ -76,13 +68,6 @@ runSearch <- function(keywords,
         dplyr::select("concept_id", "domain_id", "standard_concept"),
       by = "concept_id"
     )
-  if(!is.null(attr(cdm, "dbcon"))){
-  conceptSynonymDb <- conceptSynonymDb %>%
-    CDMConnector::computeQuery(name = paste0("cg_",prefix, "_2"),
-                               temporary = FALSE,
-                               schema = attr(cdm, "write_schema"),
-                               overwrite = TRUE)
-  }
 
   conceptSynonymDb <- conceptSynonymDb %>%
     dplyr::filter(.data$domain_id %in% .env$domains &
@@ -207,10 +192,6 @@ runSearch <- function(keywords,
   }
 
   candidateCodesList[[domains]] <- candidateCodes
-
-  # candidateCodes <- dplyr::bind_rows(candidateCodes %>%
-  #                                      dplyr::collect()) %>%
-  #   dplyr::distinct()
 
 
   # 5) add any codes lower in the hierarchy

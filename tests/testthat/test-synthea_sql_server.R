@@ -1,26 +1,21 @@
 test_that("test with synthea on sql server", {
   skip_if(Sys.getenv("darwinDbDatabaseServer") == "")
 
-  db <- DBI::dbConnect(odbc::odbc(),
-    Driver   = "ODBC Driver 11 for SQL Server",
-    Server   = Sys.getenv("darwinDbDatabaseServer"),
-    Database = Sys.getenv("darwinDbDatabase"),
-    UID      = Sys.getenv("darwinDbUser"),
-    PWD      = Sys.getenv("darwinDbPassword"),
-    Port     = Sys.getenv("darwinDbDatabasePort")
-  )
+  db <-DBI::dbConnect(odbc::odbc(),
+                      Driver   = Sys.getenv("SQL_SERVER_DRIVER"),
+                      # Driver   = "ODBC Driver 17 for SQL Server", #asdf
+                      Server   = Sys.getenv("CDM5_SQL_SERVER_SERVER"),
+                      Database = Sys.getenv("CDM5_SQL_SERVER_CDM_DATABASE"),
+                      UID      = Sys.getenv("CDM5_SQL_SERVER_USER"),
+                      PWD      = Sys.getenv("CDM5_SQL_SERVER_PASSWORD"),
+                      TrustServerCertificate="yes",
+                      Port     = Sys.getenv("CDM5_SQL_SERVER_PORT"))
 
   cdm <- CDMConnector::cdm_from_con(
     con = db,
-    cdm_schema = "cdm_synthea_100k",
-    cdm_tables = tidyselect::all_of(c(
-      "concept",
-      "concept_relationship",
-      "concept_ancestor",
-      "concept_synonym",
-      "vocabulary"
-    ))
-  )
+    cdm_schema = strsplit(Sys.getenv("CDM5_SQL_SERVER_CDM_SCHEMA"), "\\.")[[1]],
+    write_schema =  strsplit(Sys.getenv("CDM5_SQL_SERVER_SCRATCH_SCHEMA"), "\\.")[[1]])
+
   vocabVersion <- getVocabVersion(cdm = cdm)
   expect_true(length(vocabVersion) == 1)
   expect_true(is.character(vocabVersion))
