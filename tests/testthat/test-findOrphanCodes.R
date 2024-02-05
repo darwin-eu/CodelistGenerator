@@ -21,7 +21,7 @@ test_that("tests with mock db", {
 
    # we should pick up knee osteoarthritis from our achilles tables
    expect_true(orphan_codes %>%
-     dplyr::pull("group_level") == "standard concept: Osteoarthritis of knee (4)")
+     dplyr::pull("group_level") == 4)
    expect_true(orphan_codes %>%
                        dplyr::pull("estimate_value") == 100)
 
@@ -58,7 +58,7 @@ test_that("tests with mock db", {
                                    includeAncestor = FALSE,
                                    minCellCount = 150)
    expect_true(orphan_codes %>%
-                 dplyr::pull("group_level") == "standard concept: Osteoarthritis of knee (4)")
+                 dplyr::pull("group_level") == "4")
    # expect_true(is.na(orphan_codes %>%
    #   dplyr::pull("estimate_value")))
 
