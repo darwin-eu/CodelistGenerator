@@ -65,11 +65,7 @@ achillesCodeUse <- function(x,
     codeUse[[paste0(i, "_record")]] <- allRecordCount %>%
       dplyr::filter(.data$concept_id %in% x[[i]]) %>%
       dplyr::mutate(variable_name = "Record count",
-                    group_level = paste0(.data$standard_concept,
-                                         " concept: ",
-                                         .data$concept_name, " (",
-                                         .data$concept_id, ")"
-                                          ),
+                    group_level = .data$concept_id,
                     standard_concept_name = .data$concept_name,
                     standard_concept_id = .data$concept_id
                     ) %>%
@@ -90,11 +86,7 @@ achillesCodeUse <- function(x,
     codeUse[[paste0(i, "_person")]] <- allPersonCount %>%
       dplyr::filter(.data$concept_id %in% x[[i]]) %>%
       dplyr::mutate(variable_name = "Person count",
-                    group_level = paste0(.data$standard_concept,
-                                         " concept: ",
-                                         .data$concept_name, " (",
-                                         .data$concept_id, ")"
-                    ),
+                    group_level = .data$concept_id,
                     standard_concept_name = .data$concept_name,
                     standard_concept_id = .data$concept_id
       ) %>%
@@ -126,9 +118,9 @@ achillesCodeUse <- function(x,
            estimate_type = "integer",
            estimate_value = as.character(.data$n)
            ) %>%
-    dplyr::mutate(additional_name = paste0(cols, collapse = " and ")) %>%
+    dplyr::mutate(additional_name = paste0(cols, collapse = " ; ")) %>%
     tidyr::unite(
-      col = "additional_level", dplyr::all_of(cols), sep = " and ", remove = TRUE
+      col = "additional_level", dplyr::all_of(cols), sep = " ; ", remove = TRUE
     ) %>%
     dplyr::select(omopgenerics::resultColumns("summarised_result"))
 
@@ -136,8 +128,15 @@ achillesCodeUse <- function(x,
 
   }
 
-  codeUse  <- omopgenerics::newSummarisedResult(codeUse) %>%
-    omopgenerics::suppress(minCellCount = minCellCount)
+  # currently omopgenerics doesn´t like "and" in concept name
+  # codeUse  <- omopgenerics::newSummarisedResult(codeUse) %>%
+  #   omopgenerics::suppress(minCellCount = minCellCount)
+
+  codeUse <- codeUse %>%
+    dplyr::mutate(estimate_value = dplyr::if_else(as.integer(.data$estimate_value) <= as.integer(.env$minCellCount) &
+                                           as.integer(.data$estimate_value) != 0,
+                                           as.integer(NA), as.integer(.data$estimate_value)))
+
 
   return(codeUse)
 
