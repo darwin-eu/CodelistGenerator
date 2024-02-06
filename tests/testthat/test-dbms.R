@@ -31,7 +31,7 @@ test_that("achilles code use", {
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
   expect_equal(as.numeric(result_achilles %>%
-                 dplyr::filter(group_level == "standard concept: Asthma (317009)",
+                 dplyr::filter(group_level == "317009",
                                group_name == "by_concept",
                                variable_name == "Record count") %>%
                  dplyr::pull("estimate_value")),
@@ -42,7 +42,7 @@ test_that("achilles code use", {
                  dplyr::pull("estimate"))
 
   expect_equal(as.numeric(result_achilles %>%
-                 dplyr::filter(group_level == "standard concept: Exacerbation of asthma (257581)",
+                 dplyr::filter(group_level == "257581",
                                group_name == "by_concept",
                                variable_name == "Record count") %>%
                  dplyr::pull("estimate_value")),
@@ -72,7 +72,7 @@ test_that("achilles code use", {
 
 
   expect_equal(as.numeric(result_achilles %>%
-                 dplyr::filter(group_level == "standard concept: Asthma (317009)",
+                 dplyr::filter(group_level == "317009",
                                group_name == "by_concept",
                                variable_name == "Person count") %>%
                  dplyr::pull("estimate_value")),
@@ -83,7 +83,7 @@ test_that("achilles code use", {
                  dplyr::pull("estimate"))
 
   expect_equal(as.numeric(result_achilles %>%
-                            dplyr::filter(group_level == "standard concept: Exacerbation of asthma (257581)",
+                            dplyr::filter(group_level == "257581",
                                           group_name == "by_concept",
                                           variable_name == "Person count") %>%
                             dplyr::pull("estimate_value")),
