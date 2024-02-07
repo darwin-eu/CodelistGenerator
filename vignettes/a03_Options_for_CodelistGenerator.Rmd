@@ -31,7 +31,7 @@ knitr::include_graphics("mock_db_fig1.png")
 ```
 
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE, results='hide'}
-cdm <- mockVocabRef()
+cdm <- mockVocabRef(backend = "data_frame")
 ```
 
 ## Search for exact keyword match 
@@ -214,8 +214,4 @@ codes <- getCandidateCodes(
 
 codes %>% 
   glimpse()
-```
-
-```{r,echo=FALSE}
-DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
 ```

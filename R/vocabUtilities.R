@@ -176,7 +176,6 @@ getVocabularies <- function(cdm) {
 #' getConceptClassId(cdm = cdm, domain = "drug")
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
-
 getConceptClassId <- function(cdm,
                               standardConcept = "Standard",
                               domain = NULL) {

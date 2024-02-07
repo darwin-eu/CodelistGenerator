@@ -65,11 +65,7 @@ achillesCodeUse <- function(x,
     codeUse[[paste0(i, "_record")]] <- allRecordCount %>%
       dplyr::filter(.data$concept_id %in% x[[i]]) %>%
       dplyr::mutate(variable_name = "Record count",
-                    group_level = paste0(.data$standard_concept,
-                                         " concept: ",
-                                         .data$concept_name, " (",
-                                         .data$concept_id, ")"
-                                          ),
+                    group_level = .data$concept_id,
                     standard_concept_name = .data$concept_name,
                     standard_concept_id = .data$concept_id
                     ) %>%
@@ -90,11 +86,7 @@ achillesCodeUse <- function(x,
     codeUse[[paste0(i, "_person")]] <- allPersonCount %>%
       dplyr::filter(.data$concept_id %in% x[[i]]) %>%
       dplyr::mutate(variable_name = "Person count",
-                    group_level = paste0(.data$standard_concept,
-                                         " concept: ",
-                                         .data$concept_name, " (",
-                                         .data$concept_id, ")"
-                    ),
+                    group_level = .data$concept_id,
                     standard_concept_name = .data$concept_name,
                     standard_concept_id = .data$concept_id
       ) %>%
@@ -108,37 +100,43 @@ achillesCodeUse <- function(x,
       c(
         "i" = "No achilles counts found for the concepts provided."
       ))
-    return(dplyr::tibble())
+    return(omopgenerics::emptySummarisedResult())
   } else {
-  codeUse <- dplyr::bind_rows(codeUse) %>%
-    dplyr::mutate(group_name = "By concept",
-           strata_name = "Overall",
-           strata_level  = "Overall",
-           variable_level  = "Overall",
-           variable_type  = "Numeric",
-           estimate_type  = "Count",
-           estimate  = .data$n,
-           source_concept_name = NA,
-           source_concept_id = NA,
-           cohort_name = NA
-           ) %>%
-    dplyr::select("group_name", "group_level",
-                  "strata_name", "strata_level",
-                  "variable_name", "variable_level", "variable_type",
-                  "estimate_type", "estimate",
-                  "standard_concept_name", "standard_concept_id",
-                  "source_concept_name",
-                  "source_concept_id",
-                  "domain_id", "codelist_name","cohort_name")
+  cols <- c("standard_concept_name", "standard_concept_id")
 
-    codeUse <- codeUse %>%
-      dplyr::mutate(estimate = dplyr::if_else(.data$estimate < .env$minCellCount &
-                                                .data$estimate > 0,
-                                              NA, .data$estimate)) %>%
-      dplyr::mutate(standard_concept_id = as.integer(.data$standard_concept_id),
-                    source_concept_id = as.integer(.data$source_concept_id))
+  codeUse <- dplyr::bind_rows(codeUse) %>%
+    dplyr::mutate(cdm_name = CDMConnector::cdmName(cdm),
+                  package_name = "CodelistGenerator",
+                  package_version = as.character(utils::packageVersion(
+                    pkg = "CodelistGenerator")),
+           group_name = "by_concept",
+           result_type = "achilles_code_use",
+           strata_name = .data$codelist_name,
+           strata_level  = "overall",
+           variable_level  = "overall",
+           estimate_name  = "count",
+           estimate_type = "integer",
+           estimate_value = as.character(.data$n)
+           ) %>%
+    dplyr::mutate(additional_name = paste0(cols, collapse = " ; ")) %>%
+    tidyr::unite(
+      col = "additional_level", dplyr::all_of(cols), sep = " ; ", remove = TRUE
+    ) %>%
+    dplyr::select(omopgenerics::resultColumns("summarised_result"))
+
+
 
   }
+
+  # currently omopgenerics doesn´t like "and" in concept name
+  # codeUse  <- omopgenerics::newSummarisedResult(codeUse) %>%
+  #   omopgenerics::suppress(minCellCount = minCellCount)
+
+  codeUse <- codeUse %>%
+    dplyr::mutate(estimate_value = dplyr::if_else(as.integer(.data$estimate_value) <= as.integer(.env$minCellCount) &
+                                           as.character(.data$estimate_value) != 0,
+                                           as.character(NA), as.character(.data$estimate_value)))
+
 
   return(codeUse)
 
@@ -205,6 +203,8 @@ fetchAchillesCounts <- function(cdm, analysisId, conceptId = NULL){
 
  analyses %>%
     dplyr::mutate(n = as.integer(.data$n))
+
+
 }
 
 

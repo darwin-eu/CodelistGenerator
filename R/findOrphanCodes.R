@@ -56,6 +56,35 @@ findOrphanCodes <- function(x,
                             includeAncestor = TRUE,
                             minCellCount = 5){
 
+  errorMessage <- checkmate::makeAssertCollection()
+  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
+  checkmate::assertVector(domains, add = errorMessage)
+  checkmate::assertVector(standardConcept, add = errorMessage)
+  standardConceptCheck <- all(tolower(standardConcept) %in%
+                                c(
+                                  "standard",
+                                  "classification",
+                                  "non-standard"
+                                ))
+  if (!isTRUE(standardConceptCheck)) {
+    errorMessage$push(
+      "- standardConcept must be from Standard, Non-standard, or Classification"
+    )
+  }
+  checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
+  checkmate::assert_logical(searchInSynonyms, add = errorMessage)
+  checkmate::assert_logical(searchNonStandard, add = errorMessage)
+  checkmate::assert_logical(includeDescendants, add = errorMessage)
+  checkmate::assert_logical(includeAncestor, add = errorMessage)
+  checkmate::assert_numeric(minCellCount, len = 1,
+                            add = errorMessage)
+  checkmate::reportAssertions(collection = errorMessage)
+
+  checkmate::assertList(x)
+  if(length(names(x)) != length(x)){
+    cli::cli_abort("Must be a named list")
+  }
+
 
 x <- addDetails(cdm = cdm, conceptList = x)
 

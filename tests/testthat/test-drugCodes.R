@@ -19,7 +19,7 @@ test_that("getATCCodes working", {
 
 
   if (backends[[i]] == "database") {
-    DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+    CDMConnector::cdm_disconnect(cdm)
   }
 
   }
@@ -36,7 +36,7 @@ test_that("getATCCodes expected errors", {
                              name = "Not an ATC name"))
 
     if (backends[[i]] == "database") {
-      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+      CDMConnector::cdm_disconnect(cdm)
     }
   }
 
@@ -98,7 +98,7 @@ test_that("getDrugIngredientCodes working", {
 
 
     if (backends[[i]] == "database") {
-      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+      CDMConnector::cdm_disconnect(cdm)
     }
 
   }
@@ -112,7 +112,7 @@ test_that("getDrugIngredientCodes expected errors", {
     expect_error(getDrugIngredientCodes(cdm, name = "Not an Ingredient"))
 
     if (backends[[i]] == "database") {
-      DBI::dbDisconnect(attr(cdm, "dbcon"), shutdown = TRUE)
+      CDMConnector::cdm_disconnect(cdm)
     }
   }
 
