@@ -290,6 +290,7 @@ mockVocabRef <- function(backend = "database") {
 
   # achilles tables
   # count of 400 records for knee osteoarthritis
+  # count of 200 records for hip osteoarthritis
   achillesAnalysis <- dplyr::tibble(analysis_id = 1,
                                     analysis_name = 1,
                                     stratum_1_name = NA,
@@ -299,13 +300,13 @@ mockVocabRef <- function(backend = "database") {
                                     stratum_5_name = NA,
                                     is_default = NA,
                                     category = NA )
-  achillesResults <- dplyr::tibble(analysis_id = 401,
-                             stratum_1 = 4,
+  achillesResults <- dplyr::tibble(analysis_id = c(401, 401),
+                             stratum_1 = c(4, 5),
                              stratum_2 = NA,
                              stratum_3 = NA,
                              stratum_4 = NA,
                              stratum_5 = NA,
-                             count_value = 100)
+                             count_value = c(400, 200))
   achillesResultsDist <- dplyr::tibble(analysis_id = 1,
                                        stratum_1 = NA,
                                        stratum_2 = NA,

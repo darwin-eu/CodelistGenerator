@@ -20,10 +20,11 @@ test_that("tests with mock db", {
                     includeAncestor = FALSE)
 
    # we should pick up knee osteoarthritis from our achilles tables
-   expect_true(orphan_codes %>%
-     dplyr::pull("group_level") == 4)
-   expect_true(orphan_codes %>%
-                       dplyr::pull("estimate_value") == 100)
+   expect_equal(orphan_codes %>%
+     dplyr::pull("group_level"), c("4", "5"))
+   expect_equal(orphan_codes %>%
+                       dplyr::pull("estimate_value"),
+               c("400", "200"))
 
    orphan_codes <- findOrphanCodes(x = list("msk" = codes$concept_id),
                                    cdm = cdm,
@@ -57,8 +58,8 @@ test_that("tests with mock db", {
                                    includeDescendants = TRUE,
                                    includeAncestor = FALSE,
                                    minCellCount = 150)
-   expect_true(orphan_codes %>%
-                 dplyr::pull("group_level") == "4")
+   expect_equal(orphan_codes %>%
+                 dplyr::pull("group_level"), c("4", "5"))
    # expect_true(is.na(orphan_codes %>%
    #   dplyr::pull("estimate_value")))
 

@@ -4,20 +4,28 @@ test_that("achilles code use", {
   cdm <- mockVocabRef("database")
   oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
   # two codes: "Osteoarthritis of knee" "Osteoarthritis of hip"
-  # in achilles we only have a count for "Osteoarthritis of knee"
   result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm)
   expect_true(result_achilles %>%
-    dplyr::pull("estimate_value") == 100)
+                dplyr::filter(group_level == 4) %>%
+    dplyr::pull("estimate_value") == 400)
+  expect_true(result_achilles %>%
+                dplyr::filter(group_level == 5) %>%
+                dplyr::pull("estimate_value") ==200)
+  expect_true(nrow(result_achilles) == 2)
+  expect_equal(c("oa", "oa"),
+               result_achilles %>%
+                 dplyr::pull("strata_name"))
+
   # check is a summarised result
   # expect_true("summarised_result" %in%  class(result_achilles))
 
   # applying min cell count where estimate should be obscured
   result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm,
-                                     minCellCount = 150)
-  # expect_true(is.na(result_achilles %>%
-  #               dplyr::pull("estimate_value")))
+                                     minCellCount = 500)
+  expect_true(all(is.na(result_achilles %>%
+                dplyr::pull("estimate_value"))))
 
 
  # edge cases
@@ -40,4 +48,28 @@ test_that("achilles code use", {
                  minCellCount = "not a number"))
 
  CDMConnector::cdm_disconnect(cdm)
+})
+
+test_that("achilles code use: multipe codelists", {
+
+  # mock db
+  cdm <- mockVocabRef("database")
+
+  # two codelists: "Osteoarthritis of knee" "Osteoarthritis of hip"
+  result_achilles <- achillesCodeUse(list(knee_oa = 4,
+                                          hip_oa = 5),
+                                     cdm = cdm)
+
+  expect_true(result_achilles %>%
+                dplyr::filter(group_level == 4) %>%
+                dplyr::pull("estimate_value") == "400")
+  expect_true(result_achilles %>%
+                dplyr::filter(group_level == 5) %>%
+                dplyr::pull("estimate_value") == "200")
+  expect_true(nrow(result_achilles) == 2)
+  expect_equal(c("knee_oa", "hip_oa"),
+               result_achilles %>%
+                dplyr::pull("strata_name"))
+
+  CDMConnector::cdm_disconnect(cdm)
 })

@@ -111,7 +111,7 @@ achillesCodeUse <- function(x,
                     pkg = "CodelistGenerator")),
            group_name = "by_concept",
            result_type = "achilles_code_use",
-           strata_name = "overall",
+           strata_name = .data$codelist_name,
            strata_level  = "overall",
            variable_level  = "overall",
            estimate_name  = "count",
@@ -134,8 +134,8 @@ achillesCodeUse <- function(x,
 
   codeUse <- codeUse %>%
     dplyr::mutate(estimate_value = dplyr::if_else(as.integer(.data$estimate_value) <= as.integer(.env$minCellCount) &
-                                           as.integer(.data$estimate_value) != 0,
-                                           as.integer(NA), as.integer(.data$estimate_value)))
+                                           as.character(.data$estimate_value) != 0,
+                                           as.character(NA), as.character(.data$estimate_value)))
 
 
   return(codeUse)
