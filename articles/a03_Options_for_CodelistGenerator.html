@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -191,9 +191,9 @@ have picked these all up with the following search</p>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 4</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 5, 2, 4, 3</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 4, 5, 2</span></span>
 <span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From initial search", "From i…</span></span>
-<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthritis of hip", "Osteoarthrosis", "Osteoarth…</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthritis of knee", "Osteoarthriti…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
 <span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard"</span></span></code></pre></div>
@@ -217,7 +217,7 @@ can set includeAncestor to TRUE</p>
 <span><span class="co">#&gt; condition domain: Adding ancestor</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -279,15 +279,15 @@ pick up “Osteoarthritis of knee”.</p>
 <span><span class="co">#&gt; condition domain: Adding descendants</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 2</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 4, 3</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 4</span></span>
 <span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From initial search"</span></span>
-<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthritis of knee", "Arthritis"</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthritis of knee"</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED"</span></span>
 <span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard"</span></span></code></pre></div>
@@ -313,15 +313,15 @@ pick up this synonym and it would be included.</p>
 <span><span class="co">#&gt; condition domain: Adding descendants</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 4</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 2, 4, 5</span></span>
-<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "In synonyms", "From initial search", "From descendan…</span></span>
-<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthrosis", "Osteoarthritis of kne…</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2, 3, 4, 5</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "In synonyms", "From descendan…</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthrosis", "Arthritis", "Osteoarthritis of kne…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
 <span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard"</span></span></code></pre></div>
@@ -344,15 +344,15 @@ non-standard.</p>
 <span><span class="co">#&gt; condition domain: Adding codes from non-standard</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 1 seconds</span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
 <span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 4</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 2, 4, 5</span></span>
-<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From non-standard", "From non…</span></span>
-<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthrosis", "Osteoarthritis of kne…</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 4, 5, 2</span></span>
+<span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From initial search", "From i…</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthritis of knee", "Osteoarthriti…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
 <span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard"</span></span></code></pre></div>
@@ -385,12 +385,12 @@ non-standard.</p>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 2</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2, 7</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 7, 2</span></span>
 <span><span class="co">#&gt; $ found_from       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "From initial search", "From initial search"</span></span>
-<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthrosis", "Degenerative arthropathy"</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Degenerative arthropathy", "Osteoarthrosis"</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition"</span></span>
-<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "Read"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "non-standard"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Read", "SNOMED"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "non-standard", "standard"</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
