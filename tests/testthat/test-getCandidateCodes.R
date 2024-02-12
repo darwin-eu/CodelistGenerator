@@ -99,7 +99,23 @@ test_that("tests with mock db", {
       exclude = "Osteoarthritis of hip",
       domains = "Condition"
     )
-    expect_true(any(!codes$concept_name %in% "Osteoarthritis of hip"))
+    expect_true(all(codes$concept_name != "Osteoarthritis of hip"))
+
+    codes <- getCandidateCodes(
+      cdm = cdm,
+      keywords = "arthritis",
+      exclude = c("Osteoarthritis of hip", "something else", "shoulder"),
+      domains = "Condition"
+    )
+    expect_true(all(codes$concept_name != "Osteoarthritis of hip"))
+
+    codes <- getCandidateCodes(
+      cdm = cdm,
+      keywords = "arthritis",
+      exclude = c("something else", "shoulder", "Osteoarthritis of hip"),
+      domains = "Condition"
+    )
+    expect_true(all(codes$concept_name != "Osteoarthritis of hip"))
 
     # test non-standard
     codes <- getCandidateCodes(

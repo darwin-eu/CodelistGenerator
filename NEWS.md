@@ -1,3 +1,9 @@
+# CodelistGenerator 2.2.2
+* Fix for edge case with multiple exclusion criteria
+
+# CodelistGenerator 2.2.1
+* Working with omopgenerics
+
 # CodelistGenerator 2.2.0
 * Added functions findOrphanCodes, restrictToCodesInUse, sourceCodesInUse.
 * Speed improvements in getCandidateCodes from doing search in place (e.g. on database side).
