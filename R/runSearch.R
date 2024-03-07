@@ -486,21 +486,22 @@ getMatches <- function(words,
 
       }
     }
-    conceptsFound[[i]] <- workingConcepts %>%
-      dplyr::collect()
+    conceptsFound[[i]] <- workingConcepts
+
+    # %>% dplyr::collect()
   }
 
   if(length(conceptsFound)==1){
     conceptsFound <- conceptsFound[[1]] %>% dplyr::distinct()
   } else {
     conceptsFoundList <- list()
-    conceptsFoundList[[1]] <- conceptsFound[[1]]
     for(i in 1:(length(conceptsFound)-1)){
-      conceptsFoundList[[1]] <- dplyr::union_all(conceptsFoundList[[1]],
+      conceptsFoundList <- dplyr::union_all(conceptsFound[[i]],
                                             conceptsFound[[i+1]])
 
     }
-    conceptsFound <- conceptsFoundList[[1]] %>% dplyr::distinct()
+    conceptsFound <- conceptsFoundList %>% dplyr::distinct()
+
   }
 
 
