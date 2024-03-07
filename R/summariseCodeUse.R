@@ -140,14 +140,14 @@ summariseCohortCodeUse <- function(x,
                                 "cohort_end_date") %in%  colnames(cdm[[cohortTable]])))
 
  if(is.null(cohortId)){
-  cohortId <- sort(CDMConnector::cohort_set(cdm[[cohortTable]]) %>%
+  cohortId <- sort(CDMConnector::settings(cdm[[cohortTable]]) %>%
     dplyr::pull("cohort_definition_id"))
  }
 
   cohortCodeUse <- list()
   for(i in seq_along(cohortId)){
   for(j in seq_along(x)){
-  workingCohortName <- CDMConnector::cohort_set(cdm[[cohortTable]]) %>%
+  workingCohortName <- CDMConnector::settings(cdm[[cohortTable]]) %>%
     dplyr::filter(.data$cohort_definition_id == cohortId[[i]]) %>%
     dplyr::pull("cohort_name")
 
@@ -232,8 +232,7 @@ getCodeUse <- function(x,
      (records %>% utils::head(1) %>% dplyr::tally() %>% dplyr::pull("n") > 0)) {
     if(bySex == TRUE | !is.null(ageGroup)){
       records <- records %>%
-        PatientProfiles::addDemographics(cdm = cdm,
-                                         age = !is.null(ageGroup),
+        PatientProfiles::addDemographics(age = !is.null(ageGroup),
                                          ageGroup = ageGroup,
                                          sex = bySex,
                                          priorObservation = FALSE,
