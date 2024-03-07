@@ -20,8 +20,8 @@ test_that("tests with mock db", {
                     includeAncestor = FALSE)
 
    # we should pick up knee osteoarthritis from our achilles tables
-   expect_equal(orphan_codes %>%
-     dplyr::pull("group_level"), c("4", "5"))
+   expect_true(all(stringr::str_detect(orphan_codes %>%
+     dplyr::pull("additional_level"), c("4", "5"))))
    expect_equal(orphan_codes %>%
                        dplyr::pull("estimate_value"),
                c("400", "200"))
@@ -57,11 +57,12 @@ test_that("tests with mock db", {
                                    searchNonStandard = FALSE,
                                    includeDescendants = TRUE,
                                    includeAncestor = FALSE,
-                                   minCellCount = 150)
-   expect_equal(orphan_codes %>%
-                 dplyr::pull("group_level"), c("4", "5"))
-   # expect_true(is.na(orphan_codes %>%
-   #   dplyr::pull("estimate_value")))
+                                   minCellCount = 500)
+   expect_true(all(stringr::str_detect(orphan_codes %>%
+                                         dplyr::pull("additional_level"),
+                                       c("4", "5"))))
+   expect_true(all(is.na(orphan_codes %>%
+     dplyr::pull("estimate_value"))))
 
    CDMConnector::cdm_disconnect(cdm)
 

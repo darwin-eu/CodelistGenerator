@@ -42,8 +42,7 @@ test_that("achilles code use", {
                  dplyr::pull("estimate"))
 
   expect_equal(as.numeric(result_achilles %>%
-                 dplyr::filter(group_level == "257581",
-                               group_name == "by_concept",
+                 dplyr::filter(stringr::str_detect(additional_level, "257581"),
                                variable_name == "Record count") %>%
                  dplyr::pull("estimate_value")),
                result_cdm %>%
@@ -72,8 +71,7 @@ test_that("achilles code use", {
 
 
   expect_equal(as.numeric(result_achilles %>%
-                 dplyr::filter(group_level == "317009",
-                               group_name == "by_concept",
+                 dplyr::filter(stringr::str_detect(additional_level, "317009"),
                                variable_name == "Person count") %>%
                  dplyr::pull("estimate_value")),
                result_cdm %>%
@@ -83,8 +81,7 @@ test_that("achilles code use", {
                  dplyr::pull("estimate"))
 
   expect_equal(as.numeric(result_achilles %>%
-                            dplyr::filter(group_level == "257581",
-                                          group_name == "by_concept",
+                            dplyr::filter(stringr::str_detect(additional_level, "257581"),
                                           variable_name == "Person count") %>%
                             dplyr::pull("estimate_value")),
                result_cdm %>%
