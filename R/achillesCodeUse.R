@@ -105,37 +105,31 @@ achillesCodeUse <- function(x,
   cols <- c("standard_concept_name", "standard_concept_id")
 
   codeUse <- dplyr::bind_rows(codeUse) %>%
-    dplyr::mutate(cdm_name = CDMConnector::cdmName(cdm),
+    dplyr::mutate(result_id = 1L,
+                  cdm_name = CDMConnector::cdmName(cdm),
                   package_name = "CodelistGenerator",
                   package_version = as.character(utils::packageVersion(
                     pkg = "CodelistGenerator")),
-           group_name = "by_concept",
+           group_name = "codelist",
+           group_level = .data$codelist_name,
            result_type = "achilles_code_use",
-           strata_name = .data$codelist_name,
+           strata_name = "overall",
            strata_level  = "overall",
            variable_level  = "overall",
            estimate_name  = "count",
            estimate_type = "integer",
-           estimate_value = as.character(.data$n)
+           estimate_value = as.character(.data$n),
+           additional_name = paste0(cols, collapse = " &&& "),
            ) %>%
-    dplyr::mutate(additional_name = paste0(cols, collapse = " ; ")) %>%
     tidyr::unite(
-      col = "additional_level", dplyr::all_of(cols), sep = " ; ", remove = TRUE
+      col = "additional_level", dplyr::all_of(cols), sep = " &&& ", remove = TRUE
     ) %>%
-    dplyr::select(omopgenerics::resultColumns("summarised_result"))
-
-
+    dplyr::select(dplyr::any_of(omopgenerics::resultColumns("summarised_result")))
 
   }
 
-  # currently omopgenerics doesn´t like "and" in concept name
-  # codeUse  <- omopgenerics::newSummarisedResult(codeUse) %>%
-  #   omopgenerics::suppress(minCellCount = minCellCount)
-
-  codeUse <- codeUse %>%
-    dplyr::mutate(estimate_value = dplyr::if_else(as.integer(.data$estimate_value) <= as.integer(.env$minCellCount) &
-                                           as.character(.data$estimate_value) != 0,
-                                           as.character(NA), as.character(.data$estimate_value)))
+  codeUse  <- omopgenerics::newSummarisedResult(codeUse) %>%
+    omopgenerics::suppress(minCellCount = minCellCount)
 
 
   return(codeUse)

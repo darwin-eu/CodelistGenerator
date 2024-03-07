@@ -25,24 +25,10 @@ skip_on_cran()
                               ageGroup = list(c(0,17),
                                               c(18,65),
                                               c(66, 100)))
-  # column names
-  expect_true(tibble::is_tibble(results))
-
-  expect_equal(colnames(results),
-                    c("group_name", "group_level",
-                      "strata_name", "strata_level",
-                      "variable_name", "variable_level",
-                      "variable_type",
-                      "estimate_type", "estimate",
-                      "estimate_suppressed",
-                      "standard_concept_name",
-                      "standard_concept_id",
-                      "source_concept_name",
-                      "source_concept_id",
-                      "domain_id",
-                      "codelist_name",
-                      "cohort_name"))
-
+  # check is a summarised result
+  expect_true("summarised_result" %in%  class(results))
+  expect_equal(omopgenerics::resultColumns(),
+               colnames(results))
 
   # overall record count
   expect_true(results %>%

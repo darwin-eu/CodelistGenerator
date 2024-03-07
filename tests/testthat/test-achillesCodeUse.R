@@ -7,18 +7,18 @@ test_that("achilles code use", {
   result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm)
   expect_true(result_achilles %>%
-                dplyr::filter(group_level == 4) %>%
+                dplyr::filter(stringr::str_detect(additional_level, "4")) %>%
     dplyr::pull("estimate_value") == 400)
   expect_true(result_achilles %>%
-                dplyr::filter(group_level == 5) %>%
+                dplyr::filter(stringr::str_detect(additional_level, "5")) %>%
                 dplyr::pull("estimate_value") ==200)
   expect_true(nrow(result_achilles) == 2)
   expect_equal(c("oa", "oa"),
                result_achilles %>%
-                 dplyr::pull("strata_name"))
+                 dplyr::pull("group_level"))
 
   # check is a summarised result
-  # expect_true("summarised_result" %in%  class(result_achilles))
+  expect_true("summarised_result" %in%  class(result_achilles))
 
   # applying min cell count where estimate should be obscured
   result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
@@ -61,15 +61,21 @@ test_that("achilles code use: multipe codelists", {
                                      cdm = cdm)
 
   expect_true(result_achilles %>%
-                dplyr::filter(group_level == 4) %>%
+                dplyr::filter(group_level == "knee_oa") %>%
                 dplyr::pull("estimate_value") == "400")
   expect_true(result_achilles %>%
-                dplyr::filter(group_level == 5) %>%
+                dplyr::filter(group_level == "hip_oa") %>%
                 dplyr::pull("estimate_value") == "200")
+  expect_true(result_achilles %>%
+                dplyr::filter(stringr::str_detect(additional_level, "4")) %>%
+                dplyr::pull("estimate_value") == 400)
+  expect_true(result_achilles %>%
+                dplyr::filter(stringr::str_detect(additional_level, "5")) %>%
+                dplyr::pull("estimate_value") ==200)
   expect_true(nrow(result_achilles) == 2)
   expect_equal(c("knee_oa", "hip_oa"),
                result_achilles %>%
-                dplyr::pull("strata_name"))
+                dplyr::pull("group_level"))
 
   CDMConnector::cdm_disconnect(cdm)
 })
