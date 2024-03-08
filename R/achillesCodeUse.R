@@ -122,7 +122,7 @@ achillesCodeUse <- function(x,
     tidyr::unite(
       col = "additional_level", dplyr::all_of(cols), sep = " ; ", remove = TRUE
     ) %>%
-    dplyr::select(omopgenerics::resultColumns("summarised_result"))
+    dplyr::select(dplyr::any_of(omopgenerics::resultColumns("summarised_result")))
 
 
 
