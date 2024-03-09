@@ -4,6 +4,7 @@ test_that("getATCCodes working", {
   for (i in seq_along(backends)) {
   cdm <- mockVocabRef(backend = backends[i])
   atcCodes <- getATCCodes(cdm, level = "ATC 1st")
+  expect_true("codelist" %in% class(atcCodes))
   expect_true(all(atcCodes[[1]] == c(12,13)))
   expect_true(c("alimentary_tract_and_metabolism") %in%
                 names(atcCodes))

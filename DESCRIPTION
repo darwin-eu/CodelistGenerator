@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Identify Relevant Clinical Codes and Evaluate Their Use
-Version: 2.2.1
+Version: 2.2.3
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
@@ -12,7 +12,7 @@ Description: Generate a candidate code list for the Observational Medical Outcom
 License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Depends:
     R (>= 3.5.0)
 Imports:
