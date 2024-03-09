@@ -144,6 +144,7 @@ getATCCodes <- function(cdm,
         dplyr::select("concept_id") %>%
         dplyr::distinct() %>%
         dplyr::pull()
+
       } else {
         atc_descendants[[i]] <- atc_descendants[[i]] %>%
           dplyr::select(!"ancestor_concept_id")
@@ -152,6 +153,11 @@ getATCCodes <- function(cdm,
       names(atc_descendants)[i] <- workingName
     }
   }
+
+  if(isFALSE(withConceptDetails)){
+  atc_descendants <- omopgenerics::newCodelist(atc_descendants)
+  }
+
   return(atc_descendants)
 }
 
@@ -278,6 +284,7 @@ getDrugIngredientCodes <- function(cdm,
           dplyr::select("concept_id") %>%
           dplyr::distinct() %>%
           dplyr::pull()
+
       } else {
         ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
           dplyr::select(!"ancestor_concept_id")
@@ -285,6 +292,11 @@ getDrugIngredientCodes <- function(cdm,
 
       names(ingredientCodes)[[i]] <- workingName
     }
+
+    if(isFALSE(withConceptDetails)){
+    ingredientCodes <- omopgenerics::newCodelist(ingredientCodes)
+    }
+
     return(ingredientCodes)
 }
 

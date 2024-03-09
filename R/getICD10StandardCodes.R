@@ -141,6 +141,11 @@ getICD10StandardCodes <- function(cdm,
     )
   }
 
+
+  if(isFALSE(withConceptDetails)){
+    ICD10StandardCodes <- omopgenerics::newCodelist(ICD10StandardCodes)
+  }
+
   return(ICD10StandardCodes)
 }
 
