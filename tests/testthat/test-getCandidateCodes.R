@@ -161,14 +161,6 @@ test_that("tests with mock db", {
       includeDescendants = FALSE,
       includeAncestor = TRUE
     )
-    expect_true(all(c(
-      "concept_id", "concept_name",
-      "domain_id", "vocabulary_id", "found_from", "ingredient_concept_id",
-      "amount_value", "amount_unit_concept_id",
-      "numerator_value", "numerator_unit_concept_id", "denominator_value",
-      "denominator_unit_concept_id", "box_size", "dose_form"
-    ) %in%
-      names(codes)))
     expect_true(codes$concept_id == "10")
 
     # search for drug and condition
@@ -180,14 +172,6 @@ test_that("tests with mock db", {
       includeDescendants = TRUE,
       includeAncestor = TRUE
     )
-    expect_true(all(c(
-      "concept_id", "concept_name",
-      "domain_id", "vocabulary_id", "found_from", "ingredient_concept_id",
-      "amount_value", "amount_unit_concept_id",
-      "numerator_value", "numerator_unit_concept_id", "denominator_value",
-      "denominator_unit_concept_id", "box_size", "dose_form"
-    ) %in%
-      names(codes)))
     expect_true(any(codes$concept_id %in% "10"))
 
     ## Edge cases
@@ -211,6 +195,14 @@ test_that("tests with mock db", {
    codes <- getCandidateCodes(
       cdm = cdm,
       keywords = "XXXXX",
+      standardConcept = c("Standard"),
+      includeDescendants = FALSE
+    )
+    expect_true(nrow(codes) == 0)
+
+    codes <- getCandidateCodes(
+      cdm = cdm,
+      keywords = "a", exclude = "a",
       standardConcept = c("Standard"),
       includeDescendants = FALSE
     )

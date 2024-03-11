@@ -1,7 +1,7 @@
 # Testing against different database platforms
 
 
-test_that("achilles code use", {
+test_that("redshift", {
 
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
 
@@ -16,6 +16,26 @@ test_that("achilles code use", {
                                     cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
                                     write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
+
+  # candidate code search
+  expect_no_error(asthma<-getCandidateCodes(cdm,
+                                            keywords = c("asthma",
+                                                         "irritable airways",
+                                                         "lung disease",
+                                                         "respiratory abnormalities",
+                                                         "sleep apnea",
+                                                         "chronic obstructive lung disease",
+                                                         "chronic obstructive lung disease"),
+
+                       domains = c("condition", "observation"),
+                       exclude = c("childhood", "juvenile"),
+                       searchInSynonyms = TRUE,
+                       searchNonStandard = TRUE,
+                       includeDescendants = TRUE,
+                       includeAncestor = TRUE))
+  expect(nrow(asthma) > 0)
+
+  # achilles
   cdm$achilles_results <- cdm$condition_occurrence %>%
     dplyr::group_by(condition_concept_id) %>%
     dplyr::tally(name = "count_value") %>%
