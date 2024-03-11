@@ -1,3 +1,6 @@
+# CodelistGenerator 2.2.3.900 (development version)
+* Add function getRelationshipId 
+
 # CodelistGenerator 2.2.3
 * Fix for forthcoming breaking change in dependency omopgenerics
 
