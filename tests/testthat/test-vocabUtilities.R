@@ -73,6 +73,45 @@ test_that("tests with mock db", {
     doseForms <- getDoseForm(cdm = cdm)
     expect_true(all(doseForms == c("Injection", "Injectable")))
 
+    # all relationships in mock
+    expect_equal(sort(cdm$concept_relationship |>
+                        dplyr::select("relationship_id") |>
+                        dplyr::distinct() |>
+                        dplyr::pull()),
+                 getRelationshipId(cdm,
+                                   standardConcept1 = c("standard", "non-standard", "classification"),
+                                   standardConcept2 = c("standard", "non-standard", "classification"),
+                                   domains1 = c("condition", "drug"),
+                                   domains2 = c("condition", "drug")))
+
+    # specific relationships
+    expect_equal("Mapped from",
+                 getRelationshipId(cdm,
+                                   standardConcept1 = "standard",
+                                   standardConcept2 = "non-standard",
+                                   domains1 = "condition",
+                                   domains2 = "condition"))
+    expect_equal("Maps to",
+                 getRelationshipId(cdm,
+                                   standardConcept1 = "non-standard",
+                                   standardConcept2 = "standard",
+                                   domains1 = "condition",
+                                   domains2 = "condition"))
+
+    # casing of inputs will be ignored
+    expect_equal(getRelationshipId(cdm,
+                                   standardConcept1 = "Standard",
+                                   standardConcept2 = "Non-standard",
+                                   domains1 = "Condition",
+                                   domains2 = "Condition"),
+                 getRelationshipId(cdm,
+                                   standardConcept1 = "standard",
+                                   standardConcept2 = "non-standard",
+                                   domains1 = "condition",
+                                   domains2 = "condition"))
+
+
+
     # expected errors
     expect_error(getVocabVersion(cdm = "a"))
     expect_error(getVocabularies(cdm = "a"))
@@ -82,6 +121,15 @@ test_that("tests with mock db", {
     expect_error(getConceptClassId(cdm, standardConcept = FALSE))
     expect_error(getDescendants(cdm = "a"))
     expect_error(getDoseForm(cdm = "a"))
+    expect_error(getRelationshipId("cdm"))
+    expect_error(getRelationshipId(cdm,
+                      standardConcept1 = "Standard",
+                      standardConcept2 = "Something else"))
+   expect_error(getRelationshipId(cdm,
+                    domains1 = 22,
+                      domains2 = "Condition"))
+
+
 
     if (backends[[i]] == "database") {
       CDMConnector::cdm_disconnect(cdm)
