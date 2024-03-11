@@ -342,7 +342,7 @@ runSearch <- function(keywords,
 
   candidateCodes <- candidateCodes %>%
     dplyr::select(c("concept_id", "found_from", "found_id")) %>%
-    dplyr::left_join(cdm[["concept"]] %>%
+    dplyr::inner_join(cdm[["concept"]] %>%
                        dplyr::select("concept_id", "concept_name",
                                      "domain_id", "vocabulary_id",
                                      "standard_concept"),
@@ -360,10 +360,11 @@ runSearch <- function(keywords,
     # will be removed as well (with only the first kept).
     candidateCodes <- candidateCodes %>%
       dplyr::arrange(.data$found_id) %>%
-      dplyr::group_by(.data$concept_id, .data$found_from)  %>%
+      dplyr::group_by(.data$concept_id)  %>%
       dplyr::filter(dplyr::row_number(.data$concept_id) == 1) %>%
       dplyr::ungroup() |>
       dplyr::select(!"found_id")
+
   }
 
 

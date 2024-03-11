@@ -304,3 +304,31 @@ test_that("tests with mock db - multiple domains", {
     }
   }
 })
+
+test_that("tests with mock db", {
+
+  skip_on_cran()
+  skip_on_ci()
+  db <- DBI::dbConnect(duckdb::duckdb(),
+                       dbdir = CDMConnector::eunomia_dir())
+  cdm <- CDMConnector::cdm_from_con(
+    con = db,
+    cdm_schema = "main",
+    write_schema = "main"
+  )
+
+ codes <- getCandidateCodes(cdm=cdm,
+                  keywords= "sinusitis",
+                  domains = c("Condition", "observation"),
+                  searchInSynonyms = TRUE,
+                  searchNonStandard = TRUE,
+                  includeAncestor = TRUE)
+
+ expect_true(sum(is.na(codes$concept_name)) == 0)
+
+ expect_equal(codes |>
+   dplyr::pull("concept_id"),
+ unique(codes |>
+   dplyr::pull("concept_id")))
+
+})
