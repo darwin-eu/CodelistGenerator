@@ -91,6 +91,9 @@ x <- addDetails(cdm = cdm, conceptList = x)
 orphanConcepts <- list()
 # rerun search
 for(i in seq_along(x)){
+  cli::cli_inform("Searching for orphan codes for {names(x)[i]}")
+
+  suppressMessages(
 candidateCodes <- getCandidateCodes(
     cdm = cdm,
     keywords = x[[i]]$concept_name,
@@ -99,24 +102,42 @@ candidateCodes <- getCandidateCodes(
     searchInSynonyms = searchInSynonyms,
     searchNonStandard = searchNonStandard,
     includeDescendants = includeDescendants,
-    includeAncestor = includeAncestor)
+    includeAncestor = includeAncestor))
 
 # Exclude codes that are in the original set of codes
 candidateCodes <- candidateCodes %>%
   dplyr::anti_join(x[[i]] %>%
                      dplyr::select("concept_id"),
                    by = "concept_id")
+
 # Use achilles counts to summarise code use
-orphanConcepts[[i]] <- achillesCodeUse(
-  x = list("cs" = candidateCodes$concept_id),
-  cdm = cdm,
-  minCellCount = minCellCount
-)
+if(!is.null(cdm$achilles_results)){
+  cli::cli_inform("Using achilles results to restict to codes that appear in the cdm reference")
+    orphanConcepts[[i]] <- achillesCodeUse(
+    x = list("cs" = candidateCodes$concept_id),
+    cdm = cdm,
+    minCellCount = minCellCount
+  )
+} else {
+  cli::cli_inform("Achilles tables not found in cdm reference - querying cdm directly for code counts")
+  orphanConcepts[[i]] <- summariseCodeUse(
+    x = list("cs" = candidateCodes$concept_id),
+    cdm = cdm,
+    countBy = "record",
+    minCellCount = minCellCount
+  )
+  if(nrow(orphanConcepts[[i]]) >0){
+    orphanConcepts[[i]] <- orphanConcepts[[i]] %>%
+    dplyr::filter(.data$group_name == "By concept")
+  }
+}
+
 if(nrow(orphanConcepts[[i]]) >= 1 ){
   orphanConcepts[[i]] <- orphanConcepts[[i]] %>%
     dplyr::mutate(codelist = names(x)[i])
 } else {
   cli::cli_inform("-- No orphan codes found for codelist {names(x)[i]}")
+  orphanConcepts[[i]] <- omopgenerics::emptySummarisedResult()
 }
 }
 

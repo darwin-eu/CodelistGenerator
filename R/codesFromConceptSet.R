@@ -269,7 +269,7 @@ addDetails <- function(conceptList, cdm){
     conceptList[[i]] <- dplyr::tibble(concept_id = conceptList[[i]],
                                       concept_set = names(conceptList)[i])
   }
-    conceptList <- dplyr::bind_rows(conceptList)
+    conceptList <- dplyr::bind_rows(unclass(conceptList))
     }
 
   conceptList <- conceptList %>%
