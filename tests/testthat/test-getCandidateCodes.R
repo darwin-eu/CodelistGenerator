@@ -305,7 +305,7 @@ test_that("tests with mock db - multiple domains", {
   }
 })
 
-test_that("tests with mock db", {
+test_that("tests with eunomia", {
 
   skip_on_cran()
   skip_on_ci()
