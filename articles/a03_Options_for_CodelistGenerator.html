@@ -95,8 +95,9 @@ concepts and relationships.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -110,7 +111,7 @@ concepts and relationships.</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Musculoskeletal disorder"</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S"</span></span></code></pre></div>
 <p>Note, we would also identify it based on a partial match</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
@@ -119,8 +120,9 @@ concepts and relationships.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -134,7 +136,7 @@ concepts and relationships.</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Musculoskeletal disorder"</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add-descendants">Add descendants<a class="anchor" aria-label="anchor" href="#add-descendants"></a>
@@ -150,9 +152,10 @@ includeDescendants to TRUE</p>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
-<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Adding descendants</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 5 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -163,7 +166,7 @@ includeDescendants to TRUE</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Musculoskeletal disorder", "Osteoarthrosis", "Arthri…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition", "…</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard", "stan…</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S", "S", "S", "S"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="multiple-search-terms">Multiple search terms<a class="anchor" aria-label="anchor" href="#multiple-search-terms"></a>
@@ -181,8 +184,9 @@ have picked these all up with the following search</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 5 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -196,7 +200,7 @@ have picked these all up with the following search</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Musculoskeletal disorder", "Arthritis", "Osteoarthri…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition", "…</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard", "stan…</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S", "S", "S", "S"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add-ancestor">Add ancestor<a class="anchor" aria-label="anchor" href="#add-ancestor"></a>
@@ -211,10 +215,11 @@ can set includeAncestor to TRUE</p>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
-<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
-<span><span class="co">#&gt; condition domain: Adding ancestor</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Adding descendants</span></span>
+<span><span class="co">#&gt; Adding ancestor</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -228,7 +233,7 @@ can set includeAncestor to TRUE</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthritis of knee", "Arthritis"</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="searches-with-multiple-words">Searches with multiple words<a class="anchor" aria-label="anchor" href="#searches-with-multiple-words"></a>
@@ -244,9 +249,10 @@ pick up “Osteoarthritis of knee”.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
-<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Adding descendants</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -260,7 +266,7 @@ pick up “Osteoarthritis of knee”.</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthritis of knee"</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="with-exclusions">With exclusions<a class="anchor" aria-label="anchor" href="#with-exclusions"></a>
@@ -274,9 +280,10 @@ pick up “Osteoarthritis of knee”.</p>
 <span>  exclude <span class="op">=</span> <span class="st">"Hip osteoarthritis"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
-<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Adding descendants</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -290,7 +297,7 @@ pick up “Osteoarthritis of knee”.</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthritis of knee"</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="search-using-synonyms">Search using synonyms<a class="anchor" aria-label="anchor" href="#search-using-synonyms"></a>
@@ -307,10 +314,11 @@ pick up this synonym and it would be included.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  searchInSynonyms <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
-<span><span class="co">#&gt; condition domain: Adding concepts using synonymns</span></span>
-<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Adding concepts using synonymns</span></span>
+<span><span class="co">#&gt; Adding descendants</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -324,7 +332,7 @@ pick up this synonym and it would be included.</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Osteoarthrosis", "Arthritis", "Osteoarthritis of kne…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S", "S", "S"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="search-via-non-standard">Search via non-standard<a class="anchor" aria-label="anchor" href="#search-via-non-standard"></a>
@@ -338,10 +346,11 @@ non-standard.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
-<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
-<span><span class="co">#&gt; condition domain: Adding codes from non-standard</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Adding descendants</span></span>
+<span><span class="co">#&gt; Adding codes from non-standard</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -355,7 +364,7 @@ non-standard.</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Arthritis", "Osteoarthritis of knee", "Osteoarthriti…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition"</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED"</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard"</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S", "S", "S"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="search-for-both-standard-and-non-standard-concepts">Search for both standard and non-standard concepts<a class="anchor" aria-label="anchor" href="#search-for-both-standard-and-non-standard-concepts"></a>
@@ -374,9 +383,10 @@ non-standard.</p>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span>,</span>
 <span>  standardConcept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Standard"</span>, <span class="st">"Non-standard"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; condition domain: Limiting to domains of interest</span></span>
-<span><span class="co">#&gt; condition: Getting concepts to include</span></span>
-<span><span class="co">#&gt; condition domain: Adding descendants</span></span>
+<span><span class="co">#&gt; Limiting to domains of interest</span></span>
+<span><span class="co">#&gt; Getting concepts to include</span></span>
+<span><span class="co">#&gt; Adding descendants</span></span>
+<span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 8 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
@@ -390,7 +400,7 @@ non-standard.</p>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Musculoskeletal disorder", "Arthritis", "Osteoarthri…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition", "Condition", "Condition", "Condition", "…</span></span>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED", "SNOMED", "SNOMED", "SNOMED", "Read", "ICD1…</span></span>
-<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "standard", "standard", "standard", "standard", "non-…</span></span></code></pre></div>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S", "S", "S", NA, NA, NA, "S"</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
