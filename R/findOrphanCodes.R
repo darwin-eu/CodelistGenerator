@@ -128,7 +128,7 @@ if(!is.null(cdm$achilles_results)){
   )
   if(nrow(orphanConcepts[[i]]) >0){
     orphanConcepts[[i]] <- orphanConcepts[[i]] %>%
-    dplyr::filter(group_name == "By concept")
+    dplyr::filter(.data$group_name == "By concept")
   }
 }
 
