@@ -1,0 +1,154 @@
+---
+title: "Producing vocab based codelists"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a05_vocab_based_codelists}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
+library(CDMConnector)
+library(CodelistGenerator)
+library(dplyr)
+library(tidyr)
+library(DBI)
+```
+
+For this vignette we are going to produce codelists based on the underlying vocabulary. More explicitly, we will use the ATC class and Ingredient level to produce medication codelists. Similarly, we will use ICD10 chapters and subchapters to produce condition codelists; however, one should note that **ICD10 chapters need to included in the vocabulary tables for this to work**.
+
+## Medication Codelists 
+### Medication Codelists using Ingredient level codes
+The function `CodelistGenerator::getDrugIngredientCodes()` can be used to generate the medication codelists using ingredient codes only. This is best illustrated via an example. Here we will create a codelist using ingredient codes only for acetaminophen.
+
+As a first step, we would need to create a cdm reference to extract the underlying vocabulary.
+
+```{r, eval=TRUE}
+db <- DBI::dbConnect(duckdb::duckdb(), 
+                     dbdir = CDMConnector::eunomia_dir())
+cdm <- cdm_from_con(
+  con = db,
+  cdm_schema = "main", 
+  write_schema = "main"
+)
+```
+
+Next we use `CodelistGenerator::getDrugIngredientCodes()`.
+```{r, eval=T}
+acetaminophen1 <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen"
+)
+
+acetaminophen1$acetaminophen
+```
+
+Alternatively, one could also explicitly output the full names of such codes with the `withConceptDetails` argument.
+
+```{r, eval=T}
+acetaminophen2 <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen",
+  withConceptDetails = T
+)
+
+acetaminophen2
+```
+
+One could also restrict to a particular number of ingredients found in a code like so:
+
+```{r, eval=T}
+acetaminophen3 <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen",
+  ingredientRange = c(2,2),
+  withConceptDetails = T
+)
+
+acetaminophen3
+```
+In this example, we see that every code has two distinct ingredients codes.
+
+Lastly, the user also has a choice to restrict to a particular dose form. Let's try to see if there are any injection dose form of acetaminophen.
+
+```{r, eval=T}
+acetaminophen4 <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen",
+  doseForm = "injection",
+  withConceptDetails = T
+)
+
+acetaminophen4
+```
+
+We see that in this mock cdm reference, there are no injection dose form of acetaminophen.
+
+### Medication Codelists using ATC class codes
+Analogous to `CodelistGenerator::getDrugIngredientCodes()`, `CodelistGenerator::getATCCodes()` can be used to generate a codelist restricted to a particular ATC class. Let's again produce a mock cdm reference and an example using this cdm reference.
+
+```{r, eval=T}
+cdm_mock <- mockVocabRef()
+```
+
+In this example, we will produce an ATC level 1 codelist based on Alimentary Tract and Metabolism Drugs.
+
+```{r, eval=T}
+atc_codelist <- getATCCodes(
+  cdm = cdm_mock,
+  level = c("ATC 1st"),
+  name = "alimentary tract and metabolism",
+  withConceptDetails = T
+)
+
+atc_codelist
+```
+
+## Condition Codelists 
+### Condition Codelists using ICD10 chapters and subchapters
+
+We can use `CodelistGenerator::getICD10StandardCodes()` to generate relevant condition codes using ICD10 chapters and subchapters. For this example, we will try to generate a codelist for arthropathies.
+
+```{r, eval=T}
+arthropathy1 <- getICD10StandardCodes(
+  cdm = cdm_mock,
+  name = "arthropathies",
+  withConceptDetails = T
+)
+
+arthropathy1
+```
+
+The user has a choice to specify the level the ICD10 codes should come from. For example, one could restrict it to ICD10 subchapters like so: 
+```{r, eval=T}
+arthropathy2 <- getICD10StandardCodes(
+  cdm = cdm_mock,
+  level = c("ICD10 SubChapter"),
+  name = "arthropathies",
+  withConceptDetails = T
+)
+
+arthropathy2
+```
+
+The default is that we consider both the ICD10 chapters ans ICD10 Subchapters. We see that these two codelists (`arthropathy1` and `arthropathy2`) are identical, indicating that all the codes are in fact all coming from ICD10 subchapters and none from ICD10 chapters.
+
+By default, the function also includes descendants; however if the user does not wish so, he/she could also use the `includeDescendants` argument.
+
+```{r, eval=T}
+arthropathy3 <- getICD10StandardCodes(
+  cdm = cdm_mock,
+  name = "arthropathies",
+  includeDescendants = FALSE,
+  withConceptDetails = T
+)
+
+arthropathy3
+```
