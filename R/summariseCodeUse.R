@@ -49,7 +49,7 @@ summariseCodeUse <- function(x,
   codeUse <- list()
   for(i in seq_along(x)){
   cli::cli_inform("Getting use of codes from {names(x)[i]} ({i} of {length(x)})")
-  codeUse[[i]] <- getCodeUse(x[[i]],
+  codeUse[[i]] <- getCodeUse(x[i],
                           cdm = cdm,
                           cohortTable = NULL,
                           cohortId = NULL,
@@ -59,12 +59,26 @@ summariseCodeUse <- function(x,
                           byYear = byYear,
                           bySex = bySex,
                           ageGroup = ageGroup,
-                          minCellCount = minCellCount) %>%
-      dplyr::mutate(codelist_name = names(x)[i]) %>%
-      dplyr::mutate(cohort_name = NA)
+                          minCellCount = minCellCount)
   }
   codeUse <- dplyr::bind_rows(codeUse)
 
+  if(nrow(codeUse)) {
+    codeUse <- codeUse %>%
+      visOmopResults::uniteAdditional(
+        cols = c("standard_concept_id", "source_concept_name",
+                 "source_concept_id", "domain_id", "estimate_suppressed")) %>%
+      dplyr::mutate(
+        result_id = as.integer(1),
+        cdm_name = omopgenerics::cdmName(cdm),
+        result_type = "cohort_code_use",
+        package_name = "CodelistGenerator",
+        package_version = as.character(utils::packageVersion("CodelistGenerator")),
+      ) %>%
+      omopgenerics::newSummarisedResult() %>%
+      dplyr::mutate(minCellCount = as.integer(minCellCount)) %>%
+      visOmopResults::appendSettings(colsSettings = c("minCellCount"))
+  }
 
  return(codeUse)
 
@@ -152,7 +166,7 @@ summariseCohortCodeUse <- function(x,
     dplyr::pull("cohort_name")
 
   cli::cli_inform(" Getting counts of {names(x)[j]} codes for cohort {workingCohortName}")
-  cohortCodeUse[[paste0(i, "_", j)]] <- getCodeUse(x[[j]],
+  cohortCodeUse[[paste0(i, "_", j)]] <- getCodeUse(x[j],
              cdm = cdm,
              cohortTable = cohortTable,
              cohortId = cohortId[[i]],
@@ -163,10 +177,26 @@ summariseCohortCodeUse <- function(x,
              bySex = bySex,
              ageGroup = ageGroup,
              minCellCount = minCellCount) %>%
-    dplyr::mutate(codelist_name = names(x)[j]) %>%
     dplyr::mutate(cohort_name = workingCohortName)
   }}
   cohortCodeUse <- dplyr::bind_rows(cohortCodeUse)
+
+  if (nrow(cohortCodeUse) > 0) {
+    cohortCodeUse <- cohortCodeUse %>%
+      visOmopResults::uniteAdditional(
+        cols = c("cohort_name", "standard_concept_id", "source_concept_name",
+                 "source_concept_id", "domain_id", "estimate_suppressed")) %>%
+      dplyr::mutate(
+        result_id = as.integer(1),
+        cdm_name = omopgenerics::cdmName(cdm),
+        result_type = "cohort_code_use",
+        package_name = "CodelistGenerator",
+        package_version = as.character(utils::packageVersion("CodelistGenerator")),
+      ) %>%
+      omopgenerics::newSummarisedResult() %>%
+      dplyr::mutate(timing = timing, minCellCount = as.integer(minCellCount)) %>%
+      visOmopResults::appendSettings(colsSettings = c("timing", "minCellCount"))
+  }
 
   return(cohortCodeUse)
 }
@@ -193,7 +223,8 @@ getCodeUse <- function(x,
                         add = errorMessage)
   checkmate::assertTRUE(all(countBy %in% c("record", "person")),
                         add = errorMessage)
-  checkmate::assertIntegerish(x, add = errorMessage)
+  checkmate::assertIntegerish(x[[1]], add = errorMessage)
+  checkmate::assertList(x, add = errorMessage)
   checkmate::assert_logical(byConcept, add = errorMessage)
   checkmate::assert_logical(byYear, add = errorMessage)
   checkmate::assert_logical(bySex, add = errorMessage)
@@ -212,7 +243,7 @@ getCodeUse <- function(x,
                               tolower(paste0(sample(LETTERS, 4, replace = TRUE),
                                              collapse = "")))
 
-  codes <- dplyr::tibble(concept_id = x) %>%
+  codes <- dplyr::tibble(concept_id = x[[1]]) %>%
     dplyr::left_join(cdm[["concept"]] %>%
                        dplyr::select("concept_id", "domain_id"),
                      by = "concept_id",
@@ -230,6 +261,7 @@ getCodeUse <- function(x,
 
   if(!is.null(records) &&
      (records %>% utils::head(1) %>% dplyr::tally() %>% dplyr::pull("n") > 0)) {
+    records <- records %>% dplyr::mutate(codelist := !!names(x))
     if(bySex == TRUE | !is.null(ageGroup)){
       records <- records %>%
         PatientProfiles::addDemographics(age = !is.null(ageGroup),
@@ -251,32 +283,22 @@ getCodeUse <- function(x,
 
     codeCounts <-  codeCounts %>%
       dplyr::mutate(estimate_suppressed = dplyr::if_else(
-        .data$estimate < .env$minCellCount, "TRUE", "FALSE")) %>%
-      dplyr::mutate(estimate = dplyr::if_else(
+        .data$estimate_value < .env$minCellCount, "TRUE", "FALSE")) %>%
+      dplyr::mutate(estimate_value = dplyr::if_else(
         .data$estimate_suppressed == "TRUE",
-        NA, .data$estimate))
+        NA, .data$estimate_value))
 
     codeCounts <- codeCounts %>%
-      dplyr::mutate(group_level = dplyr::if_else(.data$group_name == "By concept",
-                                                 paste0("Standard concept: ",
-                                                   .data$standard_concept_name, " (",
-                                                        .data$standard_concept_id, ")",
-                                                   " Source concept: ",
-                                                   .data$source_concept_name, " (",
-                                                   .data$source_concept_id, ")",
-                                                   " Domain: ", .data$domain_id),
-                                                 "Overall")) %>%
-      dplyr::mutate(variable_type = "Numeric",
-                    variable_level = "Overall",
-                    estimate_type = "Count") %>%
+      dplyr::mutate(variable_level = NA_character_,
+                    estimate_name = "count",
+                    estimate_type = "integer") %>%
       dplyr::select(dplyr::all_of(c("group_name", "group_level",
                                     "strata_name", "strata_level",
                                     "variable_name", "variable_level",
-                                    "variable_type",
+                                    "estimate_name",
                                     "estimate_type",
-                                    "estimate",
+                                    "estimate_value",
                                     "estimate_suppressed",
-                                    "standard_concept_name",
                                     "standard_concept_id",
                                     "source_concept_name",
                                     "source_concept_id",
@@ -508,10 +530,11 @@ getSummaryCounts <- function(records,
                              byAgeGroup){
 
 if("record" %in% countBy){
-recordSummary <- records %>%
-    dplyr::tally(name = "estimate") %>%
-    dplyr::mutate(estimate = as.integer(.data$estimate),
-                  group_name = "Codelist") %>%
+  recordSummary <- records %>%
+    dplyr::tally(name = "estimate_value") %>%
+    dplyr::mutate(estimate_value = as.character(.data$estimate_value),
+                  group_name = "codelist",
+                  group_level = !!unique(records |> dplyr::pull("codelist"))) %>%
     dplyr::collect()
 if(isTRUE(byConcept)) {
   recordSummary <- dplyr::bind_rows(recordSummary,
@@ -521,15 +544,15 @@ if(isTRUE(byConcept)) {
                     .data$source_concept_id,
                     .data$source_concept_name,
                     .data$domain_id) %>%
-    dplyr::tally(name = "estimate") %>%
-    dplyr::mutate(estimate = as.integer(.data$estimate),
-                  group_name = "By concept") %>%
-    dplyr::collect())
+    dplyr::tally(name = "estimate_value") %>%
+    dplyr::mutate(estimate_value = as.character(.data$estimate_value)) %>%
+    dplyr::collect() %>%
+    visOmopResults::uniteGroup(cols = "standard_concept_name"))
 }
 recordSummary <- recordSummary %>%
   dplyr::mutate(
-    strata_name = "Overall",
-    strata_level = "Overall",
+    strata_name = "overall",
+    strata_level = "overall",
     variable_name = "Record count")
 } else {
   recordSummary <- dplyr::tibble()
@@ -539,9 +562,10 @@ if("person" %in% countBy){
 personSummary <- records %>%
     dplyr::select("person_id") %>%
     dplyr::distinct() %>%
-    dplyr::tally(name = "estimate") %>%
-    dplyr::mutate(estimate = as.integer(.data$estimate),
-                  group_name = "Codelist") %>%
+    dplyr::tally(name = "estimate_value") %>%
+    dplyr::mutate(estimate_value = as.character(.data$estimate_value),
+                  group_name = "codelist",
+                  group_level = !!unique(records |> dplyr::pull("codelist"))) %>%
     dplyr::collect()
 
 if(isTRUE(byConcept)) {
@@ -556,15 +580,15 @@ personSummary <- dplyr::bind_rows(personSummary,
                     .data$source_concept_id,
                     .data$source_concept_name,
                     .data$domain_id) %>%
-    dplyr::tally(name = "estimate") %>%
-    dplyr::mutate(estimate = as.integer(.data$estimate),
-                  group_name = "By concept") %>%
-    dplyr::collect())
+    dplyr::tally(name = "estimate_value") %>%
+    dplyr::mutate(estimate_value = as.character(.data$estimate_value)) %>%
+    dplyr::collect() %>%
+    visOmopResults::uniteGroup(cols = "standard_concept_name"))
   }
 personSummary <- personSummary %>%
   dplyr::mutate(
-    strata_name = "Overall",
-    strata_level = "Overall",
+    strata_name = "overall",
+    strata_level = "overall",
     variable_name = "Person count")
 } else {
   personSummary <- dplyr::tibble()
@@ -575,15 +599,13 @@ if("record" %in% countBy & byYear == TRUE){
   recordSummary <- dplyr::bind_rows(recordSummary,
                                     getGroupedRecordCount(records = records,
                                                           cdm = cdm,
-                                                          groupBy = "year",
-                                                          groupName = "Year"))
+                                                          groupBy = "year"))
 }
   if("person" %in% countBy & byYear == TRUE){
   personSummary <- dplyr::bind_rows(personSummary,
                                     getGroupedPersonCount(records = records,
                                                           cdm = cdm,
-                                                          groupBy = "year",
-                                                          groupName = "Year"))
+                                                          groupBy = "year"))
 
   }
 
@@ -591,16 +613,14 @@ if("record" %in% countBy & bySex == TRUE){
   recordSummary <- dplyr::bind_rows(recordSummary,
                                     getGroupedRecordCount(records = records,
                                                           cdm = cdm,
-                                                          groupBy = "sex",
-                                                          groupName = "Sex"))
+                                                          groupBy = "sex"))
 }
 
 if("person" %in% countBy & bySex == TRUE){
   personSummary <- dplyr::bind_rows(personSummary,
                                     getGroupedPersonCount(records = records,
                                                           cdm = cdm,
-                                                          groupBy = "sex",
-                                                          groupName = "Sex"))
+                                                          groupBy = "sex"))
 }
 
 
@@ -608,16 +628,14 @@ if("person" %in% countBy & bySex == TRUE){
   recordSummary <- dplyr::bind_rows(recordSummary,
                                     getGroupedRecordCount(records = records,
                                                           cdm = cdm,
-                                                          groupBy = "age_group",
-                                                          groupName = "Age group"))
+                                                          groupBy = "age_group"))
   }
 
   if("person" %in% countBy & byAgeGroup == TRUE){
   personSummary <- dplyr::bind_rows(personSummary,
                                     getGroupedPersonCount(records = records,
                                                           cdm = cdm,
-                                                          groupBy = "age_group",
-                                                          groupName = "Age group"))
+                                                          groupBy = "age_group"))
 }
 
 if("record" %in% countBy && byAgeGroup == TRUE && bySex == TRUE){
@@ -625,8 +643,7 @@ if("record" %in% countBy && byAgeGroup == TRUE && bySex == TRUE){
                                     getGroupedRecordCount(records = records,
                                                           cdm = cdm,
                                                           groupBy = c("age_group",
-                                                                      "sex"),
-                                                          groupName = "Age group and sex"))
+                                                                      "sex")))
 }
 
   if("person" %in% countBy && byAgeGroup == TRUE && bySex == TRUE){
@@ -634,8 +651,7 @@ if("record" %in% countBy && byAgeGroup == TRUE && bySex == TRUE){
                                     getGroupedPersonCount(records = records,
                                                           cdm = cdm,
                                                           groupBy = c("age_group",
-                                                                      "sex"),
-                                                          groupName = "Age group and sex"))
+                                                                      "sex")))
 }
 
 
@@ -649,33 +665,27 @@ summary <- dplyr::bind_rows(recordSummary, personSummary)
 
 getGroupedRecordCount <- function(records,
                                   cdm,
-                                  groupBy,
-                                  groupName){
+                                  groupBy){
 
 groupedCounts <- dplyr::bind_rows(
    records %>%
      dplyr::group_by(dplyr::pick(.env$groupBy)) %>%
-    dplyr::tally(name = "estimate") %>%
-    dplyr::mutate(estimate = as.integer(.data$estimate),
-                  group_name = "Codelist") %>%
+    dplyr::tally(name = "estimate_value") %>%
+    dplyr::mutate(estimate_value = as.character(.data$estimate_value),
+                  group_name = "codelist",
+                  group_level = !!unique(records |> dplyr::pull("codelist"))) %>%
     dplyr::collect(),
   records %>%
     dplyr::group_by(dplyr::pick(.env$groupBy,
                                 "standard_concept_id", "standard_concept_name",
                                 "source_concept_id", "source_concept_name",
                                 "domain_id")) %>%
-    dplyr::tally(name = "estimate") %>%
-    dplyr::mutate(estimate = as.integer(.data$estimate),
-                  group_name = "By concept"
-                  ) %>%
-    dplyr::collect())  %>%
-  tidyr::unite("groupvar",
-               c(dplyr::all_of(.env$groupBy)),
-               remove = FALSE, sep = " and ") %>%
-  dplyr::mutate(strata_name = groupName,
-                strata_level = as.character(.data$groupvar),
-                variable_name = "Record count") %>%
-  dplyr::select(!dplyr::all_of(c(groupBy, "groupvar")))
+    dplyr::tally(name = "estimate_value") %>%
+    dplyr::mutate(estimate_value = as.character(.data$estimate_value)) %>%
+    dplyr::collect() %>%
+    visOmopResults::uniteGroup(cols = "standard_concept_name"))  %>%
+  visOmopResults::uniteStrata(cols = groupBy) %>%
+  dplyr::mutate(variable_name = "Record count")
 
 return(groupedCounts)
 
@@ -683,17 +693,17 @@ return(groupedCounts)
 
 getGroupedPersonCount <- function(records,
                                   cdm,
-                                  groupBy,
-                                  groupName){
+                                  groupBy){
 
   groupedCounts <- dplyr::bind_rows(
     records %>%
       dplyr::select(dplyr::all_of(c("person_id", .env$groupBy))) %>%
       dplyr::distinct() %>%
       dplyr::group_by(dplyr::pick(.env$groupBy)) %>%
-      dplyr::tally(name = "estimate") %>%
-      dplyr::mutate(estimate = as.integer(.data$estimate),
-                    group_name = "Codelist") %>%
+      dplyr::tally(name = "estimate_value") %>%
+      dplyr::mutate(estimate_value = as.character(.data$estimate_value),
+                    group_name = "codelist",
+                    group_level = !!unique(records |> dplyr::pull("codelist"))) %>%
       dplyr::collect(),
     records %>%
       dplyr::select(dplyr::all_of(c("person_id",
@@ -706,18 +716,12 @@ getGroupedPersonCount <- function(records,
                                   "standard_concept_id", "standard_concept_name",
                                   "source_concept_id", "source_concept_name",
                                   "domain_id")) %>%
-      dplyr::tally(name = "estimate") %>%
-      dplyr::mutate(estimate = as.integer(.data$estimate),
-                    group_name = "By concept"
-      ) %>%
-      dplyr::collect()) %>%
-    tidyr::unite("groupvar",
-                 c(tidyselect::all_of(.env$groupBy)),
-                 remove = FALSE, sep = " and ") %>%
-    dplyr::mutate(strata_name = groupName,
-                  strata_level = as.character(.data$groupvar),
-                  variable_name = "Person count") %>%
-    dplyr::select(!c(.env$groupBy, "groupvar"))
+      dplyr::tally(name = "estimate_value") %>%
+      dplyr::mutate(estimate_value = as.character(.data$estimate_value)) %>%
+      dplyr::collect() %>%
+      visOmopResults::uniteGroup(cols = "standard_concept_name")) %>%
+    visOmopResults::uniteStrata(cols = groupBy) %>%
+    dplyr::mutate(variable_name = "Record count")
 
   return(groupedCounts)
 
