@@ -1,0 +1,173 @@
+---
+title: "Generating vocabulary based codelists"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a04_vocab_based_codelists}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(CDMConnector)
+if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
+if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
+if (!eunomia_is_available()) downloadEunomiaData()
+```
+
+For this vignette we are going to produce codelists based on the OMOP CDM vocabulary tables. First we will create medication codelists based on ATC classifications and drug ingredients. Second, we will create condition codes based on ICD10 chapters and subchapters.
+
+### Medication codelists based on drug ingredients
+The function `getDrugIngredientCodes()` can be used to generate the medication codelists based around ingredient codes. Here, for example, we will create a codelist using ingredient codes only for acetaminophen. We´ll do this using the Eunomia example data.
+
+```{r,  message=FALSE, warning=FALSE, echo=FALSE}
+library(CDMConnector)
+library(CodelistGenerator)
+library(dplyr)
+library(tidyr)
+
+db <- DBI::dbConnect(duckdb::duckdb(), 
+                     dbdir = CDMConnector::eunomia_dir())
+cdm <- cdm_from_con(
+  con = db,
+  cdm_schema = "main", 
+  write_schema = "main"
+)
+```
+
+By default the function will return a codelist. As Eunomia only contains a subset of the OMOP CDM vocabularies we  see a few codes returned, but we would get many more if working with the full set of vocabularies.
+```{r}
+acetaminophen_codes <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen"
+)
+
+acetaminophen_codes
+acetaminophen_codes$acetaminophen
+```
+
+Alternatively, instead of returning a codelist we could instead get back a tibble that contains additional information on each conept such as their names and domains by setting `withConceptDetails` to TRUE
+
+```{r}
+acetaminophen_codes_with_details <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen",
+  withConceptDetails = TRUE
+)
+
+acetaminophen_codes_with_details$acetaminophen |> 
+  glimpse()
+```
+
+Instead of getting back all concepts for acetaminophen, we could require that only concepts associated with acetaminophen and at least one more drug ingredient (i.e. combination therapies) are returned.
+
+```{r}
+acetaminophen_two_or_more_ingredients <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen",
+  ingredientRange = c(2,Inf),
+  withConceptDetails = TRUE
+)
+
+acetaminophen_two_or_more_ingredients$acetaminophen |> 
+  glimpse()
+```
+
+Or we could instead only return concepts associated with acetaminophen and no other drug ingredient.
+
+```{r}
+acetaminophen_one_ingredient <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen",
+  ingredientRange = c(1,1),
+  withConceptDetails = TRUE
+)
+
+acetaminophen_one_ingredient$acetaminophen |> 
+  glimpse()
+```
+
+Lastly, we could also restrict to a particular dose form. Let's try to see if there are any injection dose form of acetaminophen.
+
+```{r}
+acetaminophen_injections <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = "acetaminophen",
+  doseForm = "injection",
+  withConceptDetails = TRUE
+)
+
+acetaminophen_injections$acetaminophen |> 
+  glimpse()
+```
+
+In this case we see that in Eunomia there no concept for acetaminophen with an injection dose form.
+
+The previous examples have focused on single drug ingredient. We can though specify multiple ingredients, in which case we will get a codelist back for each.
+
+```{r}
+acetaminophen_heparin_codes <- getDrugIngredientCodes(
+  cdm = cdm,
+  name = c("acetaminophen", "heparin")
+  )
+
+acetaminophen_heparin_codes
+acetaminophen_heparin_codes$acetaminophen
+acetaminophen_heparin_codes$heparin 
+```
+
+And if we don´t specify an ingredient, we´ll get a codelist for every drug ingredient in the vocabularies.
+
+```{r}
+ingredient_codes <- getDrugIngredientCodes(cdm = cdm)
+ingredient_codes
+```
+
+### Medication codelists based on ATC classifications
+Analogous to `getDrugIngredientCodes()`, `getATCCodes()` can be used to generate a codelist based on a particular ATC class. To show this, we´ll use a the mock vocabulary from CodelistGenerator.
+
+```{r}
+cdm_mock <- mockVocabRef()
+```
+
+In this example, we will produce an ATC level 1 codelist based on Alimentary Tract and Metabolism Drugs.
+
+```{r}
+atc_codelist <- getATCCodes(
+  cdm = cdm_mock,
+  level = "ATC 1st",
+  name = "alimentary tract and metabolism"
+)
+
+atc_codelist
+```
+
+## Condition Codelists using ICD10 chapters and subchapters
+
+We can use `getICD10StandardCodes()` to generate condition codes based on ICD10 chapters and subchapters. As ICD10 is a non-standard vocabulary in the OMOP CDM this function returns standard concepts associated with these ICD10 chapters and subchapters directly via a mapping from them or indirectly from being a descendant concept of a code that is mapped from them. It is important to note that `getICD10StandardCodes()` will only return results if the ICD codes are included in the vocabulary tables.
+
+For this example, we will try to generate a codelist for arthropathies.
+
+```{r}
+arthropathy_codes <- getICD10StandardCodes(
+  cdm = cdm_mock,
+  name = "arthropathies"
+)
+arthropathy_codes
+arthropathy_codes$arthropathies
+```
+
+As with the above functions, we could return concepts with their details rather than as a codelist.
+```{r}
+arthropathy_codes <- getICD10StandardCodes(
+  cdm = cdm_mock,
+  name = "arthropathies", 
+  withConceptDetails = TRUE
+)
+arthropathy_codes
+arthropathy_codes$arthropathies
+```
