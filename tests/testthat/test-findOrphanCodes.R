@@ -67,3 +67,34 @@ test_that("tests with mock db", {
    CDMConnector::cdm_disconnect(cdm)
 
 })
+
+test_that("tests with eunomia - no achilles", {
+
+  skip_on_cran()
+  skip_on_ci()
+  db <- DBI::dbConnect(duckdb::duckdb(),
+                       dbdir = CDMConnector::eunomia_dir())
+  cdm <- CDMConnector::cdm_from_con(
+    con = db,
+    cdm_schema = "main",
+    write_schema = "main"
+  )
+
+  asthma_cs <- omopgenerics::newCodelist(list("asthma" = 317009))
+
+  expect_no_error(oc <- findOrphanCodes(asthma_cs, cdm = cdm,
+                  domains = c("condition", "observation")))
+  expect_true(nrow(oc) > 0)
+
+  # no codes
+  asthma_cs <- omopgenerics::newCodelist(list("asthma" = c(317009, 4051466)))
+  expect_no_error(oc <- findOrphanCodes(asthma_cs, cdm = cdm,
+                                        domains = c("condition", "observation")))
+
+  # one with codes, one without
+  asthma_cs <- omopgenerics::newCodelist(list("asthma_1" = c(317009, 4051466),
+                                              "asthma_2" = c(317009)))
+  expect_no_error(oc <- findOrphanCodes(asthma_cs, cdm = cdm,
+                                        domains = c("condition", "observation")))
+
+})

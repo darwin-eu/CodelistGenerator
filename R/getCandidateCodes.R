@@ -126,11 +126,10 @@ getCandidateCodes <- function(cdm,
     searchSpecs[, c("id")]
   )
 
-  searchResults <- lapply(searchSpecs, function(x) {
-    result <- runSearch(keywords,
+  searchResults <- runSearch(keywords,
       cdm = cdm,
       exclude = exclude,
-      domains = x$domain,
+      domains = domains,
       standardConcept = standardConcept,
       searchInSynonyms = searchInSynonyms,
       searchNonStandard = searchNonStandard,
@@ -138,25 +137,10 @@ getCandidateCodes <- function(cdm,
       includeAncestor = includeAncestor
     )
 
-    return(result)
-  })
-
-  # drop any empty tibbles and put results from each domain together
-  searchResults <- searchResults[lapply(searchResults, nrow) > 0]
-  searchResults <- dplyr::bind_rows(searchResults,
-    .id = NULL
-  ) %>%
-    dplyr::distinct()
-
   if (nrow(searchResults) == 0) {
     cli::cli_inform("No codes found for the given search strategy")
     return(searchResults)
   }
-
-  # add concept info
-  searchResults <- addDetails(cdm = cdm,
-             conceptList = searchResults) %>%
-    dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domains))
 
   cli::cli_alert_success(
     "{nrow(searchResults)} candidate concept{?s} identified"

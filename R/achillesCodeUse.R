@@ -1,4 +1,5 @@
 
+
 #' Summarise code use from achilles counts
 #'
 #' @param x Codelist
@@ -54,45 +55,45 @@ achillesCodeUse <- function(x,
   codeUse <- list()
 
   if("record" %in% countBy){
-  allRecordCount <- getAchillesRecordCounts(cdm = cdm, conceptId = allCodes)
-  if(nrow(allRecordCount)>=1){
-  allRecordCount <- allRecordCount %>%
-    dplyr::mutate(concept_id = as.character(.data$concept_id)) %>%
-    dplyr::left_join(codesWithDetails %>%
-                       dplyr::mutate(concept_id = as.character(.data$concept_id)),
-                     by = "concept_id")
-    for(i in seq_along(x)){
-    codeUse[[paste0(i, "_record")]] <- allRecordCount %>%
-      dplyr::filter(.data$concept_id %in% x[[i]]) %>%
-      dplyr::mutate(variable_name = "Record count",
-                    group_level = .data$concept_id,
-                    standard_concept_name = .data$concept_name,
-                    standard_concept_id = .data$concept_id
-                    ) %>%
-      dplyr::mutate(codelist_name = names(x)[i])
+    allRecordCount <- getAchillesRecordCounts(cdm = cdm, conceptId = allCodes)
+    if(nrow(allRecordCount)>=1){
+      allRecordCount <- allRecordCount %>%
+        dplyr::mutate(concept_id = as.character(.data$concept_id)) %>%
+        dplyr::left_join(codesWithDetails %>%
+                           dplyr::mutate(concept_id = as.character(.data$concept_id)),
+                         by = "concept_id")
+      for(i in seq_along(x)){
+        codeUse[[paste0(i, "_record")]] <- allRecordCount %>%
+          dplyr::filter(.data$concept_id %in% x[[i]]) %>%
+          dplyr::mutate(variable_name = "Record count",
+                        group_level = .data$concept_id,
+                        standard_concept_name = .data$concept_name,
+                        standard_concept_id = .data$concept_id
+          ) %>%
+          dplyr::mutate(codelist_name = names(x)[i])
+      }
     }
-  }
   }
 
   if("person" %in% countBy){
-  allPersonCount <- getAchillesPersonCounts(cdm = cdm, conceptId = allCodes)
-  if(nrow(allPersonCount)>=1){
-  allPersonCount <- allPersonCount %>%
-    dplyr::mutate(concept_id = as.character(.data$concept_id)) %>%
-    dplyr::left_join(codesWithDetails %>%
-                       dplyr::mutate(concept_id = as.character(.data$concept_id)),
-                     by = "concept_id")
-  for(i in seq_along(x)){
-    codeUse[[paste0(i, "_person")]] <- allPersonCount %>%
-      dplyr::filter(.data$concept_id %in% x[[i]]) %>%
-      dplyr::mutate(variable_name = "Person count",
-                    group_level = .data$concept_id,
-                    standard_concept_name = .data$concept_name,
-                    standard_concept_id = .data$concept_id
-      ) %>%
-      dplyr::mutate(codelist_name = names(x)[i])
-  }
-  }
+    allPersonCount <- getAchillesPersonCounts(cdm = cdm, conceptId = allCodes)
+    if(nrow(allPersonCount)>=1){
+      allPersonCount <- allPersonCount %>%
+        dplyr::mutate(concept_id = as.character(.data$concept_id)) %>%
+        dplyr::left_join(codesWithDetails %>%
+                           dplyr::mutate(concept_id = as.character(.data$concept_id)),
+                         by = "concept_id")
+      for(i in seq_along(x)){
+        codeUse[[paste0(i, "_person")]] <- allPersonCount %>%
+          dplyr::filter(.data$concept_id %in% x[[i]]) %>%
+          dplyr::mutate(variable_name = "Person count",
+                        group_level = .data$concept_id,
+                        standard_concept_name = .data$concept_name,
+                        standard_concept_id = .data$concept_id
+          ) %>%
+          dplyr::mutate(codelist_name = names(x)[i])
+      }
+    }
   }
 
   if(length(codeUse) == 0){
@@ -102,34 +103,40 @@ achillesCodeUse <- function(x,
       ))
     return(omopgenerics::emptySummarisedResult())
   } else {
-  cols <- c("standard_concept_name", "standard_concept_id")
+    cols <- c("standard_concept_name", "standard_concept_id")
 
-  codeUse <- dplyr::bind_rows(codeUse) %>%
-    dplyr::mutate(result_id = 1L,
-                  cdm_name = CDMConnector::cdmName(cdm),
-                  package_name = "CodelistGenerator",
-                  package_version = as.character(utils::packageVersion(
-                    pkg = "CodelistGenerator")),
-           group_name = "codelist",
-           group_level = .data$codelist_name,
-           result_type = "achilles_code_use",
-           strata_name = "overall",
-           strata_level  = "overall",
-           variable_level  = "overall",
-           estimate_name  = "count",
-           estimate_type = "integer",
-           estimate_value = as.character(.data$n),
-           additional_name = paste0(cols, collapse = " &&& "),
-           ) %>%
-    tidyr::unite(
-      col = "additional_level", dplyr::all_of(cols), sep = " &&& ", remove = TRUE
-    ) %>%
-    dplyr::select(dplyr::any_of(omopgenerics::resultColumns("summarised_result")))
+    codeUse <- dplyr::bind_rows(codeUse) %>%
+      dplyr::mutate(cdm_name = CDMConnector::cdmName(cdm),
+                    package_name = "CodelistGenerator",
+                    package_version = as.character(utils::packageVersion(
+                      pkg = "CodelistGenerator")),
+                    group_name = "by_concept",
+                    result_type = "achilles_code_use",
+                    strata_name = .data$codelist_name,
+                    strata_level  = "overall",
+                    variable_level  = "overall",
+                    estimate_name  = "count",
+                    estimate_type = "integer",
+                    estimate_value = as.character(.data$n)
+      ) %>%
+      dplyr::mutate(additional_name = paste0(cols, collapse = " &&& ")) %>%
+      tidyr::unite(
+        col = "additional_level", dplyr::all_of(cols), sep = " &&& ", remove = TRUE
+      ) %>%
+      dplyr::select(dplyr::any_of(omopgenerics::resultColumns("summarised_result")))
+
+
 
   }
 
-  codeUse  <- omopgenerics::newSummarisedResult(codeUse) %>%
-    omopgenerics::suppress(minCellCount = minCellCount)
+  # currently omopgenerics doesn´t like "and" in concept name
+  # codeUse  <- omopgenerics::newSummarisedResult(codeUse) %>%
+  #   omopgenerics::suppress(minCellCount = minCellCount)
+
+  codeUse <- codeUse %>%
+    dplyr::mutate(estimate_value = dplyr::if_else(as.integer(.data$estimate_value) <= as.integer(.env$minCellCount) &
+                                                    as.character(.data$estimate_value) != 0,
+                                                  as.character(NA), as.character(.data$estimate_value)))
 
 
   return(codeUse)
@@ -161,7 +168,7 @@ getAchillesPersonCounts <- function(cdm, conceptId = NULL){
                                      200, # visit_occurrence
                                      600, # procedure_occurrence
                                      2100  # device_exposure
-                                     ),
+                      ),
                       conceptId = conceptId)
 
 
@@ -183,22 +190,20 @@ getAchillesRecordCounts <- function(cdm, conceptId = NULL){
 }
 
 fetchAchillesCounts <- function(cdm, analysisId, conceptId = NULL){
- analyses <- cdm[["achilles_results"]] %>%
+  analyses <- cdm[["achilles_results"]] %>%
     dplyr::filter(.data$analysis_id %in%  .env$analysisId) %>%
     dplyr::select("stratum_1", "count_value") %>%
     dplyr::rename("concept_id" = "stratum_1",
                   "n"="count_value") %>%
-   dplyr::collect()
+    dplyr::collect()
 
   if(!is.null(conceptId)){
     analyses <- analyses %>%
-    dplyr::filter(.data$concept_id %in%  .env$conceptId)
-    }
+      dplyr::filter(.data$concept_id %in%  .env$conceptId)
+  }
 
- analyses %>%
+  analyses %>%
     dplyr::mutate(n = as.integer(.data$n))
 
 
 }
-
-
