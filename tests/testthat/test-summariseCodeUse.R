@@ -296,11 +296,11 @@ test_that("summarise cohort code use - eunomia", {
 
   # any
   results_all <- summariseCodeUse(list(cs = 4134304),
-                                  cdm = cdm, minCellCount = 0)
+                                  cdm = cdm)
   results_cohort <- summariseCohortCodeUse(list(cs = 4134304),
                                            cdm = cdm,
                                            cohortTable = "pharyngitis",
-                                           timing = "any", minCellCount = 0)
+                                           timing = "any")
 
   expect_true(tibble::is_tibble(results_cohort))
   expect_true(all(colnames(results_cohort) %in%
