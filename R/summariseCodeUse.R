@@ -63,12 +63,16 @@ summariseCodeUse <- function(x,
     codeUse <- codeUse %>%
       dplyr::mutate(
         result_id = as.integer(1),
-        cdm_name = omopgenerics::cdmName(cdm),
-        result_type = "cohort_code_use",
-        package_name = "CodelistGenerator",
-        package_version = as.character(utils::packageVersion("CodelistGenerator"))
+        cdm_name = omopgenerics::cdmName(cdm)
       ) %>%
-      omopgenerics::newSummarisedResult()
+      omopgenerics::newSummarisedResult(
+        settings = dplyr::tibble(
+          result_id = as.integer(1),
+          result_type = "cohort_code_use",
+          package_name = "CodelistGenerator",
+          package_version = as.character(utils::packageVersion("CodelistGenerator"))
+        )
+      )
   } else {
     codeUse <- omopgenerics::emptySummarisedResult()
   }
@@ -172,13 +176,17 @@ summariseCohortCodeUse <- function(x,
     cohortCodeUse <- cohortCodeUse %>%
       dplyr::mutate(
         result_id = as.integer(1),
-        cdm_name = omopgenerics::cdmName(cdm),
-        result_type = "cohort_code_use",
-        package_name = "CodelistGenerator",
-        package_version = as.character(utils::packageVersion("CodelistGenerator")),
-        timing = timing
+        cdm_name = omopgenerics::cdmName(cdm)
       ) %>%
-      omopgenerics::newSummarisedResult()
+      omopgenerics::newSummarisedResult(
+        settings = dplyr::tibble(
+          result_id = as.integer(1),
+          result_type = "cohort_code_use",
+          package_name = "CodelistGenerator",
+          package_version = as.character(utils::packageVersion("CodelistGenerator")),
+          timing = timing
+        )
+      )
   } else {
     codeUse <- omopgenerics::emptySummarisedResult()
   }
@@ -269,15 +277,13 @@ getCodeUse <- function(x,
       dplyr::mutate(
         codelist_name := !!names(x),
         cohort_name = .env$cohortName,
-        estimate_type = "integer"
+        estimate_type = "integer",
+        variable_name = dplyr::if_else(is.na(.data$standard_concept_name), "overall", .data$standard_concept_name),
+        variable_level = as.character(.data$standard_concept_id)
       ) %>%
       visOmopResults::uniteGroup(cols = c("cohort_name", "codelist_name")) %>%
       visOmopResults::uniteAdditional(
         cols = c("source_concept_name", "source_concept_id", "domain_id")
-      ) %>%
-      dplyr::rename(
-        "variable_name" = "standard_concept_name",
-        "variable_level" = "standard_concept_id"
       ) %>%
       dplyr::select(
         "group_name", "group_level", "strata_name", "strata_level",
