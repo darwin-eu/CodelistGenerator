@@ -174,7 +174,7 @@ getICD10NonStandardCodes <- function(cdm,
       dplyr::select("concept_id", "concept_name", "concept_code")
     if(!is.null(attr(cdm, "dbcon"))){
       icd_sub <- icd_sub %>%
-      CDMConnector::computeQuery()
+      dplyr::compute()
       }
 
     icd_sub1 <- get_subsumed_concepts(
@@ -187,7 +187,7 @@ getICD10NonStandardCodes <- function(cdm,
     )
     if(!is.null(attr(cdm, "dbcon"))){
       icd_sub1 <- icd_sub1  %>%
-      CDMConnector::computeQuery()
+      dplyr::compute()
       }
     # one more level down
     icd_sub2 <- get_subsumed_concepts(
@@ -197,7 +197,7 @@ getICD10NonStandardCodes <- function(cdm,
 
     if(!is.null(attr(cdm, "dbcon"))){
       icd_sub2 <-  icd_sub2 %>%
-      CDMConnector::computeQuery()}
+      dplyr::compute()}
 
     icd_subchapter <- icd_sub2 %>%
       dplyr::collect() %>%
@@ -217,7 +217,7 @@ getICD10NonStandardCodes <- function(cdm,
       dplyr::select("concept_id", "concept_name", "concept_code")
     if(!is.null(attr(cdm, "dbcon"))){
       icd_ch <-icd_ch  %>%
-      CDMConnector::computeQuery()
+      dplyr::compute()
       }
 
     icd_ch1 <- get_subsumed_concepts(
@@ -230,7 +230,7 @@ getICD10NonStandardCodes <- function(cdm,
     )
     if(!is.null(attr(cdm, "dbcon"))){
       icd_ch1 <- icd_ch1 %>%
-      CDMConnector::computeQuery()
+      dplyr::compute()
     }
     # one more level down
     icd_ch2 <- get_subsumed_concepts(
@@ -239,7 +239,7 @@ getICD10NonStandardCodes <- function(cdm,
     )
     if(!is.null(attr(cdm, "dbcon"))){
       icd_ch2 <- icd_ch2 %>%
-      CDMConnector::computeQuery()
+      dplyr::compute()
     }
     # and one more level down
     icd_ch3 <- get_subsumed_concepts(
@@ -248,7 +248,7 @@ getICD10NonStandardCodes <- function(cdm,
     )
     if(!is.null(attr(cdm, "dbcon"))){
       icd_ch3 <-icd_ch3 %>%
-      CDMConnector::computeQuery()}
+      dplyr::compute()}
 
     icd_chapter <- icd_ch3 %>%
       dplyr::collect() %>%

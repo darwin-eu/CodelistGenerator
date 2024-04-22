@@ -21,7 +21,7 @@ test_that("tests with mock db", {
 
    # we should pick up knee osteoarthritis from our achilles tables
    expect_true(all(stringr::str_detect(orphan_codes %>%
-     dplyr::pull("additional_level"), c("4", "5"))))
+     dplyr::pull("variable_level"), c("4", "5"))))
    expect_equal(orphan_codes %>%
                        dplyr::pull("estimate_value"),
                c("400", "200"))
@@ -49,20 +49,21 @@ test_that("tests with mock db", {
                    includeAncestor = FALSE)) == 0)
 
    # min cell count
-   orphan_codes <- findOrphanCodes(x = list("msk" = codes$concept_id),
-                                   cdm = cdm,
-                                   domains = "Condition",
-                                   standardConcept = "Standard",
-                                   searchInSynonyms = FALSE,
-                                   searchNonStandard = FALSE,
-                                   includeDescendants = TRUE,
-                                   includeAncestor = FALSE,
-                                   minCellCount = 500)
-   expect_true(all(stringr::str_detect(orphan_codes %>%
-                                         dplyr::pull("additional_level"),
-                                       c("4", "5"))))
-   expect_true(all(is.na(orphan_codes %>%
-     dplyr::pull("estimate_value"))))
+   # TODO: when omopgenerics #282
+   # orphan_codes <- findOrphanCodes(x = list("msk" = codes$concept_id),
+   #                                 cdm = cdm,
+   #                                 domains = "Condition",
+   #                                 standardConcept = "Standard",
+   #                                 searchInSynonyms = FALSE,
+   #                                 searchNonStandard = FALSE,
+   #                                 includeDescendants = TRUE,
+   #                                 includeAncestor = FALSE,
+   #                                 minCellCount = 500)
+   # expect_true(all(stringr::str_detect(orphan_codes %>%
+   #                                       dplyr::pull("variable_level"),
+   #                                     c("4", "5"))))
+   # expect_true(all(is.na(orphan_codes %>%
+   #   dplyr::pull("estimate_value"))))
 
    CDMConnector::cdm_disconnect(cdm)
 
@@ -96,5 +97,5 @@ test_that("tests with eunomia - no achilles", {
                                               "asthma_2" = c(317009)))
   expect_no_error(oc <- findOrphanCodes(asthma_cs, cdm = cdm,
                                         domains = c("condition", "observation")))
-
+  expect_true(nrow(oc) > 0)
 })

@@ -1,5 +1,4 @@
 test_that("achilles code use", {
-
   # mock db
   cdm <- mockVocabRef("database")
   oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
@@ -7,11 +6,11 @@ test_that("achilles code use", {
   result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm)
   expect_true(result_achilles %>%
-                dplyr::filter(stringr::str_detect(additional_level, "4")) %>%
-    dplyr::pull("estimate_value") == 400)
+                dplyr::filter(stringr::str_detect(variable_level, "4")) %>%
+    dplyr::pull("estimate_value") == "400")
   expect_true(result_achilles %>%
-                dplyr::filter(stringr::str_detect(additional_level, "5")) %>%
-                dplyr::pull("estimate_value") ==200)
+                dplyr::filter(stringr::str_detect(variable_level, "5")) %>%
+                dplyr::pull("estimate_value") == "200")
   expect_true(nrow(result_achilles) == 2)
   expect_equal(c("oa", "oa"),
                result_achilles %>%
@@ -21,11 +20,11 @@ test_that("achilles code use", {
   expect_true("summarised_result" %in%  class(result_achilles))
 
   # applying min cell count where estimate should be obscured
-  result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
-                                     cdm = cdm,
-                                     minCellCount = 500)
-  expect_true(all(is.na(result_achilles %>%
-                dplyr::pull("estimate_value"))))
+  # TODO test when omogenerics #282
+  # result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
+  #                                    cdm = cdm)
+  # expect_true(all(is.na(result_achilles %>%
+  #               dplyr::pull("estimate_value"))))
 
 
  # edge cases
@@ -67,11 +66,11 @@ test_that("achilles code use: multipe codelists", {
                 dplyr::filter(group_level == "hip_oa") %>%
                 dplyr::pull("estimate_value") == "200")
   expect_true(result_achilles %>%
-                dplyr::filter(stringr::str_detect(additional_level, "4")) %>%
-                dplyr::pull("estimate_value") == 400)
+                dplyr::filter(stringr::str_detect(variable_level, "4")) %>%
+                dplyr::pull("estimate_value") == "400")
   expect_true(result_achilles %>%
-                dplyr::filter(stringr::str_detect(additional_level, "5")) %>%
-                dplyr::pull("estimate_value") ==200)
+                dplyr::filter(stringr::str_detect(variable_level, "5")) %>%
+                dplyr::pull("estimate_value") == "200")
   expect_true(nrow(result_achilles) == 2)
   expect_equal(c("knee_oa", "hip_oa"),
                result_achilles %>%

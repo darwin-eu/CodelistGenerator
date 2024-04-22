@@ -4,7 +4,7 @@
 \alias{achillesCodeUse}
 \title{Summarise code use from achilles counts}
 \usage{
-achillesCodeUse(x, cdm, countBy = c("record", "person"), minCellCount = 5)
+achillesCodeUse(x, cdm, countBy = c("record", "person"))
 }
 \arguments{
 \item{x}{Codelist}
@@ -13,9 +13,6 @@ achillesCodeUse(x, cdm, countBy = c("record", "person"), minCellCount = 5)
 
 \item{countBy}{Either "record" for record-level counts or "person" for
 person-level counts}
-
-\item{minCellCount}{The minimum number of counts to reported, below which
-results will be suppressed.}
 }
 \value{
 A tibble with results

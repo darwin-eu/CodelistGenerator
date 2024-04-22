@@ -529,7 +529,7 @@ addIngredientCount <- function(cdm, concepts) {
              by = "concept_id")
  if(!is.null(attr(cdm, "dbcon"))){
    concepts <- concepts %>%
-   CDMConnector::computeQuery()}
+   dplyr::compute()}
 
  concepts
 }

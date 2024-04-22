@@ -68,7 +68,7 @@ summariseCodeUse <- function(x,
       omopgenerics::newSummarisedResult(
         settings = dplyr::tibble(
           result_id = as.integer(1),
-          result_type = "cohort_code_use",
+          result_type = "code_use",
           package_name = "CodelistGenerator",
           package_version = as.character(utils::packageVersion("CodelistGenerator"))
         )
@@ -275,11 +275,11 @@ getCodeUse <- function(x,
 
     codeCounts <-  codeCounts %>%
       dplyr::mutate(
-        codelist_name := !!names(x),
-        cohort_name = .env$cohortName,
-        estimate_type = "integer",
-        variable_name = dplyr::if_else(is.na(.data$standard_concept_name), "overall", .data$standard_concept_name),
-        variable_level = as.character(.data$standard_concept_id)
+        "codelist_name" := !!names(x),
+        "cohort_name" = .env$cohortName,
+        "estimate_type" = "integer",
+        "variable_name" = dplyr::if_else(is.na(.data$standard_concept_name), "overall", .data$standard_concept_name),
+        "variable_level" = as.character(.data$standard_concept_id)
       ) %>%
       visOmopResults::uniteGroup(cols = c("cohort_name", "codelist_name")) %>%
       visOmopResults::uniteAdditional(
@@ -429,7 +429,7 @@ getRelevantRecords <- function(codes,
                           dplyr::select("concept_id", "domain_id"),
                         by = c("standard_concept_id"="concept_id"),
                         copy = TRUE) %>%
-      CDMConnector::computeQuery(
+      dplyr::compute(
         name = paste0(intermediateTable,"_grr"),
         temporary = FALSE,
         schema = attr(cdm, "write_schema"),
@@ -472,7 +472,7 @@ getRelevantRecords <- function(codes,
       if(workingRecords %>% utils::head(1) %>% dplyr::tally() %>% dplyr::pull("n") >0){
         codeRecords <- codeRecords %>%
           dplyr::union_all(workingRecords)  %>%
-          CDMConnector::computeQuery(
+          dplyr::compute(
             name = paste0(intermediateTable,"_grr_i"),
             temporary = FALSE,
             schema = attr(cdm, "write_schema"),
@@ -492,7 +492,7 @@ getRelevantRecords <- function(codes,
                          dplyr::select("concept_id", "concept_name"),
                        by = c("source_concept_id"="concept_id")) %>%
       dplyr::rename("source_concept_name"="concept_name")  %>%
-      CDMConnector::computeQuery(
+      dplyr::compute(
         name = paste0(intermediateTable,"_grr_cr"),
         temporary = FALSE,
         schema = attr(cdm, "write_schema"),
