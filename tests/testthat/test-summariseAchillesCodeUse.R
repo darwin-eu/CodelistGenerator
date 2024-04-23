@@ -3,7 +3,7 @@ test_that("achilles code use", {
   cdm <- mockVocabRef("database")
   oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
   # two codes: "Osteoarthritis of knee" "Osteoarthritis of hip"
-  result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
+  result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm)
   expect_true(result_achilles %>%
                 dplyr::filter(stringr::str_detect(variable_level, "4")) %>%
@@ -21,7 +21,7 @@ test_that("achilles code use", {
 
   # applying min cell count where estimate should be obscured
   # TODO test when omogenerics #282
-  # result_achilles <- achillesCodeUse(list(oa = oa$concept_id),
+  # result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id),
   #                                    cdm = cdm)
   # expect_true(all(is.na(result_achilles %>%
   #               dplyr::pull("estimate_value"))))
@@ -29,17 +29,17 @@ test_that("achilles code use", {
 
  # edge cases
  # concept id not in achilles
- expect_message(result_achilles <- achillesCodeUse(list(asthma = 123),
+ expect_message(result_achilles <- summariseAchillesCodeUse(list(asthma = 123),
                                     cdm = cdm))
  expect_true(nrow(result_achilles) == 0)
  # expect_true("summarised_result" %in%  class(result_achilles))
 
  # expected errors
- expect_error(achillesCodeUse(123, #not a named list
+ expect_error(summariseAchillesCodeUse(123, #not a named list
                  cdm = cdm))
- expect_error(achillesCodeUse(asthma,
+ expect_error(summariseAchillesCodeUse(asthma,
                  cdm = "cdm")) # not a cdm
- expect_error(achillesCodeUse(asthma,
+ expect_error(summariseAchillesCodeUse(asthma,
                  cdm = cdm,
                  countBy = "not an option"))
 
@@ -52,7 +52,7 @@ test_that("achilles code use: multipe codelists", {
   cdm <- mockVocabRef("database")
 
   # two codelists: "Osteoarthritis of knee" "Osteoarthritis of hip"
-  result_achilles <- achillesCodeUse(list(knee_oa = 4,
+  result_achilles <- summariseAchillesCodeUse(list(knee_oa = 4,
                                           hip_oa = 5),
                                      cdm = cdm)
 

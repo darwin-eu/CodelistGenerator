@@ -115,7 +115,7 @@ findOrphanCodes <- function(x,
     # Use achilles counts to summarise code use
     if("achilles_results" %in% names(cdm)){
       cli::cli_inform("Using achilles results to restict to codes that appear in the cdm reference")
-      orphanConcepts[[i]] <- achillesCodeUse(
+      orphanConcepts[[i]] <- summariseAchillesCodeUse(
         x = list("cs" = candidateCodes$concept_id),
         cdm = cdm
       )

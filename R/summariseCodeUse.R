@@ -116,7 +116,6 @@ summariseCodeUse <- function(x,
 #' cdm <- CDMConnector::cdm_from_con(con,
 #'                                   cdm_schem = "main",
 #'                                   write_schema = "main")
-
 #' cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
 #' conceptSet = list(a = 260139,
 #'                   b = 1127433),

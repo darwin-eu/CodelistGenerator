@@ -46,7 +46,7 @@ test_that("redshift", {
     dplyr::compute()
 
   asthma <- list(asthma = c(317009, 257581))
-  result_achilles <- achillesCodeUse(asthma,
+  result_achilles <- summariseAchillesCodeUse(asthma,
                                      cdm = cdm)
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
@@ -84,7 +84,7 @@ test_that("redshift", {
     dplyr::compute()
 
   asthma <- list(asthma = c(317009, 257581))
-  result_achilles <- achillesCodeUse(asthma,
+  result_achilles <- summariseAchillesCodeUse(asthma,
                                      cdm = cdm)
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
@@ -111,15 +111,15 @@ test_that("redshift", {
 
   # edge cases
   # concept id not in achilles
-  expect_message(achillesCodeUse(list(asthma = 123),
+  expect_message(summariseAchillesCodeUse(list(asthma = 123),
                                  cdm = cdm))
 
   # expected errors
-  expect_error(achillesCodeUse(123, #not a named list
+  expect_error(summariseAchillesCodeUse(123, #not a named list
                                cdm = cdm))
-  expect_error(achillesCodeUse(asthma,
+  expect_error(summariseAchillesCodeUse(asthma,
                                cdm = "cdm")) # not a cdm
-  expect_error(achillesCodeUse(asthma,
+  expect_error(summariseAchillesCodeUse(asthma,
                                cdm = cdm,
                                countBy = "not an option"))
 
