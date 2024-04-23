@@ -4,7 +4,12 @@
 \alias{achillesCodeUse}
 \title{Summarise code use from achilles counts}
 \usage{
-achillesCodeUse(x, cdm, countBy = c("record", "person"))
+achillesCodeUse(
+  x,
+  cdm,
+  countBy = c("record", "person"),
+  minCellCount = lifecycle::deprecated()
+)
 }
 \arguments{
 \item{x}{Codelist}
@@ -13,6 +18,8 @@ achillesCodeUse(x, cdm, countBy = c("record", "person"))
 
 \item{countBy}{Either "record" for record-level counts or "person" for
 person-level counts}
+
+\item{minCellCount}{\verb{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}}
 }
 \value{
 A tibble with results

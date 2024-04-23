@@ -37,7 +37,8 @@ Imports:
     PatientProfiles (>= 0.8.0),
     RJSONIO,
     vctrs,
-    visOmopResults (>= 0.3.0)
+    visOmopResults (>= 0.3.0),
+    lifecycle
 Suggests: 
     covr,
     knitr,

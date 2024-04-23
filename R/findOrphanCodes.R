@@ -18,7 +18,8 @@
 #' will be included in the candidate codelist.
 #' @param includeAncestor Either TRUE or FALSE.
 #' If TRUE the direct ancestor concepts of identified concepts
-#'  will be included in the candidate codelist.
+#' will be included in the candidate codelist.
+#' @param minCellCount ```r lifecycle::badge("deprecated")```
 #'
 #' @return A codelist containing code related to (but not in) the target
 #' codelist that are present used in the cdm
@@ -44,6 +45,7 @@
 #' orphan_codes
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
+
 findOrphanCodes <- function(x,
                             cdm,
                             domains = "Condition",
@@ -51,7 +53,12 @@ findOrphanCodes <- function(x,
                             searchInSynonyms = TRUE,
                             searchNonStandard = TRUE,
                             includeDescendants = TRUE,
-                            includeAncestor = TRUE){
+                            includeAncestor = TRUE,
+                            minCellCount = lifecycle::deprecated()) {
+
+  if (lifecycle::is_present(minCellCount)) {
+    lifecycle::deprecate_warn("2.3.0", "findOrphanCodes()", with = "omopgenerics::suppress()")
+  }
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)

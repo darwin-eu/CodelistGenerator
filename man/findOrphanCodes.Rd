@@ -12,7 +12,8 @@ findOrphanCodes(
   searchInSynonyms = TRUE,
   searchNonStandard = TRUE,
   includeDescendants = TRUE,
-  includeAncestor = TRUE
+  includeAncestor = TRUE,
+  minCellCount = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ will be included in the candidate codelist.}
 \item{includeAncestor}{Either TRUE or FALSE.
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.}
+
+\item{minCellCount}{\verb{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}}
 }
 \value{
 A codelist containing code related to (but not in) the target

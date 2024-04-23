@@ -9,6 +9,7 @@
 #' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
 #' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
 #' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
+#' @param minCellCount ```r lifecycle::badge("deprecated")```
 #'
 #' @return A tibble with results overall and, if specified, by strata
 #' @export
@@ -36,7 +37,12 @@ summariseCodeUse <- function(x,
                              byConcept = TRUE,
                              byYear = FALSE,
                              bySex = FALSE,
-                             ageGroup = NULL){
+                             ageGroup = NULL,
+                             minCellCount = lifecycle::deprecated()){
+
+  if (lifecycle::is_present(minCellCount)) {
+    lifecycle::deprecate_warn("2.3.0", "summariseCodeUse()", with = "omopgenerics::suppress()")
+  }
 
   checkmate::assertList(x)
   if(length(names(x)) != length(x)){
@@ -98,6 +104,7 @@ summariseCodeUse <- function(x,
 #' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
 #' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
 #' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
+#' @param minCellCount ```r lifecycle::badge("deprecated")```
 #'
 #' @return A tibble with results overall and, if specified, by strata
 #' @export
@@ -135,7 +142,12 @@ summariseCohortCodeUse <- function(x,
                                    byConcept = TRUE,
                                    byYear = FALSE,
                                    bySex = FALSE,
-                                   ageGroup = NULL) {
+                                   ageGroup = NULL,
+                                   minCellCount = lifecycle::deprecated()) {
+
+  if (lifecycle::is_present(minCellCount)) {
+    lifecycle::deprecate_warn("2.3.0", "summariseCohortCodeUse()", with = "omopgenerics::suppress()")
+  }
 
   checkmate::assertList(x)
   if(length(names(x)) != length(x)){

@@ -4,6 +4,7 @@
 #' @param cdm cdm_reference via CDMConnector::cdm_from_con()
 #' @param countBy Either "record" for record-level counts or "person" for
 #' person-level counts
+#' @param minCellCount ```r lifecycle::badge("deprecated")```
 #'
 #' @return A tibble with results
 #' @export
@@ -19,7 +20,12 @@
 
 achillesCodeUse <- function(x,
                             cdm,
-                            countBy = c("record", "person")) {
+                            countBy = c("record", "person"),
+                            minCellCount = lifecycle::deprecated()) {
+
+  if (lifecycle::is_present(minCellCount)) {
+    lifecycle::deprecate_warn("2.3.0", "achillesCodeUse()", with = "omopgenerics::suppress()")
+  }
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)

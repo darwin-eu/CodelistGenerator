@@ -146,9 +146,8 @@ skip_on_cran()
                 as.numeric() ==
                 cdm$drug_exposure %>%
                 dplyr::filter(drug_concept_id %in% acetiminophen) %>%
-                PatientProfiles::addAge(cdm,
-                                        indexDate = "drug_exposure_start_date") %>%
-                PatientProfiles::addSex(cdm) %>%
+                PatientProfiles::addAge(indexDate = "drug_exposure_start_date") %>%
+                PatientProfiles::addSex() %>%
                 dplyr::filter(sex == "Male" &
                                 age >= "18" &
                                 age <= "65") %>%

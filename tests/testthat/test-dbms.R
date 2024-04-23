@@ -122,9 +122,6 @@ test_that("redshift", {
   expect_error(achillesCodeUse(asthma,
                                cdm = cdm,
                                countBy = "not an option"))
-  expect_error(achillesCodeUse(asthma,
-                               cdm = cdm,
-                               minCellCount = "not a number"))
 
   CDMConnector::cdm_disconnect(cdm)
 })
