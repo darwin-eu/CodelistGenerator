@@ -20,11 +20,11 @@ test_that("achilles code use", {
   expect_true("summarised_result" %in%  class(result_achilles))
 
   # applying min cell count where estimate should be obscured
-  # TODO test when omogenerics #282
-  # result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id),
-  #                                    cdm = cdm)
-  # expect_true(all(is.na(result_achilles %>%
-  #               dplyr::pull("estimate_value"))))
+  result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id),
+                                     cdm = cdm)
+  expect_true(all(is.na(result_achilles %>%
+                          omopgenerics::suppress(minCellCount = 500) %>%
+                dplyr::pull("estimate_value"))))
 
 
  # edge cases

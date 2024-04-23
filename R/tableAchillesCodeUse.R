@@ -46,6 +46,117 @@ tableAchillesCodeUse <- function(result,
                                  minCellCount = 5,
                                  .options = list()) {
 
+  x <- internalTableAchillesResult(
+    result = result,
+    resultType = "achilles_code_use",
+    type = type,
+    header = header,
+    conceptId = conceptId,
+    standard = standard,
+    vocabulary =  vocabulary,
+    groupColumns = groupColumns,
+    settings = character(),
+    excludeColumns = excludeColumns,
+    minCellCount = minCellCount,
+    .options = .options
+  )
+
+  return(x)
+}
+
+#' Format the result of summariseOrphanCodes into a visual table.
+#'
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param result A summarised result with results of the type
+#' "orphan_codes".
+#' @param type Type of desired formatted table, possibilities: "gt",
+#' "flextable", "tibble".
+#' @param header A vector containing which elements should go into the header
+#' in order. Allowed are: `cdm_name`, `group`, `strata`, `additional`,
+#' `variable`, `estimate`, `settings`.
+#' @param conceptId If TRUE concept ids will be displayed.
+#' @param standard If TRUE a column indicating if the code is standard will be
+#' displayed.
+#' @param vocabulary If TRUE vocabulary id will be displayed.
+#' @param settings Vector with the settings columns to display.
+#' @param groupColumns Columns to use as group labels. Allowed columns are
+#' `cdm_name` and/or `codelist_name`.
+#' @param minCellCount Counts below which results will be clouded.
+#' @param excludeColumns Columns to drop from the output table.
+#' @param .options Named list with additional formatting options.
+#' visOmopResults::optionsFormatTable() shows allowed arguments and
+#' their default values.
+#'
+#' @return A table with a formatted version of the summariseOrphanCodes
+#' result.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' codes <- getCandidateCodes(cdm = cdm,
+#' keywords = "Musculoskeletal disorder",
+#' domains = "Condition",
+#' includeDescendants = FALSE)
+#'
+#' orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
+#' cdm = cdm,
+#' domains = "Condition",
+#' standardConcept = "Standard",
+#' searchInSynonyms = FALSE,
+#' searchNonStandard = FALSE,
+#' includeDescendants = TRUE,
+#' includeAncestor = FALSE)
+#'
+#' tableOrphanCodes(orphan_codes)
+#'
+#' CDMConnector::cdmDisconnect(cdm)
+#'}
+#'
+tableOrphanCodes <- function(result,
+                             type = "gt",
+                             header = c("cdm_name", "estimate"),
+                             conceptId = TRUE,
+                             standard = TRUE,
+                             vocabulary = TRUE,
+                             groupColumns = NULL,
+                             settings = character(),
+                             excludeColumns = c("result_id", "estimate_type"),
+                             minCellCount = 5,
+                             .options = list()) {
+
+  x <- internalTableAchillesResult(
+    result = result,
+    resultType = "orphan_codes",
+    type = type,
+    header = header,
+    conceptId = conceptId,
+    standard = standard,
+    vocabulary =  vocabulary,
+    groupColumns = groupColumns,
+    settings = settings,
+    excludeColumns = excludeColumns,
+    minCellCount = minCellCount,
+    .options = .options
+  )
+
+  return(x)
+}
+
+internalTableAchillesResult <- function(result,
+                                        type,
+                                        resultType,
+                                        header,
+                                        conceptId,
+                                        standard,
+                                        vocabulary,
+                                        groupColumns,
+                                        settings,
+                                        excludeColumns,
+                                        minCellCount,
+                                        .options) {
   # checks
   if (inherits(groupColumns, "list")) {
     checkmate::assertList(groupColumns, len = 1)
@@ -71,8 +182,9 @@ tableAchillesCodeUse <- function(result,
     )
   }
 
-  # nice estimate name
+  # filter result + nice estimate name
   x <- result |>
+    visOmopResults::filterSettings(.data$result_type == .env$resultType) |>
     dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
 
   # additional:
@@ -121,6 +233,26 @@ tableAchillesCodeUse <- function(result,
   }
   if (any(grepl("additional", excludeColumns))) {
     split <- split[!split %in% "additional"]
+  }
+
+  if (length(settings) > 0) {
+    if (any(grepl("additional", excludeColumns))) {
+      # additional = settings, and don't exclude + do split
+      x <- x |>
+        visOmopResults::addSettings(columns = settings) |>
+        dplyr::select(!c("additional_name", "additional_level")) |>
+        visOmopResults::uniteAdditional(cols = settings)
+      excludeColumns <- excludeColumns[!grepl("additional", excludeColumns)]
+      split <- c(split, "additional")
+    } else {
+      x <- x |>
+        visOmopResults::addSettings(columns = settings) |>
+        visOmopResults::splitAdditional() |>
+        visOmopResults::uniteAdditional(cols = c(visOmopResults::additionalColumns(x), settings))
+    }
+    if ("standard_concept" %in% settings & standard) {
+
+    }
   }
 
   x <- visOmopResults::formatTable(

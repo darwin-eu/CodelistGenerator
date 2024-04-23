@@ -219,7 +219,7 @@ achillesCodeUse <- function(x,
   lifecycle::deprecate_soft(
     when = "2.4.0",
     what = "achillesCodeUse()",
-    with = "summariseAchillesCodeUse"
+    with = "summariseAchillesCodeUse()"
   )
   x <- summariseAchillesCodeUse(
     x = ,

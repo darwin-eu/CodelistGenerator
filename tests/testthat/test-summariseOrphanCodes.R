@@ -27,11 +27,11 @@ test_that("tests with mock db", {
    settings <- omopgenerics::settings(orphan_codes)
    expect_true(all(
      colnames(settings) ==
-       c("result_id", "result_type", "package_name", "package_version", "domains",
-         "standard_concept", "search_in_synonyms", "search_non_standard",
+       c("result_id", "result_type", "package_name", "package_version", "search_domains",
+         "search_standard_concept", "search_in_synonyms", "search_non_standard",
          "include_descendants", "include_ancestor")))
-   expect_true(settings$domains == "Condition")
-   expect_true(settings$result_type == "find_orphan_codes")
+   expect_true(settings$search_domains == "Condition")
+   expect_true(settings$result_type == "orphan_codes")
 
    orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
                                    cdm = cdm,
@@ -56,21 +56,18 @@ test_that("tests with mock db", {
                    includeAncestor = FALSE)) == 0)
 
    # min cell count
-   # TODO: when omopgenerics #282
-   # orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
-   #                                 cdm = cdm,
-   #                                 domains = "Condition",
-   #                                 standardConcept = "Standard",
-   #                                 searchInSynonyms = FALSE,
-   #                                 searchNonStandard = FALSE,
-   #                                 includeDescendants = TRUE,
-   #                                 includeAncestor = FALSE,
-   #                                 minCellCount = 500)
-   # expect_true(all(stringr::str_detect(orphan_codes %>%
-   #                                       dplyr::pull("variable_level"),
-   #                                     c("4", "5"))))
-   # expect_true(all(is.na(orphan_codes %>%
-   #   dplyr::pull("estimate_value"))))
+   orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
+                                   cdm = cdm,
+                                   domains = "Condition",
+                                   standardConcept = "Standard",
+                                   searchInSynonyms = FALSE,
+                                   searchNonStandard = FALSE,
+                                   includeDescendants = TRUE,
+                                   includeAncestor = FALSE)
+   expect_true(all(is.na(
+     orphan_codes %>%
+       omopgenerics::suppress(minCellCount = 500) %>%
+       dplyr::pull("estimate_value"))))
 
    CDMConnector::cdm_disconnect(cdm)
 
@@ -95,10 +92,10 @@ test_that("tests with eunomia - no achilles", {
   expect_true(nrow(oc) > 0)
   settings <- omopgenerics::settings(oc)
   expect_true(all(colnames(settings) ==
-                    c("result_id", "result_type", "package_name", "package_version", "domains",
-                      "standard_concept", "search_in_synonyms", "search_non_standard", "include_descendants", "include_ancestor")))
-  expect_true(settings$domains == "condition &&& observation")
-  expect_true(settings$result_type == "find_orphan_codes")
+                    c("result_id", "result_type", "package_name", "package_version", "search_domains",
+                      "search_standard_concept", "search_in_synonyms", "search_non_standard", "include_descendants", "include_ancestor")))
+  expect_true(settings$search_domains == "condition &&& observation")
+  expect_true(settings$result_type == "orphan_codes")
 
   # no codes
   asthma_cs <- omopgenerics::newCodelist(list("asthma" = c(317009, 4051466)))

@@ -25,6 +25,20 @@ skip_on_cran()
                               ageGroup = list(c(0,17),
                                               c(18,65),
                                               c(66, 100)))
+
+  # min cell counts:
+   expect_true(
+     all(is.na(
+     omopgenerics::suppress(results) |>
+     dplyr::filter(
+     variable_name == "overall",
+     strata_level == "1909",
+     group_level == "acetiminophen"
+     ) |>
+       dplyr::pull("estimate_value")
+     ))
+   )
+
   # check is a summarised result
   expect_true("summarised_result" %in%  class(results))
   expect_equal(omopgenerics::resultColumns(),

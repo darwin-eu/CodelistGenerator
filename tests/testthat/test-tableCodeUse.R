@@ -305,22 +305,6 @@ test_that("table code use output formats", {
   expect_true(all(colnames(tab3$`_data`) ==
                     c("cdm_name_codelist_name", "Estimate name", "Estimate value")))
 
-  # check min cell count
-  # TODO when omopgenerics # 282
-  # tab4 <- tableCodeUse(result = results |>
-  #                        dplyr::filter(variable_name == "overall", strata_name == "overall"),
-  #                      type = "tibble",
-  #                      header = character(),
-  #                      split = c("group", "strata"),
-  #                      groupColumn = "cdm_name",
-  #                      conceptId = TRUE,
-  #                      sourceConcept = FALSE,
-  #                      excludeColumns = c("result_id", "estimate_type",
-  #                                         "variable_name", "variable_level",
-  #                                         "additional_name", "additional_level"),
-  #                      minCellCount = 3000,
-  #                      .options = list())
-
 })
 
 test_that("tableCodeUse expected behaviour", {

@@ -168,8 +168,8 @@ summariseOrphanCodes <- function(x,
         package_name = "CodelistGenerator",
         package_version = as.character(utils::packageVersion(
           pkg = "CodelistGenerator")),
-        search_domains = paste0(domains, collapse = " &&& "), # "search" added not to mistake with code domain in summarised result
-        search_standard_concept = paste0(standardConcept, collapse = " &&& "), # "search" added not to mistake with strata_concept in summarised result
+        domains = paste0(domains, collapse = " &&& "),
+        standard_concept = paste0(standardConcept, collapse = " &&& "),
         search_in_synonyms = searchInSynonyms,
         search_non_standard = searchNonStandard,
         include_descendants = includeDescendants,
@@ -242,7 +242,7 @@ findOrphanCodes <- function(x,
   lifecycle::deprecate_soft(
     when = "2.4.0",
     what = "findOrphanCodes()",
-    with = "summariseOrphanCodes()"
+    with = "summariseOrphanCodes"
   )
 
   x <- findOrphanCodes(x = x,
