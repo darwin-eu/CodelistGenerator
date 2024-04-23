@@ -107,7 +107,7 @@ summariseAchillesCodeUse <- function(x,
         result_id = as.integer(1),
         cdm_name = CDMConnector::cdmName(cdm),
         group_name = "codelist_name",
-        result_type = "achilles_code_use",
+        domain_id = tolower(.data$domain_id),
         estimate_type = "integer",
         estimate_value = as.character(.data$n)
       ) %>%

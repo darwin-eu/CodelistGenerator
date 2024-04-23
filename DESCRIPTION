@@ -47,7 +47,9 @@ Suggests:
     RPostgres,
     odbc,
     spelling,
-    tibble
+    tibble,
+    gt,
+    flextable
 Remotes: 
     darwin-eu-dev/omopgenerics,
     oxford-pharmacoepi/visOmopResults

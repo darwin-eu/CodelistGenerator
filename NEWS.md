@@ -11,7 +11,7 @@
 * Working with omopgenerics
 
 # CodelistGenerator 2.2.0
-* Added functions findOrphanCodes, restrictToCodesInUse, sourceCodesInUse.
+* Added functions summariseOrphanCodes, restrictToCodesInUse, sourceCodesInUse.
 * Speed improvements in getCandidateCodes from doing search in place (e.g. on database side).
 * Dropped explicit support of an Arrow cdm.
 

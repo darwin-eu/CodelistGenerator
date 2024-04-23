@@ -251,6 +251,11 @@ internalTableCodeUse <- function(result,
     split <- split[!split %in% "additional"]
   }
 
+  # fix split
+  if (any(grepl("group", excludeColumns))) {
+    split <- split[!split %in% "group"]
+  }
+
   x <- x |>
     dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
 

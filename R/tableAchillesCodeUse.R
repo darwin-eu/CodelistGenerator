@@ -1,0 +1,140 @@
+#' Format the result of summariseAchillesCodeUse into a visual table.
+#'
+#' `r lifecycle::badge("experimental")`
+#'
+#' @param result A summarised result with results of the type
+#' "achilles_code_use".
+#' @param type Type of desired formatted table, possibilities: "gt",
+#' "flextable", "tibble".
+#' @param header A vector containing which elements should go into the header
+#' in order. Allowed are: `cdm_name`, `group`, `strata`, `additional`,
+#' `variable`, `estimate`, `settings`.
+#' @param conceptId If TRUE concept ids will be displayed.
+#' @param standard If TRUE a column indicating if the code is standard will be
+#' displayed.
+#' @param vocabulary If TRUE vocabulary id will be displayed.
+#' @param groupColumns Columns to use as group labels. Allowed columns are
+#' `cdm_name` and/or `codelist_name`.
+#' @param minCellCount Counts below which results will be clouded.
+#' @param excludeColumns Columns to drop from the output table.
+#' @param .options Named list with additional formatting options.
+#' visOmopResults::optionsFormatTable() shows allowed arguments and
+#' their default values.
+#'
+#' @return A table with a formatted version of the summariseCohortCodeUse
+#' result.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
+#' result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id), cdm = cdm)
+#' tableAchillesCodeUse(result_achilles)
+#' CDMConnector::cdmDisconnect(cdm)
+#'}
+#'
+tableAchillesCodeUse <- function(result,
+                                 type = "gt",
+                                 header = c("cdm_name", "estimate"),
+                                 conceptId = TRUE,
+                                 standard = TRUE,
+                                 vocabulary = TRUE,
+                                 groupColumns = NULL,
+                                 excludeColumns = c("result_id", "estimate_type"),
+                                 minCellCount = 5,
+                                 .options = list()) {
+
+  # checks
+  if (inherits(groupColumns, "list")) {
+    checkmate::assertList(groupColumns, len = 1)
+    groupCheck <- groupColumns[[1]]
+  } else if (inherits(groupColumns, "character")) {
+    groupCheck <- groupColumns
+  } else {
+    groupCheck <- NULL
+  }
+  if (!is.null(groupCheck)) {
+    idsErr <- !groupCheck %in% c("cdm_name", "codelist_name")
+    if (sum(idsErr) > 0) {
+      cli::cli_abort("Allowed group columns are `cdm_name` and/or `codelist_name`.")
+    }
+  }
+  checkmate::assertLogical(conceptId, len = 1, any.missing = FALSE)
+  checkmate::assertLogical(standard, len = 1, any.missing = FALSE)
+  checkmate::assertLogical(vocabulary, len = 1, any.missing = FALSE)
+  if (standard & vocabulary & any(grepl("additional", excludeColumns))) {
+    cli::cli_abort(
+      c("!" = "Incompatible input arguments.",
+        "i" = "`additional` columns cannot be excluded while both `standard` and `vocabulary` are TRUE.")
+    )
+  }
+
+  # nice estimate name
+  x <- result |>
+    dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
+
+  # additional:
+  if (any(grepl("additional", excludeColumns)) & (standard | vocabulary)) {
+    # remove additonal from exclude columns
+    excludeColumns <- excludeColumns[!grepl("additional", excludeColumns)]
+  } else if (!any(grepl("additional", excludeColumns)) & !standard & !vocabulary) {
+    # add additional to exclude
+    excludeColumns <- c(excludeColumns, "additional_name", "additional_level")
+  }
+
+  if (!standard & !any(grepl("additional", excludeColumns))) {
+    # remove standard from additional
+    x <- x |>
+      dplyr::mutate(
+        additional_name = sub(".*& ", "", .data$additional_name),
+        additional_level = sub(".*& ", "", .data$additional_level)
+      )
+  }
+
+  if (!vocabulary & !any(grepl("additional", excludeColumns))) {
+    # remove vocabulary from additional
+    x <- x |>
+      dplyr::mutate(
+        additional_name = sub(" &.*", "", .data$additional_name),
+        additional_level = sub(" &.*", "", .data$additional_level)
+      )
+  }
+
+  if (!conceptId) {
+    renameColumns = c("Standard concept name" = "variable_name")
+    excludeColumns <- c(excludeColumns, "variable_level")
+  } else {
+    x <- x
+    renameColumns = c("Standard concept name" = "variable_name",
+                      "Standard concept id" = "variable_level")
+  }
+
+  # split:
+  split <- c("group", "strata", "additional")
+  if (any(grepl("group", excludeColumns))) {
+    split <- split[!split %in% "group"]
+  }
+  if (any(grepl("strata", excludeColumns))) {
+    split <- split[!split %in% "strata"]
+  }
+  if (any(grepl("additional", excludeColumns))) {
+    split <- split[!split %in% "additional"]
+  }
+
+  x <- visOmopResults::formatTable(
+    result = x,
+    formatEstimateName = character(),
+    header = header,
+    split = split,
+    groupColumn = groupColumns,
+    type = type,
+    renameColumns = renameColumns,
+    minCellCount = minCellCount,
+    excludeColumns = excludeColumns,
+    .options = .options
+  )
+
+  return(x)
+}
