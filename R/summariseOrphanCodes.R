@@ -46,14 +46,14 @@
 #' }
 
 summariseOrphanCodes <- function(x,
-                            cdm,
-                            domains = "Condition",
-                            standardConcept = "Standard",
-                            searchInSynonyms = TRUE,
-                            searchNonStandard = TRUE,
-                            includeDescendants = TRUE,
-                            includeAncestor = TRUE,
-                            minCellCount = lifecycle::deprecated()) {
+                                 cdm,
+                                 domains = "Condition",
+                                 standardConcept = "Standard",
+                                 searchInSynonyms = TRUE,
+                                 searchNonStandard = TRUE,
+                                 includeDescendants = TRUE,
+                                 includeAncestor = TRUE,
+                                 minCellCount = lifecycle::deprecated()) {
 
   if (lifecycle::is_present(minCellCount)) {
     lifecycle::deprecate_warn("2.3.0", "summariseOrphanCodes()", with = "omopgenerics::suppress()")
@@ -107,9 +107,10 @@ summariseOrphanCodes <- function(x,
 
     # Exclude codes that are in the original set of codes
     candidateCodes <- candidateCodes %>%
-      dplyr::anti_join(x[[i]] %>%
-                         dplyr::select("concept_id"),
-                       by = "concept_id")
+      dplyr::anti_join(
+        x[[i]] %>% dplyr::select("concept_id"),
+        by = "concept_id"
+      )
 
     # Use achilles counts to summarise code use
     if ("achilles_results" %in% names(cdm)) {
@@ -117,18 +118,22 @@ summariseOrphanCodes <- function(x,
       orphanConcepts[[i]] <- summariseAchillesCodeUse(
         x = list("cs" = candidateCodes$concept_id),
         cdm = cdm
-      ) %>%
-        dplyr::left_join(
-          candidateCodes %>%
-            dplyr::mutate("variable_level" = as.character(.data$concept_id)) %>%
-            dplyr::select("variable_level", "found_from"),
-          by = "variable_level"
-        ) %>%
-        dplyr::mutate(
-          additional_name = paste0(.data$additional_name, " &&& relationship_id"),
-          additional_level = paste0(.data$additional_level, " &&& ", .data$found_from)
-        ) |>
-        dplyr::select(!"found_from")
+      )
+      if (nrow(orphanConcepts[[i]]) > 0) {
+        # transform to orphan codes result format
+        orphanConcepts[[i]] <- orphanConcepts[[i]] %>%
+          dplyr::left_join(
+            candidateCodes %>%
+              dplyr::mutate("variable_level" = as.character(.data$concept_id)) %>%
+              dplyr::select("variable_level", "found_from"),
+            by = "variable_level"
+          ) %>%
+          dplyr::mutate(
+            additional_name = paste0(.data$additional_name, " &&& relationship_id"),
+            additional_level = paste0(.data$additional_level, " &&& ", .data$found_from)
+          ) |>
+          dplyr::select(!"found_from")
+      }
     } else {
       cli::cli_inform("Achilles tables not found in cdm reference - querying cdm directly for code counts")
       orphanConcepts[[i]] <- summariseCodeUse(
@@ -137,7 +142,7 @@ summariseOrphanCodes <- function(x,
         countBy = "record"
       )
       if (nrow(orphanConcepts[[i]]) > 0) {
-        # transform to achilles result format
+        # transform to orphan codes result format
         orphanConcepts[[i]] <- orphanConcepts[[i]] %>%
           dplyr::filter(.data$variable_name != "overall") %>%
           visOmopResults::splitAdditional() %>%
