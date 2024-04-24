@@ -126,6 +126,7 @@ test_that("test settings work", {
                            conceptId = TRUE,
                            standard = TRUE,
                            vocabulary = TRUE,
+                           relationship = FALSE,
                            settings = c("search_in_synonyms"),
                            groupColumns = NULL,
                            excludeColumns = c("result_id", "estimate_type"),
@@ -144,6 +145,7 @@ test_that("test settings work", {
                            conceptId = TRUE,
                            standard = FALSE,
                            vocabulary = TRUE,
+                           relationship = FALSE,
                            settings = c("search_in_synonyms"),
                            groupColumns = NULL,
                            excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
@@ -162,6 +164,7 @@ test_that("test settings work", {
                            conceptId = TRUE,
                            standard = TRUE,
                            vocabulary = FALSE,
+                           relationship = FALSE,
                            settings = c("search_in_synonyms", "search_standard_concept"),
                            groupColumns = NULL,
                            excludeColumns = c("result_id", "estimate_type"),
@@ -173,6 +176,41 @@ test_that("test settings work", {
       c('Codelist name', 'Domain id', 'Standard concept name', 'Standard concept id',
         'Standard concept', 'Search in synonyms', 'Search standard concept',
         'CDM name\nmock\nRecord count')))
+
+  tab4 <- tableOrphanCodes(orphan_codes,
+                           type = "tibble",
+                           header = c("cdm_name", "estimate"),
+                           conceptId = TRUE,
+                           standard = TRUE,
+                           vocabulary = FALSE,
+                           relationship = TRUE,
+                           settings = c("search_in_synonyms", "search_standard_concept"),
+                           groupColumns = NULL,
+                           excludeColumns = c("result_id", "estimate_type"),
+                           minCellCount = 5,
+                           .options = list())
+  expect_true(all(
+    colnames(tab4) ==
+      c('Codelist name', 'Domain id', 'Standard concept name', 'Standard concept id',
+        'Standard concept', 'Relationship id', 'Search in synonyms', 'Search standard concept',
+        '[header]CDM name\n[header_level]mock\n[header_level]Record count')))
+
+  tab5 <- tableOrphanCodes(orphan_codes,
+                           type = "tibble",
+                           header = c("cdm_name", "estimate"),
+                           conceptId = FALSE,
+                           standard = FALSE,
+                           vocabulary = FALSE,
+                           relationship = TRUE,
+                           settings = character(),
+                           groupColumns = NULL,
+                           excludeColumns = c("result_id", "estimate_type"),
+                           minCellCount = 5,
+                           .options = list())
+  expect_true(all(
+    colnames(tab5) ==
+      c('Codelist name', 'Domain id', 'Standard concept name', 'Relationship id',
+        '[header]CDM name\n[header_level]mock\n[header_level]Record count')))
 
 })
 test_that("table achilles code use expcted behaviour", {

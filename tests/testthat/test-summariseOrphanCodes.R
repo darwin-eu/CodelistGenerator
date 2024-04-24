@@ -69,6 +69,9 @@ test_that("tests with mock db", {
        omopgenerics::suppress(minCellCount = 500) %>%
        dplyr::pull("estimate_value"))))
 
+   expect_true(all(orphan_codes |> visOmopResults::additionalColumns() ==
+                     c("standard_concept", "vocabulary_id", "relationship_id")))
+
    CDMConnector::cdm_disconnect(cdm)
 
 })
@@ -96,6 +99,8 @@ test_that("tests with eunomia - no achilles", {
                       "search_standard_concept", "search_in_synonyms", "search_non_standard", "include_descendants", "include_ancestor")))
   expect_true(settings$search_domains == "condition &&& observation")
   expect_true(settings$result_type == "orphan_codes")
+  expect_true(all(oc |> visOmopResults::additionalColumns() ==
+                    c("standard_concept", "vocabulary_id", "relationship_id")))
 
   # no codes
   asthma_cs <- omopgenerics::newCodelist(list("asthma" = c(317009, 4051466)))

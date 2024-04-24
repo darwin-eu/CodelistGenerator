@@ -54,6 +54,7 @@ tableAchillesCodeUse <- function(result,
     conceptId = conceptId,
     standard = standard,
     vocabulary =  vocabulary,
+    relationship = FALSE,
     groupColumns = groupColumns,
     settings = character(),
     excludeColumns = excludeColumns,
@@ -79,6 +80,7 @@ tableAchillesCodeUse <- function(result,
 #' @param standard If TRUE a column indicating if the code is standard will be
 #' displayed.
 #' @param vocabulary If TRUE vocabulary id will be displayed.
+#' @param relationship If TRUE relationship id will be displayed.
 #' @param settings Vector with the settings columns to display.
 #' @param groupColumns Columns to use as group labels. Allowed columns are
 #' `cdm_name` and/or `codelist_name`.
@@ -121,11 +123,14 @@ tableOrphanCodes <- function(result,
                              conceptId = TRUE,
                              standard = TRUE,
                              vocabulary = TRUE,
+                             relationship = TRUE,
                              groupColumns = NULL,
                              settings = character(),
                              excludeColumns = c("result_id", "estimate_type"),
                              minCellCount = 5,
                              .options = list()) {
+
+  checkmate::assertLogical(relationship, len = 1, any.missing = FALSE)
 
   x <- internalTableAchillesResult(
     result = result,
@@ -135,6 +140,7 @@ tableOrphanCodes <- function(result,
     conceptId = conceptId,
     standard = standard,
     vocabulary =  vocabulary,
+    relationship = relationship,
     groupColumns = groupColumns,
     settings = settings,
     excludeColumns = excludeColumns,
@@ -152,6 +158,7 @@ internalTableAchillesResult <- function(result,
                                         conceptId,
                                         standard,
                                         vocabulary,
+                                        relationship,
                                         groupColumns,
                                         settings,
                                         excludeColumns,
@@ -188,32 +195,35 @@ internalTableAchillesResult <- function(result,
     dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
 
   # additional:
-  if (any(grepl("additional", excludeColumns)) & (standard | vocabulary)) {
+  if (resultType == "achilles_code_use") {
+    condition <- !standard & !vocabulary
+  } else {
+    condition <- !standard & !vocabulary & !relationship & length(settings)==0
+  }
+  if (any(grepl("additional", excludeColumns)) & !condition) {
     # remove additonal from exclude columns
     excludeColumns <- excludeColumns[!grepl("additional", excludeColumns)]
-  } else if (!any(grepl("additional", excludeColumns)) & !standard & !vocabulary) {
+  } else if (!any(grepl("additional", excludeColumns)) & condition) {
     # add additional to exclude
     excludeColumns <- c(excludeColumns, "additional_name", "additional_level")
   }
 
-  if (!standard & !any(grepl("additional", excludeColumns))) {
-    # remove standard from additional
+  if (!condition) {
+    toInclude <- c("standard_concept", "vocabulary_id", "relationship_id")[c(standard, vocabulary, relationship)]
+    if (length(settings) > 0) {
+      toInclude <- c(toInclude, settings)
+    }
     x <- x |>
-      dplyr::mutate(
-        additional_name = sub(".*& ", "", .data$additional_name),
-        additional_level = sub(".*& ", "", .data$additional_level)
-      )
+      dplyr::left_join(
+        omopgenerics::settings(x),
+        by = "result_id"
+      ) |>
+      visOmopResults::splitAdditional() |>
+      visOmopResults::uniteAdditional(cols = toInclude) |>
+      dplyr::select(omopgenerics::resultColumns())
   }
 
-  if (!vocabulary & !any(grepl("additional", excludeColumns))) {
-    # remove vocabulary from additional
-    x <- x |>
-      dplyr::mutate(
-        additional_name = sub(" &.*", "", .data$additional_name),
-        additional_level = sub(" &.*", "", .data$additional_level)
-      )
-  }
-
+  # concept name and id
   if (!conceptId) {
     renameColumns = c("Standard concept name" = "variable_name")
     excludeColumns <- c(excludeColumns, "variable_level")
@@ -235,26 +245,7 @@ internalTableAchillesResult <- function(result,
     split <- split[!split %in% "additional"]
   }
 
-  if (length(settings) > 0) {
-    if (any(grepl("additional", excludeColumns))) {
-      # additional = settings, and don't exclude + do split
-      x <- x |>
-        visOmopResults::addSettings(columns = settings) |>
-        dplyr::select(!c("additional_name", "additional_level")) |>
-        visOmopResults::uniteAdditional(cols = settings)
-      excludeColumns <- excludeColumns[!grepl("additional", excludeColumns)]
-      split <- c(split, "additional")
-    } else {
-      x <- x |>
-        visOmopResults::addSettings(columns = settings) |>
-        visOmopResults::splitAdditional() |>
-        visOmopResults::uniteAdditional(cols = c(visOmopResults::additionalColumns(x), settings))
-    }
-    if ("standard_concept" %in% settings & standard) {
-
-    }
-  }
-
+  # visOmopTable
   x <- visOmopResults::formatTable(
     result = x,
     formatEstimateName = character(),

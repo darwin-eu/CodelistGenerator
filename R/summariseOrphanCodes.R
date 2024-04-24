@@ -117,7 +117,18 @@ summariseOrphanCodes <- function(x,
       orphanConcepts[[i]] <- summariseAchillesCodeUse(
         x = list("cs" = candidateCodes$concept_id),
         cdm = cdm
-      )
+      ) %>%
+        dplyr::left_join(
+          candidateCodes %>%
+            dplyr::mutate("variable_level" = as.character(.data$concept_id)) %>%
+            dplyr::select("variable_level", "found_from"),
+          by = "variable_level"
+        ) %>%
+        dplyr::mutate(
+          additional_name = paste0(.data$additional_name, " &&& relationship_id"),
+          additional_level = paste0(.data$additional_level, " &&& ", .data$found_from)
+        ) |>
+        dplyr::select(!"found_from")
     } else {
       cli::cli_inform("Achilles tables not found in cdm reference - querying cdm directly for code counts")
       orphanConcepts[[i]] <- summariseCodeUse(
@@ -134,7 +145,9 @@ summariseOrphanCodes <- function(x,
           dplyr::left_join(
             candidateCodes %>%
               dplyr::mutate("variable_level" = as.character(.data$concept_id)) %>%
-              dplyr::select("variable_level", "vocabulary_id", "standard_concept") %>%
+              dplyr::select(
+                "variable_level", "vocabulary_id", "standard_concept", "relationship_id" = "found_from"
+              ) %>%
               dplyr::mutate(
                 standard_concept = dplyr::case_when(
                   standard_concept == "S" ~ "standard",
@@ -144,7 +157,7 @@ summariseOrphanCodes <- function(x,
               ),
             by = "variable_level"
           ) %>%
-          visOmopResults::uniteAdditional(cols = c("standard_concept", "vocabulary_id")) %>%
+          visOmopResults::uniteAdditional(cols = c("standard_concept", "vocabulary_id", "relationship_id")) %>%
           visOmopResults::uniteStrata(cols = "domain_id")
       }
     }
