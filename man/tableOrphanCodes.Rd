@@ -49,7 +49,7 @@ displayed.}
 \item{minCellCount}{Counts below which results will be clouded.}
 
 \item{.options}{Named list with additional formatting options.
-visOmopResults::optionsFormatTable() shows allowed arguments and
+visOmopResults::optionsVisOmopTable() shows allowed arguments and
 their default values.}
 }
 \value{

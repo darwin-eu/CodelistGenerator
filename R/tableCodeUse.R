@@ -16,7 +16,7 @@
 #' @param minCellCount Counts below which results will be clouded.
 #' @param excludeColumns Columns to drop from the output table.
 #' @param .options Named list with additional formatting options.
-#' visOmopResults::optionsFormatTable() shows allowed arguments and
+#' visOmopResults::optionsVisOmopTable() shows allowed arguments and
 #' their default values.
 #'
 #' @return A table with a formatted version of the summariseCodeUse result.
@@ -104,7 +104,7 @@ tableCodeUse <- function(result,
 #' @param minCellCount Counts below which results will be clouded.
 #' @param excludeColumns Columns to drop from the output table.
 #' @param .options Named list with additional formatting options.
-#' visOmopResults::optionsFormatTable() shows allowed arguments and
+#' visOmopResults::optionsVisOmopTable() shows allowed arguments and
 #' their default values.
 #'
 #' @return A table with a formatted version of the summariseCohortCodeUse
@@ -282,7 +282,7 @@ internalTableCodeUse <- function(result,
     }
   }
 
-  x <- visOmopResults::formatTable(
+  x <- visOmopResults::visOmopTable(
     result = x,
     formatEstimateName = character(),
     header = header,
@@ -300,7 +300,7 @@ internalTableCodeUse <- function(result,
 
 optionsCodeUse <- function(userOptions) {
 
-  defaultOpts <- visOmopResults::optionsFormatTable()
+  defaultOpts <- visOmopResults::optionsVisOmopTable()
 
   idsIgnored <- ! names(userOptions) %in% names(defaultOpts)
   if (sum(idsIgnored) > 0) {

@@ -18,7 +18,7 @@
 #' @param minCellCount Counts below which results will be clouded.
 #' @param excludeColumns Columns to drop from the output table.
 #' @param .options Named list with additional formatting options.
-#' visOmopResults::optionsFormatTable() shows allowed arguments and
+#' visOmopResults::optionsVisOmopTable() shows allowed arguments and
 #' their default values.
 #'
 #' @return A table with a formatted version of the summariseCohortCodeUse
@@ -87,7 +87,7 @@ tableAchillesCodeUse <- function(result,
 #' @param minCellCount Counts below which results will be clouded.
 #' @param excludeColumns Columns to drop from the output table.
 #' @param .options Named list with additional formatting options.
-#' visOmopResults::optionsFormatTable() shows allowed arguments and
+#' visOmopResults::optionsVisOmopTable() shows allowed arguments and
 #' their default values.
 #'
 #' @return A table with a formatted version of the summariseOrphanCodes
@@ -246,7 +246,7 @@ internalTableAchillesResult <- function(result,
   }
 
   # visOmopTable
-  x <- visOmopResults::formatTable(
+  x <- visOmopResults::visOmopTable(
     result = x,
     formatEstimateName = character(),
     header = header,
