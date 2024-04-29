@@ -15,7 +15,6 @@ test_that("table achilles code use expcted columns", {
                                vocabulary = TRUE,
                                groupColumns = NULL,
                                excludeColumns = c("result_id", "estimate_type"),
-                               minCellCount = 5,
                                .options = list())
   expect_true(inherits(tab1, "gt_tbl"))
   expect_true(all(
@@ -31,7 +30,6 @@ test_that("table achilles code use expcted columns", {
                                standard = FALSE,
                                vocabulary = FALSE,
                                excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                               minCellCount = 5,
                                .options = list())
   expect_true(inherits(tab2, "gt_tbl"))
   expect_true(all(
@@ -47,7 +45,6 @@ test_that("table achilles code use expcted columns", {
                                standard = FALSE,
                                vocabulary = FALSE,
                                excludeColumns = c("result_id", "estimate_type"),
-                               minCellCount = 5,
                                .options = list())
   expect_true(inherits(tab3, "gt_tbl"))
   expect_true(all(
@@ -63,7 +60,6 @@ test_that("table achilles code use expcted columns", {
                                standard = TRUE,
                                vocabulary = FALSE,
                                excludeColumns = c("result_id", "estimate_type", "cdm_name"),
-                               minCellCount = 5,
                                .options = list())
   expect_false(inherits(tab4, "gt_tbl"))
   expect_false(inherits(tab4, "flextable"))
@@ -79,26 +75,12 @@ test_that("table achilles code use expcted columns", {
                                vocabulary = FALSE,
                                groupColumns = c("cdm_name"),
                                excludeColumns = c("result_id", "estimate_type"),
-                               minCellCount = 5,
                                .options = list())
   expect_true(inherits(tab5, "flextable"))
   expect_true(all(
     colnames(tab5$body$dataset) ==
       c('CDM name', 'Codelist name', 'Domain id', 'Standard concept name', 'Standard concept id', 'Standard concept', 'Record count')))
   expect_true(tab5$body$dataset$`CDM name` |> levels() == "mock")
-
-  # minCellCount
-  tab6 <- tableAchillesCodeUse(result = result,
-                               type = "tibble",
-                               header = c("estimate"),
-                               conceptId = TRUE,
-                               standard = TRUE,
-                               vocabulary = FALSE,
-                               groupColumns = c("cdm_name"),
-                               excludeColumns = c("result_id", "estimate_type"),
-                               minCellCount = 201,
-                               .options = list())
-  expect_true(all(tab6$`[header_level]Record count` == c("400", "<201")))
 })
 test_that("test table orphan codes work", {
   cdm <- mockVocabRef("database")
@@ -130,7 +112,6 @@ test_that("test table orphan codes work", {
                            settings = c("search_in_synonyms"),
                            groupColumns = NULL,
                            excludeColumns = c("result_id", "estimate_type"),
-                           minCellCount = 5,
                            .options = list())
   expect_true(inherits(tab1, "gt_tbl"))
   expect_true(all(
@@ -149,7 +130,6 @@ test_that("test table orphan codes work", {
                            settings = c("search_in_synonyms"),
                            groupColumns = NULL,
                            excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                           minCellCount = 5,
                            .options = list())
   expect_true(inherits(tab2, "gt_tbl"))
   expect_true(all(
@@ -168,7 +148,6 @@ test_that("test table orphan codes work", {
                            settings = c("search_in_synonyms", "search_standard_concept"),
                            groupColumns = NULL,
                            excludeColumns = c("result_id", "estimate_type"),
-                           minCellCount = 5,
                            .options = list())
   expect_true(inherits(tab3, "flextable"))
   expect_true(all(
@@ -187,7 +166,6 @@ test_that("test table orphan codes work", {
                            settings = c("search_in_synonyms", "search_standard_concept"),
                            groupColumns = NULL,
                            excludeColumns = c("result_id", "estimate_type"),
-                           minCellCount = 5,
                            .options = list())
   expect_true(all(
     colnames(tab4) ==
@@ -205,7 +183,6 @@ test_that("test table orphan codes work", {
                            settings = character(),
                            groupColumns = NULL,
                            excludeColumns = c("result_id", "estimate_type"),
-                           minCellCount = 5,
                            .options = list())
   expect_true(all(
     colnames(tab5) ==
@@ -231,7 +208,6 @@ test_that("expcted behaviour", {
                                     vocabulary = TRUE,
                                     groupColumns = NULL,
                                     excludeColumns = c("additional_name"),
-                                    minCellCount = 5,
                                     .options = list()))
   expect_error(tableAchillesCodeUse(result,
                                     type = "gt",
@@ -241,7 +217,6 @@ test_that("expcted behaviour", {
                                     vocabulary = TRUE,
                                     groupColumns = NULL,
                                     excludeColumns = character(),
-                                    minCellCount = 5,
                                     .options = list()))
   expect_error(tableAchillesCodeUse(result,
                                     type = "gt",
@@ -251,7 +226,6 @@ test_that("expcted behaviour", {
                                     vocabulary = TRUE,
                                     groupColumns = NULL,
                                     excludeColumns = character(),
-                                    minCellCount = 5,
                                     .options = list()))
   expect_error(tableAchillesCodeUse(result,
                                     type = "gt",
@@ -261,6 +235,5 @@ test_that("expcted behaviour", {
                                     vocabulary = 0,
                                     groupColumns = NULL,
                                     excludeColumns = character(),
-                                    minCellCount = 5,
                                     .options = list()))
 })

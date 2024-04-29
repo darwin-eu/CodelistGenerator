@@ -14,7 +14,6 @@ tableCohortCodeUse(
   timing = FALSE,
   groupColumns = NULL,
   excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-  minCellCount = 5,
   .options = list()
 )
 }
@@ -40,8 +39,6 @@ in order. Allowed are: \code{cdm_name}, \code{group}, \code{strata}, \code{addit
 \code{cdm_name}, \code{cohort_name} and/or \code{codelist_name}.}
 
 \item{excludeColumns}{Columns to drop from the output table.}
-
-\item{minCellCount}{Counts below which results will be clouded.}
 
 \item{.options}{Named list with additional formatting options.
 visOmopResults::optionsVisOmopTable() shows allowed arguments and

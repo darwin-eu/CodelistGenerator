@@ -52,7 +52,8 @@ Suggests:
     flextable
 Remotes: 
     darwin-eu-dev/omopgenerics,
-    oxford-pharmacoepi/visOmopResults
+    darwin-eu/CDMConnector,
+    darwin-eu/visOmopResults
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr

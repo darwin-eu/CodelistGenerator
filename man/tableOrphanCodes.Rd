@@ -15,7 +15,6 @@ tableOrphanCodes(
   groupColumns = NULL,
   settings = character(),
   excludeColumns = c("result_id", "estimate_type"),
-  minCellCount = 5,
   .options = list()
 )
 }
@@ -45,8 +44,6 @@ displayed.}
 \item{settings}{Vector with the settings columns to display.}
 
 \item{excludeColumns}{Columns to drop from the output table.}
-
-\item{minCellCount}{Counts below which results will be clouded.}
 
 \item{.options}{Named list with additional formatting options.
 visOmopResults::optionsVisOmopTable() shows allowed arguments and

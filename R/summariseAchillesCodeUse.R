@@ -202,7 +202,7 @@ fetchAchillesCounts <- function(cdm, analysisId, conceptId = NULL){
 #'
 #' @return A tibble with results
 #' @export
-#'
+#' @keywords internal
 #' @examples
 #' \dontrun{
 #' cdm <- mockVocabRef("database")

@@ -81,7 +81,6 @@ tableAchillesCodeUse <- function(result,
 #' @param settings Vector with the settings columns to display.
 #' @param groupColumns Columns to use as group labels. Allowed columns are
 #' `cdm_name` and/or `codelist_name`.
-#' @param minCellCount Counts below which results will be clouded.
 #' @param excludeColumns Columns to drop from the output table.
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::optionsVisOmopTable() shows allowed arguments and

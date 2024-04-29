@@ -224,7 +224,10 @@ summariseOrphanCodes <- function(x,
 #'
 #' @return A codelist containing code related to (but not in) the target
 #' codelist that are present used in the cdm
+#'
 #' @export
+#'
+#' @keywords internal
 #'
 #' @examples
 #' \dontrun{
