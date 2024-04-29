@@ -211,7 +211,6 @@ fetchAchillesCounts <- function(cdm, analysisId, conceptId = NULL){
 #' result_achilles
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
-
 achillesCodeUse <- function(x,
                             cdm,
                             countBy = c("record", "person"),
