@@ -34,7 +34,6 @@ test_that("table code use expcted columns", {
                        conceptId = TRUE,
                        sourceConcept = TRUE,
                        excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                       minCellCount = 5,
                        .options = list())
   expect_true(inherits(tab1, "gt_tbl"))
   expect_true(all(
@@ -52,7 +51,6 @@ test_that("table code use expcted columns", {
                        conceptId = FALSE,
                        sourceConcept = TRUE,
                        excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                       minCellCount = 5,
                        .options = list())
   expect_true(all(
     colnames(tab2) ==
@@ -68,7 +66,6 @@ test_that("table code use expcted columns", {
                        conceptId = FALSE,
                        sourceConcept = FALSE,
                        excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                       minCellCount = 5,
                        .options = list())
 
   expect_true(all(
@@ -85,7 +82,6 @@ test_that("table code use expcted columns", {
                        conceptId = TRUE,
                        sourceConcept = FALSE,
                        excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                       minCellCount = 5,
                        .options = list())
 
   expect_true(all(
@@ -116,7 +112,6 @@ test_that("table code use expcted columns", {
     conceptId = TRUE,
     sourceConcept = FALSE,
     excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-    minCellCount = 5,
     .options = list()
     )
   expect_true(inherits(tab5, "flextable"))
@@ -136,7 +131,6 @@ test_that("table code use expcted columns", {
     conceptId = TRUE,
     sourceConcept = FALSE,
     excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-    minCellCount = 5,
     .options = list()
   )
   expect_true(all(
@@ -157,7 +151,6 @@ test_that("table code use expcted columns", {
     sourceConcept = FALSE,
     timing = TRUE,
     excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-    minCellCount = 5,
     .options = list()
   )
   expect_true(all(
@@ -176,10 +169,8 @@ test_that("table code use expcted columns", {
     sourceConcept = TRUE,
     timing = TRUE,
     excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-    minCellCount = 5,
     .options = list()
   )
-  # issue #128 in visOmopResults will change column order so timing goes after source concept id
   expect_true(all(
     colnames(tab8$`_data`) %in%
       c('group', 'Standard concept name', 'Standard concept id', 'Timing', 'Source concept name', 'Source concept id',
@@ -196,10 +187,8 @@ test_that("table code use expcted columns", {
     sourceConcept = TRUE,
     timing = TRUE,
     excludeColumns = c("result_id", "estimate_type"),
-    minCellCount = 5,
     .options = list()
   )
-  # issue #128 in visOmopResults will change column order so timing goes after domain id
   expect_true(all(
     colnames(tab9$`_data`) %in%
       c('group', 'Standard concept name', 'Standard concept id', 'Timing',
@@ -218,7 +207,6 @@ test_that("table code use expcted columns", {
     sourceConcept = FALSE,
     timing = TRUE,
     excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-    minCellCount = 5,
     .options = list()
   )
   expect_true(all(
@@ -262,7 +250,6 @@ test_that("table code use output formats", {
                        conceptId = TRUE,
                        sourceConcept = FALSE,
                        excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                       minCellCount = 5,
                        .options = list())
   expect_true(inherits(tab1, "flextable"))
   expect_true(all(tab1$body$dataset$`Codelist name`|> levels() == c("Acetiminophen", "Poliovirus vaccine")))
@@ -279,7 +266,6 @@ test_that("table code use output formats", {
                        excludeColumns = c("result_id", "estimate_type",
                                           "variable_name", "variable_level",
                                           "additional_name", "additional_level"),
-                       minCellCount = 5,
                        .options = list())
   expect_true(inherits(tab2, "gt_tbl"))
   expect_true(all(tab2$`_data`$`CDM name`|> levels() == c("Synthea synthetic health database")))
@@ -297,7 +283,6 @@ test_that("table code use output formats", {
                        excludeColumns = c("result_id", "estimate_type",
                                           "variable_name", "variable_level",
                                           "additional_name", "additional_level"),
-                       minCellCount = 5,
                        .options = list())
   expect_true(inherits(tab3, "gt_tbl"))
   expect_true(all(tab3$`_data`$cdm_name_codelist_name |> levels() ==
@@ -345,7 +330,6 @@ test_that("tableCodeUse expected behaviour", {
                  conceptId = FALSE,
                  sourceConcept = FALSE,
                  excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                 minCellCount = 5,
                  .options = list())
   )
 
@@ -358,7 +342,6 @@ test_that("tableCodeUse expected behaviour", {
                  conceptId = FALSE,
                  sourceConcept = FALSE,
                  excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                 minCellCount = 5,
                  .options = list())
   )
 
@@ -371,7 +354,6 @@ test_that("tableCodeUse expected behaviour", {
                  conceptId = FALSE,
                  sourceConcept = FALSE,
                  excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                 minCellCount = 5,
                  .options = list())
   )
 
@@ -384,7 +366,6 @@ test_that("tableCodeUse expected behaviour", {
                  conceptId = FALSE,
                  sourceConcept = FALSE,
                  excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                 minCellCount = 5,
                  .options = list())
   )
 
@@ -397,7 +378,6 @@ test_that("tableCodeUse expected behaviour", {
                  conceptId = FALSE,
                  sourceConcept = FALSE,
                  excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                 minCellCount = 5,
                  .options = NULL)
   )
 
@@ -410,7 +390,6 @@ test_that("tableCodeUse expected behaviour", {
                  conceptId = FALSE,
                  sourceConcept = FALSE,
                  excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                 minCellCount = 5,
                  .options = list("hola" = 1))
   )
 

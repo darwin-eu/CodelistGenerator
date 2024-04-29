@@ -13,7 +13,6 @@
 #' @param sourceConcept If TRUE source concepts will be displayed.
 #' @param groupColumns Columns to use as group labels. Allowed columns are
 #' `cdm_name` and/or `codelist_name`.
-#' @param minCellCount Counts below which results will be clouded.
 #' @param excludeColumns Columns to drop from the output table.
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::optionsVisOmopTable() shows allowed arguments and
@@ -48,7 +47,6 @@ tableCodeUse <- function(result,
                          sourceConcept = TRUE,
                          groupColumns = NULL,
                          excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                         minCellCount = 5,
                          .options = list()) {
 
   # checks
@@ -78,7 +76,6 @@ tableCodeUse <- function(result,
     sourceConcept = sourceConcept,
     timing = FALSE,
     excludeColumns = excludeColumns,
-    minCellCount = minCellCount,
     .options = .options
   )
 
@@ -101,7 +98,6 @@ tableCodeUse <- function(result,
 #' @param timing If TRUE the timing setting will be displayed.
 #' @param groupColumns Columns to use as group labels. Allowed columns are
 #' `cdm_name`, `cohort_name` and/or `codelist_name`.
-#' @param minCellCount Counts below which results will be clouded.
 #' @param excludeColumns Columns to drop from the output table.
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::optionsVisOmopTable() shows allowed arguments and
@@ -145,7 +141,6 @@ tableCohortCodeUse <- function(result,
                                timing = FALSE,
                                groupColumns = NULL,
                                excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                               minCellCount = 5,
                                .options = list()) {
 
   # checks
@@ -176,7 +171,6 @@ tableCohortCodeUse <- function(result,
     sourceConcept = sourceConcept,
     timing = timing,
     excludeColumns = excludeColumns,
-    minCellCount = minCellCount,
     .options = .options
   )
 
@@ -193,7 +187,6 @@ internalTableCodeUse <- function(result,
                                  sourceConcept,
                                  timing,
                                  excludeColumns,
-                                 minCellCount,
                                  .options) {
   # checks
   checkmate::assertLogical(splitStrata, len = 1, any.missing = FALSE)
@@ -275,8 +268,16 @@ internalTableCodeUse <- function(result,
       x <- x |>
         visOmopResults::addSettings(columns = "timing") |>
         dplyr::mutate(
-          additional_name = paste0(.data$additional_name, " &&& timing"),
-          additional_level = paste0(.data$additional_level, " &&& ", .data$timing),
+          additional_name = dplyr::if_else(
+            .data$additional_name == "overall",
+            "timing",
+            paste0(.data$additional_name, " &&& timing")
+          ),
+          additional_level = dplyr::if_else(
+            .data$additional_level == "overall",
+            .data$timing,
+            paste0(.data$additional_level, " &&& ", .data$timing)
+          )
         ) |>
         dplyr::select(!"timing")
     }
@@ -290,7 +291,6 @@ internalTableCodeUse <- function(result,
     groupColumn = groupColumns,
     type = type,
     renameColumns = renameColumns,
-    minCellCount = minCellCount,
     excludeColumns = excludeColumns,
     .options = .options
   )

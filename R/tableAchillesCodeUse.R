@@ -15,7 +15,6 @@
 #' @param vocabulary If TRUE vocabulary id will be displayed.
 #' @param groupColumns Columns to use as group labels. Allowed columns are
 #' `cdm_name` and/or `codelist_name`.
-#' @param minCellCount Counts below which results will be clouded.
 #' @param excludeColumns Columns to drop from the output table.
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::optionsVisOmopTable() shows allowed arguments and
@@ -43,7 +42,6 @@ tableAchillesCodeUse <- function(result,
                                  vocabulary = TRUE,
                                  groupColumns = NULL,
                                  excludeColumns = c("result_id", "estimate_type"),
-                                 minCellCount = 5,
                                  .options = list()) {
 
   x <- internalTableAchillesResult(
@@ -58,7 +56,6 @@ tableAchillesCodeUse <- function(result,
     groupColumns = groupColumns,
     settings = character(),
     excludeColumns = excludeColumns,
-    minCellCount = minCellCount,
     .options = .options
   )
 
@@ -127,7 +124,6 @@ tableOrphanCodes <- function(result,
                              groupColumns = NULL,
                              settings = character(),
                              excludeColumns = c("result_id", "estimate_type"),
-                             minCellCount = 5,
                              .options = list()) {
 
   checkmate::assertLogical(relationship, len = 1, any.missing = FALSE)
@@ -144,7 +140,6 @@ tableOrphanCodes <- function(result,
     groupColumns = groupColumns,
     settings = settings,
     excludeColumns = excludeColumns,
-    minCellCount = minCellCount,
     .options = .options
   )
 
@@ -162,7 +157,6 @@ internalTableAchillesResult <- function(result,
                                         groupColumns,
                                         settings,
                                         excludeColumns,
-                                        minCellCount,
                                         .options) {
   # checks
   if (inherits(groupColumns, "list")) {
@@ -254,7 +248,6 @@ internalTableAchillesResult <- function(result,
     groupColumn = groupColumns,
     type = type,
     renameColumns = renameColumns,
-    minCellCount = minCellCount,
     excludeColumns = excludeColumns,
     .options = .options
   )

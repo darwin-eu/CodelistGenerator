@@ -100,7 +100,7 @@ test_that("table achilles code use expcted columns", {
                                .options = list())
   expect_true(all(tab6$`[header_level]Record count` == c("400", "<201")))
 })
-test_that("test settings work", {
+test_that("test table orphan codes work", {
   cdm <- mockVocabRef("database")
 
   codes <- getCandidateCodes(
@@ -213,7 +213,7 @@ test_that("test settings work", {
         '[header]CDM name\n[header_level]mock\n[header_level]Record count')))
 
 })
-test_that("table achilles code use expcted behaviour", {
+test_that("expcted behaviour", {
   # mock db
   cdm <- mockVocabRef("database")
 
