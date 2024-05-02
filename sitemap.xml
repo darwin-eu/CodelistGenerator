@@ -109,9 +109,27 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/sourceCodesInUse.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseAchillesCodeUse.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCodeUse.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCohortCodeUse.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseOrphanCodes.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableAchillesCodeUse.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableCodeUse.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableCohortCodeUse.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableOrphanCodes.html</loc>
   </url>
 </urlset>
