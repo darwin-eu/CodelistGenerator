@@ -1,5 +1,7 @@
 # CodelistGenerator 2.2.3.900 (development version)
 * Add function getRelationshipId 
+* Add functions summariseAchillesCodeUse (replaces achillesCodeUse), summariseOrphanCodes (replaces findOrphanCodes), tableAchillesCodeUse, tableCodeUse, tableCohortCodeUse, tableOrphanCodes.
+
 
 # CodelistGenerator 2.2.3
 * Fix for forthcoming breaking change in dependency omopgenerics
@@ -11,7 +13,7 @@
 * Working with omopgenerics
 
 # CodelistGenerator 2.2.0
-* Added functions summariseOrphanCodes, restrictToCodesInUse, sourceCodesInUse.
+* Added functions findOrphanCodes, restrictToCodesInUse, sourceCodesInUse.
 * Speed improvements in getCandidateCodes from doing search in place (e.g. on database side).
 * Dropped explicit support of an Arrow cdm.
 

@@ -33,7 +33,7 @@ test_that("redshift", {
                        searchNonStandard = TRUE,
                        includeDescendants = TRUE,
                        includeAncestor = TRUE))
-  expect(nrow(asthma) > 0)
+  expect_true(nrow(asthma) > 0)
 
   # achilles
   cdm$achilles_results <- cdm$condition_occurrence %>%
@@ -50,25 +50,23 @@ test_that("redshift", {
                                      cdm = cdm)
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
-  expect_equal(as.numeric(result_achilles %>%
-                 dplyr::filter(stringr::str_detect(additional_level, "317009"),
-                               variable_name == "Record count") %>%
-                 dplyr::pull("estimate_value")),
+  expect_equal(result_achilles %>%
+                 dplyr::filter(stringr::str_detect(variable_level, "317009"),
+                               estimate_name == "record_count") %>%
+                 dplyr::pull("estimate_value"),
                result_cdm %>%
-                 dplyr::filter(standard_concept_id == 317009,
-                               group_name == "By concept",
-                               variable_name == "Record count") %>%
-                 dplyr::pull("estimate"))
+                 dplyr::filter(variable_level == 317009,
+                               estimate_name == "record_count") %>%
+                 dplyr::pull("estimate_value"))
 
-  expect_equal(as.numeric(result_achilles %>%
-                 dplyr::filter(stringr::str_detect(additional_level, "257581"),
-                               variable_name == "Record count") %>%
-                 dplyr::pull("estimate_value")),
+  expect_equal(result_achilles %>%
+                 dplyr::filter(stringr::str_detect(variable_level, "257581"),
+                               estimate_name == "record_count") %>%
+                 dplyr::pull("estimate_value"),
                result_cdm %>%
-                 dplyr::filter(standard_concept_id == 257581,
-                               group_name == "By concept",
-                               variable_name == "Record count") %>%
-                 dplyr::pull("estimate"))
+                 dplyr::filter(variable_level == 257581,
+                               estimate_name == "record_count") %>%
+                 dplyr::pull("estimate_value"))
 
 
   cdm$achilles_results <- cdm$condition_occurrence %>%
@@ -88,26 +86,24 @@ test_that("redshift", {
                                      cdm = cdm)
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
-
-  expect_equal(as.numeric(result_achilles %>%
-                 dplyr::filter(stringr::str_detect(additional_level, "317009"),
-                               variable_name == "Person count") %>%
-                 dplyr::pull("estimate_value")),
+  expect_equal(result_achilles %>%
+                 dplyr::filter(stringr::str_detect(variable_level, "317009"),
+                               estimate_name == "person_count") %>%
+                 dplyr::pull("estimate_value"),
                result_cdm %>%
-                 dplyr::filter(standard_concept_id == 317009,
-                               group_name == "By concept",
-                               variable_name == "Person count") %>%
-                 dplyr::pull("estimate"))
+                 dplyr::filter(variable_level == 317009,
+                               estimate_name == "person_count") %>%
+                 dplyr::pull("estimate_value"))
 
-  expect_equal(as.numeric(result_achilles %>%
-                            dplyr::filter(stringr::str_detect(additional_level, "257581"),
-                                          variable_name == "Person count") %>%
-                            dplyr::pull("estimate_value")),
+  expect_equal(result_achilles %>%
+                 dplyr::filter(stringr::str_detect(variable_level, "257581"),
+                               estimate_name == "person_count") %>%
+                 dplyr::pull("estimate_value"),
                result_cdm %>%
-                 dplyr::filter(standard_concept_id == 257581,
-                               group_name == "By concept",
-                               variable_name == "Person count") %>%
-                 dplyr::pull("estimate"))
+                 dplyr::filter(variable_level == 257581,
+                               estimate_name == "person_count") %>%
+                 dplyr::pull("estimate_value"))
+
 
   # edge cases
   # concept id not in achilles

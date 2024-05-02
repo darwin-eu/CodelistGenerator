@@ -510,7 +510,7 @@ test_that("summarise code use - redshift", {
                                               c(18,65),
                                               c(66, 100)))
   # column names
-  expect_true(inherits(results_cohort, "summarised_result"))
+  expect_true(inherits(results, "summarised_result"))
 
   # overall record count
   expect_true(results %>%
@@ -529,7 +529,7 @@ test_that("summarise code use - redshift", {
   expect_true(results %>%
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "overall" &
-                                strata_level == "pverall" &
+                                strata_level == "overall" &
                                 estimate_name == "person_count") %>%
                 dplyr::pull("estimate_value") %>%
                 as.numeric() ==
