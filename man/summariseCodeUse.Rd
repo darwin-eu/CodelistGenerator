@@ -12,7 +12,7 @@ summariseCodeUse(
   byYear = FALSE,
   bySex = FALSE,
   ageGroup = NULL,
-  minCellCount = 5
+  minCellCount = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -31,8 +31,7 @@ person-level counts}
 
 \item{ageGroup}{If not NULL, a list of ageGroup vectors of length two.}
 
-\item{minCellCount}{The minimum number of counts to reported, below which
-results will be suppressed. If 0, all results will be reported.}
+\item{minCellCount}{\verb{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}}
 }
 \value{
 A tibble with results overall and, if specified, by strata

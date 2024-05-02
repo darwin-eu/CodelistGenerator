@@ -349,6 +349,6 @@ mockVocabRef <- function(backend = "database") {
                           cdm = cdm_df,
                           schema = "main",
                           overwrite = TRUE)
-
+  attr(cdm, "write_schema") <- "main"
   cdm
 }

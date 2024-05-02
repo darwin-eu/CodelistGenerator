@@ -13,3 +13,7 @@ extras/SQLite/vocab.sqlite
 tests/testthat/vocab.sqlite
 *.jar
 GiBleed_5.3.zip
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto
