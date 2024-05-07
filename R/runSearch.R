@@ -423,18 +423,7 @@ getMatches <- function(words,
 
       cToSearch <-  paste0("%", workingExclude[j], "%")
       workingConcepts <- workingConcepts %>%
-        dplyr::filter(stringr::str_like(concept_name, .env$cToSearch))
-
-        # if(inherits(workingConcepts, "tbl_sql")){
-        #   workingConcepts <- workingConcepts %>%
-        #     dplyr::filter(dplyr::sql(paste0("concept_name LIKE '%", .env$workingExclude[j], "%'")))
-        # } else {
-        #   workingConcepts <- workingConcepts %>%
-        #     dplyr::filter(stringr::str_detect(
-        #       .data$concept_name,
-        #       .env$workingExclude[j]
-        #     ))
-        # }
+        dplyr::filter(stringr::str_like(.data$concept_name, .env$cToSearch))
 
       }
     }
