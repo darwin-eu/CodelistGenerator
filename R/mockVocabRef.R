@@ -27,11 +27,15 @@
 #' cdm
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
-mockVocabRef <- function(backend = "database") {
+mockVocabRef <- function(backend = "data_frame") {
   errorMessage <- checkmate::makeAssertCollection()
   checkmate::assertTRUE(backend %in% c("database", "data_frame"))
   checkmate::assertTRUE(length(backend) == 1)
   checkmate::reportAssertions(collection = errorMessage)
+
+  if(backend == "database"){
+    rlang::check_installed("duckdb")
+  }
 
   # compulsory tables
   person <- dplyr::tibble(

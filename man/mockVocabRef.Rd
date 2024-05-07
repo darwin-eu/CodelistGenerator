@@ -4,7 +4,7 @@
 \alias{mockVocabRef}
 \title{Generate example vocabulary database}
 \usage{
-mockVocabRef(backend = "database")
+mockVocabRef(backend = "data_frame")
 }
 \arguments{
 \item{backend}{'database' (duckdb) or 'data_frame'}

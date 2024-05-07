@@ -56,12 +56,19 @@ test_that("db without icd10 codes loaded", {
 })
 
 test_that("db without icd10 codes loaded", {
-  cdm <- mockVocabRef()
-  cdm$concept <- cdm$concept %>%
+  backends <- c("database", "data_frame")
+  for (i in seq_along(backends)) {
+    cdm <- mockVocabRef(backend = backends[i])
+    cdm$concept <- cdm$concept %>%
     dplyr::filter(vocabulary_id != "ICD10")
   expect_message(codes <- getICD10StandardCodes(cdm = cdm))
   expect_true(length(codes) == 0)
+  if (backends[[i]] == "database") {
   CDMConnector::cdm_disconnect(cdm)
+  }
+  }
+
+
 })
 
 test_that("expected errors", {
@@ -70,5 +77,5 @@ test_that("expected errors", {
   expect_error(getICD10StandardCodes(cdm = cdm, level = c(
     "Not an ICD10 Chapter"
   )))
-  CDMConnector::cdm_disconnect(cdm)
+
 })
