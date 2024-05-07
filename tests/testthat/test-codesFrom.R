@@ -137,5 +137,20 @@ test_that("test inputs - redshift", {
   )
   expect_true("Influenza" %in% x$influenza$concept_name)
 
+  # check is sorted alphabetically
+  x <- codesFromCohort(
+    cdm = cdm,
+    path =  system.file(package = "CodelistGenerator",
+                        "cohorts2"),
+    withConceptDetails = TRUE
+  )
+
+  expect_equal(sort(x[[1]]$concept_name), x[[1]]$concept_name)
+  expect_equal(sort(x[[2]]$concept_name), x[[2]]$concept_name)
+  expect_equal(sort(x[[3]]$concept_name), x[[3]]$concept_name)
+
   CDMConnector::cdmDisconnect(cdm)
 })
+
+
+
