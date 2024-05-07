@@ -1,6 +1,5 @@
 # Testing against different database platforms
 
-
 test_that("redshift", {
 
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
@@ -34,6 +33,9 @@ test_that("redshift", {
                        includeDescendants = TRUE,
                        includeAncestor = TRUE))
   expect_true(nrow(asthma) > 0)
+
+  # drug ingredients
+  expect_no_error(getDrugIngredientCodes(cdm, "metformin"))
 
   # achilles
   cdm$achilles_results <- cdm$condition_occurrence %>%
@@ -122,3 +124,142 @@ test_that("redshift", {
   CDMConnector::cdm_disconnect(cdm)
 })
 
+test_that("snowflake", {
+
+  testthat::skip_if(Sys.getenv("SNOWFLAKE_SERVER") == "")
+
+  con <- DBI::dbConnect(odbc::odbc(),
+                        SERVER = Sys.getenv("SNOWFLAKE_SERVER"),
+                        UID = Sys.getenv("SNOWFLAKE_USER"),
+                        PWD = Sys.getenv("SNOWFLAKE_PASSWORD"),
+                        DATABASE = Sys.getenv("SNOWFLAKE_DATABASE"),
+                        WAREHOUSE = Sys.getenv("SNOWFLAKE_WAREHOUSE"),
+                        DRIVER = Sys.getenv("SNOWFLAKE_DRIVER"))
+
+  cdm_schema <- strsplit(Sys.getenv("SNOWFLAKE_CDM_SCHEMA"), "\\.")[[1]]
+  write_schema <- strsplit(Sys.getenv("SNOWFLAKE_SCRATCH_SCHEMA"), "\\.")[[1]]
+
+  cdm <- CDMConnector::cdm_from_con(con = con,
+                                    cdm_schema = cdm_schema,
+                                    write_schema = write_schema,
+                                    cdm_name = "snowflake")
+
+
+  # candidate code search
+  expect_no_error(asthma<-getCandidateCodes(cdm,
+                                            keywords = c("asthma",
+                                                         "irritable airways",
+                                                         "lung disease",
+                                                         "respiratory abnormalities",
+                                                         "sleep apnea",
+                                                         "chronic obstructive lung disease",
+                                                         "chronic obstructive lung disease"),
+
+                                            domains = c("condition", "observation"),
+                                            exclude = c("childhood", "juvenile"),
+                                            searchInSynonyms = TRUE,
+                                            searchNonStandard = TRUE,
+                                            includeDescendants = TRUE,
+                                            includeAncestor = TRUE))
+  expect(nrow(asthma) > 0)
+
+  # drug ingredients
+  expect_no_error(getDrugIngredientCodes(cdm, "metformin"))
+
+  # achilles
+  cdm$achilles_results <- cdm$condition_occurrence %>%
+    dplyr::group_by(condition_concept_id) %>%
+    dplyr::tally(name = "count_value") %>%
+    dplyr::rename("stratum_1" = "condition_concept_id") %>%
+    dplyr::mutate(stratum_2 = NA,
+                  stratum_3 = NA,
+                  analysis_id = 401) %>%
+    dplyr::compute()
+
+  asthma <- list(asthma = c(317009, 257581))
+  result_achilles <- achillesCodeUse(asthma,
+                                     cdm = cdm)
+  result_cdm <- summariseCodeUse(asthma, cdm = cdm)
+
+  expect_equal(as.numeric(result_achilles %>%
+                            dplyr::filter(group_level == "317009",
+                                          group_name == "by_concept",
+                                          variable_name == "Record count") %>%
+                            dplyr::pull("estimate_value")),
+               result_cdm %>%
+                 dplyr::filter(standard_concept_id == 317009,
+                               group_name == "By concept",
+                               variable_name == "Record count") %>%
+                 dplyr::pull("estimate"))
+
+  expect_equal(as.numeric(result_achilles %>%
+                            dplyr::filter(group_level == "257581",
+                                          group_name == "by_concept",
+                                          variable_name == "Record count") %>%
+                            dplyr::pull("estimate_value")),
+               result_cdm %>%
+                 dplyr::filter(standard_concept_id == 257581,
+                               group_name == "By concept",
+                               variable_name == "Record count") %>%
+                 dplyr::pull("estimate"))
+
+
+  cdm$achilles_results <- cdm$condition_occurrence %>%
+    dplyr::group_by(person_id, condition_concept_id) %>%
+    dplyr::tally() %>%
+    dplyr::ungroup() %>%
+    dplyr::group_by(condition_concept_id) %>%
+    dplyr::tally(name = "count_value") %>%
+    dplyr::rename("stratum_1" = "condition_concept_id") %>%
+    dplyr::mutate(stratum_2 = NA,
+                  stratum_3 = NA,
+                  analysis_id = 400) %>%
+    CDMConnector::computeQuery()
+
+  asthma <- list(asthma = c(317009, 257581))
+  result_achilles <- achillesCodeUse(asthma,
+                                     cdm = cdm)
+  result_cdm <- summariseCodeUse(asthma, cdm = cdm)
+
+
+  expect_equal(as.numeric(result_achilles %>%
+                            dplyr::filter(group_level == "317009",
+                                          group_name == "by_concept",
+                                          variable_name == "Person count") %>%
+                            dplyr::pull("estimate_value")),
+               result_cdm %>%
+                 dplyr::filter(standard_concept_id == 317009,
+                               group_name == "By concept",
+                               variable_name == "Person count") %>%
+                 dplyr::pull("estimate"))
+
+  expect_equal(as.numeric(result_achilles %>%
+                            dplyr::filter(group_level == "257581",
+                                          group_name == "by_concept",
+                                          variable_name == "Person count") %>%
+                            dplyr::pull("estimate_value")),
+               result_cdm %>%
+                 dplyr::filter(standard_concept_id == 257581,
+                               group_name == "By concept",
+                               variable_name == "Person count") %>%
+                 dplyr::pull("estimate"))
+
+  # edge cases
+  # concept id not in achilles
+  expect_message(achillesCodeUse(list(asthma = 123),
+                                 cdm = cdm))
+
+  # expected errors
+  expect_error(achillesCodeUse(123, #not a named list
+                               cdm = cdm))
+  expect_error(achillesCodeUse(asthma,
+                               cdm = "cdm")) # not a cdm
+  expect_error(achillesCodeUse(asthma,
+                               cdm = cdm,
+                               countBy = "not an option"))
+  expect_error(achillesCodeUse(asthma,
+                               cdm = cdm,
+                               minCellCount = "not a number"))
+
+  CDMConnector::cdm_disconnect(cdm)
+})

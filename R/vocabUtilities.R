@@ -1,4 +1,4 @@
-# Copyright 2023 DARWIN EU®
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of IncidencePrevalence
 #
@@ -390,14 +390,20 @@ getDescendantsOnly <- function(cdm, conceptId, ingredientRange, doseForm) {
 }
 
 getDescendantsAndAncestor <- function(cdm, conceptId, ingredientRange, doseForm) {
+  conceptIdDbTable <- omopgenerics::uniqueTableName()
+  cdm <- omopgenerics::insertTable(cdm = cdm,
+                            name = conceptIdDbTable,
+                            table = dplyr::tibble(ancestor_concept_id = as.integer(conceptId)),
+                            overwrite = TRUE)
 
   descendants <- cdm$concept_ancestor %>%
-    dplyr::inner_join(dplyr::tibble(ancestor_concept_id = as.integer(conceptId)),
-                      by = "ancestor_concept_id",
-                      copy = TRUE) %>%
+    dplyr::inner_join(cdm[[conceptIdDbTable]],
+                      by = "ancestor_concept_id") %>%
     dplyr::rename("concept_id" = "descendant_concept_id") %>%
     dplyr::left_join(cdm$concept,
-                     by = "concept_id")
+                     by = "concept_id") %>%
+    dplyr::compute()
+  CDMConnector::dropTable(cdm, conceptIdDbTable)
 
   descendants <- addIngredientCount(cdm = cdm, concepts = descendants) %>%
     dplyr::filter(.data$ingredient_count >= !!ingredientRange[1],
