@@ -1,4 +1,4 @@
-# Copyright 2023 DARWIN EU®
+# Copyright 2024 DARWIN EU®
 #
 # This file is part of IncidencePrevalence
 #
@@ -421,16 +421,9 @@ getMatches <- function(words,
     for (j in seq_along(workingExclude)) {
       if (nchar(workingExclude[j]) >= 1) {
 
-        if(inherits(workingConcepts, "tbl_sql")){
-          workingConcepts <- workingConcepts %>%
-            dplyr::filter(dplyr::sql(paste0("concept_name LIKE '%", .env$workingExclude[j], "%'")))
-        } else {
-          workingConcepts <- workingConcepts %>%
-            dplyr::filter(stringr::str_detect(
-              .data$concept_name,
-              .env$workingExclude[j]
-            ))
-        }
+      cToSearch <-  paste0("%", workingExclude[j], "%")
+      workingConcepts <- workingConcepts %>%
+        dplyr::filter(stringr::str_like(.data$concept_name, .env$cToSearch))
 
       }
     }

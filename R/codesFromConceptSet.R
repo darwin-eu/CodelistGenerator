@@ -1,4 +1,4 @@
-# Copyright 2023 DARWIN EU (C)
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of CodelistGenerator
 #
@@ -299,7 +299,13 @@ addDetails <- function(conceptList, cdm){
    conceptList <- split(
     x = conceptList %>% dplyr::select(!"concept_set"),
     f = as.factor(conceptList$concept_set)
-  )}
+   )
+   }
+
+  for(i in seq_along(conceptList)){
+    conceptList[[i]] <- conceptList[[i]] %>%
+      dplyr::arrange(.data$concept_name)
+  }
 
    return(conceptList)
 
