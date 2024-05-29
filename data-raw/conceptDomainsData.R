@@ -48,6 +48,5 @@ conceptDomainsData <- dplyr::tibble(domain_id = c("drug","condition",
                   )
   )
 
-usethis::use_data(conceptDomainsData, overwrite = TRUE)
+usethis::use_data(conceptDomainsData, overwrite = TRUE, internal = TRUE)
 
-usethis::use_data(conceptDomainsData, overwrite = TRUE)
