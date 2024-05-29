@@ -167,7 +167,7 @@ runSearch <- function(keywords,
       dplyr::select("concept_id") %>%
       dplyr::distinct() %>%
       dplyr::left_join(workingConcept,
-                       by = "concept_id", copy = TRUE
+                       by = "concept_id"
       )
 
     candidateCodes <- dplyr::union_all(
@@ -230,7 +230,7 @@ runSearch <- function(keywords,
           candidateCodes <- candidateCodes %>%
             dplyr::anti_join(excludeCodes %>%
                                dplyr::select("concept_id"),
-                             by = "concept_id", copy = TRUE
+                             by = "concept_id"
             )|>
             dplyr::compute()
         }
@@ -476,13 +476,13 @@ addAncestor <- function(workingCandidateCodes,
     dplyr::select("concept_id") %>%
     dplyr::rename("descendant_concept_id" = "concept_id") %>%
     dplyr::left_join(conceptAncestorDf,
-                     by = "descendant_concept_id", copy = TRUE
+                     by = "descendant_concept_id"
     ) %>%
     dplyr::filter(.data$min_levels_of_separation == "1") %>%
     dplyr::select("ancestor_concept_id") %>%
     dplyr::rename("concept_id" = "ancestor_concept_id") %>%
     dplyr::left_join(conceptDf,
-                     by = "concept_id", copy = TRUE
+                     by = "concept_id"
     )
 
   # keep if not already in candidateCodes
