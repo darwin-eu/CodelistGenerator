@@ -2,7 +2,7 @@
 
 test_that("redshift", {
 
-  testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
+  testthat::skip_on_cran()
 
   db <-  DBI::dbConnect(RPostgres::Redshift(),
                         dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
@@ -126,8 +126,7 @@ test_that("redshift", {
 })
 
 test_that("snowflake", {
-
-  testthat::skip_if(Sys.getenv("SNOWFLAKE_SERVER") == "")
+  testthat::skip_on_cran()
 
   con <- DBI::dbConnect(odbc::odbc(),
                         SERVER = Sys.getenv("SNOWFLAKE_SERVER"),

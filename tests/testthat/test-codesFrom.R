@@ -97,7 +97,8 @@ test_that("test inputs - mock", {
 })
 
 test_that("test inputs - redshift", {
-  testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
+
+  testthat::skip_on_cran()
 
   db <-  DBI::dbConnect(RPostgres::Redshift(),
                         dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
