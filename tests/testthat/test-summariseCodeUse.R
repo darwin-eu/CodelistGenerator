@@ -487,7 +487,7 @@ test_that("summarise cohort code use - eunomia", {
 
 test_that("summarise code use - redshift", {
 
-  testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
+  testthat::skip_on_cran()
 
   db <-  DBI::dbConnect(RPostgres::Redshift(),
                  dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),

@@ -33,9 +33,7 @@ test_that("tests with mock db", {
 
 test_that("sql server with achilles", {
 
-  testthat::skip_if(Sys.getenv("CDM5_SQL_SERVER_SERVER") == "")
-  testthat::skip_if(Sys.getenv("SQL_SERVER_DRIVER") == "")
-  testthat::skip_if(packageVersion("CDMConnector") <= "1.2.0")
+  testthat::skip_on_cran()
 
   db <- DBI::dbConnect(odbc::odbc(),
                        Driver   = Sys.getenv("SQL_SERVER_DRIVER"),
