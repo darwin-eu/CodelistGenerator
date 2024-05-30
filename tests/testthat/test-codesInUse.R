@@ -35,6 +35,8 @@ test_that("sql server with achilles", {
 
   testthat::skip_on_cran()
 
+  testthat::skip_on_ci()
+
   db <- DBI::dbConnect(odbc::odbc(),
                        Driver   = Sys.getenv("SQL_SERVER_DRIVER"),
                        Server   = Sys.getenv("CDM5_SQL_SERVER_SERVER"),
