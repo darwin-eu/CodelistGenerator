@@ -403,7 +403,6 @@ getDescendantsAndAncestor <- function(cdm, conceptId, ingredientRange, doseForm)
     dplyr::left_join(cdm$concept,
                      by = "concept_id") %>%
     dplyr::compute()
-  CDMConnector::dropTable(cdm, conceptIdDbTable)
 
   descendants <- addIngredientCount(cdm = cdm, concepts = descendants) %>%
     dplyr::filter(.data$ingredient_count >= !!ingredientRange[1],
@@ -455,6 +454,8 @@ descendants$ancestor_concept_id <- stringr::str_replace_all(
                                      conceptDoseForms = descendantDoseForms,
                                      doseForm = doseForm)
   }
+
+  CDMConnector::dropTable(cdm, conceptIdDbTable)
 
   # nb conceptId will also be a descendant of itself
   return(descendants)
@@ -520,7 +521,7 @@ addIngredientCount <- function(cdm, concepts) {
                         dplyr::select("concept_id"),
                by = c("ancestor_concept_id" = "concept_id"))
 
- ingredient_count <- concepts%>%
+ ingredient_count <- concepts %>%
    dplyr::select("concept_id") %>%
    dplyr::distinct() %>%
    dplyr::left_join(ingredient_ancestor,

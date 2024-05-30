@@ -364,12 +364,17 @@ formatConceptList <- function(cdm, conceptListTable) {
           "descendant_concept_id"
         ) %>%
         dplyr::mutate(concept_id = as.integer(.data$concept_id)) %>%
-        dplyr::inner_join(
+        dplyr::right_join(
           cdm[[conceptListTable]] %>%
             dplyr::mutate(concept_id = as.integer(.data$concept_id)) %>%
             dplyr::filter(.data$include_descendants == TRUE),
           by = "concept_id"
         ) %>%
+        dplyr::mutate(descendant_concept_id = dplyr::if_else(
+          # in case concept is not in ancestor table
+          # (even though it should be)
+          is.na(.data$descendant_concept_id),
+          .data$concept_id, .data$descendant_concept_id)) %>%
         dplyr::select(-"concept_id") %>%
         dplyr::rename("concept_id" = "descendant_concept_id")
     ) %>%
