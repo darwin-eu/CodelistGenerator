@@ -51,6 +51,17 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: Print environment variables
+        run: |
+          echo "DB Host: $CDM5_REDSHIFT_HOST"
+          echo "DB User: $CDM5_REDSHIFT_USER"
+          echo "DB Name: $CDM5_REDSHIFT_DBNAME"
+
+      - name: Check network access
+        run: |
+          ping -c 4 $CDM5_REDSHIFT_HOST
+          nslookup $CDM5_REDSHIFT_HOST
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
