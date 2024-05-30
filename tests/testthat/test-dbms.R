@@ -210,7 +210,7 @@ test_that("snowflake", {
     dplyr::mutate(stratum_2 = NA,
                   stratum_3 = NA,
                   analysis_id = 400) %>%
-    CDMConnector::computeQuery()
+    dplyr::compute()
 
   asthma <- list(asthma = c(317009, 257581))
   result_achilles <- summariseAchillesCodeUse(asthma,

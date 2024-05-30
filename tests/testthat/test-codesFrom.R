@@ -23,7 +23,7 @@ test_that("test inputs - mock", {
                                    "concepts_for_mock")
   ))
   # codesFromConceptSet won´t work with cohorts
-  expect_error( codesFromConceptSet(
+  expect_error(codesFromConceptSet(
     cdm = cdm, path =  system.file(package = "CodelistGenerator",
                                    "cohorts_for_mock")
   ))

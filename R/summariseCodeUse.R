@@ -254,18 +254,39 @@ getCodeUse <- function(x,
                    call = call)
   }
 
-  intermediateTable <- omopgenerics::uniqueTableName()
-
-  codes <- dplyr::tibble(concept_id = x[[1]]) %>%
+  tableCodelist <- omopgenerics::uniqueTableName()
+  cdm <- omopgenerics::insertTable(cdm = cdm,
+                            name = tableCodelist,
+                            table = dplyr::tibble(concept_id = x[[1]]),
+                            overwrite = TRUE,
+                            temporary = FALSE)
+  cdm[[tableCodelist]] <- cdm[[tableCodelist]] %>%
     dplyr::left_join(
       cdm[["concept"]] %>% dplyr::select("concept_id", "domain_id"),
-      by = "concept_id",
-      copy = TRUE)
+      by = "concept_id")
 
-  codes <- codes %>% addDomainInfo(cdm = cdm)
 
-  records <- getRelevantRecords(codes = codes,
-                                cdm = cdm,
+  tableDomainsData <- omopgenerics::uniqueTableName()
+  cdm <- omopgenerics::insertTable(cdm = cdm,
+                                   name = tableDomainsData,
+                                   table = conceptDomainsData,
+                                   overwrite = TRUE,
+                                   temporary = FALSE)
+
+  cdm[[tableCodelist]] <- cdm[[tableCodelist]] %>%
+    dplyr::mutate(domain_id = tolower(.data$domain_id)) |>
+    dplyr::left_join(cdm[[tableDomainsData]],
+                     by = "domain_id") |>
+    dplyr::compute(name = tableCodelist,
+                   temporary = FALSE,
+                   overwrite = TRUE)
+
+  CDMConnector::dropTable(cdm = cdm, name = tableDomainsData)
+  cdm[[tableDomainsData]] <- NULL
+
+  intermediateTable <- omopgenerics::uniqueTableName()
+  records <- getRelevantRecords(cdm = cdm,
+                                tableCodelist = tableCodelist,
                                 cohortTable = cohortTable,
                                 cohortId = cohortId,
                                 timing = timing,
@@ -332,82 +353,84 @@ getCodeUse <- function(x,
 
   return(codeCounts)
 }
+#
+# addDomainInfo <- function(codes,
+#                           cdm) {
+#
+#   codes <- codes %>%
+#     dplyr::mutate(domain_id = tolower(.data$domain_id)) %>%
+#     dplyr::mutate(table_name =
+#                     dplyr::case_when(
+#                       stringr::str_detect(domain_id,"condition") ~ "condition_occurrence",
+#                       stringr::str_detect(domain_id,"drug") ~ "drug_exposure",
+#                       stringr::str_detect(domain_id,"observation") ~ "observation",
+#                       stringr::str_detect(domain_id,"measurement") ~ "measurement",
+#                       stringr::str_detect(domain_id,"visit") ~ "visit_occurrence",
+#                       stringr::str_detect(domain_id,"procedure") ~ "procedure_occurrence",
+#                       stringr::str_detect(domain_id,"device") ~ "device_exposure"
+#                     )
+#     ) %>%
+#     dplyr::mutate(standard_concept_id_name =
+#                     dplyr::case_when(
+#                       stringr::str_detect(domain_id,"condition") ~ "condition_concept_id",
+#                       stringr::str_detect(domain_id,"drug") ~ "drug_concept_id",
+#                       stringr::str_detect(domain_id,"observation") ~ "observation_concept_id",
+#                       stringr::str_detect(domain_id,"measurement") ~ "measurement_concept_id",
+#                       stringr::str_detect(domain_id,"visit") ~ "visit_concept_id",
+#                       stringr::str_detect(domain_id,"procedure") ~ "procedure_concept_id",
+#                       stringr::str_detect(domain_id,"device") ~ "device_concept_id"
+#                     )
+#     ) %>%
+#     dplyr::mutate(source_concept_id_name =
+#                     dplyr::case_when(
+#                       stringr::str_detect(domain_id,"condition") ~ "condition_source_concept_id",
+#                       stringr::str_detect(domain_id,"drug") ~ "drug_source_concept_id",
+#                       stringr::str_detect(domain_id,"observation") ~ "observation_source_concept_id",
+#                       stringr::str_detect(domain_id,"measurement") ~ "measurement_source_concept_id",
+#                       stringr::str_detect(domain_id,"visit") ~ "visit_source_concept_id",
+#                       stringr::str_detect(domain_id,"procedure") ~ "procedure_source_concept_id",
+#                       stringr::str_detect(domain_id,"device") ~ "device_source_concept_id"
+#                     )
+#     ) %>%
+#     dplyr::mutate(date_name =
+#                     dplyr::case_when(
+#                       stringr::str_detect(domain_id,"condition") ~ "condition_start_date",
+#                       stringr::str_detect(domain_id,"drug") ~ "drug_exposure_start_date",
+#                       stringr::str_detect(domain_id,"observation") ~ "observation_date",
+#                       stringr::str_detect(domain_id,"measurement") ~ "measurement_date",
+#                       stringr::str_detect(domain_id,"visit") ~ "visit_start_date",
+#                       stringr::str_detect(domain_id,"procedure") ~ "procedure_date",
+#                       stringr::str_detect(domain_id,"device") ~ "device_exposure_start_date"
+#                     )
+#     )
+#
+#   unsupported_domains <- codes %>%
+#     dplyr::filter(!is.na(.data$domain_id)) %>%
+#     dplyr::filter(is.na(.data$table_name)) %>%
+#     dplyr::pull("domain_id")
+#
+#   if(length(unsupported_domains)>0){
+#     cli::cli_warn("Concepts included from non-supported domains
+#                    ({unsupported_domains})")
+#   }
+#
+#   return(codes)
+#
+# }
 
-addDomainInfo <- function(codes,
-                          cdm) {
 
-  codes <- codes %>%
-    dplyr::mutate(domain_id = tolower(.data$domain_id)) %>%
-    dplyr::mutate(table_name =
-                    dplyr::case_when(
-                      stringr::str_detect(domain_id,"condition") ~ "condition_occurrence",
-                      stringr::str_detect(domain_id,"drug") ~ "drug_exposure",
-                      stringr::str_detect(domain_id,"observation") ~ "observation",
-                      stringr::str_detect(domain_id,"measurement") ~ "measurement",
-                      stringr::str_detect(domain_id,"visit") ~ "visit_occurrence",
-                      stringr::str_detect(domain_id,"procedure") ~ "procedure_occurrence",
-                      stringr::str_detect(domain_id,"device") ~ "device_exposure"
-                    )
-    ) %>%
-    dplyr::mutate(standard_concept_id_name =
-                    dplyr::case_when(
-                      stringr::str_detect(domain_id,"condition") ~ "condition_concept_id",
-                      stringr::str_detect(domain_id,"drug") ~ "drug_concept_id",
-                      stringr::str_detect(domain_id,"observation") ~ "observation_concept_id",
-                      stringr::str_detect(domain_id,"measurement") ~ "measurement_concept_id",
-                      stringr::str_detect(domain_id,"visit") ~ "visit_concept_id",
-                      stringr::str_detect(domain_id,"procedure") ~ "procedure_concept_id",
-                      stringr::str_detect(domain_id,"device") ~ "device_concept_id"
-                    )
-    ) %>%
-    dplyr::mutate(source_concept_id_name =
-                    dplyr::case_when(
-                      stringr::str_detect(domain_id,"condition") ~ "condition_source_concept_id",
-                      stringr::str_detect(domain_id,"drug") ~ "drug_source_concept_id",
-                      stringr::str_detect(domain_id,"observation") ~ "observation_source_concept_id",
-                      stringr::str_detect(domain_id,"measurement") ~ "measurement_source_concept_id",
-                      stringr::str_detect(domain_id,"visit") ~ "visit_source_concept_id",
-                      stringr::str_detect(domain_id,"procedure") ~ "procedure_source_concept_id",
-                      stringr::str_detect(domain_id,"device") ~ "device_source_concept_id"
-                    )
-    ) %>%
-    dplyr::mutate(date_name =
-                    dplyr::case_when(
-                      stringr::str_detect(domain_id,"condition") ~ "condition_start_date",
-                      stringr::str_detect(domain_id,"drug") ~ "drug_exposure_start_date",
-                      stringr::str_detect(domain_id,"observation") ~ "observation_date",
-                      stringr::str_detect(domain_id,"measurement") ~ "measurement_date",
-                      stringr::str_detect(domain_id,"visit") ~ "visit_start_date",
-                      stringr::str_detect(domain_id,"procedure") ~ "procedure_date",
-                      stringr::str_detect(domain_id,"device") ~ "device_exposure_start_date"
-                    )
-    )
-
-  unsupported_domains <- codes %>%
-    dplyr::filter(!is.na(.data$domain_id)) %>%
-    dplyr::filter(is.na(.data$table_name)) %>%
-    dplyr::pull("domain_id")
-
-  if(length(unsupported_domains)>0){
-    cli::cli_warn("Concepts included from non-supported domains
-                   ({unsupported_domains})")
-  }
-
-  return(codes)
-
-}
-
-
-getRelevantRecords <- function(codes,
-                               cdm,
+getRelevantRecords <- function(cdm,
+                               tableCodelist,
                                cohortTable,
                                cohortId,
                                timing,
                                intermediateTable){
 
-  tableName <- purrr::discard(unique(codes$table_name), is.na)
-  standardConceptIdName <- purrr::discard(unique(codes$standard_concept_id_name), is.na)
-  sourceConceptIdName <- purrr::discard(unique(codes$source_concept_id_name), is.na)
+  codes <- cdm[[tableCodelist]] |> dplyr::collect()
+
+  tableName <- purrr::discard(unique(codes$table), is.na)
+  standardConceptIdName <- purrr::discard(unique(codes$standard_concept), is.na)
+  sourceConceptIdName <- purrr::discard(unique(codes$source_concept), is.na)
   dateName <- purrr::discard(unique(codes$date_name), is.na)
 
   if(!is.null(cohortTable)){
@@ -452,7 +475,7 @@ getRelevantRecords <- function(codes,
       dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[1]],
                     "source_concept_id" = .env$sourceConceptIdName[[1]]) %>%
       dplyr::inner_join(codes %>%
-                          dplyr::filter(.data$table_name == tableName[[1]]) %>%
+                          dplyr::filter(.data$table == !!tableName[[1]]) %>%
                           dplyr::select("concept_id", "domain_id"),
                         by = c("standard_concept_id"="concept_id"),
                         copy = TRUE) %>%
@@ -491,7 +514,7 @@ getRelevantRecords <- function(codes,
         dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[i+1]],
                       "source_concept_id" = .env$sourceConceptIdName[[i+1]]) %>%
         dplyr::inner_join(codes %>%
-                            dplyr::filter(.data$table_name == tableName[[i+1]]) %>%
+                            dplyr::filter(.data$table == tableName[[i+1]]) %>%
                             dplyr::select("concept_id", "domain_id"),
                           by = c("standard_concept_id"="concept_id"),
                           copy = TRUE)
