@@ -122,8 +122,248 @@ test_that("redshift", {
                                cdm = cdm,
                                countBy = "not an option"))
 
-  CDMConnector::cdm_disconnect(cdm)
+
+
+  # test summariseCodeUse
+  asthma <- list(asthma = c(317009, 257581))
+
+  results <- summariseCodeUse(asthma,
+                              cdm = cdm,
+                              byYear = TRUE,
+                              bySex = TRUE,
+                              ageGroup = list(c(0,17),
+                                              c(18,65),
+                                              c(66, 100)))
+  # column names
+  expect_true(inherits(results, "summarised_result"))
+
+  # overall record count
+  expect_true(results %>%
+                dplyr::filter(variable_name == "overall" &
+                                strata_name == "overall" &
+                                strata_level == "overall",
+                              estimate_name == "record_count") %>%
+                dplyr::pull("estimate_value") %>%
+                as.numeric() ==
+                cdm$condition_occurrence %>%
+                dplyr::filter(condition_concept_id %in%  !!asthma[[1]]) %>%
+                dplyr::tally() %>%
+                dplyr::pull("n"))
+
+  # overall person count
+  expect_true(results %>%
+                dplyr::filter(variable_name == "overall" &
+                                strata_name == "overall" &
+                                strata_level == "overall" &
+                                estimate_name == "person_count") %>%
+                dplyr::pull("estimate_value") %>%
+                as.numeric() ==
+                cdm$condition_occurrence %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
+                dplyr::select("person_id") %>%
+                dplyr::distinct() %>%
+                dplyr::tally() %>%
+                dplyr::pull("n"))
+
+  # by year
+  # overall record count
+  expect_true(results %>%
+                dplyr::filter(variable_name == "overall" &
+                                strata_name == "year" &
+                                strata_level == "2008",
+                              estimate_name == "record_count") %>%
+                dplyr::pull("estimate_value") %>%
+                as.numeric() ==
+                cdm$condition_occurrence %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
+                dplyr::filter(year(condition_start_date) == 2008) %>%
+                dplyr::tally() %>%
+                dplyr::pull("n"))
+
+  # overall person count
+  expect_true(results %>%
+                dplyr::filter(variable_name == "overall" &
+                                strata_name == "year" &
+                                strata_level == "2008",
+                              estimate_name == "person_count") %>%
+                dplyr::pull("estimate_value") %>%
+                as.numeric() ==
+                cdm$condition_occurrence %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
+                dplyr::filter(year(condition_start_date) == 2008) %>%
+                dplyr::select("person_id") %>%
+                dplyr::distinct() %>%
+                dplyr::tally() %>%
+                dplyr::pull("n"))
+
+  # by age group and sex
+  # overall record count
+  expect_true(results %>%
+                dplyr::filter(variable_name == "overall" &
+                                strata_name == "sex" &
+                                strata_level == "Male",
+                              estimate_name == "record_count") %>%
+                dplyr::pull("estimate_value") %>%
+                as.numeric() ==
+                cdm$condition_occurrence %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
+                PatientProfiles::addSex() %>%
+                dplyr::filter(sex == "Male") %>%
+                dplyr::tally() %>%
+                dplyr::pull("n"))
+
+  expect_true(results %>%
+                dplyr::filter(variable_name == "overall" &
+                                strata_name == "age_group &&& sex" &
+                                strata_level == "18 to 65 &&& Male",
+                              estimate_name == "record_count") %>%
+                dplyr::pull("estimate_value") %>%
+                as.numeric() ==
+                cdm$condition_occurrence %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
+                PatientProfiles::addAge(indexDate = "condition_start_date") %>%
+                PatientProfiles::addSex() %>%
+                dplyr::filter(sex == "Male" &
+                                age >= "18" &
+                                age <= "65") %>%
+                dplyr::tally() %>%
+                dplyr::pull("n"))
+
+  # overall person count
+  expect_true(results %>%
+                dplyr::filter(variable_name == "overall" &
+                                strata_name == "age_group &&& sex" &
+                                strata_level == "18 to 65 &&& Male",
+                              estimate_name == "person_count") %>%
+                dplyr::pull("estimate_value") %>%
+                as.numeric() ==
+                cdm$condition_occurrence %>%
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
+                PatientProfiles::addAge(indexDate = "condition_start_date") %>%
+                PatientProfiles::addSex() %>%
+                dplyr::filter(sex == "Male" &
+                                age >= "18" &
+                                age <= "65") %>%
+                dplyr::select("person_id") %>%
+                dplyr::distinct() %>%
+                dplyr::tally() %>%
+                dplyr::pull("n"))
+
+
+
+
+  results <- summariseCodeUse(asthma,
+                              cdm = cdm, countBy = "person",
+                              byYear = FALSE,
+                              bySex = FALSE,
+                              ageGroup = NULL)
+  expect_true(nrow(results %>%
+                     dplyr::filter(estimate_name == "person_count")) > 0)
+  expect_true(nrow(results %>%
+                     dplyr::filter(estimate_name == "record_count")) == 0)
+
+  results <- summariseCodeUse(asthma,
+                              cdm = cdm, countBy = "record",
+                              byYear = FALSE,
+                              bySex = FALSE,
+                              ageGroup = NULL)
+  expect_true(nrow(results %>%
+                     dplyr::filter(estimate_name == "person_count")) == 0)
+  expect_true(nrow(results %>%
+                     dplyr::filter(estimate_name == "record_count")) > 0)
+
+
+  # domains covered
+
+  # condition
+  expect_true(nrow(summariseCodeUse(list(cs = c(317009)),
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
+
+  # visit
+  expect_true(nrow(summariseCodeUse(list(cs = 9201),
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
+
+  # drug
+  expect_true(nrow(summariseCodeUse(list(cs = 19071493),
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
+
+  # measurement
+  expect_true(nrow(summariseCodeUse(list(cs = 2212542),
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
+
+  # procedure and condition
+  expect_true(nrow(summariseCodeUse(list(cs = c(4261206,317009)),
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
+
+  # no records
+  expect_message(results <- summariseCodeUse(list(cs = c(999999)),
+                                             cdm = cdm,
+                                             byYear = FALSE,
+                                             bySex = FALSE,
+                                             ageGroup = NULL))
+  expect_true(nrow(results) == 0)
+
+
+
+  # expected errors
+  expect_error(summariseCodeUse(list(cs = "not a concept"),
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = NULL))
+  expect_error(summariseCodeUse(list(cs = 123),
+                                cdm = "not a cdm",
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = NULL))
+  expect_error(summariseCodeUse(list(cs = 123),
+                                cdm = cdm,
+                                byYear = "Maybe",
+                                bySex = FALSE,
+                                ageGroup = NULL))
+  expect_error(summariseCodeUse(list(cs = 123),
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = "Maybe",
+                                ageGroup = NULL))
+  expect_error(summariseCodeUse(list(cs = 123),
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = 25))
+  expect_error(summariseCodeUse(list(cs = 123),
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = list(c(18,17))))
+  expect_error(summariseCodeUse(list(cs = 123),
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = list(c(0,17),
+                                                c(15,20))))
+
+
+  CDMConnector::cdmDisconnect(cdm)
+
+
 })
+
 
 test_that("snowflake", {
   testthat::skip_on_cran()
