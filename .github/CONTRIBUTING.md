@@ -30,7 +30,7 @@ devtools::test()
 Code to add new functionality should be accompanied by tests. Code coverage can be checked using: 
 ``` r
 # note, you may first have to detach the package
-# detach("package:IncidencePrevalence", unload=TRUE)
+# detach("package:CodelistGenerator", unload=TRUE)
 devtools::test_coverage()
 ```
 

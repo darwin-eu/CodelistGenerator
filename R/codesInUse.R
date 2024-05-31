@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU (C)
+# Copyright 2024 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #

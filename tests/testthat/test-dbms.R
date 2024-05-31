@@ -15,6 +15,9 @@ test_that("redshift", {
                                     cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
                                     write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
+  cdm$concept <- cdm$concept |>
+    dplyr::mutate(concept_id = as.integer64(concept_id)) |>
+    dplyr::compute()
 
   # candidate code search
   expect_no_error(asthma<-getCandidateCodes(cdm,
@@ -121,6 +124,16 @@ test_that("redshift", {
   expect_error(summariseAchillesCodeUse(asthma,
                                cdm = cdm,
                                countBy = "not an option"))
+
+  # working concept set example with mock
+  x <- codesFromConceptSet(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "concepts_dbms")
+  )
+  expect_true(x$oa_no_desc == 4079750)
+  expect_true(!761485 %in% x$oa_no_desc)
+  expect_true(761485 %in% x$oa_desc)
+
 
   CDMConnector::cdm_disconnect(cdm)
 })

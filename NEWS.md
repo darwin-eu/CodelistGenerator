@@ -1,7 +1,6 @@
-# CodelistGenerator 2.2.3.900 (development version)
+# CodelistGenerator 3.0
 * Add function getRelationshipId 
 * Add functions summariseAchillesCodeUse (replaces achillesCodeUse), summariseOrphanCodes (replaces findOrphanCodes), tableAchillesCodeUse, tableCodeUse, tableCohortCodeUse, tableOrphanCodes.
-
 
 # CodelistGenerator 2.2.3
 * Fix for forthcoming breaking change in dependency omopgenerics
