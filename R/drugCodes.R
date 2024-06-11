@@ -150,9 +150,11 @@ getATCCodes <- function(cdm,
           dplyr::select(!"ancestor_concept_id")
       }
 
-      names(atc_descendants)[i] <- workingName
+      names(atc_descendants)[i] <- paste0(names(atc_descendants)[i], "_", workingName)
     }
   }
+
+  names(atc_descendants) <- nonDuplicateEntries(names(atc_descendants))
 
   if(isFALSE(withConceptDetails)){
   atc_descendants <- omopgenerics::newCodelist(atc_descendants)
@@ -331,3 +333,27 @@ fetchBatchedDescendants <- function(cdm,
 
   return(descendants)
 }
+
+nonDuplicateEntries <- function(x){
+  x_df <- as.data.frame(x)
+  names(x_df) <- c("name")
+  x_df <- x_df %>%
+    dplyr::mutate(name_tidy = gsub("^.*?_","",.data$name))
+
+  x_count <- x_df %>%
+    dplyr::group_by(.data$name_tidy) %>%
+    dplyr::tally()
+
+  name_fin <- x_df %>%
+    dplyr::left_join(x_count, by = "name_tidy") %>%
+    dplyr::mutate(
+      name_fin = dplyr::case_when(
+        (n>1) ~ .data$name,
+        T ~ .data$name_tidy
+      )
+    ) %>%
+    dplyr::pull("name_fin")
+
+  return(name_fin)
+}
+
