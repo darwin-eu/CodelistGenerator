@@ -292,8 +292,10 @@ getDrugIngredientCodes <- function(cdm,
           dplyr::select(!"ancestor_concept_id")
       }
 
-      names(ingredientCodes)[[i]] <- workingName
+      names(ingredientCodes)[[i]] <- paste0(names(ingredientCodes)[i], "_", workingName)
     }
+
+    names(ingredientCodes) <- nonDuplicateEntries(names(ingredientCodes))
 
     if(isFALSE(withConceptDetails)){
     ingredientCodes <- omopgenerics::newCodelist(ingredientCodes)
