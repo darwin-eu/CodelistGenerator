@@ -6,7 +6,7 @@ test_that("getATCCodes working", {
   atcCodes <- getATCCodes(cdm, level = "ATC 1st")
   expect_true("codelist" %in% class(atcCodes))
   expect_true(all(atcCodes[[1]] == c(12,13)))
-  expect_true(c("alimentary_tract_and_metabolism") %in%
+  expect_true(c("1234_alimentary_tract_and_metabolism") %in%
                 names(atcCodes))
 
   atcCodes2 <- getATCCodes(cdm, level = "ATC 1st",
@@ -53,7 +53,7 @@ test_that("getDrugIngredientCodes working", {
 
     ing_codes2 <- getDrugIngredientCodes(cdm, name = "Adalimumab")
     expect_true(all(ing_codes2[[1]] == c(10,13)))
-    expect_true(names(ing_codes2) == "adalimumab")
+    expect_true(names(ing_codes2) == "1234_adalimumab")
 
     ing_codes3 <- getDrugIngredientCodes(cdm,
                                          name = "Adalimumab",
@@ -81,10 +81,10 @@ test_that("getDrugIngredientCodes working", {
                                              ingredientRange = c(2,Inf))
 
     expect_equal(ing_codes_all, ing_codes)
-    expect_true(all(c(10) %in% ing_codes_mono$adalimumab))
-    expect_null(ing_codes_mono$other_ingredient)
-    expect_true(all(c(13) %in% ing_codes_comb$adalimumab))
-    expect_true(all(c(13) %in% ing_codes_comb$other_ingredient))
+    expect_true(all(c(10) %in% ing_codes_mono$`1234_adalimumab`))
+    expect_null(ing_codes_mono$`1234_other_ingredient`)
+    expect_true(all(c(13) %in% ing_codes_comb$`1234_adalimumab`))
+    expect_true(all(c(13) %in% ing_codes_comb$`1234_other_ingredient`))
 
     expect_error(getDrugIngredientCodes(cdm,
                                         ingredientRange = c(3,2)))
@@ -176,7 +176,7 @@ test_that("no duplicate names example 1",{
       "ICD10 Chapter", "ICD10 SubChapter",
       "ICD Code","ICD Code", "Ingredient"
     ),
-    concept_code = "1234",
+    concept_code = as.character(c(2:20)),
     valid_start_date = NA,
     valid_end_date = NA,
     invalid_reason =
@@ -403,8 +403,8 @@ test_that("no duplicate names example 1",{
                2
               )
 
-  expect_equal(names(ingredient_list) |>
-                 unique() |>
+  expect_equal(names(ingredient_list) %>%
+                 unique()|>
                  length() |>
                  as.numeric(),
                2
@@ -414,7 +414,7 @@ test_that("no duplicate names example 1",{
 
   expect_true(all(names(ingredient_list)
                   %in%
-                    c("10_adalimumab", "19_adalimumab")))
+                    c("11_adalimumab", "20_adalimumab")))
 
   cdm <- mockVocabRef()
 
@@ -422,7 +422,11 @@ test_that("no duplicate names example 1",{
     cdm = cdm, name = "Adalimumab"
   )
 
-  expect_true(all(startsWith(names(ingredient_list), "a")))
+  expect_false(all(startsWith(names(ingredient_list), "a")))
+
+  expect_true(all(names(ingredient_list)
+                  %in%
+                    c("1234_adalimumab")))
 })
 
 test_that("no duplicate names example 2",{
@@ -484,7 +488,7 @@ test_that("no duplicate names example 2",{
       "ICD10 Chapter", "ICD10 SubChapter",
       "ICD Code","ICD Code", "ATC 1st"
     ),
-    concept_code = "1234",
+    concept_code = as.character(c(2:20)),
     valid_start_date = NA,
     valid_end_date = NA,
     invalid_reason =
@@ -711,18 +715,20 @@ test_that("no duplicate names example 2",{
                2
   )
 
-  expect_equal(names(atc_list) |>
-                 unique() |>
+  expect_equal(names(atc_list) %>%
+                 unique()|>
                  length() |>
                  as.numeric(),
                2
   )
 
   expect_false(all(startsWith(names(atc_list), "a")))
+  expect_true(startsWith(names(atc_list)[1], "1"))
+  expect_true(startsWith(names(atc_list)[2], "2"))
 
   expect_true(all(names(atc_list)
                   %in%
-                    c("12_alimentary_tract_and_metabolism", "19_alimentary_tract_and_metabolism")))
+                    c("13_alimentary_tract_and_metabolism", "20_alimentary_tract_and_metabolism")))
 
   cdm <- mockVocabRef()
 
@@ -730,5 +736,6 @@ test_that("no duplicate names example 2",{
     cdm = cdm, name = "ALIMENTARY TRACT AND METABOLISM"
   )
 
-  expect_true(all(startsWith(names(atc_list), "a")))
+  expect_false(all(startsWith(names(atc_list), "a")))
+  expect_true(all(startsWith(names(atc_list), "1")))
 })

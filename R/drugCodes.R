@@ -150,11 +150,10 @@ getATCCodes <- function(cdm,
           dplyr::select(!"ancestor_concept_id")
       }
 
-      names(atc_descendants)[i] <- paste0(names(atc_descendants)[i], "_", workingName)
+      names(atc_descendants)[[i]] <- standardToConceptCode(cdm = cdm, names(atc_descendants)[[i]])
+      names(atc_descendants)[[i]] <- paste0(names(atc_descendants)[[i]], "_", workingName)
     }
   }
-
-  names(atc_descendants) <- nonDuplicateEntries(names(atc_descendants))
 
   if(isFALSE(withConceptDetails)){
   atc_descendants <- omopgenerics::newCodelist(atc_descendants)
@@ -190,9 +189,9 @@ getATCCodes <- function(cdm,
 #'
 #' @examples
 #' \dontrun{
-#'cdm <- mockVocabRef()
-#'getDrugIngredientCodes(cdm = cdm, name = "Adalimumab")
-#'CDMConnector::cdmDisconnect(cdm)
+#' cdm <- mockVocabRef()
+#' getDrugIngredientCodes(cdm = cdm, name = "Adalimumab")
+#' CDMConnector::cdmDisconnect(cdm)
 #'}
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,
@@ -280,7 +279,6 @@ getDrugIngredientCodes <- function(cdm,
       workingName <- tidyWords(workingName)
       workingName <- stringr::str_replace_all(workingName, " ", "_")
 
-
       if(isFALSE(withConceptDetails)){
         ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
           dplyr::select("concept_id") %>%
@@ -292,10 +290,9 @@ getDrugIngredientCodes <- function(cdm,
           dplyr::select(!"ancestor_concept_id")
       }
 
+      names(ingredientCodes)[[i]] <- standardToConceptCode(cdm = cdm, names(ingredientCodes)[[i]])
       names(ingredientCodes)[[i]] <- paste0(names(ingredientCodes)[i], "_", workingName)
     }
-
-    names(ingredientCodes) <- nonDuplicateEntries(names(ingredientCodes))
 
     if(isFALSE(withConceptDetails)){
     ingredientCodes <- omopgenerics::newCodelist(ingredientCodes)
@@ -336,26 +333,16 @@ fetchBatchedDescendants <- function(cdm,
   return(descendants)
 }
 
-nonDuplicateEntries <- function(x){
+standardToConceptCode <- function(cdm, x){
   x_df <- as.data.frame(x)
-  names(x_df) <- c("name")
-  x_df <- x_df %>%
-    dplyr::mutate(name_tidy = gsub("^.*?_","",.data$name))
+  y <- c()
 
-  x_count <- x_df %>%
-    dplyr::group_by(.data$name_tidy) %>%
-    dplyr::tally()
+  for (i in (1:length(x))){
+    y_output <- cdm$concept %>%
+      dplyr::filter(.data$concept_id == !!x[[i]]) %>%
+      dplyr::pull("concept_code")
+    y <- c(y, y_output)
+  }
 
-  name_fin <- x_df %>%
-    dplyr::left_join(x_count, by = "name_tidy") %>%
-    dplyr::mutate(
-      name_fin = dplyr::case_when(
-        (n>1) ~ .data$name,
-        T ~ .data$name_tidy
-      )
-    ) %>%
-    dplyr::pull("name_fin")
-
-  return(name_fin)
+  return(y)
 }
-
