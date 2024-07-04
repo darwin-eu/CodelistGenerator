@@ -33,7 +33,8 @@
 #' @return A named list, with each item containing a vector of descendant
 #' concepts of an ATC group (if withConceptDetails was set as FALSE) or a
 #' tibble with the descendant concepts along with additional details about them
-#' (if withConceptDetails was set as TRUE).
+#' (if withConceptDetails was set as TRUE). Names start with the concept code
+#' followed by concept name.
 #' @export
 #'
 #' @examples
@@ -132,10 +133,10 @@ getATCCodes <- function(cdm,
     names(atc_descendants) <- dplyr::tibble(concept_id = names(atc_descendants)) |>
       dplyr::mutate(seq = dplyr::row_number()) |>
       dplyr::left_join(atc_groups |>
-                         dplyr::mutate(concept_id = as.character(concept_id)),
+                         dplyr::mutate(concept_id = as.character(.data$concept_id)),
                        by= "concept_id") |>
-      dplyr::mutate(new_name = paste0(concept_code, "_",
-                                      omopgenerics::toSnakeCase(concept_name))) |>
+      dplyr::mutate(new_name = paste0(.data$concept_code, "_",
+                                      omopgenerics::toSnakeCase(.data$concept_name))) |>
       dplyr::arrange(seq) |>
       dplyr::pull("new_name")
 
@@ -186,7 +187,8 @@ getATCCodes <- function(cdm,
 #' @return A named list, with each item containing a vector of descendant
 #' concepts of an ingredient (if withConceptDetails was set as FALSE) or a
 #' tibble with the descendant concepts along with additional details about them
-#' (if withConceptDetails was set as TRUE).
+#' (if withConceptDetails was set as TRUE).Names start with the concept code
+#' followed by concept name.
 #' @export
 #'
 #' @examples
@@ -275,10 +277,10 @@ getDrugIngredientCodes <- function(cdm,
     names(ingredientCodes) <- dplyr::tibble(concept_id = names(ingredientCodes)) |>
     dplyr::mutate(seq = dplyr::row_number()) |>
       dplyr::left_join(ingredientConcepts |>
-                          dplyr::mutate(concept_id = as.character(concept_id)),
+                          dplyr::mutate(concept_id = as.character(.data$concept_id)),
                        by= "concept_id") |>
-      dplyr::mutate(new_name = paste0(concept_code, "_",
-                                      omopgenerics::toSnakeCase(concept_name))) |>
+      dplyr::mutate(new_name = paste0(.data$concept_code, "_",
+                                      omopgenerics::toSnakeCase(.data$concept_name))) |>
       dplyr::arrange(seq) |>
       dplyr::pull("new_name")
 
