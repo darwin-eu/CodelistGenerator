@@ -32,7 +32,7 @@ Imports:
     cli (>= 3.1.0),
     purrr,
     lubridate,
-    PatientProfiles (>= 1.0.0),
+    PatientProfiles (>= 1.1.0),
     RJSONIO,
     vctrs,
     visOmopResults (>= 0.3.0),

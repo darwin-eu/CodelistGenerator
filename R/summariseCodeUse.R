@@ -254,7 +254,8 @@ getCodeUse <- function(x,
                    call = call)
   }
 
-  tableCodelist <- omopgenerics::uniqueTableName()
+  tableCodelist <- paste0(omopgenerics::uniqueTableName(),
+                          omopgenerics::uniqueId())
   cdm <- omopgenerics::insertTable(cdm = cdm,
                             name = tableCodelist,
                             table = dplyr::tibble(concept_id = x[[1]]),
@@ -266,7 +267,8 @@ getCodeUse <- function(x,
       by = "concept_id")
 
 
-  tableDomainsData <- omopgenerics::uniqueTableName()
+  tableDomainsData <- paste0(omopgenerics::uniqueTableName(),
+                             omopgenerics::uniqueId())
   cdm <- omopgenerics::insertTable(cdm = cdm,
                                    name = tableDomainsData,
                                    table = conceptDomainsData,
@@ -284,7 +286,8 @@ getCodeUse <- function(x,
   CDMConnector::dropTable(cdm = cdm, name = tableDomainsData)
   cdm[[tableDomainsData]] <- NULL
 
-  intermediateTable <- omopgenerics::uniqueTableName()
+  intermediateTable <- paste0(omopgenerics::uniqueTableName(),
+                              omopgenerics::uniqueId())
   records <- getRelevantRecords(cdm = cdm,
                                 tableCodelist = tableCodelist,
                                 cohortTable = cohortTable,
@@ -296,12 +299,15 @@ getCodeUse <- function(x,
      (records %>% utils::head(1) %>% dplyr::tally() %>% dplyr::pull("n") > 0)) {
     if(bySex == TRUE | !is.null(ageGroup)){
       records <- records %>%
-        PatientProfiles::addDemographics(age = !is.null(ageGroup),
+        PatientProfiles::addDemographicsQuery(age = !is.null(ageGroup),
                                          ageGroup = ageGroup,
                                          sex = bySex,
                                          priorObservation = FALSE,
                                          futureObservation =  FALSE,
-                                         indexDate = "date")
+                                         indexDate = "date") |>
+        dplyr::compute(overwrite = TRUE,
+                       name = omopgenerics::tableName(records),
+                       temporary = FALSE)
     }
 
     byAgeGroup <- !is.null(ageGroup)
@@ -346,6 +352,10 @@ getCodeUse <- function(x,
     ))
   }
 
+
+  CDMConnector::dropTable(cdm = cdm,
+                          name = tableCodelist)
+  cdm[[tableCodelist]] <- NULL
   CDMConnector::dropTable(
     cdm = cdm,
     name = tidyselect::starts_with(intermediateTable)
@@ -465,6 +475,17 @@ getRelevantRecords <- function(cdm,
       return(NULL)
     }
 
+
+    tableCodes <- paste0(omopgenerics::uniqueTableName(),
+                            omopgenerics::uniqueId())
+    cdm <- omopgenerics::insertTable(cdm = cdm,
+                                     name = tableCodes,
+                                     table = codes %>%
+                                       dplyr::filter(.data$table == !!tableName[[1]]) %>%
+                                       dplyr::select("concept_id", "domain_id"),
+                                     overwrite = TRUE,
+                                     temporary = FALSE)
+
     codeRecords <- codeRecords %>%
       dplyr::mutate(date = !!dplyr::sym(dateName[[1]])) %>%
       dplyr::mutate(year = lubridate::year(date)) %>%
@@ -474,17 +495,17 @@ getRelevantRecords <- function(cdm,
                                     "date", "year"))) %>%
       dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[1]],
                     "source_concept_id" = .env$sourceConceptIdName[[1]]) %>%
-      dplyr::inner_join(codes %>%
-                          dplyr::filter(.data$table == !!tableName[[1]]) %>%
-                          dplyr::select("concept_id", "domain_id"),
-                        by = c("standard_concept_id"="concept_id"),
-                        copy = TRUE) %>%
+      dplyr::inner_join(cdm[[tableCodes]],
+                        by = c("standard_concept_id"="concept_id")) %>%
       dplyr::compute(
         name = paste0(intermediateTable,"_grr"),
         temporary = FALSE,
         schema = attr(cdm, "write_schema"),
         overwrite = TRUE
       )
+
+    CDMConnector::dropTable(cdm = cdm, name = tableCodes)
+    cdm[[tableCodes]] <- NULL
 
   } else {
     return(NULL)
@@ -542,6 +563,8 @@ getRelevantRecords <- function(cdm,
                          dplyr::select("concept_id", "concept_name"),
                        by = c("source_concept_id"="concept_id")) %>%
       dplyr::rename("source_concept_name"="concept_name")  %>%
+      dplyr::mutate(source_concept_name = dplyr::if_else(is.na(.data$source_concept_name),
+                                                         "NA", .data$source_concept_name)) %>%
       dplyr::compute(
         name = paste0(intermediateTable,"_grr_cr"),
         temporary = FALSE,
