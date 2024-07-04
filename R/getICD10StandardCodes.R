@@ -141,7 +141,12 @@ getICD10StandardCodes <- function(cdm,
                        by = "concept_id")
     # split into list
     ICD10StandardCodes <- ICD10MapsTo %>%
-      dplyr::collect()
+      dplyr::collect() %>%
+      dplyr::left_join(cdm[["concept"]] %>% dplyr::select(.data$concept_id, .data$concept_code),
+                       by = "concept_id",
+                       copy = T) %>%
+      dplyr::mutate(name = paste0(.data$concept_code,"_", .data$name))
+
     ICD10StandardCodes <- split(
       x = ICD10StandardCodes,
       f = as.factor(ICD10StandardCodes$name),
@@ -150,13 +155,16 @@ getICD10StandardCodes <- function(cdm,
   } else {
     # split into list (only returning vector of concept ids)
     ICD10StandardCodes <- ICD10MapsTo %>%
-      dplyr::collect()
+      dplyr::collect() %>%
+      dplyr::left_join(cdm[["concept"]] %>% dplyr::select(.data$concept_id, .data$concept_code),
+                       by = "concept_id",
+                       copy = T) %>%
+      dplyr::mutate(name = paste0(.data$concept_code,"_", .data$name))
     ICD10StandardCodes <- split(
       x = ICD10StandardCodes$concept_id,
       f = ICD10StandardCodes$name
     )
   }
-
 
   if(isFALSE(withConceptDetails)){
     ICD10StandardCodes <- omopgenerics::newCodelist(ICD10StandardCodes)

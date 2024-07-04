@@ -35,7 +35,8 @@ information on the identified concepts.}
 A named list, with each item containing a vector of descendant
 concepts of an ATC group (if withConceptDetails was set as FALSE) or a
 tibble with the descendant concepts along with additional details about them
-(if withConceptDetails was set as TRUE).
+(if withConceptDetails was set as TRUE). Names start with the concept code
+followed by concept name.
 }
 \description{
 Get descendant codes for ATC levels
