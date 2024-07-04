@@ -73,6 +73,7 @@ getATCCodes <- function(cdm,
   atc_groups <- cdm$concept %>%
     dplyr::filter(.data$vocabulary_id == "ATC") %>%
     dplyr::filter(.data$concept_class_id %in% .env$level) %>%
+    dplyr::select("concept_id", "concept_name", "concept_code") %>%
     dplyr::collect()
 
   if (!is.null(name)) {
@@ -128,17 +129,19 @@ getATCCodes <- function(cdm,
       drop = TRUE
     )
 
+    names(atc_descendants) <- dplyr::tibble(concept_id = names(atc_descendants)) |>
+      dplyr::mutate(seq = dplyr::row_number()) |>
+      dplyr::left_join(atc_groups |>
+                         dplyr::mutate(concept_id = as.character(concept_id)),
+                       by= "concept_id") |>
+      dplyr::mutate(new_name = paste0(concept_code, "_",
+                                      omopgenerics::toSnakeCase(concept_name))) |>
+      dplyr::arrange(seq) |>
+      dplyr::pull("new_name")
+
+
     # for each item in the list - pull out concepts and name
     for (i in seq_along(atc_descendants)) {
-      workingLevel <- atc_groups %>%
-        dplyr::filter(.data$concept_id == names(atc_descendants)[i]) %>%
-        dplyr::pull("concept_class_id")
-      workingName <- atc_groups %>%
-        dplyr::filter(.data$concept_id == names(atc_descendants)[i]) %>%
-        dplyr::pull("concept_name")
-      workingName <- tidyWords(workingName)
-      workingName <- stringr::str_replace_all(workingName, " ", "_")
-
       if(isFALSE(withConceptDetails)){
       atc_descendants[[i]] <- atc_descendants[[i]] %>%
         dplyr::select("concept_id") %>%
@@ -149,14 +152,13 @@ getATCCodes <- function(cdm,
         atc_descendants[[i]] <- atc_descendants[[i]] %>%
           dplyr::select(!"ancestor_concept_id")
       }
-
-      names(atc_descendants)[[i]] <- standardToConceptCode(cdm = cdm, names(atc_descendants)[[i]])
-      names(atc_descendants)[[i]] <- paste0(names(atc_descendants)[[i]], "_", workingName)
     }
   }
 
   if(isFALSE(withConceptDetails)){
-  atc_descendants <- omopgenerics::newCodelist(atc_descendants)
+    atc_descendants <- omopgenerics::newCodelist(atc_descendants)
+  } else {
+    atc_descendants <- omopgenerics::newCodelistWithDetails(atc_descendants)
   }
 
   return(atc_descendants)
@@ -210,7 +212,7 @@ getDrugIngredientCodes <- function(cdm,
   ingredientConcepts <- cdm$concept %>%
     dplyr::filter(.data$standard_concept == "S") %>%
     dplyr::filter(.data$concept_class_id == "Ingredient") %>%
-    dplyr::select("concept_id", "concept_name") %>%
+    dplyr::select("concept_id", "concept_name", "concept_code") %>%
     dplyr::collect()
 
   if (!is.null(name)) {
@@ -241,7 +243,6 @@ getDrugIngredientCodes <- function(cdm,
     cli::cli_warn("No descendant codes found")
     return(invisible(list()))
   }
-
       ingredientCodes <- ingredientCodes  %>%
         dplyr::select("concept_id", "concept_name",
                         "domain_id", "vocabulary_id",
@@ -271,14 +272,18 @@ getDrugIngredientCodes <- function(cdm,
       drop = TRUE
     )
 
+    names(ingredientCodes) <- dplyr::tibble(concept_id = names(ingredientCodes)) |>
+    dplyr::mutate(seq = dplyr::row_number()) |>
+      dplyr::left_join(ingredientConcepts |>
+                          dplyr::mutate(concept_id = as.character(concept_id)),
+                       by= "concept_id") |>
+      dplyr::mutate(new_name = paste0(concept_code, "_",
+                                      omopgenerics::toSnakeCase(concept_name))) |>
+      dplyr::arrange(seq) |>
+      dplyr::pull("new_name")
+
     # for each item in the list - pull out concepts and name
     for (i in seq_along(ingredientCodes)) {
-      workingName <- ingredientConcepts %>%
-        dplyr::filter(.data$concept_id == names(ingredientCodes)[[i]]) %>%
-        dplyr::pull("concept_name")
-      workingName <- tidyWords(workingName)
-      workingName <- stringr::str_replace_all(workingName, " ", "_")
-
       if(isFALSE(withConceptDetails)){
         ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
           dplyr::select("concept_id") %>%
@@ -289,13 +294,12 @@ getDrugIngredientCodes <- function(cdm,
         ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
           dplyr::select(!"ancestor_concept_id")
       }
-
-      names(ingredientCodes)[[i]] <- standardToConceptCode(cdm = cdm, names(ingredientCodes)[[i]])
-      names(ingredientCodes)[[i]] <- paste0(names(ingredientCodes)[i], "_", workingName)
     }
 
     if(isFALSE(withConceptDetails)){
     ingredientCodes <- omopgenerics::newCodelist(ingredientCodes)
+    } else {
+    ingredientCodes <- omopgenerics::newCodelistWithDetails(ingredientCodes)
     }
 
     return(ingredientCodes)
@@ -333,16 +337,3 @@ fetchBatchedDescendants <- function(cdm,
   return(descendants)
 }
 
-standardToConceptCode <- function(cdm, x){
-  x_df <- as.data.frame(x)
-  y <- c()
-
-  for (i in (1:length(x))){
-    y_output <- cdm$concept %>%
-      dplyr::filter(.data$concept_id == !!x[[i]]) %>%
-      dplyr::pull("concept_code")
-    y <- c(y, y_output)
-  }
-
-  return(y)
-}

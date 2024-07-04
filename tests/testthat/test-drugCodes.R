@@ -8,6 +8,7 @@ test_that("getATCCodes working", {
   expect_true(all(atcCodes[[1]] == c(12,13)))
   expect_true(c("1234_alimentary_tract_and_metabolism") %in%
                 names(atcCodes))
+  expect_true(inherits(atcCodes, "codelist"))
 
   atcCodes2 <- getATCCodes(cdm, level = "ATC 1st",
                            name = "ALIMENTARY TRACT AND METABOLISM")
@@ -17,7 +18,7 @@ test_that("getATCCodes working", {
                            name = "ALIMENTARY TRACT AND METABOLISM",
                            withConceptDetails = TRUE)
   expect_true(!is.null(atcCodes3[[1]]$concept_name))
-
+  expect_true(inherits(atcCodes3, "codelist_with_details"))
 
   if (backends[[i]] == "database") {
     CDMConnector::cdm_disconnect(cdm)
@@ -50,6 +51,7 @@ test_that("getDrugIngredientCodes working", {
     cdm <- mockVocabRef(backend = backends[i])
     ing_codes <- getDrugIngredientCodes(cdm)
     expect_true(all(ing_codes[[1]] == c(10,13)))
+    expect_true(inherits(ing_codes, "codelist"))
 
     ing_codes2 <- getDrugIngredientCodes(cdm, name = "Adalimumab")
     expect_true(all(ing_codes2[[1]] == c(10,13)))
@@ -70,7 +72,7 @@ test_that("getDrugIngredientCodes working", {
                                          doseForm = "injection",
                                          withConceptDetails = TRUE)
     expect_true(!is.null(ing_codes5[[1]]$concept_name))
-
+    expect_true(inherits(ing_codes5, "codelist_with_details"))
 
     # limiting on ingredients
     ing_codes_all <- getDrugIngredientCodes(cdm,
