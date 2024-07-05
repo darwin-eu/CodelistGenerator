@@ -28,6 +28,8 @@ getRoutes <- function(cdm, category = TRUE) {
   if (isTRUE(category)) {
     # relate does form concept id with the classification established by
     # doseFormToRoute
+    doseData <- get0("doseFormToRoute", envir = asNamespace("CodelistGenerator"))
+
     routeCategory <- cdm$concept_relationship |>
       # get dose form available in the cdm
       dplyr::filter(.data$relationship_id == "RxNorm has dose form") |>
@@ -36,7 +38,7 @@ getRoutes <- function(cdm, category = TRUE) {
       dplyr::distinct() |>
       dplyr::collect() |>
       dplyr::left_join(
-        doseFormToRoute, by = c("concept_id" = "dose_form_concept_id")
+        doseData, by = c("concept_id" = "dose_form_concept_id")
       ) |>
       dplyr::mutate(route_category = dplyr::if_else(
         is.na(.data$route_category),
