@@ -18,7 +18,7 @@ test_that("redshift", {
 
   expect_no_error(routeCat <- getRoutes(cdm, category = TRUE))
   expect_true(all(routeCat %in%
-                  doseFormToRoute$route_category))
+                  c(doseFormToRoute$route_category, "unclassified route")))
   # alphabetical order
   expect_identical(routeCat,
                    sort(getRoutes(cdm)))

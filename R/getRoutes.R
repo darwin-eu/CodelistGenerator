@@ -18,7 +18,8 @@
 #'
 #' @param cdm A cdm reference.
 #' @param category Whether to use the derived dose form categories (see
-#' https://doi.org/10.1002/pds.5809) or the routes from vocabulary tables.
+#' https://doi.org/10.1002/pds.5809) for more details on how routes
+#' where classified).
 #'
 #' @return A character vector with available routes
 #' @export
@@ -28,7 +29,7 @@ getRoutes <- function(cdm, category = TRUE) {
   if (isTRUE(category)) {
     # relate does form concept id with the classification established by
     # doseFormToRoute
-    doseData <- get0("doseFormToRoute", envir = asNamespace("CodelistGenerator"))
+    doseRouteData <- get0("doseFormToRoute", envir = asNamespace("CodelistGenerator"))
 
     routeCategory <- cdm$concept_relationship |>
       # get dose form available in the cdm
@@ -38,7 +39,7 @@ getRoutes <- function(cdm, category = TRUE) {
       dplyr::distinct() |>
       dplyr::collect() |>
       dplyr::left_join(
-        doseData, by = c("concept_id" = "dose_form_concept_id")
+        doseRouteData, by = c("concept_id" = "dose_form_concept_id")
       ) |>
       dplyr::mutate(route_category = dplyr::if_else(
         is.na(.data$route_category),
@@ -65,3 +66,4 @@ getRoutes <- function(cdm, category = TRUE) {
 
   return(routeCategory)
 }
+
