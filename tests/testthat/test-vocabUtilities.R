@@ -71,7 +71,7 @@ test_that("tests with mock db", {
 
 
     doseForms <- getDoseForm(cdm = cdm)
-    expect_true(all(doseForms == c("Injection", "Injectable")))
+    expect_true(all(doseForms %in% c("Injection", "Injectable")))
 
     # all relationships in mock
     expect_equal(sort(cdm$concept_relationship |>

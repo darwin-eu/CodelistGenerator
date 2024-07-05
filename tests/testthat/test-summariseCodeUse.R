@@ -17,7 +17,7 @@ skip_on_cran()
   poliovirus_vaccine <- c(40213160)
   cs <- list(acetiminophen = acetiminophen,
              poliovirus_vaccine = poliovirus_vaccine)
-
+  startNames <- CDMConnector::listSourceTables(cdm)
   results <- summariseCodeUse(cs,
                               cdm = cdm,
                               byYear = TRUE,
@@ -25,6 +25,8 @@ skip_on_cran()
                               ageGroup = list(c(0,17),
                                               c(18,65),
                                               c(66, 100)))
+  endNames <- CDMConnector::listSourceTables(cdm)
+  expect_true(length(setdiff(endNames, startNames)) == 0)
 
   # min cell counts:
    expect_true(
