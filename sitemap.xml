@@ -55,6 +55,9 @@
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
   </url>
   <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/doseFormToRoute.html</loc>
+  </url>
+  <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/findOrphanCodes.html</loc>
   </url>
   <url>
@@ -86,6 +89,9 @@
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRelationshipId.html</loc>
+  </url>
+  <url>
+    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRoutes.html</loc>
   </url>
   <url>
     <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabVersion.html</loc>
