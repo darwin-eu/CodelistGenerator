@@ -21,7 +21,7 @@ Useful links:
 Other contributors:
 \itemize{
   \item Marti Catala \email{marti.catalasabate@ndorms.ox.ac.uk} (\href{https://orcid.org/0000-0003-3308-9905}{ORCID}) [contributor]
-  \item Xihang  Chen \email{xihang.chen@ndorms.ox.ac.uk} (\href{https://orcid.org/0009-0001-8112-8959}{ORCID}) [contributor]
+  \item Xihang Chen \email{xihang.chen@ndorms.ox.ac.uk} (\href{https://orcid.org/0009-0001-8112-8959}{ORCID}) [contributor]
 }
 
 }

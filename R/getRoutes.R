@@ -35,9 +35,14 @@ getRoutes <- function(cdm, category = TRUE) {
       dplyr::rename("concept_id" = "concept_id_2") |>
       dplyr::distinct() |>
       dplyr::collect() |>
-      dplyr::inner_join(
+      dplyr::left_join(
         doseFormToRoute, by = c("concept_id" = "dose_form_concept_id")
       ) |>
+      dplyr::mutate(route_category = dplyr::if_else(
+        is.na(.data$route_category),
+        "unclassified route",
+        .data$route_category
+      )) |>
       dplyr::select("route_category") |>
       dplyr::distinct() |>
       dplyr::pull()

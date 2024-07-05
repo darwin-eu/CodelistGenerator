@@ -15,8 +15,16 @@ test_that("redshift", {
                                     cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
                                     write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
-  expect_true(all(getRoutes(cdm, category = TRUE) %in%
-                    doseFormToRoute$route_category))
+
+  expect_no_error(routeCat <- getRoutes(cdm, category = TRUE))
+  expect_true(all(routeCat %in%
+                  doseFormToRoute$route_category))
+  # alphabetical order
+  expect_identical(routeCat,
+                   sort(getRoutes(cdm)))
+
+  expect_no_error(routeCatOmop <- getRoutes(cdm, category = FALSE))
+  expect_true(is.character(routeCatOmop))
 
 
   cdm$concept <- cdm$concept |>
