@@ -15,6 +15,10 @@ test_that("redshift", {
                                     cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
                                     write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
+  expect_true(all(getRoutes(cdm, category = TRUE) %in%
+                    doseFormToRoute$route_category))
+
+
   cdm$concept <- cdm$concept |>
     dplyr::mutate(concept_id = as.integer64(concept_id)) |>
     dplyr::compute()
