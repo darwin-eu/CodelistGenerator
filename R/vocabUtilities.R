@@ -150,11 +150,11 @@ getVocabularies <- function(cdm) {
   }
   checkmate::reportAssertions(collection = errorMessage)
 
-  vocabs <- cdm$concept %>%
+  vocabs <- sort(cdm$concept %>%
     dplyr::select("vocabulary_id") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
-    dplyr::pull()
+    dplyr::pull())
 
   return(vocabs)
 }
@@ -241,6 +241,8 @@ getConceptClassId <- function(cdm,
     dplyr::collect() %>%
     dplyr::pull()
 
+  conceptClassId <- sort(conceptClassId)
+
   return(conceptClassId)
 }
 
@@ -286,6 +288,8 @@ getDoseForm <- function(cdm) {
     ) %>%
     dplyr::collect() %>%
     dplyr::pull("concept_name")
+
+  rxDoseForm <- sort(rxDoseForm)
 
   return(rxDoseForm)
 }

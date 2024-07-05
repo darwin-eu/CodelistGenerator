@@ -125,6 +125,10 @@ codesFromCohort <- function(path, cdm, withConceptDetails = FALSE) {
       dplyr::union_all(extractCodes(files[k], unknown))
   }
 
+  if(is.null(codelistTibble)){
+    cli::cli_abort("No codes found")
+  }
+
   codelistTable <- omopgenerics::uniqueTableName()
   cdm <- omopgenerics::insertTable(cdm = cdm,
                                    name = codelistTable,

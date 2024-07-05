@@ -39,7 +39,7 @@ test_that("redshift", {
 
   # drug ingredients
   expect_no_error(metformin <- getDrugIngredientCodes(cdm, "metformin"))
-  expect_true(is.integer(metformin$metformin))
+  expect_true(inherits(metformin, "codelist"))
 
   # achilles
   cdm$achilles_results <- cdm$condition_occurrence %>%

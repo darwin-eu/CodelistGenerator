@@ -142,7 +142,7 @@ getICD10StandardCodes <- function(cdm,
     # split into list
     ICD10StandardCodes <- ICD10MapsTo %>%
       dplyr::collect() %>%
-      dplyr::left_join(cdm[["concept"]] %>% dplyr::select(.data$concept_id, .data$concept_code),
+      dplyr::left_join(cdm[["concept"]] %>% dplyr::select("concept_id", "concept_code"),
                        by = "concept_id",
                        copy = T) %>%
       dplyr::mutate(name = paste0(.data$concept_code,"_", .data$name))
@@ -156,7 +156,7 @@ getICD10StandardCodes <- function(cdm,
     # split into list (only returning vector of concept ids)
     ICD10StandardCodes <- ICD10MapsTo %>%
       dplyr::collect() %>%
-      dplyr::left_join(cdm[["concept"]] %>% dplyr::select(.data$concept_id, .data$concept_code),
+      dplyr::left_join(cdm[["concept"]] %>% dplyr::select("concept_id", "concept_code"),
                        by = "concept_id",
                        copy = T) %>%
       dplyr::mutate(name = paste0(.data$concept_code,"_", .data$name))
