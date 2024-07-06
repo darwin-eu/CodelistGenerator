@@ -19,7 +19,7 @@
 #'
 #' @param x A codelist
 #' @param cdm cdm_reference via CDMConnector
-#' @param minimimPersonCount Minimum number
+#' @param minimumCount Any codes with a frequency under this will be removed.
 #' @param table cdm table
 #'
 #' @return Use achilles counts to filter codelist to only the codes used in the database
@@ -86,7 +86,7 @@ x
 #' Use achilles counts to get codes used in the database
 #'
 #' @param cdm cdm_reference via CDMConnector
-#' @param minimimPersonCount Minimum number
+#' @param minimumCount Any codes with a frequency under this will be removed.
 #' @param table cdm table
 #'
 #' @return A list of integers indicating codes being used in the database.

@@ -14,9 +14,9 @@ codesInUse(
 \arguments{
 \item{cdm}{cdm_reference via CDMConnector}
 
-\item{table}{cdm table}
+\item{minimumCount}{Any codes with a frequency under this will be removed.}
 
-\item{minimimPersonCount}{Minimum number}
+\item{table}{cdm table}
 }
 \value{
 A list of integers indicating codes being used in the database.
