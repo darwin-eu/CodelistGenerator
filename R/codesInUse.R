@@ -14,13 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Filter a codelist to keep only the codes used in the database
+#' Use achilles counts to filter a codelist to keep only the codes
+#' used in the database
 #'
 #' @param x A codelist
 #' @param cdm cdm_reference via CDMConnector
+#' @param minimumCount Any codes with a frequency under this will be removed.
 #' @param table cdm table
 #'
-#' @return A list of integers indicating the codes used in the database
+#' @return Use achilles counts to filter codelist to only the codes used in the database
 #' @export
 #'
 #' @examples
@@ -39,6 +41,7 @@
 #' }
 restrictToCodesInUse <- function(x,
                                cdm,
+                               minimumCount = 0L,
                                table = c("condition_occurrence",
                                          "device_exposure",
                                          "drug_exposure",
@@ -47,13 +50,19 @@ restrictToCodesInUse <- function(x,
                                          "procedure_occurrence",
                                          "visit_occurrence")){
 
-dbCodes <- codesInUse(cdm = cdm,
-                      table = table)
 
-if(is.null(dbCodes)){
+  if(is.null(cdm[["achilles_results"]])){
+    cli::cli_abort("Achilles results must be in the cdm reference")
+  }
+
+  dbCodes <- codesInUse(cdm = cdm,
+                        minimumCount = minimumCount,
+                        table = table)
+
+  if(is.null(dbCodes)){
   for(i in seq_along(x)){
     cli::cli_inform("No codes from any codelist found in the database")
-    return(invisible(NULL))
+    return(invisible(omopgenerics::emptyCodelist()))
   }
 } else {
   for(i in seq_along(x)){
@@ -67,16 +76,17 @@ if(is.null(dbCodes)){
 x <- vctrs::list_drop_empty(x)
 
 if(length(x) == 0){
-  return(invisible(NULL))
+  return(invisible(omopgenerics::emptyCodelist()))
 }
 
 x
 
 }
 
-#' Get codes used in the database
+#' Use achilles counts to get codes used in the database
 #'
 #' @param cdm cdm_reference via CDMConnector
+#' @param minimumCount Any codes with a frequency under this will be removed.
 #' @param table cdm table
 #'
 #' @return A list of integers indicating codes being used in the database.
@@ -90,6 +100,7 @@ x
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
 codesInUse <- function(cdm,
+                       minimumCount = 0,
                        table = c("condition_occurrence",
                                  "device_exposure",
                                  "drug_exposure",
@@ -98,40 +109,16 @@ codesInUse <- function(cdm,
                                  "procedure_occurrence",
                                  "visit_occurrence")){
 
-if(!is.null(cdm[["achilles_results"]])){
-  codes <- fetchAchillesCodesInUse(cdm)
-} else {
-  # if achilles not available, query cdm
-  codes <- list()
-  for(i in seq_along(table)){
-  workingTable <- table[i]
-  workingConcept <- dplyr::case_when(
-    workingTable == "condition_occurrence" ~ "condition_concept_id",
-    workingTable == "device_exposure" ~ "device_concept_id",
-    workingTable == "drug_exposure" ~ "drug_concept_id",
-    workingTable == "measurement" ~ "measurement_concept_id",
-    workingTable == "observation" ~ "observation_concept_id",
-    workingTable == "procedure_occurrence" ~ "procedure_concept_id",
-    workingTable == "visit_occurrence" ~ "visit_concept_id"
-    )
-
-  if(!is.null(cdm[[workingTable]])){
-    codes[[i]] <- as.integer(cdm[[workingTable]] %>%
-                               dplyr::select(workingConcept) %>%
-                               dplyr::distinct() %>%
-                               dplyr::pull())
-  } else {
-    codes[[i]] <- NULL
+  if(is.null(cdm[["achilles_results"]])){
+    cli::cli_abort("Achilles results must be in the cdm reference")
   }
 
-  }
-  codes <- unlist(codes)
-  }
+  codes <- fetchAchillesCodesInUse(cdm, minimumCount = minimumCount)
 
   codes
 }
 
-#' Get source codes used in the database
+#' Use achilles counts to get source codes used in the database
 #'
 #' @param cdm cdm_reference via CDMConnector
 #' @param table cdm table
@@ -155,30 +142,10 @@ sourceCodesInUse <- function(cdm,
                                            "procedure_occurrence",
                                            "visit_occurrence")){
 
-  if(!is.null(cdm[["achilles_results"]])){
-    codes <- fetchAchillesCodesInUse(cdm)
-  } else {
-    # if achilles not available, query cdm
-    codes <- list()
-    for(i in seq_along(table)){
-      workingTable <- table[i]
-      workingConcept <- dplyr::case_when(
-        workingTable == "condition_occurrence" ~ "condition_source_concept_id",
-        workingTable == "device_exposure" ~ "device_source_concept_id",
-        workingTable == "drug_exposure" ~ "drug_source_concept_id",
-        workingTable == "measurement" ~ "measurement_source_concept_id",
-        workingTable == "observation" ~ "observation_source_concept_id",
-        workingTable == "procedure_occurrence" ~ "procedure_source_concept_id",
-        workingTable == "visit_occurrence" ~ "visit_source_concept_id"
-      )
-
-      codes[[i]] <- as.integer(cdm[[workingTable]] %>%
-                                 dplyr::select(workingConcept) %>%
-                                 dplyr::distinct() %>%
-                                 dplyr::pull())
+    if(is.null(cdm[["achilles_results"]])){
+    cli::cli_abort("Achilles results must be in the cdm reference")
     }
-    codes <- unlist(codes)
-  }
+    codes <- fetchAchillesSourceCodesInUse(cdm)
 
   codes
 }
@@ -231,7 +198,7 @@ unmappedSourceCodesInUse <- function(cdm,
   codes
 }
 
-fetchAchillesCodesInUse <- function(cdm){
+fetchAchillesCodesInUse <- function(cdm, minimumCount = 0){
   cdm[["achilles_results"]] %>%
     dplyr::filter(.data$analysis_id %in%
       c(
@@ -243,13 +210,14 @@ fetchAchillesCodesInUse <- function(cdm){
         601, # procedure_occurrence
         2101 # device_exposure
       )) %>%
+    dplyr::filter(.data$count_value >= .env$minimumCount) %>%
     dplyr::select("stratum_1") %>%
     dplyr::distinct() %>%
     dplyr::mutate(stratum_1 = as.integer(.data$stratum_1)) %>%
     dplyr::pull("stratum_1")
 }
 
-fetchAchillesSourceCodesInUse <- function(cdm){
+fetchAchillesSourceCodesInUse <- function(cdm, minimumCount = 0){
   cdm[["achilles_results"]] %>%
     dplyr::filter(.data$analysis_id %in%
                     c(
@@ -261,6 +229,7 @@ fetchAchillesSourceCodesInUse <- function(cdm){
                       625, # procedure_occurrence
                       2125 # device_exposure
                     )) %>%
+    dplyr::filter(.data$count_value >= .env$minimumCount) %>%
     dplyr::select("stratum_1") %>%
     dplyr::distinct() %>%
     dplyr::mutate(stratum_1 = as.integer(.data$stratum_1)) %>%

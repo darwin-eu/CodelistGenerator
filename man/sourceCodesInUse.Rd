@@ -2,7 +2,7 @@
 % Please edit documentation in R/codesInUse.R
 \name{sourceCodesInUse}
 \alias{sourceCodesInUse}
-\title{Get source codes used in the database}
+\title{Use achilles counts to get source codes used in the database}
 \usage{
 sourceCodesInUse(
   cdm,
@@ -19,7 +19,7 @@ sourceCodesInUse(
 A list of source codes used in the database.
 }
 \description{
-Get source codes used in the database
+Use achilles counts to get source codes used in the database
 }
 \examples{
 \dontrun{
