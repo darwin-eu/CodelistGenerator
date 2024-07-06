@@ -2,11 +2,13 @@
 % Please edit documentation in R/codesInUse.R
 \name{restrictToCodesInUse}
 \alias{restrictToCodesInUse}
-\title{Filter a codelist to keep only the codes used in the database}
+\title{Use achilles counts to filter a codelist to keep only the codes
+used in the database}
 \usage{
 restrictToCodesInUse(
   x,
   cdm,
+  minimumCount = 0L,
   table = c("condition_occurrence", "device_exposure", "drug_exposure", "measurement",
     "observation", "procedure_occurrence", "visit_occurrence")
 )
@@ -17,12 +19,15 @@ restrictToCodesInUse(
 \item{cdm}{cdm_reference via CDMConnector}
 
 \item{table}{cdm table}
+
+\item{minimimPersonCount}{Minimum number}
 }
 \value{
-A list of integers indicating the codes used in the database
+Use achilles counts to filter codelist to only the codes used in the database
 }
 \description{
-Filter a codelist to keep only the codes used in the database
+Use achilles counts to filter a codelist to keep only the codes
+used in the database
 }
 \examples{
 \dontrun{

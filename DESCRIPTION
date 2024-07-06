@@ -10,7 +10,13 @@ Authors@R: c(
     comment = c(ORCID = "0000-0003-3308-9905")),
     person("Xihang", " Chen", email = "xihang.chen@ndorms.ox.ac.uk", 
     role = c("ctb"), 
-    comment = c(ORCID = "0009-0001-8112-8959")))
+    comment = c(ORCID = "0009-0001-8112-8959")),
+    person("Mike", "Du", email = "mike.du@ndorms.ox.ac.uk", 
+    role = c("ctb"), 
+    comment = c(ORCID = "0000-0002-9517-8834")),
+    person("Danielle", "Newby", email = "danielle.newby@ndorms.ox.ac.uk", 
+    role = c("ctb"), 
+    comment = c(ORCID = "0000-0002-3001-1478")))
 Description: Generate a candidate code list for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate code list will be returned.
 License: Apache License (>= 2)
 Encoding: UTF-8

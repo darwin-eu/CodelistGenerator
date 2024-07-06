@@ -2,10 +2,11 @@
 % Please edit documentation in R/codesInUse.R
 \name{codesInUse}
 \alias{codesInUse}
-\title{Get codes used in the database}
+\title{Use achilles counts to get codes used in the database}
 \usage{
 codesInUse(
   cdm,
+  minimumCount = 0,
   table = c("condition_occurrence", "device_exposure", "drug_exposure", "measurement",
     "observation", "procedure_occurrence", "visit_occurrence")
 )
@@ -14,12 +15,14 @@ codesInUse(
 \item{cdm}{cdm_reference via CDMConnector}
 
 \item{table}{cdm table}
+
+\item{minimimPersonCount}{Minimum number}
 }
 \value{
 A list of integers indicating codes being used in the database.
 }
 \description{
-Get codes used in the database
+Use achilles counts to get codes used in the database
 }
 \examples{
 \dontrun{

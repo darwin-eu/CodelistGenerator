@@ -90,7 +90,8 @@ test_that("test inputs - mock", {
   ))
 
   if (backends[[i]] == "database") {
-  CDMConnector::cdmDisconnect(cdm)}
+  CDMConnector::cdmDisconnect(cdm)
+    }
 
   }
 
