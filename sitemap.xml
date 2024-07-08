@@ -28,7 +28,7 @@
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getICD10StandardCodes.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getMappings.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRelationshipId.html</loc></url>
-<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRoutes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRouteCategories.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabVersion.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabularies.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc></url>
@@ -36,6 +36,7 @@
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/restrictToCodesInUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/sourceCodesInUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/subsetOnRouteCategory.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseAchillesCodeUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCodeUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCohortCodeUse.html</loc></url>
