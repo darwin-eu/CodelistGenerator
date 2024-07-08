@@ -17,15 +17,13 @@ test_that("redshift", {
                                     write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
 
-  expect_no_error(routeCat <- getRoutes(cdm, category = TRUE))
+  expect_no_error(routeCat <- getRouteCategories(cdm))
   expect_true(all(routeCat %in%
                   c(doseFormToRoute$route_category, "unclassified route")))
   # alphabetical order
   expect_identical(routeCat,
-                   sort(getRoutes(cdm)))
+                   sort(getRouteCategories(cdm)))
 
-  expect_no_error(routeCatOmop <- getRoutes(cdm, category = FALSE))
-  expect_true(is.character(routeCatOmop))
 
 
   cdm$concept <- cdm$concept |>
@@ -313,12 +311,23 @@ test_that("postgres", {
   codes <- getDrugIngredientCodes(cdm, "metformin")
   codes[["asthma"]] <- 317009
 
-  diclofenac_codes <- CodelistGenerator::getDrugIngredientCodes(cdm,
-                                                                name = c("diclofenac"))
+  drug_codes <- CodelistGenerator::getDrugIngredientCodes(cdm,
+                                                          name = c("metformin",
+                                                                   "diclofenac"))
 
+  # if we subset to oral both should still have codes
+  expect_true(length(subsetOnRouteCategory(drug_codes, cdm,
+                          routeCategory = "oral")) == 2)
+  # only metformin has injectable route
+  expect_true(length(subsetOnRouteCategory(drug_codes, cdm,
+                                             routeCategory = "injectable")) == 2)
+  # we can put multiple route categories
+  expect_true(length(subsetOnRouteCategory(drug_codes, cdm,
+                                           routeCategory = c("injectable",
+                                                             "oral"))) == 2)
 
   # make sure no extra domains added to the results
-  breastcancer_codes <- getCandidateCodes(
+  codes <- getCandidateCodes(
     cdm = cdm,
     keywords = c("at") ,
     domains = c("Condition", "Observation"),
@@ -328,7 +337,7 @@ test_that("postgres", {
     includeDescendants = TRUE,
     includeAncestor = FALSE
   )
-  expect_true(length(unique(breastcancer_codes$domain_id)) <= 2)
+  expect_true(length(unique(codes$domain_id)) <= 2)
 
   CDMConnector::cdmDisconnect(cdm)
 })

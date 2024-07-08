@@ -16,20 +16,23 @@
 
 #' Get available routes in a cdm reference.
 #'
-#' @param cdm A cdm reference.
-#' @param category Whether to use the derived dose form categories (see
+#' @description
+#' Get the dose form categories available in the database (see
 #' https://doi.org/10.1002/pds.5809) for more details on how routes
-#' where classified).
+#' were classified).
+#'
+#'
+#' @param cdm A cdm reference.
 #'
 #' @return A character vector with available routes
 #' @export
 #'
-getRoutes <- function(cdm, category = TRUE) {
+getRouteCategories <- function(cdm) {
 
-  if (isTRUE(category)) {
     # relate does form concept id with the classification established by
     # doseFormToRoute
-    doseRouteData <- get0("doseFormToRoute", envir = asNamespace("CodelistGenerator"))
+    doseRouteData <- get0("doseFormToRoute",
+                          envir = asNamespace("CodelistGenerator"))
 
     routeCategory <- cdm$concept_relationship |>
       # get dose form available in the cdm
@@ -49,17 +52,6 @@ getRoutes <- function(cdm, category = TRUE) {
       dplyr::select("route_category") |>
       dplyr::distinct() |>
       dplyr::pull()
-  } else {
-    routeCategory <- cdm$concept |>
-      dplyr::inner_join(
-        cdm$concept_relationship |>
-          dplyr::filter(.data$relationship_id == "Has route of admin"),
-        by = c("concept_id" = "concept_id_2")
-      ) |>
-      dplyr::select("concept_name") |>
-      dplyr::distinct() |>
-      dplyr::pull()
-  }
 
   # sort alphabetically the result
   routeCategory <- sort(routeCategory)
