@@ -22,7 +22,7 @@ test_that("redshift", {
                   c(doseFormToRoute$route_category, "unclassified route")))
   # alphabetical order
   expect_identical(routeCat,
-                   sort(getRoutes(cdm)))
+                   sort(getRouteCategories(cdm)))
 
 
 
