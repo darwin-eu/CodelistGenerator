@@ -86,9 +86,8 @@ concepts and relationships.</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 1</span></span>
@@ -100,7 +99,7 @@ concepts and relationships.</p>
 <span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SNOMED"</span></span>
 <span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S"</span></span></code></pre></div>
 <p>Note, we would also identify it based on a partial match</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"Musculoskeletal"</span>,</span>
@@ -112,9 +111,8 @@ concepts and relationships.</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 1</span></span>
@@ -132,7 +130,7 @@ concepts and relationships.</p>
 <p><img src="mock_db_fig7.png"><!-- --></p>
 <p>To include descendants of an identified code, we can set
 includeDescendants to TRUE</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span>
@@ -161,7 +159,7 @@ includeDescendants to TRUE</p>
 </h2>
 <p>We can also search for multiple keywords at the same time, and would
 have picked these all up with the following search</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -177,9 +175,8 @@ have picked these all up with the following search</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 5 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 5</span></span>
@@ -197,7 +194,7 @@ have picked these all up with the following search</p>
 <p><img src="mock_db_fig5.png"><!-- --></p>
 <p>To include the ancestors one level above the identified concepts we
 can set includeAncestor to TRUE</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"Osteoarthritis of knee"</span>,</span>
@@ -211,9 +208,8 @@ can set includeAncestor to TRUE</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 2</span></span>
@@ -232,7 +228,7 @@ can set includeAncestor to TRUE</p>
 <p>We can also find concepts with multiple words even if they are in a
 different order. For example, a search for “Knee osteoarthritis” will
 pick up “Osteoarthritis of knee”.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"Knee osteoarthritis"</span>,</span>
@@ -245,9 +241,8 @@ pick up “Osteoarthritis of knee”.</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1 candidate concept identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 1</span></span>
@@ -264,7 +259,7 @@ pick up “Osteoarthritis of knee”.</p>
 </h2>
 <p><img src="mock_db_fig5.png"><!-- --></p>
 <p>We can also exclude specific terms</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"arthritis"</span>,</span>
@@ -277,9 +272,8 @@ pick up “Osteoarthritis of knee”.</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 2</span></span>
@@ -299,7 +293,7 @@ pick up “Osteoarthritis of knee”.</p>
 “Arthritis” has a synonym of “Osteoarthrosis” and so a search of both
 the primary name of a concept and any of its associated synonyms would
 pick up this synonym and it would be included.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"osteoarthrosis"</span>,</span>
@@ -313,9 +307,8 @@ pick up this synonym and it would be included.</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 4</span></span>
@@ -332,7 +325,7 @@ pick up this synonym and it would be included.</p>
 </h2>
 <p>Or we could have also picked up “Osteoarthrosis” by searching via
 non-standard.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"arthritis"</span>, <span class="st">"arthropathy"</span><span class="op">)</span>,</span>
@@ -346,9 +339,8 @@ non-standard.</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 4 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 4</span></span>
@@ -365,7 +357,7 @@ non-standard.</p>
 </h2>
 <p><img src="mock_db_fig8.png"><!-- --></p>
 <p>We can also include non-standard codes in our results like so</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -383,9 +375,8 @@ non-standard.</p>
 <span><span class="co">#&gt; Search completed. Finishing up.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 8 candidate concepts identified</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Time taken: 0 minutes and 0 seconds</span></span>
+<span></span>
 <span><span class="va">codes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 8</span></span>

@@ -87,15 +87,14 @@ vocabularies.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - 161_acetaminophen (7 codes)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">acetaminophen_codes</span><span class="op">$</span><span class="va">acetaminophen</span></span>
+<span><span class="co">#&gt; - 161_acetaminophen (7 codes)</span></span>
+<span><span class="va">acetaminophen_codes</span><span class="op">$</span><span class="va">acetaminophen</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
 <p>Alternatively, instead of returning a codelist we could instead get
 back a tibble that contains additional information on each conept such
 as their names and domains by setting <code>withConceptDetails</code> to
 TRUE</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">acetaminophen_codes_with_details</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
@@ -108,7 +107,7 @@ TRUE</p>
 <p>Instead of getting back all concepts for acetaminophen, we could
 require that only concepts associated with acetaminophen and at least
 one more drug ingredient (i.e. combination therapies) are returned.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">acetaminophen_two_or_more_ingredients</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
@@ -121,7 +120,7 @@ one more drug ingredient (i.e. combination therapies) are returned.</p>
 <span><span class="co">#&gt;  NULL</span></span></code></pre></div>
 <p>Or we could instead only return concepts associated with
 acetaminophen and no other drug ingredient.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">acetaminophen_one_ingredient</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
@@ -134,16 +133,15 @@ acetaminophen and no other drug ingredient.</p>
 <span><span class="co">#&gt;  NULL</span></span></code></pre></div>
 <p>Lastly, we could also restrict to a particular dose form. Let’s try
 to see if there are any injection dose form of acetaminophen.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">acetaminophen_injections</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
 <span>  doseForm <span class="op">=</span> <span class="st">"injection"</span>,</span>
 <span>  withConceptDetails <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: No descendant codes found</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Warning: No descendant codes found</span></span>
+<span></span>
 <span><span class="va">acetaminophen_injections</span><span class="op">$</span><span class="va">acetaminophen</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  NULL</span></span></code></pre></div>
@@ -152,7 +150,7 @@ acetaminophen with an injection dose form.</p>
 <p>The previous examples have focused on single drug ingredient. We can
 though specify multiple ingredients, in which case we will get a
 codelist back for each.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">acetaminophen_heparin_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"acetaminophen"</span>, <span class="st">"heparin"</span><span class="op">)</span></span>
@@ -163,16 +161,14 @@ codelist back for each.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">2 codelists</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - 161_acetaminophen (7 codes)</span></span>
-<span><span class="co">#&gt; - 5224_heparin (1 codes)</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">acetaminophen_heparin_codes</span><span class="op">$</span><span class="va">acetaminophen</span></span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">acetaminophen_heparin_codes</span><span class="op">$</span><span class="va">heparin</span> </span>
+<span><span class="co">#&gt; - 5224_heparin (1 codes)</span></span>
+<span><span class="va">acetaminophen_heparin_codes</span><span class="op">$</span><span class="va">acetaminophen</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="va">acetaminophen_heparin_codes</span><span class="op">$</span><span class="va">heparin</span> </span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
 <p>And if we don´t specify an ingredient, we´ll get a codelist for every
 drug ingredient in the vocabularies.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ingredient_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span><span class="op">)</span></span>
 <span><span class="va">ingredient_codes</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -197,11 +193,11 @@ drug ingredient in the vocabularies.</p>
 <code><a href="../reference/getATCCodes.html">getATCCodes()</a></code> can be used to generate a codelist based on a
 particular ATC class. To show this, we´ll use a the mock vocabulary from
 CodelistGenerator.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm_mock</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>In this example, we will produce an ATC level 1 codelist based on
 Alimentary Tract and Metabolism Drugs.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">atc_codelist</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getATCCodes.html">getATCCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm_mock</span>,</span>
 <span>  level <span class="op">=</span> <span class="st">"ATC 1st"</span>,</span>
@@ -227,7 +223,7 @@ a code that is mapped from them. It is important to note that
 codes are included in the vocabulary tables.</p>
 <p>For this example, we will try to generate a codelist for
 arthropathies.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">arthropathy_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getICD10StandardCodes.html">getICD10StandardCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm_mock</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"arthropathies"</span></span>
@@ -236,13 +232,12 @@ arthropathies.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - 1234_arthropathies (3 codes)</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">arthropathy_codes</span><span class="op">$</span><span class="va">arthropathies</span></span>
+<span><span class="co">#&gt; - 1234_arthropathies (3 codes)</span></span>
+<span><span class="va">arthropathy_codes</span><span class="op">$</span><span class="va">arthropathies</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
 <p>As with the above functions, we could return concepts with their
 details rather than as a codelist.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">arthropathy_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getICD10StandardCodes.html">getICD10StandardCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm_mock</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"arthropathies"</span>, </span>
@@ -255,9 +250,8 @@ details rather than as a codelist.</p>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1234_arthropathi…          3 Arthritis    Condition SNOMED        1234        </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 1234_arthropathi…          4 Osteoarthri… Condition SNOMED        1234        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1234_arthropathi…          5 Osteoarthri… Condition SNOMED        1234</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">arthropathy_codes</span><span class="op">$</span><span class="va">arthropathies</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1234_arthropathi…          5 Osteoarthri… Condition SNOMED        1234</span></span>
+<span><span class="va">arthropathy_codes</span><span class="op">$</span><span class="va">arthropathies</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
