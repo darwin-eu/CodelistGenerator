@@ -214,7 +214,24 @@ test_that("table code use expcted columns", {
       c('group', 'Standard concept name', 'Timing',
         '[header]CDM name\n[header_level]Synthea synthetic health database\n[header_level]Record count',
         '[header]CDM name\n[header_level]Synthea synthetic health database\n[header_level]Person count')))
-})
+
+
+  # empty result
+  results <- summariseCodeUse(list(a = 99999),
+                              cdm = cdm)
+
+  tab1 <- tableCodeUse(result = results)
+  CDMConnector::cdm_disconnect(cdm)
+
+  # no code use result
+  cdm <- mockVocabRef("database")
+  results <- summariseOrphanCodes(x = list("msk" = 1),
+                                       cdm = cdm)
+  tab1 <- tableCodeUse(result = results)
+
+  CDMConnector::cdm_disconnect(cdm)
+
+  })
 
 test_that("table code use output formats", {
   if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {

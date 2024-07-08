@@ -1,6 +1,7 @@
 test_that("achilles code use", {
 
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
+  testthat::skip_if_offline()
 
   db <-  DBI::dbConnect(RPostgres::Redshift(),
                         dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),

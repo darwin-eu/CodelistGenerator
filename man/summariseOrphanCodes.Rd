@@ -4,50 +4,16 @@
 \alias{summariseOrphanCodes}
 \title{Find orphan codes related to a codelist}
 \usage{
-summariseOrphanCodes(
-  x,
-  cdm,
-  domains = "Condition",
-  standardConcept = "Standard",
-  searchInSynonyms = TRUE,
-  searchNonStandard = TRUE,
-  includeDescendants = TRUE,
-  includeAncestor = TRUE,
-  minCellCount = lifecycle::deprecated()
-)
+summariseOrphanCodes(x, cdm)
 }
 \arguments{
-\item{x}{Codes for which to find codes related but not included (orphan
-codes)}
+\item{x}{A codelist for which to find related codes used in the database}
 
 \item{cdm}{cdm_reference via CDMConnector}
-
-\item{domains}{Character vector with one or more of the OMOP CDM domain.}
-
-\item{standardConcept}{Character vector with one or more of "Standard",
-"Classification", and "Non-standard". These correspond to the flags used
-for the standard_concept field in the concept table of the cdm.}
-
-\item{searchInSynonyms}{Either TRUE or FALSE. If TRUE the code will also
-search using both the primary name in the concept table and synonyms from
-the concept synonym table.}
-
-\item{searchNonStandard}{Either TRUE or FALSE. If TRUE the code will also
-search via non-standard concepts.}
-
-\item{includeDescendants}{Either TRUE or FALSE.
-If TRUE descendant concepts of identified concepts
-will be included in the candidate codelist.}
-
-\item{includeAncestor}{Either TRUE or FALSE.
-If TRUE the direct ancestor concepts of identified concepts
-will be included in the candidate codelist.}
-
-\item{minCellCount}{\verb{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}}
 }
 \value{
-A codelist containing code related to (but not in) the target
-codelist that are present used in the cdm
+A summarised result containg the frequency of codes related
+to (but not in) the codelist
 }
 \description{
 Find orphan codes related to a codelist
@@ -61,13 +27,7 @@ domains = "Condition",
 includeDescendants = FALSE)
 
 orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
-cdm = cdm,
-domains = "Condition",
-standardConcept = "Standard",
-searchInSynonyms = FALSE,
-searchNonStandard = FALSE,
-includeDescendants = TRUE,
-includeAncestor = FALSE)
+cdm = cdm)
 
 orphan_codes
 CDMConnector::cdmDisconnect(cdm)

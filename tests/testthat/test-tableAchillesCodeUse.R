@@ -81,7 +81,30 @@ test_that("table achilles code use expcted columns", {
     colnames(tab5$body$dataset) ==
       c('CDM name', 'Codelist name', 'Domain id', 'Standard concept name', 'Standard concept id', 'Standard concept', 'Record count')))
   expect_true(tab5$body$dataset$`CDM name` |> levels() == "mock")
+
+  # empty result
+  result <- summariseAchillesCodeUse(list(a = 99999),
+                                     cdm = cdm)
+  expect_no_error(tableAchillesCodeUse(result))
+
+  # not an achilles result
+  cond <- dplyr::tibble("person_id" = 1,
+                        "condition_occurrence_id" = 1,
+                        "condition_start_date" = as.Date("2000-01-01"),
+                        "condition_type_concept_id" = 1L,
+                        "condition_concept_id" = 4,
+                        "condition_source_concept_id" = 1)
+  cdm <- omopgenerics::insertTable(cdm,
+                                   name = "condition_occurrence",
+                                   table = cond)
+  result <- summariseCodeUse(list(knee_oa = 4, hip_oa = 5),
+                                     cdm = cdm)
+  expect_no_error(tableAchillesCodeUse(result))
+
+  CDMConnector::cdm_disconnect(cdm)
+
 })
+
 test_that("test table orphan codes work", {
   cdm <- mockVocabRef("database")
 
@@ -93,103 +116,34 @@ test_that("test table orphan codes work", {
   )
 
   orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
-                                       cdm = cdm,
-                                       domains = "Condition",
-                                       standardConcept = "Standard",
-                                       searchInSynonyms = FALSE,
-                                       searchNonStandard = FALSE,
-                                       includeDescendants = TRUE,
-                                       includeAncestor = FALSE)
+                                       cdm = cdm)
 
-  # different combinations of settings and additoinal variables:
-  tab1 <- tableOrphanCodes(orphan_codes,
-                           type = "gt",
-                           header = c("cdm_name", "estimate"),
-                           conceptId = TRUE,
-                           standard = TRUE,
-                           vocabulary = TRUE,
-                           relationship = FALSE,
-                           settings = c("search_in_synonyms"),
-                           groupColumns = NULL,
-                           excludeColumns = c("result_id", "estimate_type"),
-                           .options = list())
+  tab1 <- tableOrphanCodes(orphan_codes)
   expect_true(inherits(tab1, "gt_tbl"))
-  expect_true(all(
-    colnames(tab1$`_data`) ==
-      c('Codelist name', 'Domain id', 'Standard concept name', 'Standard concept id',
-        'Standard concept', 'Vocabulary id', 'Search in synonyms',
-        '[header]CDM name\n[header_level]mock\n[header_level]Record count')))
 
-  tab2 <- tableOrphanCodes(orphan_codes,
-                           type = "gt",
-                           header = c("cdm_name", "estimate"),
-                           conceptId = TRUE,
-                           standard = FALSE,
-                           vocabulary = TRUE,
-                           relationship = FALSE,
-                           settings = c("search_in_synonyms"),
-                           groupColumns = NULL,
-                           excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-                           .options = list())
-  expect_true(inherits(tab2, "gt_tbl"))
-  expect_true(all(
-    colnames(tab2$`_data`) ==
-      c('Codelist name', 'Domain id', 'Standard concept name', 'Standard concept id',
-        'Vocabulary id', 'Search in synonyms',
-        '[header]CDM name\n[header_level]mock\n[header_level]Record count')))
+  # empty result
+  result <- summariseOrphanCodes(list(a = 99999),
+                                     cdm = cdm)
+  expect_no_error(tableOrphanCodes(result))
 
-  tab3 <- tableOrphanCodes(orphan_codes,
-                           type = "flextable",
-                           header = c("cdm_name", "estimate"),
-                           conceptId = TRUE,
-                           standard = TRUE,
-                           vocabulary = FALSE,
-                           relationship = FALSE,
-                           settings = c("search_in_synonyms", "search_standard_concept"),
-                           groupColumns = NULL,
-                           excludeColumns = c("result_id", "estimate_type"),
-                           .options = list())
-  expect_true(inherits(tab3, "flextable"))
-  expect_true(all(
-    colnames(tab3$body$dataset) ==
-      c('Codelist name', 'Domain id', 'Standard concept name', 'Standard concept id',
-        'Standard concept', 'Search in synonyms', 'Search standard concept',
-        'CDM name\nmock\nRecord count')))
+  # not an orphan code use result result
+  cond <- dplyr::tibble("person_id" = 1,
+                        "condition_occurrence_id" = 1,
+                        "condition_start_date" = as.Date("2000-01-01"),
+                        "condition_type_concept_id" = 1L,
+                        "condition_concept_id" = 4,
+                        "condition_source_concept_id" = 1)
+  cdm <- omopgenerics::insertTable(cdm,
+                                   name = "condition_occurrence",
+                                   table = cond)
+  result <- summariseCodeUse(list(knee_oa = 4, hip_oa = 5),
+                             cdm = cdm)
+  expect_no_error(tableAchillesCodeUse(result))
 
-  tab4 <- tableOrphanCodes(orphan_codes,
-                           type = "tibble",
-                           header = c("cdm_name", "estimate"),
-                           conceptId = TRUE,
-                           standard = TRUE,
-                           vocabulary = FALSE,
-                           relationship = TRUE,
-                           settings = c("search_in_synonyms", "search_standard_concept"),
-                           groupColumns = NULL,
-                           excludeColumns = c("result_id", "estimate_type"),
-                           .options = list())
-  expect_true(all(
-    colnames(tab4) ==
-      c('Codelist name', 'Domain id', 'Standard concept name', 'Standard concept id',
-        'Standard concept', 'Relationship id', 'Search in synonyms', 'Search standard concept',
-        '[header]CDM name\n[header_level]mock\n[header_level]Record count')))
-
-  tab5 <- tableOrphanCodes(orphan_codes,
-                           type = "tibble",
-                           header = c("cdm_name", "estimate"),
-                           conceptId = FALSE,
-                           standard = FALSE,
-                           vocabulary = FALSE,
-                           relationship = TRUE,
-                           settings = character(),
-                           groupColumns = NULL,
-                           excludeColumns = c("result_id", "estimate_type"),
-                           .options = list())
-  expect_true(all(
-    colnames(tab5) ==
-      c('Codelist name', 'Domain id', 'Standard concept name', 'Relationship id',
-        '[header]CDM name\n[header_level]mock\n[header_level]Record count')))
+  CDMConnector::cdm_disconnect(cdm)
 
 })
+
 test_that("expcted behaviour", {
   # mock db
   cdm <- mockVocabRef("database")

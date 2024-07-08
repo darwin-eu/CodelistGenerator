@@ -44,6 +44,19 @@ tableAchillesCodeUse <- function(result,
                                  excludeColumns = c("result_id", "estimate_type"),
                                  .options = list()) {
 
+  if(nrow(result) == 0){
+    cli::cli_warn("result object is empty")
+    return(emptyResultTable(type = type))
+  }
+
+  result <- result |>
+    visOmopResults::filterSettings(.data$result_type == "achilles_code_use")
+
+  if(nrow(result) == 0){
+    cli::cli_warn("No achilles code use results found in result object")
+    return(emptyResultTable(type = type))
+  }
+
   x <- internalTableAchillesResult(
     result = result,
     resultType = "achilles_code_use",
@@ -77,8 +90,6 @@ tableAchillesCodeUse <- function(result,
 #' @param standard If TRUE a column indicating if the code is standard will be
 #' displayed.
 #' @param vocabulary If TRUE vocabulary id will be displayed.
-#' @param relationship If TRUE relationship id will be displayed.
-#' @param settings Vector with the settings columns to display.
 #' @param groupColumns Columns to use as group labels. Allowed columns are
 #' `cdm_name` and/or `codelist_name`.
 #' @param excludeColumns Columns to drop from the output table.
@@ -119,30 +130,39 @@ tableOrphanCodes <- function(result,
                              conceptId = TRUE,
                              standard = TRUE,
                              vocabulary = TRUE,
-                             relationship = TRUE,
                              groupColumns = NULL,
-                             settings = character(),
                              excludeColumns = c("result_id", "estimate_type"),
                              .options = list()) {
 
-  checkmate::assertLogical(relationship, len = 1, any.missing = FALSE)
+  if(nrow(result) == 0){
+    cli::cli_warn("Result object is empty")
+    return(emptyResultTable(type = type))
+  }
+
+  result <- result |>
+    visOmopResults::filterSettings(.data$result_type == "orphan_code_use")
+
+  if(nrow(result) == 0){
+    cli::cli_warn("No orphan code results found in result object")
+    return(emptyResultTable(type = type))
+  }
 
   x <- internalTableAchillesResult(
     result = result,
-    resultType = "orphan_codes",
+    resultType = "orphan_code_use",
     type = type,
     header = header,
     conceptId = conceptId,
     standard = standard,
     vocabulary =  vocabulary,
-    relationship = relationship,
+    relationship = FALSE,
     groupColumns = groupColumns,
-    settings = settings,
+    settings = character(),
     excludeColumns = excludeColumns,
     .options = .options
   )
 
-  return(x)
+
 }
 
 internalTableAchillesResult <- function(result,
@@ -188,11 +208,8 @@ internalTableAchillesResult <- function(result,
     dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
 
   # additional:
-  if (resultType == "achilles_code_use") {
     condition <- !standard & !vocabulary
-  } else {
-    condition <- !standard & !vocabulary & !relationship & length(settings)==0
-  }
+
   if (any(grepl("additional", excludeColumns)) & !condition) {
     # remove additonal from exclude columns
     excludeColumns <- excludeColumns[!grepl("additional", excludeColumns)]
@@ -252,4 +269,10 @@ internalTableAchillesResult <- function(result,
   )
 
   return(x)
+}
+
+emptyResultTable <- function(type){
+
+  empty_result <- dplyr::tibble()
+
 }
