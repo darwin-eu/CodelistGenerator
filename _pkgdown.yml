@@ -6,3 +6,33 @@ template:
 navbar:
   structure:
     right: [github]
+
+reference:
+- subtitle: Search for codes following a systematic search strategy
+- contents:
+  - matches("getCandidateCodes")
+- subtitle: Create vocabulary-based codelists
+- contents:
+  - matches("getDrugIngredientCodes|getATCCodes|getICD10StandardCodes")
+- subtitle: Extract codelists from JSON files
+- contents:
+  - matches("codesFromCohort|codesFromConceptSet")
+- subtitle: Run codelist diagnostics
+- contents:
+  - matches("summariseAchillesCodeUse|summariseCodeUse|summariseCohortCodeUse|summariseOrphanCodes")
+- subtitle: Present codelist diagnostics results in a table
+- contents:
+  - matches("tableAchillesCodeUse|tableCodeUse|tableCohortCodeUse|tableOrphanCodes")
+- subtitle: Extract codelists from JSON files
+- contents:
+  - matches("codesFromCohort|codesFromConceptSet")
+- subtitle: Codelist utility functions
+- contents:
+  - matches("codesInUse|compareCodelists|restrictToCodesInUse|subsetOnRouteCategory")
+- subtitle: Vocabulary utility functions
+- contents:
+  - matches("getVocabVersion|getVocabularies|getConceptClassId|getDomains|getDescendants|getDoseForm|doseFormToRoute|getRouteCategories|getRoutes|getRelationshipId|getMappings|sourceCodesInUse")
+- subtitle: Create a mock dataset that contains vocabulary tables
+- contents:
+  - matches("mockVocabRef")
+
