@@ -18,13 +18,23 @@
 #'
 #' @param x Codelist
 #' @param cdm A cdm reference
-#' @param route Route
+#' @param routeCategory Route category. Use getRoutes() to find the available
+#' route categories for a cdm
 #'
-#' @return A character vector with available dose units
+#' @return The codelist with only those concepts associated with the
+#' specified route categories
 #' @export
 #'
-subsetOnRouteCategory <- function(x, route){
+subsetOnRouteCategory <- function(x, cdm, routeCategory){
 
+  x <- omopgenerics::newCodelist(x)
+
+  if(isFALSE(inherits(cdm, "cdm_reference"))){
+    cli::cli_abort("cdm must be a cdm reference")
+  }
+  if(isFALSE(is.character(routeCategory))){
+    cli::cli_abort("routeCategory must be a character vector")
+  }
 
   doseRouteData <- get0("doseFormToRoute", envir = asNamespace("CodelistGenerator"))
 
@@ -38,7 +48,7 @@ subsetOnRouteCategory <- function(x, route){
                                      overwrite = TRUE,
                                      temporary = FALSE)
 
-    x[[i]] <-cdm[[tableCodelist]] |>
+    x[[i]] <- cdm[[tableCodelist]] |>
       dplyr::inner_join(cdm$concept_relationship |>
       dplyr::filter(.data$relationship_id == "RxNorm has dose form"),
       by = c("concept_id" = "concept_id_1")
@@ -54,13 +64,15 @@ subsetOnRouteCategory <- function(x, route){
         "unclassified route",
         .data$route_category
       )) |>
-      dplyr::filter(.data$route_category %in% .env$route) |>
+      dplyr::filter(.data$route_category %in% .env$routeCategory) |>
       dplyr::pull("concept_id")
   }
 
-   z <- 1
+   x <- x |>
+    vctrs::list_drop_empty()
 
-  x
+   CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
+
+   x
 
 }
-

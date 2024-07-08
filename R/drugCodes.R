@@ -28,9 +28,6 @@
 #' @param doseUnit Only descendants codes with the specified dose unit
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
-#' @param route Only descendants codes with the specified route
-#' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose form.
 #' @param routeCategory Only descendants codes with the specified route
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
@@ -57,15 +54,11 @@ getATCCodes <- function(cdm,
                         name = NULL,
                         doseForm = NULL,
                         doseUnit = NULL,
-                        route = NULL,
                         routeCategory = NULL,
                         withConceptDetails = FALSE) {
 
   if(!is.null(doseUnit)){
     cli::cli_abort("doseUnit argument is not yet supported")
-  }
-  if(!is.null(route)){
-    cli::cli_abort("route argument is not yet supported")
   }
   if(!is.null(routeCategory)){
     cli::cli_abort("routeCategory argument is not yet supported")
@@ -201,9 +194,6 @@ getATCCodes <- function(cdm,
 #' @param doseUnit Only descendants codes with the specified dose unit
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
-#' @param route Only descendants codes with the specified route
-#' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose form.
 #' @param routeCategory Only descendants codes with the specified route
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
@@ -234,16 +224,12 @@ getDrugIngredientCodes <- function(cdm,
                                    name = NULL,
                                    doseForm = NULL,
                                    doseUnit = NULL,
-                                   route = NULL,
                                    routeCategory = NULL,
                                    ingredientRange = c(1, Inf),
                                    withConceptDetails = FALSE) {
 
   if(!is.null(doseUnit)){
     cli::cli_abort("doseUnit argument is not yet supported")
-  }
-  if(!is.null(route)){
-    cli::cli_abort("route argument is not yet supported")
   }
   if(!is.null(routeCategory)){
     cli::cli_abort("routeCategory argument is not yet supported")
