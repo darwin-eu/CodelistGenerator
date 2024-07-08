@@ -35,8 +35,54 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
 
+      <h3 id="search-for-codes-following-a-systematic-search-strategy">Search for codes following a systematic search strategy<a class="anchor" aria-label="anchor" href="#search-for-codes-following-a-systematic-search-strategy"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="getCandidateCodes.html">getCandidateCodes()</a></code>
+
+        </dt>
+        <dd>Generate candidate codelist for the OMOP CDM</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="create-vocabulary-based-codelists">Create vocabulary-based codelists<a class="anchor" aria-label="anchor" href="#create-vocabulary-based-codelists"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="getATCCodes.html">getATCCodes()</a></code>
+
+        </dt>
+        <dd>Get descendant codes for ATC levels</dd>
+      </dl><dl><dt>
+
+          <code><a href="getDrugIngredientCodes.html">getDrugIngredientCodes()</a></code>
+
+        </dt>
+        <dd>Get descendant codes for drug ingredients</dd>
+      </dl><dl><dt>
+
+          <code><a href="getICD10StandardCodes.html">getICD10StandardCodes()</a></code>
+
+        </dt>
+        <dd>Get corresponding standard codes for ICD-10 chapters and sub-chapters</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="extract-codelists-from-json-files">Extract codelists from JSON files<a class="anchor" aria-label="anchor" href="#extract-codelists-from-json-files"></a></h3>
 
 
 
@@ -57,7 +103,111 @@
 
         </dt>
         <dd>Get concept ids from a provided path to json files</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="run-codelist-diagnostics">Run codelist diagnostics<a class="anchor" aria-label="anchor" href="#run-codelist-diagnostics"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="summariseAchillesCodeUse.html">summariseAchillesCodeUse()</a></code>
+
+        </dt>
+        <dd>Summarise code use from achilles counts</dd>
       </dl><dl><dt>
+
+          <code><a href="summariseCodeUse.html">summariseCodeUse()</a></code>
+
+        </dt>
+        <dd>Summarise code use in patient-level data</dd>
+      </dl><dl><dt>
+
+          <code><a href="summariseCohortCodeUse.html">summariseCohortCodeUse()</a></code>
+
+        </dt>
+        <dd>Summarise code use among a cohort in the cdm reference</dd>
+      </dl><dl><dt>
+
+          <code><a href="summariseOrphanCodes.html">summariseOrphanCodes()</a></code>
+
+        </dt>
+        <dd>Find orphan codes related to a codelist</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="present-codelist-diagnostics-results-in-a-table">Present codelist diagnostics results in a table<a class="anchor" aria-label="anchor" href="#present-codelist-diagnostics-results-in-a-table"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="tableAchillesCodeUse.html">tableAchillesCodeUse()</a></code>
+
+        </dt>
+        <dd>Format the result of summariseAchillesCodeUse into a table.</dd>
+      </dl><dl><dt>
+
+          <code><a href="tableCodeUse.html">tableCodeUse()</a></code>
+
+        </dt>
+        <dd>Format the result of summariseCodeUse into a table.</dd>
+      </dl><dl><dt>
+
+          <code><a href="tableCohortCodeUse.html">tableCohortCodeUse()</a></code>
+
+        </dt>
+        <dd>Format the result of summariseCohortCodeUse into a table.</dd>
+      </dl><dl><dt>
+
+          <code><a href="tableOrphanCodes.html">tableOrphanCodes()</a></code>
+
+        </dt>
+        <dd>Format the result of summariseOrphanCodes into a table.</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="extract-codelists-from-json-files-1">Extract codelists from JSON files<a class="anchor" aria-label="anchor" href="#extract-codelists-from-json-files-1"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="codesFromCohort.html">codesFromCohort()</a></code>
+
+        </dt>
+        <dd>Get concept ids from a provided path to cohort json files</dd>
+      </dl><dl><dt>
+
+          <code><a href="codesFromConceptSet.html">codesFromConceptSet()</a></code>
+
+        </dt>
+        <dd>Get concept ids from a provided path to json files</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="codelist-utility-functions">Codelist utility functions<a class="anchor" aria-label="anchor" href="#codelist-utility-functions"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="codesInUse.html">codesInUse()</a></code>
 
@@ -71,22 +221,33 @@
         <dd>Compare two codelists</dd>
       </dl><dl><dt>
 
+          <code><a href="restrictToCodesInUse.html">restrictToCodesInUse()</a></code>
+
+        </dt>
+        <dd>Use achilles counts to filter a codelist to keep only the codes used in the database</dd>
+      </dl><dl><dt>
+
+          <code><a href="subsetOnRouteCategory.html">subsetOnRouteCategory()</a></code>
+
+        </dt>
+        <dd>Subset a codelist to only those with a particular route category</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="vocabulary-utility-functions">Vocabulary utility functions<a class="anchor" aria-label="anchor" href="#vocabulary-utility-functions"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
           <code><a href="doseFormToRoute.html">doseFormToRoute</a></code>
 
         </dt>
         <dd>Equivalence from dose from concept IDs to route categories.</dd>
-      </dl><dl><dt>
-
-          <code><a href="getATCCodes.html">getATCCodes()</a></code>
-
-        </dt>
-        <dd>Get descendant codes for ATC levels</dd>
-      </dl><dl><dt>
-
-          <code><a href="getCandidateCodes.html">getCandidateCodes()</a></code>
-
-        </dt>
-        <dd>Generate candidate codelist for the OMOP CDM</dd>
       </dl><dl><dt>
 
           <code><a href="getConceptClassId.html">getConceptClassId()</a></code>
@@ -111,18 +272,6 @@
 
         </dt>
         <dd>getDoseForm</dd>
-      </dl><dl><dt>
-
-          <code><a href="getDrugIngredientCodes.html">getDrugIngredientCodes()</a></code>
-
-        </dt>
-        <dd>Get descendant codes for drug ingredients</dd>
-      </dl><dl><dt>
-
-          <code><a href="getICD10StandardCodes.html">getICD10StandardCodes()</a></code>
-
-        </dt>
-        <dd>Get corresponding standard codes for ICD-10 chapters and sub-chapters</dd>
       </dl><dl><dt>
 
           <code><a href="getMappings.html">getMappings()</a></code>
@@ -155,78 +304,30 @@
         <dd>getVocabularies</dd>
       </dl><dl><dt>
 
-          <code><a href="mockVocabRef.html">mockVocabRef()</a></code>
-
-        </dt>
-        <dd>Generate example vocabulary database</dd>
-      </dl><dl><dt>
-
-          <code><a href="restrictToCodesInUse.html">restrictToCodesInUse()</a></code>
-
-        </dt>
-        <dd>Use achilles counts to filter a codelist to keep only the codes used in the database</dd>
-      </dl><dl><dt>
-
           <code><a href="sourceCodesInUse.html">sourceCodesInUse()</a></code>
 
         </dt>
         <dd>Use achilles counts to get source codes used in the database</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
 
-          <code><a href="subsetOnRouteCategory.html">subsetOnRouteCategory()</a></code>
+      <h3 id="create-a-mock-dataset-that-contains-vocabulary-tables">Create a mock dataset that contains vocabulary tables<a class="anchor" aria-label="anchor" href="#create-a-mock-dataset-that-contains-vocabulary-tables"></a></h3>
 
-        </dt>
-        <dd>Subset a codelist to only those with a particular route category</dd>
-      </dl><dl><dt>
 
-          <code><a href="summariseAchillesCodeUse.html">summariseAchillesCodeUse()</a></code>
 
-        </dt>
-        <dd>Summarise code use from achilles counts</dd>
-      </dl><dl><dt>
+    </div><div class="section level2">
 
-          <code><a href="summariseCodeUse.html">summariseCodeUse()</a></code>
 
-        </dt>
-        <dd>Summarise code use in patient-level data</dd>
-      </dl><dl><dt>
 
-          <code><a href="summariseCohortCodeUse.html">summariseCohortCodeUse()</a></code>
+
+      <dl><dt>
+
+          <code><a href="mockVocabRef.html">mockVocabRef()</a></code>
 
         </dt>
-        <dd>Summarise code use among a cohort in the cdm reference</dd>
-      </dl><dl><dt>
-
-          <code><a href="summariseOrphanCodes.html">summariseOrphanCodes()</a></code>
-
-        </dt>
-        <dd>Find orphan codes related to a codelist</dd>
-      </dl><dl><dt>
-
-          <code><a href="tableAchillesCodeUse.html">tableAchillesCodeUse()</a></code>
-
-        </dt>
-        <dd>Format the result of summariseAchillesCodeUse into a table.</dd>
-      </dl><dl><dt>
-
-          <code><a href="tableCodeUse.html">tableCodeUse()</a></code>
-
-        </dt>
-        <dd>Format the result of summariseCodeUse into a table.</dd>
-      </dl><dl><dt>
-
-          <code><a href="tableCohortCodeUse.html">tableCohortCodeUse()</a></code>
-
-        </dt>
-        <dd>Format the result of summariseCohortCodeUse into a table.</dd>
-      </dl><dl><dt>
-
-          <code><a href="tableOrphanCodes.html">tableOrphanCodes()</a></code>
-
-        </dt>
-        <dd>Format the result of summariseOrphanCodes into a table.</dd>
+        <dd>Generate example vocabulary database</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
