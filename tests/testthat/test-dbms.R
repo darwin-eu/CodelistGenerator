@@ -319,7 +319,7 @@ test_that("postgres", {
                           routeCategory = "oral")) == 2)
   # only metformin has injectable route
   expect_true(length(subsetOnRouteCategory(drug_codes, cdm,
-                                             routeCategory = "injectable")) == 2)
+                                             routeCategory = "injectable")) == 1)
   # we can put multiple route categories
   # and we should get the same result if we subset up front or later
   drug_codes2 <- getDrugIngredientCodes(cdm,
