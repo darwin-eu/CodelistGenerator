@@ -25,6 +25,15 @@
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
+#' @param doseUnit Only descendants codes with the specified dose unit
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose form.
+#' @param route Only descendants codes with the specified route
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose form.
+#' @param routeCategory Only descendants codes with the specified route
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose form.
 #' @param withConceptDetails If FALSE, each item in the list of results (one per
 #' ATC group) will contain a vector of concept IDs for each ingredient. If
 #' TRUE each item in the list of results will contain a tibble with additional
@@ -47,7 +56,22 @@ getATCCodes <- function(cdm,
                         level = c("ATC 1st"),
                         name = NULL,
                         doseForm = NULL,
+                        doseUnit = NULL,
+                        route = NULL,
+                        routeCategory = NULL,
                         withConceptDetails = FALSE) {
+
+  if(!is.null(doseUnit)){
+    cli::cli_abort("doseUnit argument is not yet supported")
+  }
+  if(!is.null(route)){
+    cli::cli_abort("route argument is not yet supported")
+  }
+  if(!is.null(routeCategory)){
+    cli::cli_abort("routeCategory argument is not yet supported")
+  }
+
+
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   levelCheck <- all(level %in%
@@ -174,6 +198,15 @@ getATCCodes <- function(cdm,
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
+#' @param doseUnit Only descendants codes with the specified dose unit
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose form.
+#' @param route Only descendants codes with the specified route
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose form.
+#' @param routeCategory Only descendants codes with the specified route
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose form.
 #' @param ingredientRange Used to restrict descendant codes to those
 #' associated with a specific number of ingredients. Must be a vector of length
 #' two with the first element the minimum number of ingredients allowed and
@@ -200,8 +233,23 @@ getATCCodes <- function(cdm,
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,
                                    doseForm = NULL,
+                                   doseUnit = NULL,
+                                   route = NULL,
+                                   routeCategory = NULL,
                                    ingredientRange = c(1, Inf),
                                    withConceptDetails = FALSE) {
+
+  if(!is.null(doseUnit)){
+    cli::cli_abort("doseUnit argument is not yet supported")
+  }
+  if(!is.null(route)){
+    cli::cli_abort("route argument is not yet supported")
+  }
+  if(!is.null(routeCategory)){
+    cli::cli_abort("routeCategory argument is not yet supported")
+  }
+
+
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
   checkmate::assertVector(name,

@@ -8,6 +8,9 @@ getDrugIngredientCodes(
   cdm,
   name = NULL,
   doseForm = NULL,
+  doseUnit = NULL,
+  route = NULL,
+  routeCategory = NULL,
   ingredientRange = c(1, Inf),
   withConceptDetails = FALSE
 )
@@ -20,6 +23,18 @@ getDrugIngredientCodes(
 concepts for these two particular drug ingredients.}
 
 \item{doseForm}{Only descendants codes with the specified dose form
+will be returned. If NULL, descendant codes will be returned regardless
+of dose form.}
+
+\item{doseUnit}{Only descendants codes with the specified dose unit
+will be returned. If NULL, descendant codes will be returned regardless
+of dose form.}
+
+\item{route}{Only descendants codes with the specified route
+will be returned. If NULL, descendant codes will be returned regardless
+of dose form.}
+
+\item{routeCategory}{Only descendants codes with the specified route
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
 
