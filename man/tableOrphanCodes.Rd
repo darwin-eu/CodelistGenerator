@@ -42,10 +42,6 @@ displayed.}
 \item{.options}{Named list with additional formatting options.
 visOmopResults::optionsVisOmopTable() shows allowed arguments and
 their default values.}
-
-\item{relationship}{If TRUE relationship id will be displayed.}
-
-\item{settings}{Vector with the settings columns to display.}
 }
 \value{
 A table with a formatted version of the summariseOrphanCodes

@@ -90,8 +90,6 @@ tableAchillesCodeUse <- function(result,
 #' @param standard If TRUE a column indicating if the code is standard will be
 #' displayed.
 #' @param vocabulary If TRUE vocabulary id will be displayed.
-#' @param relationship If TRUE relationship id will be displayed.
-#' @param settings Vector with the settings columns to display.
 #' @param groupColumns Columns to use as group labels. Allowed columns are
 #' `cdm_name` and/or `codelist_name`.
 #' @param excludeColumns Columns to drop from the output table.
