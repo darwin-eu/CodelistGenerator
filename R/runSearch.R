@@ -365,7 +365,10 @@ runSearch <- function(keywords,
       dplyr::ungroup() |>
       dplyr::select(!"found_id")
 
-  }
+    # make sure we only have codes from the domain of interest
+    candidateCodes <- candidateCodes |>
+      dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domains))
+      }
 
 
   if(!is.null(attr(cdm, "dbcon"))){
