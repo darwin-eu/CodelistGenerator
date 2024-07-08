@@ -35,10 +35,6 @@ of dose form.}
 ATC group) will contain a vector of concept IDs for each ingredient. If
 TRUE each item in the list of results will contain a tibble with additional
 information on the identified concepts.}
-
-\item{doseUnit}{Only descendants codes with the specified dose unit
-will be returned. If NULL, descendant codes will be returned regardless
-of dose form.}
 }
 \value{
 A named list, with each item containing a vector of descendant
