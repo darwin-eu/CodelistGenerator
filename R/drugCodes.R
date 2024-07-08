@@ -25,9 +25,6 @@
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
-#' @param doseUnit Only descendants codes with the specified dose unit
-#' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose form.
 #' @param routeCategory Only descendants codes with the specified route
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
