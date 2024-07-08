@@ -9,7 +9,6 @@ getATCCodes(
   level = c("ATC 1st"),
   name = NULL,
   doseForm = NULL,
-  doseUnit = NULL,
   routeCategory = NULL,
   withConceptDetails = FALSE
 )
@@ -28,10 +27,6 @@ concepts for these two particular ATC groups.}
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
 
-\item{doseUnit}{Only descendants codes with the specified dose unit
-will be returned. If NULL, descendant codes will be returned regardless
-of dose form.}
-
 \item{routeCategory}{Only descendants codes with the specified route
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
@@ -40,6 +35,10 @@ of dose form.}
 ATC group) will contain a vector of concept IDs for each ingredient. If
 TRUE each item in the list of results will contain a tibble with additional
 information on the identified concepts.}
+
+\item{doseUnit}{Only descendants codes with the specified dose unit
+will be returned. If NULL, descendant codes will be returned regardless
+of dose form.}
 }
 \value{
 A named list, with each item containing a vector of descendant

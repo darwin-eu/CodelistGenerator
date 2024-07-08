@@ -53,17 +53,8 @@ getATCCodes <- function(cdm,
                         level = c("ATC 1st"),
                         name = NULL,
                         doseForm = NULL,
-                        doseUnit = NULL,
                         routeCategory = NULL,
                         withConceptDetails = FALSE) {
-
-  if(!is.null(doseUnit)){
-    cli::cli_abort("doseUnit argument is not yet supported")
-  }
-  if(!is.null(routeCategory)){
-    cli::cli_abort("routeCategory argument is not yet supported")
-  }
-
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
@@ -179,6 +170,12 @@ getATCCodes <- function(cdm,
     atc_descendants <- omopgenerics::newCodelistWithDetails(atc_descendants)
   }
 
+  if(!is.null(routeCategory)){
+    atc_descendants <- subsetOnRouteCategory(atc_descendants,
+                                             cdm = cdm,
+                                             routeCategory = routeCategory)
+  }
+
   return(atc_descendants)
 }
 
@@ -189,9 +186,6 @@ getATCCodes <- function(cdm,
 #' "codeine"), would result in a list of length two with the descendant
 #' concepts for these two particular drug ingredients.
 #' @param doseForm Only descendants codes with the specified dose form
-#' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose form.
-#' @param doseUnit Only descendants codes with the specified dose unit
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
 #' @param routeCategory Only descendants codes with the specified route
@@ -223,18 +217,9 @@ getATCCodes <- function(cdm,
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,
                                    doseForm = NULL,
-                                   doseUnit = NULL,
                                    routeCategory = NULL,
                                    ingredientRange = c(1, Inf),
                                    withConceptDetails = FALSE) {
-
-  if(!is.null(doseUnit)){
-    cli::cli_abort("doseUnit argument is not yet supported")
-  }
-  if(!is.null(routeCategory)){
-    cli::cli_abort("routeCategory argument is not yet supported")
-  }
-
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
@@ -336,6 +321,12 @@ getDrugIngredientCodes <- function(cdm,
     ingredientCodes <- omopgenerics::newCodelist(ingredientCodes)
     } else {
     ingredientCodes <- omopgenerics::newCodelistWithDetails(ingredientCodes)
+    }
+
+    if(!is.null(routeCategory)){
+      ingredientCodes <- subsetOnRouteCategory(ingredientCodes,
+                            cdm = cdm,
+                            routeCategory = routeCategory)
     }
 
     return(ingredientCodes)

@@ -311,9 +311,8 @@ test_that("postgres", {
   codes <- getDrugIngredientCodes(cdm, "metformin")
   codes[["asthma"]] <- 317009
 
-  drug_codes <- CodelistGenerator::getDrugIngredientCodes(cdm,
-                                                          name = c("metformin",
-                                                                   "diclofenac"))
+  drug_codes <- getDrugIngredientCodes(cdm, name = c("metformin",
+                                                     "diclofenac"))
 
   # if we subset to oral both should still have codes
   expect_true(length(subsetOnRouteCategory(drug_codes, cdm,
@@ -322,9 +321,20 @@ test_that("postgres", {
   expect_true(length(subsetOnRouteCategory(drug_codes, cdm,
                                              routeCategory = "injectable")) == 2)
   # we can put multiple route categories
-  expect_true(length(subsetOnRouteCategory(drug_codes, cdm,
-                                           routeCategory = c("injectable",
-                                                             "oral"))) == 2)
+  # and we should get the same result if we subset up front or later
+  drug_codes2 <- getDrugIngredientCodes(cdm,
+                                        routeCategory = c("injectable",
+                                                          "oral"),
+                                        name = c("metformin","diclofenac"))
+  drug_codes_subset <-  getDrugIngredientCodes(cdm,
+                                               routeCategory = c("injectable",
+                                                                 "oral"),
+                                               name = c("metformin","diclofenac")) |>
+    subsetOnRouteCategory(cdm = cdm,
+                          routeCategory = c("injectable", "oral"))
+
+  expect_true(length(drug_codes_subset) == 2)
+  expect_identical(drug_codes_subset, drug_codes2)
 
   # make sure no extra domains added to the results
   codes <- getCandidateCodes(

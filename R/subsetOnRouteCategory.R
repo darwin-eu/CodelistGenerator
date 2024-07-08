@@ -65,7 +65,12 @@ subsetOnRouteCategory <- function(x, cdm, routeCategory){
         .data$route_category
       )) |>
       dplyr::filter(.data$route_category %in% .env$routeCategory) |>
+      dplyr::select("concept_id") |>
+      dplyr::distinct() |>
       dplyr::pull("concept_id")
+
+    x[[i]] <- sort(x[[i]])
+
   }
 
    x <- x |>
