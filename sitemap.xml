@@ -1,141 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/404.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a01_Introduction_to_CodelistGenerator.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02_Candidate_codes_OA.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a03_Options_for_CodelistGenerator.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/a04_Vocab_based_codelists.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/index.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/CodelistGenerator-package.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/achillesCodeUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesFromCohort.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesFromConceptSet.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesInUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/doseFormToRoute.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/findOrphanCodes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getATCCodes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getConceptClassId.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDescendants.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDomains.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDoseForm.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDrugIngredientCodes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getICD10StandardCodes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getMappings.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRelationshipId.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRoutes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabVersion.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabularies.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/mockVocabRef.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/restrictToCodesInUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/sourceCodesInUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseAchillesCodeUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCodeUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCohortCodeUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseOrphanCodes.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableAchillesCodeUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableCodeUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableCohortCodeUse.html</loc>
-  </url>
-  <url>
-    <loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableOrphanCodes.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/404.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/CONTRIBUTING.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/LICENSE-text.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/LICENSE.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/articles/a01_Introduction_to_CodelistGenerator.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/articles/a02_Candidate_codes_OA.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/articles/a03_Options_for_CodelistGenerator.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/articles/a04_Vocab_based_codelists.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/articles/index.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/authors.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/index.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/news/index.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/CodelistGenerator-package.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/achillesCodeUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesFromCohort.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesFromConceptSet.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesInUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/compareCodelists.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/doseFormToRoute.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getATCCodes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getConceptClassId.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDescendants.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDomains.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDoseForm.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDrugIngredientCodes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getICD10StandardCodes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getMappings.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRelationshipId.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getRoutes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabVersion.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getVocabularies.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/mockVocabRef.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/restrictToCodesInUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/sourceCodesInUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseAchillesCodeUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCodeUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCohortCodeUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseOrphanCodes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableAchillesCodeUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableCodeUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableCohortCodeUse.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableOrphanCodes.html</loc></url>
 </urlset>
+
