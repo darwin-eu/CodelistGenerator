@@ -1,6 +1,4 @@
-#' Format the result of summariseCodeUse into a visual table.
-#'
-#' `r lifecycle::badge("experimental")`
+#' Format the result of summariseCodeUse into a table.
 #'
 #' @param result A summarised result with results of the type "code_use".
 #' @param type Type of desired formatted table, possibilities: "gt",
@@ -96,9 +94,7 @@ tableCodeUse <- function(result,
   return(x)
 }
 
-#' Format the result of summariseCohortCodeUse into a visual table.
-#'
-#' `r lifecycle::badge("experimental")`
+#' Format the result of summariseCohortCodeUse into a table.
 #'
 #' @param result A summarised result with results of the type "cohort_code_use".
 #' @param type Type of desired formatted table, possibilities: "gt",

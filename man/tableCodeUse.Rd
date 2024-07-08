@@ -2,7 +2,7 @@
 % Please edit documentation in R/tableCodeUse.R
 \name{tableCodeUse}
 \alias{tableCodeUse}
-\title{Format the result of summariseCodeUse into a visual table.}
+\title{Format the result of summariseCodeUse into a table.}
 \usage{
 tableCodeUse(
   result,
@@ -45,7 +45,7 @@ their default values.}
 A table with a formatted version of the summariseCodeUse result.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Format the result of summariseCodeUse into a table.
 }
 \examples{
 \dontrun{

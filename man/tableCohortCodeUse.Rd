@@ -2,7 +2,7 @@
 % Please edit documentation in R/tableCodeUse.R
 \name{tableCohortCodeUse}
 \alias{tableCohortCodeUse}
-\title{Format the result of summariseCohortCodeUse into a visual table.}
+\title{Format the result of summariseCohortCodeUse into a table.}
 \usage{
 tableCohortCodeUse(
   result,
@@ -49,7 +49,7 @@ A table with a formatted version of the summariseCohortCodeUse
 result.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Format the result of summariseCohortCodeUse into a table.
 }
 \examples{
 \dontrun{

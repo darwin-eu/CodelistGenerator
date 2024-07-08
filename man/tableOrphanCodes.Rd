@@ -2,7 +2,7 @@
 % Please edit documentation in R/tableAchillesCodeUse.R
 \name{tableOrphanCodes}
 \alias{tableOrphanCodes}
-\title{Format the result of summariseOrphanCodes into a visual table.}
+\title{Format the result of summariseOrphanCodes into a table.}
 \usage{
 tableOrphanCodes(
   result,
@@ -48,7 +48,7 @@ A table with a formatted version of the summariseOrphanCodes
 result.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Format the result of summariseOrphanCodes into a table.
 }
 \examples{
 \dontrun{
