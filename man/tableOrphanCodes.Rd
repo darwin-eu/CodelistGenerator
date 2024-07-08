@@ -11,9 +11,7 @@ tableOrphanCodes(
   conceptId = TRUE,
   standard = TRUE,
   vocabulary = TRUE,
-  relationship = TRUE,
   groupColumns = NULL,
-  settings = character(),
   excludeColumns = c("result_id", "estimate_type"),
   .options = list()
 )
@@ -36,18 +34,18 @@ displayed.}
 
 \item{vocabulary}{If TRUE vocabulary id will be displayed.}
 
-\item{relationship}{If TRUE relationship id will be displayed.}
-
 \item{groupColumns}{Columns to use as group labels. Allowed columns are
 \code{cdm_name} and/or \code{codelist_name}.}
-
-\item{settings}{Vector with the settings columns to display.}
 
 \item{excludeColumns}{Columns to drop from the output table.}
 
 \item{.options}{Named list with additional formatting options.
 visOmopResults::optionsVisOmopTable() shows allowed arguments and
 their default values.}
+
+\item{relationship}{If TRUE relationship id will be displayed.}
+
+\item{settings}{Vector with the settings columns to display.}
 }
 \value{
 A table with a formatted version of the summariseOrphanCodes

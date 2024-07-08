@@ -289,6 +289,10 @@ tibbleToList <- function(codelistTibble) {
 
 addDetails <- function(conceptList, cdm){
 
+  if(length(conceptList)==0){
+    return(conceptList)
+  }
+
   # will accept either a list or tibble
   # will return the same type as the input
   inputIsTbl <- inherits(conceptList, "tbl_df")

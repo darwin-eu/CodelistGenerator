@@ -198,8 +198,8 @@ unmappedSourceCodesInUse <- function(cdm,
   codes
 }
 
-fetchAchillesCodesInUse <- function(cdm, minimumCount = 0){
-  cdm[["achilles_results"]] %>%
+fetchAchillesCodesInUse <- function(cdm, minimumCount = 0, collect = TRUE){
+ codes <- cdm[["achilles_results"]] %>%
     dplyr::filter(.data$analysis_id %in%
       c(
         401, # condition occurrence
@@ -211,10 +211,17 @@ fetchAchillesCodesInUse <- function(cdm, minimumCount = 0){
         2101 # device_exposure
       )) %>%
     dplyr::filter(.data$count_value >= .env$minimumCount) %>%
-    dplyr::select("stratum_1") %>%
+    dplyr::select("concept_id" = "stratum_1") %>%
     dplyr::distinct() %>%
-    dplyr::mutate(stratum_1 = as.integer(.data$stratum_1)) %>%
-    dplyr::pull("stratum_1")
+    dplyr::mutate(concept_id = as.integer(.data$concept_id))
+
+ if(isTRUE(collect)){
+  codes <- codes %>%
+    dplyr::pull("concept_id")
+ }
+
+ codes
+
 }
 
 fetchAchillesSourceCodesInUse <- function(cdm, minimumCount = 0){

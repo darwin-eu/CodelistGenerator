@@ -3,6 +3,7 @@
 test_that("redshift", {
 
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
+  skip_if_offline()
 
   db <-  DBI::dbConnect(RPostgres::Redshift(),
                         dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
@@ -153,6 +154,7 @@ test_that("redshift", {
 test_that("snowflake", {
 
   testthat::skip_if(Sys.getenv("SNOWFLAKE_SERVER") == "")
+  skip_if_offline()
 
   con <- DBI::dbConnect(odbc::odbc(),
                         SERVER = Sys.getenv("SNOWFLAKE_SERVER"),
@@ -285,4 +287,45 @@ test_that("snowflake", {
                                countBy = "not an option"))
 
   CDMConnector::cdm_disconnect(cdm)
+})
+
+test_that("postgres", {
+
+  testthat::skip_if(Sys.getenv("CDM5_POSTGRESQL_DBNAME") == "")
+  skip_if_offline()
+
+  db <- DBI::dbConnect(RPostgres::Postgres(),
+                       dbname = Sys.getenv("CDM5_POSTGRESQL_DBNAME"),
+                       host = Sys.getenv("CDM5_POSTGRESQL_HOST"),
+                       user = Sys.getenv("CDM5_POSTGRESQL_USER"),
+                       password = Sys.getenv("CDM5_POSTGRESQL_PASSWORD"))
+  cdm <- CDMConnector::cdm_from_con(
+    con = db,
+    cdm_schema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA"),
+    write_schema = c(schema =  Sys.getenv("CDM5_POSTGRESQL_SCRATCH_SCHEMA"),
+                     prefix = "incp_"),
+    achilles_schema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA")
+  )
+
+  # check orphan code use performance
+  a<- summariseOrphanCodes(list("asthma"=317009), cdm)
+   tableOrphanCodes(a)
+
+  b<-  summariseOrphanCodes2(list("asthma"=317009), cdm)
+  setdiff(
+  sort(a$variable_name),
+  sort(b$variable_name))
+
+  setdiff(
+    sort(b$variable_name),
+    sort(a$variable_name))
+
+  codes <- getDrugIngredientCodes(cdm, "metformin")
+  codes[["asthma"]] <- 317009
+
+  summariseOrphanCodes2(codes, cdm)
+
+  diclofenac_codes <- CodelistGenerator::getDrugIngredientCodes(cdm,
+                                                                name = c("diclofenac"))
+
 })

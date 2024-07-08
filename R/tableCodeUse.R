@@ -49,6 +49,20 @@ tableCodeUse <- function(result,
                          excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
                          .options = list()) {
 
+  if(nrow(result) == 0){
+    cli::cli_warn("Result object is empty")
+    return(emptyResultTable(type = type))
+  }
+
+  result <- result |>
+    visOmopResults::filterSettings(.data$result_type == "code_use")
+
+  if(nrow(result) == 0){
+    cli::cli_warn("No code use results found in result object")
+    return(emptyResultTable(type = type))
+  }
+
+
   # checks
   if (inherits(groupColumns, "list")) {
     checkmate::assertList(groupColumns, len = 1)
