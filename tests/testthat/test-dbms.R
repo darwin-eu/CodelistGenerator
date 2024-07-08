@@ -308,24 +308,27 @@ test_that("postgres", {
   )
 
   # check orphan code use performance
-  a<- summariseOrphanCodes(list("asthma"=317009), cdm)
-   tableOrphanCodes(a)
-
-  b<-  summariseOrphanCodes2(list("asthma"=317009), cdm)
-  setdiff(
-  sort(a$variable_name),
-  sort(b$variable_name))
-
-  setdiff(
-    sort(b$variable_name),
-    sort(a$variable_name))
+  expect_no_error(summariseOrphanCodes(list("asthma"=317009), cdm))
 
   codes <- getDrugIngredientCodes(cdm, "metformin")
   codes[["asthma"]] <- 317009
 
-  summariseOrphanCodes2(codes, cdm)
-
   diclofenac_codes <- CodelistGenerator::getDrugIngredientCodes(cdm,
                                                                 name = c("diclofenac"))
 
+
+  # make sure no extra domains added to the results
+  breastcancer_codes <- getCandidateCodes(
+    cdm = cdm,
+    keywords = c("at") ,
+    domains = c("Condition", "Observation"),
+    standardConcept = "Standard",
+    searchInSynonyms = FALSE,
+    searchNonStandard = FALSE,
+    includeDescendants = TRUE,
+    includeAncestor = FALSE
+  )
+  expect_true(length(unique(breastcancer_codes$domain_id)) <= 2)
+
+  CDMConnector::cdmDisconnect(cdm)
 })
