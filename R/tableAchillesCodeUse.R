@@ -1,6 +1,4 @@
-#' Format the result of summariseAchillesCodeUse into a visual table.
-#'
-#' `r lifecycle::badge("experimental")`
+#' Format the result of summariseAchillesCodeUse into a table.
 #'
 #' @param result A summarised result with results of the type
 #' "achilles_code_use".
@@ -75,9 +73,7 @@ tableAchillesCodeUse <- function(result,
   return(x)
 }
 
-#' Format the result of summariseOrphanCodes into a visual table.
-#'
-#' `r lifecycle::badge("experimental")`
+#' Format the result of summariseOrphanCodes into a table.
 #'
 #' @param result A summarised result with results of the type
 #' "orphan_codes".

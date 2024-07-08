@@ -2,7 +2,7 @@
 % Please edit documentation in R/tableAchillesCodeUse.R
 \name{tableAchillesCodeUse}
 \alias{tableAchillesCodeUse}
-\title{Format the result of summariseAchillesCodeUse into a visual table.}
+\title{Format the result of summariseAchillesCodeUse into a table.}
 \usage{
 tableAchillesCodeUse(
   result,
@@ -48,7 +48,7 @@ A table with a formatted version of the summariseCohortCodeUse
 result.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Format the result of summariseAchillesCodeUse into a table.
 }
 \examples{
 \dontrun{
