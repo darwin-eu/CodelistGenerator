@@ -15,6 +15,9 @@ summariseOrphanCodes(
 \item{x}{A codelist for which to find related codes used in the database}
 
 \item{cdm}{cdm_reference via CDMConnector}
+
+\item{domain}{The domains to restrict results too. Only concepts from these
+domains will be returned.}
 }
 \value{
 A summarised result containg the frequency of codes related
