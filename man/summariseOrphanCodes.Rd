@@ -4,12 +4,20 @@
 \alias{summariseOrphanCodes}
 \title{Find orphan codes related to a codelist}
 \usage{
-summariseOrphanCodes(x, cdm)
+summariseOrphanCodes(
+  x,
+  cdm,
+  domain = c("condition", "device", "drug", "measurement", "observation", "procedure",
+    "visit")
+)
 }
 \arguments{
 \item{x}{A codelist for which to find related codes used in the database}
 
 \item{cdm}{cdm_reference via CDMConnector}
+
+\item{domain}{The domains to restrict results too. Only concepts from these
+domains will be returned.}
 }
 \value{
 A summarised result containg the frequency of codes related
