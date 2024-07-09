@@ -124,6 +124,11 @@ restrictToCodesInUse <- function(x,
                             "CodelistGenerator::restrictToCodesInUse()",
                             "CodelistGenerator::subsetToCodesInUse()")
 
+  subsetToCodesInUse(x = x,
+                     cdm = cdm,
+                     minimumCount = minimumCount,
+                     table = table)
+
 }
 
 #' Use achilles counts to get codes used in the database

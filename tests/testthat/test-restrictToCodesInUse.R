@@ -3,6 +3,8 @@ test_that("restrict to codes in use", {
   startCl <- list(a = c(4,5,6),
                   b = c(1,2))
   endCl <- restrictToCodesInUse(startCl, cdm)
+  endCl2 <- subsetToCodesInUse(startCl, cdm)
+  expect_identical(endCl, endCl2)
 
   expect_true(all(c(4,5) %in% endCl[["a"]]))
   expect_false(c(6) %in% endCl[["a"]])
