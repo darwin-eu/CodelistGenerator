@@ -19,17 +19,21 @@
 #'
 #' @param x A codelist
 #' @param cdm A cdm reference
+#' @param remove TRUE or FALSE. If TRUE the inputted codelist will be kept and
+#' the stratified appended. If FALSE only the stratified codelist will be
+#' returned.
 #'
 #' @return A codelist
 #' @export
 #'
-stratifyByRouteCategory <- function(x, cdm){
+stratifyByRouteCategory <- function(x, cdm, remove = TRUE){
 
   x <- omopgenerics::newCodelist(x)
 
   if(isFALSE(inherits(cdm, "cdm_reference"))){
     cli::cli_abort("cdm must be a cdm reference")
   }
+  checkmate::assertLogical(remove)
 
   doseRouteData <- get0("doseFormToRoute", envir = asNamespace("CodelistGenerator"))
 
@@ -85,6 +89,10 @@ stratifyByRouteCategory <- function(x, cdm){
 
   result <- purrr:::list_flatten(result) |>
     vctrs::list_drop_empty()
+
+  if(isFALSE(remove)){
+    result <- purrr:::list_flatten(list(x, result))
+  }
 
   CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
 
