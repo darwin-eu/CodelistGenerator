@@ -14,15 +14,15 @@ injectable,46234466
 topical,19057400
 topical,43563497
 transdermal,19082073
-transmucosal - buccal/sublingual,40164192
-transmucosal - buccal/sublingual,40175589
+transmucosal_buccal_or_sublingual,40164192
+transmucosal_buccal_or_sublingual,40175589
 oral,19135868
 oral,19021887
 injectable,46234468
 oral,19082075
 oral,37498346
 oral,19135866
-transmucosal - buccal/sublingual,19102296
+transmucosal_buccal_or_sublingual,19102296
 topical,21014180
 topical,19110977
 oral,19082255
@@ -37,7 +37,7 @@ topical,779945
 inhalable,19127579
 oral,44817840
 oral,19018708
-transmucosal - rectal,19082627
+transmucosal_rectal,19082627
 oral,19082077
 oral,19082079
 oral,19082080
@@ -82,7 +82,7 @@ topical,2008663
 topical,19130329
 inhalable,19126918
 inhalable,36250064
-transmucosal - buccal/sublingual,19095900
+transmucosal_buccal_or_sublingual,19095900
 topical,19082110
 topical,19082161
 topical,19082163
@@ -90,9 +90,9 @@ inhalable,19082162
 inhalable,19126919
 topical,19082164
 topical,43563498
-transmucosal - nasal,35604877
-transmucosal - nasal,19082165
-transmucosal - nasal,19011167
+transmucosal_nasal,35604877
+transmucosal_nasal,19082165
+transmucosal_nasal,19011167
 topical,19095977
 topical,40228565
 topical,19129401
@@ -106,17 +106,17 @@ topical,19082167
 oral,19082168
 topical,19082169
 oral,19111148
-transmucosal - buccal/sublingual,37498347
-transmucosal - buccal/sublingual,19082101
-transmucosal - buccal/sublingual,19095916
+transmucosal_buccal_or_sublingual,37498347
+transmucosal_buccal_or_sublingual,19082101
+transmucosal_buccal_or_sublingual,19095916
 oral,19082651
-transmucosal - buccal/sublingual,19082253
+transmucosal_buccal_or_sublingual,19082253
 topical,19095975
 topical,19095918
 oral,19082652
 oral,19095976
 oral,19082170
-transmucosal - buccal/sublingual,19095911
+transmucosal_buccal_or_sublingual,19095911
 oral,19082191
 oral,19082573
 oral,963781
@@ -147,16 +147,16 @@ topical,19082282
 topical,19082198
 topical,19082283
 topical,19082199
-transmucosal - rectal,19082200
+transmucosal_rectal,19082200
 topical,19082221
 topical,43563499
 topical,21014170
-transmucosal - buccal/sublingual,37498348
-transmucosal - buccal/sublingual,40220762
-transmucosal - buccal/sublingual,19082285
-transmucosal - rectal,19000942
+transmucosal_buccal_or_sublingual,37498348
+transmucosal_buccal_or_sublingual,40220762
+transmucosal_buccal_or_sublingual,19082285
+transmucosal_rectal,19000942
 oral,19001144
-transmucosal - buccal/sublingual,19082222
+transmucosal_buccal_or_sublingual,19082222
 oral,19082223
 oral,19001943
 topical,2008664
@@ -184,7 +184,7 @@ topical,19010880
 topical,1356079
 topical,702776
 topical,19082287
-transmucosal - vaginal,19082230
+transmucosal_vaginal,19082230
 topical,1396583
 topical,19112649
 topical,19093368
