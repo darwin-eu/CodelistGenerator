@@ -308,6 +308,13 @@ test_that("postgres", {
   # check orphan code use performance
   expect_no_error(summariseOrphanCodes(list("asthma"=317009), cdm))
 
+  # limit orphan codes to a domain
+  # we won't have any orphan codes from drug
+  asthma_oc <- summariseOrphanCodes(list("asthma"= c(317009)),
+                       cdm,
+                       domain = "drug")
+  expect_true(nrow(asthma_oc) == 0)
+
   codes <- getDrugIngredientCodes(cdm, "metformin")
   codes[["asthma"]] <- 317009
 
