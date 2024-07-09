@@ -157,7 +157,7 @@ test_that("test inputs - redshift", {
     cdm = cdm,
     path =  system.file(package = "CodelistGenerator",
                         "concepts"),
-    withConceptDetails = TRUE
+    type = "codelist_with_details"
   )
   expect_true("Influenza" %in% x$influenza$concept_name)
 
