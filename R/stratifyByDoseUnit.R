@@ -15,7 +15,7 @@
 # limitations under the License.
 
 
-#' Stratify a codelist by route category
+#' Stratify a codelist by dose unit
 #'
 #' @param x A codelist
 #' @param cdm A cdm reference
@@ -25,7 +25,7 @@
 #' @return A codelist
 #' @export
 #'
-stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
+stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
 
   if(inherits(x, "codelist_with_details")){
     x_original <- x
@@ -42,12 +42,22 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
   }
   checkmate::assertLogical(keepOriginal, len = 1)
 
-  doseRouteData <- get0("doseFormToRoute", envir = asNamespace("CodelistGenerator"))
-
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
 
   result <- list()
+
+  drugStrengthNamed <- cdm$drug_strength |>
+    dplyr::left_join(cdm$concept |>
+                       dplyr::select("concept_id",
+                                     "concept_name"),
+                     by= c("amount_unit_concept_id"= "concept_id")) |>
+    dplyr::rename("amount_concept_name" = "concept_name") |>
+    dplyr::left_join(cdm$concept |>
+                       dplyr::select("concept_id",
+                                     "concept_name"),
+                     by= c("numerator_unit_concept_id"= "concept_id")) |>
+    dplyr::rename("numerator_concept_name" = "concept_name")
 
   for(i in seq_along(x)){
     cdm <- omopgenerics::insertTable(cdm = cdm,
@@ -58,48 +68,47 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
 
     workingName <- names(x)[i]
 
-    workingCodesWithRoute <- cdm[[tableCodelist]] |>
-      dplyr::left_join(cdm$concept_relationship |>
-                          dplyr::filter(.data$relationship_id == "RxNorm has dose form"),
-                        by = c("concept_id" = "concept_id_1")
+    workingCodesWithDoseUnit <- cdm[[tableCodelist]] |>
+      dplyr::left_join(drugStrengthNamed,
+                        by = c("concept_id" = "drug_concept_id")
       ) |>
       dplyr::select("concept_id",
-                    "concept_id_2") |>
-      dplyr::collect() |>
-      dplyr::left_join(
-        doseRouteData, by = c("concept_id_2" = "dose_form_concept_id")
-      ) |>
-      dplyr::mutate(route_category = dplyr::if_else(
-        is.na(.data$route_category),
-        "unclassified route",
-        .data$route_category
-      )) |>
-      dplyr::select("concept_id", "route_category") |>
+                    "amount_concept_name",
+                    "numerator_concept_name") |>
       dplyr::distinct() |>
       dplyr::collect()
 
+    workingCodesWithDoseUnit <- workingCodesWithDoseUnit |>
+      dplyr::mutate(
+        unit_group = dplyr::case_when(
+          !is.na(.data$amount_concept_name) ~ omopgenerics::toSnakeCase(.data$amount_concept_name),
+          !is.na(.data$numerator_concept_name) ~ omopgenerics::toSnakeCase(.data$numerator_concept_name),
+          .default = "unkown_dose_unit"
+        )
+      )
+
     if(isTRUE(withDetails)){
-      workingCodesWithRoute <-  x_original[[i]] |>
-          dplyr::inner_join(workingCodesWithRoute,
-                            by = "concept_id")
+      workingCodesWithDoseUnit <-  x_original[[i]] |>
+        dplyr::inner_join(workingCodesWithDoseUnit,
+                          by = "concept_id")
     }
 
-    workingCodesWithRoute <- split(
-      workingCodesWithRoute,
-      workingCodesWithRoute[, c("route_category")]
+    workingCodesWithDoseUnit <- split(
+      workingCodesWithDoseUnit,
+      workingCodesWithDoseUnit[, c("unit_group")]
     )
 
-    names(workingCodesWithRoute) <- paste0(workingName, "_",
-                                           names(workingCodesWithRoute))
+    names(workingCodesWithDoseUnit) <- paste0(workingName, "_",
+                                           names(workingCodesWithDoseUnit))
 
     if(isFALSE(withDetails)){
-    for(j in seq_along(workingCodesWithRoute)){
-      workingCodesWithRoute[[j]] <- sort(workingCodesWithRoute[[j]] |>
-                                           dplyr::pull("concept_id"))
+      for(j in seq_along(workingCodesWithDoseUnit)){
+        workingCodesWithDoseUnit[[j]] <- sort(workingCodesWithDoseUnit[[j]] |>
+                                             dplyr::pull("concept_id"))
 
-    }}
+      }}
 
-    result[[i]] <- workingCodesWithRoute
+    result[[i]] <- workingCodesWithDoseUnit
 
   }
 

@@ -342,9 +342,8 @@ test_that("postgres", {
   drug_codes_subset <-  getDrugIngredientCodes(cdm,
                                                routeCategory = c("injectable",
                                                                  "oral"),
-                                               name = c("metformin","diclofenac")) |>
-    subsetOnRouteCategory(cdm = cdm,
-                          routeCategory = c("injectable", "oral"))
+                                               name = c("metformin","diclofenac"))
+
 
   expect_true(length(drug_codes_subset) == 2)
   expect_identical(drug_codes_subset, drug_codes2)
@@ -356,6 +355,23 @@ test_that("postgres", {
     stratifyByRouteCategory(cdm = cdm))
   expect_true(inherits(drug_codes_stratified_by_route, "codelist_with_details"))
 
+
+
+ # can subset and stratify by dose unit
+  expect_no_error(getDoseUnit(cdm))
+  drugs <- getDrugIngredientCodes(cdm,
+                                      name = c("metformin","diclofenac"))
+  expect_no_error(subsetOnDoseUnit(drugs, cdm, c("milligram")))
+
+  expect_no_error(drug_codes_stratified_by_unit <-  getDrugIngredientCodes(cdm,
+                                                                            name = c("metformin","diclofenac")) |>
+                    stratifyByDoseUnit(cdm = cdm))
+
+  # we can also stratify by both route and unit
+  expect_no_error(drug_codes_stratified_by_route_and_unit <-  getDrugIngredientCodes(cdm,
+                                                                           name = c("metformin","diclofenac")) |>
+                    stratifyByRouteCategory(cdm = cdm) |>
+                    stratifyByDoseUnit(cdm = cdm))
 
   # make sure no extra domains added to the results
   codes <- getCandidateCodes(

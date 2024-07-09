@@ -28,10 +28,10 @@ reference:
   - matches("codesFromCohort|codesFromConceptSet")
 - subtitle: Codelist utility functions
 - contents:
-  - matches("codesInUse|compareCodelists|subsetToCodesInUse|restrictToCodesInUse|subsetOnRouteCategory|stratifyByRouteCategory")
+  - matches("codesInUse|compareCodelists|subsetToCodesInUse|restrictToCodesInUse|subsetOnRouteCategory|stratifyByRouteCategory|stratifyByDoseUnit|subsetOnDoseUnit")
 - subtitle: Vocabulary utility functions
 - contents:
-  - matches("getVocabVersion|getVocabularies|getConceptClassId|getDomains|getDescendants|getDoseForm|doseFormToRoute|getRouteCategories|getRoutes|getRelationshipId|getMappings|sourceCodesInUse")
+  - matches("getVocabVersion|getVocabularies|getConceptClassId|getDomains|getDescendants|getDoseForm|doseFormToRoute|getRouteCategories|getRoutes|getDoseUnit|getRelationshipId|getMappings|sourceCodesInUse")
 - subtitle: Create a mock dataset that contains vocabulary tables
 - contents:
   - matches("mockVocabRef")
