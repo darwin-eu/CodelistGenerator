@@ -27,6 +27,14 @@
 #'
 subsetOnRouteCategory <- function(x, cdm, routeCategory){
 
+  if(inherits(x, "codelist_with_details")){
+    x_original <- x
+    withDetails <- TRUE
+    x <- codelistFromCodelistWithDetails(x)
+  } else {
+    withDetails <- FALSE
+  }
+
   x <- omopgenerics::newCodelist(x)
 
   if(isFALSE(inherits(cdm, "cdm_reference"))){
@@ -71,6 +79,10 @@ subsetOnRouteCategory <- function(x, cdm, routeCategory){
 
     x[[i]] <- sort(x[[i]])
 
+    if(isTRUE(withDetails)){
+      x[[i]] <- x_original[[i]] |>
+        dplyr::filter(.data$concept_id %in% x[[i]])
+    }
   }
 
    x <- x |>

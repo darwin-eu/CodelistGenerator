@@ -350,9 +350,11 @@ test_that("postgres", {
   expect_identical(drug_codes_subset, drug_codes2)
 
   # can stratify by route
-  expect_no_error(drug_codes_stratified_by_route <-  getDrugIngredientCodes(cdm,,
+  expect_no_error(drug_codes_stratified_by_route <-  getDrugIngredientCodes(cdm,
+                                                                            withConceptDetails = TRUE,
                                                name = c("metformin","diclofenac")) |>
     stratifyByRouteCategory(cdm = cdm))
+  expect_true(inherits(drug_codes_stratified_by_route, "codelist_with_details"))
 
 
   # make sure no extra domains added to the results

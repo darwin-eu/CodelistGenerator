@@ -263,8 +263,9 @@ getDrugIngredientCodes <- function(cdm,
   }
       ingredientCodes <- ingredientCodes  %>%
         dplyr::select("concept_id", "concept_name",
-                        "domain_id", "vocabulary_id",
-                        "ancestor_concept_id") %>%
+                      "domain_id", "vocabulary_id",
+                      "standard_concept",
+                      "ancestor_concept_id") %>%
       # split different ancestors into multiple cols
       tidyr::separate_wider_delim(
         cols = "ancestor_concept_id",
@@ -276,7 +277,8 @@ getDrugIngredientCodes <- function(cdm,
     ingredientCodes <- ingredientCodes %>%
       # one row per concept + ancestor
       tidyr::pivot_longer(cols = !c("concept_id", "concept_name",
-                                    "domain_id", "vocabulary_id"),
+                                    "domain_id", "vocabulary_id",
+                                    "standard_concept"),
         names_to = NULL,
         values_to = "ancestor_concept_id",
         values_drop_na = TRUE
@@ -322,8 +324,8 @@ getDrugIngredientCodes <- function(cdm,
 
     if(!is.null(routeCategory)){
       ingredientCodes <- subsetOnRouteCategory(ingredientCodes,
-                            cdm = cdm,
-                            routeCategory = routeCategory)
+                                               cdm = cdm,
+                                               routeCategory = routeCategory)
     }
 
     return(ingredientCodes)

@@ -4,16 +4,15 @@
 \alias{codesFromCohort}
 \title{Get concept ids from a provided path to cohort json files}
 \usage{
-codesFromCohort(path, cdm, withConceptDetails = FALSE)
+codesFromCohort(path, cdm, type = c("codelist"))
 }
 \arguments{
 \item{path}{Path to a file or folder containing JSONs of cohort definitions}
 
 \item{cdm}{A cdm reference created with CDMConnector}
 
-\item{withConceptDetails}{If FALSE a vector of concept IDs will be returned
-for each concept set. If TRUE a tibble will be returned with additional
-information on the identified concepts.}
+\item{type}{Can be "codelist", "codelist_with_details", or
+"concept_set_expression"}
 }
 \value{
 Named list with concept_ids for each concept set

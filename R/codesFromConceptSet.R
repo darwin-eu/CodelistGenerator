@@ -14,13 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 #' Get concept ids from a provided path to json files
 #'
 #' @param path Path to a file or folder containing JSONs of concept sets
 #' @param cdm A cdm reference created with CDMConnector
-#' @param withConceptDetails If FALSE a vector of concept IDs will be returned
-#' for each concept set. If TRUE a tibble will be returned with additional
-#' information on the identified concepts.
+#' @param type Can be "codelist", "codelist_with_details", or
+#' "concept_set_expression"
 #'
 #' @return Named list with concept_ids for each concept set
 #' @export
@@ -34,7 +34,11 @@
 #' x
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
-codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
+codesFromConceptSet <- function(path,
+                                cdm,
+                                type = c("codelist")) {
+
+
   # initial checks
   checkInputs(path = path, cdm = cdm)
 
@@ -67,6 +71,28 @@ codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
     }
   )
 
+  if(type == "concept_set_expression"){
+    conceptList <- conceptList |>
+    dplyr::select("concept_id",
+                  "excluded" = "is_excluded",
+                  "descendants" = "include_descendants",
+                  "mapped" = "include_mapped",
+                  "cohort_name")
+
+    conceptList <- split(
+      conceptList,
+      conceptList[, c("cohort_name")]
+    )
+
+    for(j in seq_along(conceptList)){
+      conceptList[[j]] <- conceptList[[j]] |>
+        dplyr::select(!"cohort_name")
+    }
+    conceptList <- omopgenerics::newConceptSetExpression(conceptList)
+    return(conceptList)
+    }
+
+
   if(any(conceptList$include_mapped == TRUE)){
     exc <- paste(conceptList %>%
                    dplyr::filter(.data$include_mapped == TRUE) %>%
@@ -90,10 +116,17 @@ codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
   conceptFinalList <- formatConceptList(cdm = cdm,
                                         conceptListTable = conceptListTable)
 
-  if(isTRUE(withConceptDetails)){
+  if(type == "codelist"){
+    conceptFinalList <- omopgenerics::newCodelist(conceptFinalList)
+  }
+
+  if(type == "codelist_with_details"){
     conceptFinalList <- addDetails(conceptList = conceptFinalList,
                cdm = cdm)
+    conceptFinalList <- omopgenerics::newCodelistWithDetails(conceptFinalList)
   }
+
+
 
   # return list
   return(conceptFinalList)
@@ -103,14 +136,15 @@ codesFromConceptSet <- function(path, cdm, withConceptDetails = FALSE) {
 #'
 #' @param path Path to a file or folder containing JSONs of cohort definitions
 #' @param cdm A cdm reference created with CDMConnector
-#' @param withConceptDetails If FALSE a vector of concept IDs will be returned
-#' for each concept set. If TRUE a tibble will be returned with additional
-#' information on the identified concepts.
+#' @param type Can be "codelist", "codelist_with_details", or
+#' "concept_set_expression"
 #'
 #' @return Named list with concept_ids for each concept set
 #' @export
 #'
-codesFromCohort <- function(path, cdm, withConceptDetails = FALSE) {
+codesFromCohort <- function(path,
+                            cdm,
+                            type = c("codelist")) {
   # initial checks
   checkInputs(path = path, cdm = cdm)
 
@@ -128,6 +162,29 @@ codesFromCohort <- function(path, cdm, withConceptDetails = FALSE) {
   if(is.null(codelistTibble)){
     cli::cli_abort("No codes found")
   }
+
+  if(type == "concept_set_expression"){
+    codelistTibble <- codelistTibble |>
+      dplyr::mutate(include_mapped = FALSE) |>
+      dplyr::select("concept_id",
+                    "excluded" = "is_excluded",
+                    "descendants" = "include_descendants",
+                    "mapped" = "include_mapped",
+                    "codelist_name")
+
+    codelistTibble <- split(
+      codelistTibble,
+      codelistTibble[, c("codelist_name")]
+    )
+
+    for(j in seq_along(codelistTibble)){
+      codelistTibble[[j]] <- codelistTibble[[j]] |>
+        dplyr::select(!"codelist_name")
+    }
+    codelistTibble <- omopgenerics::newConceptSetExpression(codelistTibble)
+    return(codelistTibble)
+  }
+
 
   codelistTable <- omopgenerics::uniqueTableName()
   cdm <- omopgenerics::insertTable(cdm = cdm,
@@ -151,10 +208,16 @@ codesFromCohort <- function(path, cdm, withConceptDetails = FALSE) {
   # split into list
   codelist <- tibbleToList(codelistTibble)
 
-  if(isTRUE(withConceptDetails)){
+  if(type == "codelist"){
+    codelist <- omopgenerics::newCodelist(codelist)
+  }
+
+  if(type == "codelist_with_details"){
     codelist <- addDetails(conceptList = codelist,
                                    cdm = cdm)
+    codelist <- omopgenerics::newCodelistWithDetails(codelist)
   }
+
 
   # return
   return(codelist)
