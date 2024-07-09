@@ -36,6 +36,10 @@ summariseOrphanCodes <- function(x,
   if(isFALSE(inherits(cdm, "cdm_reference"))){
     cli::cli_abort("cdm is not a cdm reference but is {class(cdm)}")
   }
+  if(isFALSE(inherits(x, "codelist")) && isFALSE(is.list(x))){
+    cli::cli_abort("x is not a codelist but is {class(cdm)}")
+  }
+
   x <- omopgenerics::newCodelist(x)
 
   # will only return codes that are used in the database
@@ -56,7 +60,16 @@ summariseOrphanCodes <- function(x,
     dplyr::inner_join(codesUsed,
                       by = c("concept_id_2"="concept_id"))
 
-
+  if("concept_recommended" %in% names(cdm)){
+    phoebe <- TRUE
+    phoebeUsed <- cdm$concept_recommended |>
+      dplyr::inner_join(codesUsed,
+                        by = c("concept_id_2"="concept_id"))
+  } else {
+    phoebe <- FALSE
+    cli::cli_inform(c("PHOEBE results not available",
+                      "i" = "The concept_recommened table is not present in the cdm."))
+  }
 
   orphanCodes <- list()
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
@@ -75,40 +88,58 @@ summariseOrphanCodes <- function(x,
       dplyr::inner_join(descendantsUsed,
                        by = c("concept_id" = "ancestor_concept_id")) |>
       dplyr::select("concept_id" = "descendant_concept_id") |>
-      dplyr::distinct()
+      dplyr::filter(!is.na(.data$concept_id)) |>
+      dplyr::distinct() |>
+      dplyr::pull("concept_id")
 
     # get ancestors used in db
     orphanAncestors <- cdm[[tableCodelist]] |>
       dplyr::left_join(ancestorsUsed,
                        by = c("concept_id" = "descendant_concept_id")) |>
-      dplyr::select("concept_id" = "ancestor_concept_id") |>
-      dplyr::distinct()
+      dplyr::select("concept_id" = "ancestor_concept_id")  |>
+      dplyr::filter(!is.na(.data$concept_id)) |>
+      dplyr::distinct() |>
+      dplyr::pull("concept_id")
 
     # get relationship 1
     orphanRelationship1 <- cdm[[tableCodelist]] |>
       dplyr::left_join(relationshipUsed1,
                        by = c("concept_id" = "concept_id_2")) |>
-      dplyr::select("concept_id" = "concept_id_1",
-                    "relationship_id") |>
-      dplyr::distinct()
+      dplyr::select("concept_id" = "concept_id_1")  |>
+      dplyr::filter(!is.na(.data$concept_id)) |>
+      dplyr::distinct() |>
+      dplyr::pull("concept_id")
 
     # get relationship 2
     orphanRelationship2 <- cdm[[tableCodelist]] |>
       dplyr::left_join(relationshipUsed1,
                        by = c("concept_id" = "concept_id_1")) |>
-      dplyr::select("concept_id" = "concept_id_2") |>
-      dplyr::distinct()
-
-    orphanCodes[[names(x)[i]]] <- dplyr::union_all(orphanDescendants,
-                                        orphanAncestors,
-                                        orphanRelationship1,
-                                        orphanRelationship2) |>
-                         dplyr::distinct() |>
-      dplyr::anti_join(cdm[[tableCodelist]],
-                       by = "concept_id") |>
+      dplyr::select("concept_id" = "concept_id_2")  |>
+      dplyr::filter(!is.na(.data$concept_id)) |>
+      dplyr::distinct() |>
       dplyr::pull("concept_id")
 
-    orphanCodes[[names(x)[i]]]  <-  orphanCodes[[names(x)[i]]][!is.na(orphanCodes[[names(x)[i]]])]
+    orphanCodes[[names(x)[i]]] <- c(orphanDescendants,
+                                    orphanAncestors,
+                                    orphanRelationship1,
+                                    orphanRelationship2)
+
+
+    if(isTRUE(phoebe)){
+      phoebeCodes <-  cdm[[tableCodelist]] |>
+        dplyr::left_join(phoebeUsed,
+                         by = c("concept_id" = "concept_id_1")) |>
+        dplyr::select("concept_id" = "concept_id_2")  |>
+        dplyr::filter(!is.na(.data$concept_id)) |>
+        dplyr::distinct() |>
+        dplyr::pull("concept_id")
+
+      orphanCodes[[names(x)[i]]] <- c(orphanCodes[[names(x)[i]]],
+                                      phoebeCodes)
+    }
+
+    # make sure we don't have any of the original codes
+    orphanCodes[[names(x)[i]]] <- setdiff(orphanCodes[[names(x)[i]]], x[[i]])
   }
 
   orphanCodes <- orphanCodes |> vctrs::list_drop_empty()

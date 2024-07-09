@@ -305,8 +305,13 @@ test_that("postgres", {
     achilles_schema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA")
   )
 
-  # check orphan code use performance
+  # check orphan code use
   expect_no_error(summariseOrphanCodes(list("asthma"=317009), cdm))
+
+  asthma <- getCandidateCodes(cdm, "asthma", domains = c("condition",
+                                                         "observation"))
+  asthma_orphan <- summariseOrphanCodes(list(asthma = asthma$concept_id),
+                                        cdm)
 
   # limit orphan codes to a domain
   # we won't have any orphan codes from drug
@@ -314,6 +319,7 @@ test_that("postgres", {
                        cdm,
                        domain = "drug")
   expect_true(nrow(asthma_oc) == 0)
+
 
   codes <- getDrugIngredientCodes(cdm, "metformin")
   codes[["asthma"]] <- 317009
