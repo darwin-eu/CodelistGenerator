@@ -32,6 +32,76 @@
 #'                            keywords = "arthritis",
 #'                            domains = "Condition",
 #'                            includeDescendants = FALSE)
+#' x <- subsetToCodesInUse(list("cs1" = codes$concept_id,
+#'                                "cs2" = 999),
+#'                                 cdm = cdm)
+#'
+#' x
+#' CDMConnector::cdmDisconnect(cdm)
+#' }
+subsetToCodesInUse <- function(x,
+                                 cdm,
+                                 minimumCount = 0L,
+                                 table = c("condition_occurrence",
+                                           "device_exposure",
+                                           "drug_exposure",
+                                           "measurement",
+                                           "observation",
+                                           "procedure_occurrence",
+                                           "visit_occurrence")){
+
+
+  if(is.null(cdm[["achilles_results"]])){
+    cli::cli_abort("Achilles results must be in the cdm reference")
+  }
+
+  dbCodes <- codesInUse(cdm = cdm,
+                        minimumCount = minimumCount,
+                        table = table)
+
+  if(is.null(dbCodes)){
+    for(i in seq_along(x)){
+      cli::cli_inform("No codes from any codelist found in the database")
+      return(invisible(omopgenerics::emptyCodelist()))
+    }
+  } else {
+    for(i in seq_along(x)){
+      x[[i]] <- intersect(x[[i]], dbCodes)
+      if(!length(x[[i]]) >= 1){
+        cli::cli_inform("No codes from codelist {names(x)[i]} found in the database")
+      }
+    }
+  }
+
+  x <- vctrs::list_drop_empty(x)
+
+  if(length(x) == 0){
+    return(invisible(omopgenerics::emptyCodelist()))
+  }
+
+  x
+
+}
+
+
+#' Use achilles counts to filter a codelist to keep only the codes
+#' used in the database
+#'
+#' @param x A codelist
+#' @param cdm cdm_reference via CDMConnector
+#' @param minimumCount Any codes with a frequency under this will be removed.
+#' @param table cdm table
+#'
+#' @return Use achilles counts to filter codelist to only the codes used in the database
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' cdm <- mockVocabRef("database")
+#' codes <- getCandidateCodes(cdm = cdm,
+#'                            keywords = "arthritis",
+#'                            domains = "Condition",
+#'                            includeDescendants = FALSE)
 #' x <- restrictToCodesInUse(list("cs1" = codes$concept_id,
 #'                                "cs2" = 999),
 #'                                 cdm = cdm)
@@ -50,36 +120,14 @@ restrictToCodesInUse <- function(x,
                                          "procedure_occurrence",
                                          "visit_occurrence")){
 
+  lifecycle::deprecate_warn("3.1.0",
+                            "CodelistGenerator::restrictToCodesInUse()",
+                            "CodelistGenerator::subsetToCodesInUse()")
 
-  if(is.null(cdm[["achilles_results"]])){
-    cli::cli_abort("Achilles results must be in the cdm reference")
-  }
-
-  dbCodes <- codesInUse(cdm = cdm,
-                        minimumCount = minimumCount,
-                        table = table)
-
-  if(is.null(dbCodes)){
-  for(i in seq_along(x)){
-    cli::cli_inform("No codes from any codelist found in the database")
-    return(invisible(omopgenerics::emptyCodelist()))
-  }
-} else {
-  for(i in seq_along(x)){
-    x[[i]] <- intersect(x[[i]], dbCodes)
-    if(!length(x[[i]]) >= 1){
-    cli::cli_inform("No codes from codelist {names(x)[i]} found in the database")
-    }
-  }
-}
-
-x <- vctrs::list_drop_empty(x)
-
-if(length(x) == 0){
-  return(invisible(omopgenerics::emptyCodelist()))
-}
-
-x
+  subsetToCodesInUse(x = x,
+                     cdm = cdm,
+                     minimumCount = minimumCount,
+                     table = table)
 
 }
 

@@ -10,10 +10,10 @@ test_that("tests with mock db", {
     includeDescendants = FALSE
   )
   expect_true(all(c("4", "5") %in%
-                restrictToCodesInUse(list("cs" = codes$concept_id),
+                subsetToCodesInUse(list("cs" = codes$concept_id),
                        cdm = cdm)[[1]]))
 
-  expect_true(length(restrictToCodesInUse(list("cs1" = codes$concept_id,
+  expect_true(length(subsetToCodesInUse(list("cs1" = codes$concept_id,
                        "cs2" = 999),
                        cdm = cdm)) == 1) # will just have cs1
 
@@ -24,7 +24,7 @@ test_that("tests with mock db", {
     domains = "Condition",
     includeDescendants = FALSE
   )
- expect_message(restrictToCodesInUse(list("cs" = codes$concept_id),
+ expect_message(subsetToCodesInUse(list("cs" = codes$concept_id),
                        cdm = cdm))
 
   CDMConnector::cdm_disconnect(cdm)
@@ -50,8 +50,6 @@ test_that("sql server with achilles", {
                                     achilles_schema = c("CDMV54", "dbo"),
                                     write_schema = c("ohdsi", "dbo"))
 
-
-
   asthma_codes <- getCandidateCodes(
     cdm = cdm,
     keywords = "asthma",
@@ -60,7 +58,7 @@ test_that("sql server with achilles", {
   )
   asthma_cl <- list("cs" = asthma_codes$concept_id)
 
-  asthma_codes_present <- restrictToCodesInUse(x = asthma_cl,
+  asthma_codes_present <- subsetToCodesInUse(x = asthma_cl,
                                                cdm = cdm)
 
 expect_equal(sort(asthma_codes_present[[1]]),
