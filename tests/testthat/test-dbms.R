@@ -356,6 +356,8 @@ test_that("postgres", {
     stratifyByRouteCategory(cdm = cdm))
   expect_true(inherits(drug_codes_stratified_by_route, "codelist_with_details"))
 
+ expect_no_error(getDoseUnit(cdm))
+
 
   # make sure no extra domains added to the results
   codes <- getCandidateCodes(
