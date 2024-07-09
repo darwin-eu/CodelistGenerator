@@ -27,6 +27,14 @@
 #'
 stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
 
+  if(inherits(x, "codelist_with_details")){
+    x_original <- x
+    withDetails <- TRUE
+    x <- codelistFromCodelistWithDetails(x)
+  } else {
+    withDetails <- FALSE
+  }
+
   x <- omopgenerics::newCodelist(x)
 
   if(isFALSE(inherits(cdm, "cdm_reference"))){
@@ -70,6 +78,12 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
       dplyr::distinct() |>
       dplyr::collect()
 
+    if(isTRUE(withDetails)){
+      workingCodesWithRoute <-  x_original[[i]] |>
+          dplyr::inner_join(workingCodesWithRoute,
+                            by = "concept_id")
+    }
+
     workingCodesWithRoute <- split(
       workingCodesWithRoute,
       workingCodesWithRoute[, c("route_category")]
@@ -78,12 +92,15 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
     names(workingCodesWithRoute) <- paste0(workingName, "_",
                                            names(workingCodesWithRoute))
 
+    if(isFALSE(withDetails)){
     for(j in seq_along(workingCodesWithRoute)){
       workingCodesWithRoute[[j]] <- sort(workingCodesWithRoute[[j]] |>
                                            dplyr::pull("concept_id"))
-    }
+
+    }}
 
     result[[i]] <- workingCodesWithRoute
+
   }
 
   result <- purrr::list_flatten(result) |>
@@ -94,6 +111,13 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
   }
 
   CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
+
+
+  if(isFALSE(withDetails)){
+    result <- omopgenerics::newCodelist(result)
+  } else{
+    result <- omopgenerics::newCodelistWithDetails(result)
+  }
 
   result
 
