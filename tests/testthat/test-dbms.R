@@ -336,6 +336,12 @@ test_that("postgres", {
   expect_true(length(drug_codes_subset) == 2)
   expect_identical(drug_codes_subset, drug_codes2)
 
+  # can stratify by route
+  expect_no_error(drug_codes_stratified_by_route <-  getDrugIngredientCodes(cdm,,
+                                               name = c("metformin","diclofenac")) |>
+    stratifyByRouteCategory(cdm = cdm))
+
+
   # make sure no extra domains added to the results
   codes <- getCandidateCodes(
     cdm = cdm,
