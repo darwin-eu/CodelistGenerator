@@ -342,7 +342,7 @@ test_that("postgres", {
   drug_codes_subset <-  getDrugIngredientCodes(cdm,
                                                routeCategory = c("injectable",
                                                                  "oral"),
-                                               name = c("metformin","diclofenac")) |>
+                                               name = c("metformin","diclofenac"))
 
 
   expect_true(length(drug_codes_subset) == 2)

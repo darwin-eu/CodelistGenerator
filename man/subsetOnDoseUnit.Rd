@@ -11,7 +11,7 @@ subsetOnDoseUnit(x, cdm, doseUnit)
 
 \item{cdm}{A cdm reference}
 
-\item{routeCategory}{Route category. Use getDoseUnit() to find the available
+\item{doseUnit}{Dose unit. Use getDoseUnit() to find the available
 dose units in a cdm}
 }
 \value{

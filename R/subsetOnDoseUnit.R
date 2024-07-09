@@ -18,7 +18,7 @@
 #'
 #' @param x Codelist
 #' @param cdm A cdm reference
-#' @param routeCategory Route category. Use getDoseUnit() to find the available
+#' @param doseUnit Dose unit. Use getDoseUnit() to find the available
 #' dose units in a cdm
 #'
 #' @return The codelist with only those concepts associated with the
