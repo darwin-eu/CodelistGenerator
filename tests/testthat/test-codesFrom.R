@@ -97,6 +97,20 @@ test_that("test inputs - mock", {
   expect_true(all(c("3", "5") %in% x[["OA"]]))
   expect_true(!c("4") %in% x[["OA"]])
 
+  x <- codesFromCohort(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "cohorts_for_mock_with_exclude"),
+    type = "codelist_with_details"
+  )
+  expect_true(inherits(x, "codelist_with_details"))
+
+  x <- codesFromCohort(
+    cdm = cdm, path =  system.file(package = "CodelistGenerator",
+                                   "cohorts_for_mock_with_exclude"),
+    type = "concept_set_expression"
+  )
+  expect_true(inherits(x, "concept_set_expression") |
+              inherits(x, "conceptSetExpression"))
 
   # we´ll get an error if we have the same name concept set in multiple cohorts,
   # but with different definitions
