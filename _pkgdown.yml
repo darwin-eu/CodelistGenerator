@@ -28,7 +28,7 @@ reference:
   - matches("codesFromCohort|codesFromConceptSet")
 - subtitle: Codelist utility functions
 - contents:
-  - matches("codesInUse|compareCodelists|restrictToCodesInUse|subsetOnRouteCategory")
+  - matches("codesInUse|compareCodelists|subsetToCodesInUse|restrictToCodesInUse|subsetOnRouteCategory")
 - subtitle: Vocabulary utility functions
 - contents:
   - matches("getVocabVersion|getVocabularies|getConceptClassId|getDomains|getDescendants|getDoseForm|doseFormToRoute|getRouteCategories|getRoutes|getRelationshipId|getMappings|sourceCodesInUse")
