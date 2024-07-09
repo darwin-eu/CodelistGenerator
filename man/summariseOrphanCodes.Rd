@@ -4,7 +4,12 @@
 \alias{summariseOrphanCodes}
 \title{Find orphan codes related to a codelist}
 \usage{
-summariseOrphanCodes(x, cdm)
+summariseOrphanCodes(
+  x,
+  cdm,
+  domain = c("condition", "device", "drug", "measurement", "observation", "procedure",
+    "visit")
+)
 }
 \arguments{
 \item{x}{A codelist for which to find related codes used in the database}
