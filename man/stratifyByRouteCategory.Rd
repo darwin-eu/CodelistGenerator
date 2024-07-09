@@ -4,12 +4,15 @@
 \alias{stratifyByRouteCategory}
 \title{Stratify a codelist by route category}
 \usage{
-stratifyByRouteCategory(x, cdm)
+stratifyByRouteCategory(x, cdm, keepOriginal = FALSE)
 }
 \arguments{
 \item{x}{A codelist}
 
 \item{cdm}{A cdm reference}
+
+\item{keepOriginal}{Whether to keep the original codelist and append the
+stratify (if TRUE) or just return the stratified codelist (if FALSE).}
 }
 \value{
 A codelist
