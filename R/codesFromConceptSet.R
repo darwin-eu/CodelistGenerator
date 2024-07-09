@@ -19,9 +19,6 @@
 #'
 #' @param path Path to a file or folder containing JSONs of concept sets
 #' @param cdm A cdm reference created with CDMConnector
-#' @param withConceptDetails If FALSE a vector of concept IDs will be returned
-#' for each concept set. If TRUE a tibble will be returned with additional
-#' information on the identified concepts.
 #' @param type Can be "codelist", "codelist_with_details", or
 #' "concept_set_expression"
 #'

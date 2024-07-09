@@ -13,10 +13,6 @@ codesFromConceptSet(path, cdm, type = c("codelist"))
 
 \item{type}{Can be "codelist", "codelist_with_details", or
 "concept_set_expression"}
-
-\item{withConceptDetails}{If FALSE a vector of concept IDs will be returned
-for each concept set. If TRUE a tibble will be returned with additional
-information on the identified concepts.}
 }
 \value{
 Named list with concept_ids for each concept set
