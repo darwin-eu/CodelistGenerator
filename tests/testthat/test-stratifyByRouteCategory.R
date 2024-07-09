@@ -12,13 +12,12 @@ test_that("stratify by route works", {
 
     # can also keep the original
     ing_codes_str_all <- stratifyByRouteCategory(ing_codes, cdm,
-                                                 remove = FALSE)
+                                                 keepOriginal = TRUE)
     expect_true(length(ing_codes_str_all) == 4)
 
     # expected errors
     expect_error(stratifyByRouteCategory("a",  cdm))
     expect_error(stratifyByRouteCategory(ing_codes,  "a"))
-
 
 
     if (backends[[i]] == "database") {
