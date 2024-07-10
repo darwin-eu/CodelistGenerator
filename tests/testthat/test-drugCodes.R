@@ -16,7 +16,7 @@ test_that("getATCCodes working", {
 
   atcCodes3 <- getATCCodes(cdm, level = "ATC 1st",
                            name = "ALIMENTARY TRACT AND METABOLISM",
-                           withConceptDetails = TRUE)
+                           type = "codelist_with_details")
   expect_true(!is.null(atcCodes3[[1]]$concept_name))
   expect_true(inherits(atcCodes3, "codelist_with_details"))
 
@@ -70,7 +70,7 @@ test_that("getDrugIngredientCodes working", {
     ing_codes5 <- getDrugIngredientCodes(cdm,
                                          name = "Adalimumab",
                                          doseForm = "injection",
-                                         withConceptDetails = TRUE)
+                                         type = "codelist_with_details")
     expect_true(!is.null(ing_codes5[[1]]$concept_name))
     expect_true(inherits(ing_codes5, "codelist_with_details"))
 

@@ -350,7 +350,7 @@ test_that("postgres", {
 
   # can stratify by route
   expect_no_error(drug_codes_stratified_by_route <-  getDrugIngredientCodes(cdm,
-                                                                            withConceptDetails = TRUE,
+                                                                            type = "codelist_with_details",
                                                name = c("metformin","diclofenac")) |>
     stratifyByRouteCategory(cdm = cdm))
   expect_true(inherits(drug_codes_stratified_by_route, "codelist_with_details"))

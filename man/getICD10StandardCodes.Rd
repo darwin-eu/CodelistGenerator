@@ -9,7 +9,7 @@ getICD10StandardCodes(
   level = c("ICD10 Chapter", "ICD10 SubChapter"),
   name = NULL,
   includeDescendants = TRUE,
-  withConceptDetails = FALSE
+  type = "codelist"
 )
 }
 \arguments{
@@ -24,9 +24,8 @@ will be considered.}
 to standard codes will be returned. If TRUE descendants of standard concepts
 will also be included.}
 
-\item{withConceptDetails}{If FALSE a vector of concept IDs will be returned
-for each ICD group If TRUE a tibble will be returned with additional
-information on the identified concepts.}
+\item{type}{Can be "codelist", "codelist_with_details", or
+"concept_set_expression"}
 }
 \value{
 A named list, with each element containing the corresponding

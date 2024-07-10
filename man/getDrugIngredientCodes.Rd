@@ -11,7 +11,7 @@ getDrugIngredientCodes(
   doseUnit = NULL,
   routeCategory = NULL,
   ingredientRange = c(1, Inf),
-  withConceptDetails = FALSE
+  type = "codelist"
 )
 }
 \arguments{
@@ -39,17 +39,11 @@ two with the first element the minimum number of ingredients allowed and
 the second the maximum. A value of c(2, 2) would restrict to only concepts
 associated with two ingredients.}
 
-\item{withConceptDetails}{If FALSE, each item in the list of results (one per
-ingredient) will contain a vector of concept IDs for each ingredient. If
-TRUE each item in the list of results will contain a tibble with additional
-information on the identified concepts.}
+\item{type}{Can be "codelist", "codelist_with_details", or
+"concept_set_expression"}
 }
 \value{
-A named list, with each item containing a vector of descendant
-concepts of an ingredient (if withConceptDetails was set as FALSE) or a
-tibble with the descendant concepts along with additional details about them
-(if withConceptDetails was set as TRUE).Names start with the concept code
-followed by concept name.
+Concepts with their format based on the type argument.
 }
 \description{
 Get descendant codes for drug ingredients

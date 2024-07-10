@@ -11,7 +11,7 @@ getATCCodes(
   doseForm = NULL,
   doseUnit = NULL,
   routeCategory = NULL,
-  withConceptDetails = FALSE
+  type = "codelist"
 )
 }
 \arguments{
@@ -36,17 +36,11 @@ of dose unit}
 will be returned. If NULL, descendant codes will be returned regardless
 of dose form.}
 
-\item{withConceptDetails}{If FALSE, each item in the list of results (one per
-ATC group) will contain a vector of concept IDs for each ingredient. If
-TRUE each item in the list of results will contain a tibble with additional
-information on the identified concepts.}
+\item{type}{Can be "codelist", "codelist_with_details", or
+"concept_set_expression"}
 }
 \value{
-A named list, with each item containing a vector of descendant
-concepts of an ATC group (if withConceptDetails was set as FALSE) or a
-tibble with the descendant concepts along with additional details about them
-(if withConceptDetails was set as TRUE). Names start with the concept code
-followed by concept name.
+Concepts with their format based on the type argument.
 }
 \description{
 Get descendant codes for ATC levels

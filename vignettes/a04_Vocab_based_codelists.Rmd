@@ -50,16 +50,18 @@ acetaminophen_codes
 acetaminophen_codes$acetaminophen
 ```
 
-Alternatively, instead of returning a codelist we could instead get back a tibble that contains additional information on each conept such as their names and domains by setting `withConceptDetails` to TRUE
+Alternatively, instead of returning a codelist with only the concept IDs we could get them with details such as their name and domain. 
 
 ```{r}
 acetaminophen_codes_with_details <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
-  withConceptDetails = TRUE
+  type = "codelist_with_details"
 )
 
-acetaminophen_codes_with_details$acetaminophen |> 
+acetaminophen_codes_with_details
+
+acetaminophen_codes_with_details[[1]] |> 
   glimpse()
 ```
 
@@ -70,10 +72,12 @@ acetaminophen_two_or_more_ingredients <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
   ingredientRange = c(2,Inf),
-  withConceptDetails = TRUE
+  type = "codelist_with_details"
 )
 
-acetaminophen_two_or_more_ingredients$acetaminophen |> 
+acetaminophen_two_or_more_ingredients
+
+acetaminophen_two_or_more_ingredients[[1]] |> 
   glimpse()
 ```
 
@@ -84,10 +88,12 @@ acetaminophen_one_ingredient <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
   ingredientRange = c(1,1),
-  withConceptDetails = TRUE
+  type = "codelist_with_details"
 )
 
-acetaminophen_one_ingredient$acetaminophen |> 
+acetaminophen_one_ingredient
+
+acetaminophen_one_ingredient[[1]] |> 
   glimpse()
 ```
 
@@ -98,11 +104,10 @@ acetaminophen_injections <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
   doseForm = "injection",
-  withConceptDetails = TRUE
+  type = "codelist_with_details"
 )
 
-acetaminophen_injections$acetaminophen |> 
-  glimpse()
+acetaminophen_injections
 ```
 
 In this case we see that in Eunomia there no concept for acetaminophen with an injection dose form.
@@ -116,8 +121,6 @@ acetaminophen_heparin_codes <- getDrugIngredientCodes(
   )
 
 acetaminophen_heparin_codes
-acetaminophen_heparin_codes$acetaminophen
-acetaminophen_heparin_codes$heparin 
 ```
 
 And if we don´t specify an ingredient, we´ll get a codelist for every drug ingredient in the vocabularies.
@@ -166,8 +169,9 @@ As with the above functions, we could return concepts with their details rather 
 arthropathy_codes <- getICD10StandardCodes(
   cdm = cdm_mock,
   name = "arthropathies", 
-  withConceptDetails = TRUE
+  type = "codelist_with_details"
 )
 arthropathy_codes
-arthropathy_codes$arthropathies
+
+arthropathy_codes[[1]]
 ```

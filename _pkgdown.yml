@@ -14,9 +14,6 @@ reference:
 - subtitle: Create vocabulary-based codelists
 - contents:
   - matches("getDrugIngredientCodes|getATCCodes|getICD10StandardCodes")
-- subtitle: Extract codelists from JSON files
-- contents:
-  - matches("codesFromCohort|codesFromConceptSet")
 - subtitle: Run codelist diagnostics
 - contents:
   - matches("summariseAchillesCodeUse|summariseCodeUse|summariseCohortCodeUse|summariseOrphanCodes")
