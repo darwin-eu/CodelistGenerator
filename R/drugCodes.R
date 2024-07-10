@@ -25,6 +25,9 @@
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
+#' @param doseUnit Only descendants codes with the specified dose unit
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose unit
 #' @param routeCategory Only descendants codes with the specified route
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
@@ -50,6 +53,7 @@ getATCCodes <- function(cdm,
                         level = c("ATC 1st"),
                         name = NULL,
                         doseForm = NULL,
+                        doseUnit = NULL,
                         routeCategory = NULL,
                         withConceptDetails = FALSE) {
 
@@ -173,6 +177,12 @@ getATCCodes <- function(cdm,
                                              routeCategory = routeCategory)
   }
 
+  if(!is.null(doseUnit)){
+    atc_descendants <- subsetOnDoseUnit(atc_descendants,
+                                             cdm = cdm,
+                                             doseUnit = doseUnit)
+  }
+
   return(atc_descendants)
 }
 
@@ -185,9 +195,12 @@ getATCCodes <- function(cdm,
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
+#' @param doseUnit Only descendants codes with the specified dose unit
+#' will be returned. If NULL, descendant codes will be returned regardless
+#' of dose unit
 #' @param routeCategory Only descendants codes with the specified route
 #' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose form.
+#' of route category.
 #' @param ingredientRange Used to restrict descendant codes to those
 #' associated with a specific number of ingredients. Must be a vector of length
 #' two with the first element the minimum number of ingredients allowed and
@@ -214,6 +227,7 @@ getATCCodes <- function(cdm,
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,
                                    doseForm = NULL,
+                                   doseUnit = NULL,
                                    routeCategory = NULL,
                                    ingredientRange = c(1, Inf),
                                    withConceptDetails = FALSE) {
@@ -326,6 +340,12 @@ getDrugIngredientCodes <- function(cdm,
       ingredientCodes <- subsetOnRouteCategory(ingredientCodes,
                                                cdm = cdm,
                                                routeCategory = routeCategory)
+    }
+
+    if(!is.null(doseUnit)){
+      ingredientCodes <- subsetOnDoseUnit(ingredientCodes,
+                                          cdm = cdm,
+                                          doseUnit = doseUnit)
     }
 
     return(ingredientCodes)
