@@ -90,20 +90,30 @@ vocabularies.</p>
 <span><span class="co">#&gt; - 161_acetaminophen (7 codes)</span></span>
 <span><span class="va">acetaminophen_codes</span><span class="op">$</span><span class="va">acetaminophen</span></span>
 <span><span class="co">#&gt; NULL</span></span></code></pre></div>
-<p>Alternatively, instead of returning a codelist we could instead get
-back a tibble that contains additional information on each conept such
-as their names and domains by setting <code>withConceptDetails</code> to
-TRUE</p>
+<p>Alternatively, instead of returning a codelist with only the concept
+IDs we could get them with details such as their name and domain.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">acetaminophen_codes_with_details</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
-<span>  withConceptDetails <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  type <span class="op">=</span> <span class="st">"codelist_with_details"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">acetaminophen_codes_with_details</span><span class="op">$</span><span class="va">acetaminophen</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">acetaminophen_codes_with_details</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; - 161_acetaminophen (5 codes)</span></span>
+<span></span>
+<span><span class="va">acetaminophen_codes_with_details</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  NULL</span></span></code></pre></div>
+<span><span class="co">#&gt; Rows: 7</span></span>
+<span><span class="co">#&gt; Columns: 5</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1125315, 1127078, 1127433, 40229134, 40231925, 401625…</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Acetaminophen", "Acetaminophen 160 MG Oral Tablet", …</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Drug", "Drug", "Drug", "Drug", "Drug", "Drug", "Drug"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "RxNorm", "RxNorm", "RxNorm", "RxNorm", "RxNorm", "Rx…</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S", "S", "S", "S", "S", "S"</span></span></code></pre></div>
 <p>Instead of getting back all concepts for acetaminophen, we could
 require that only concepts associated with acetaminophen and at least
 one more drug ingredient (i.e. combination therapies) are returned.</p>
@@ -112,12 +122,24 @@ one more drug ingredient (i.e. combination therapies) are returned.</p>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
 <span>  ingredientRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="cn">Inf</span><span class="op">)</span>,</span>
-<span>  withConceptDetails <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  type <span class="op">=</span> <span class="st">"codelist_with_details"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">acetaminophen_two_or_more_ingredients</span><span class="op">$</span><span class="va">acetaminophen</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">acetaminophen_two_or_more_ingredients</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; - 161_acetaminophen (5 codes)</span></span>
+<span></span>
+<span><span class="va">acetaminophen_two_or_more_ingredients</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  NULL</span></span></code></pre></div>
+<span><span class="co">#&gt; Rows: 4</span></span>
+<span><span class="co">#&gt; Columns: 5</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 40229134, 40231925, 40162522, 19133768</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Acetaminophen 21.7 MG/ML / Dextromethorphan Hydrobro…</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Drug", "Drug", "Drug", "Drug"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "RxNorm", "RxNorm", "RxNorm", "RxNorm"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S", "S", "S"</span></span></code></pre></div>
 <p>Or we could instead only return concepts associated with
 acetaminophen and no other drug ingredient.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -125,12 +147,24 @@ acetaminophen and no other drug ingredient.</p>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
 <span>  ingredientRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,</span>
-<span>  withConceptDetails <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  type <span class="op">=</span> <span class="st">"codelist_with_details"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">acetaminophen_one_ingredient</span><span class="op">$</span><span class="va">acetaminophen</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">acetaminophen_one_ingredient</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; - 161_acetaminophen (5 codes)</span></span>
+<span></span>
+<span><span class="va">acetaminophen_one_ingredient</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  NULL</span></span></code></pre></div>
+<span><span class="co">#&gt; Rows: 3</span></span>
+<span><span class="co">#&gt; Columns: 5</span></span>
+<span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1125315, 1127078, 1127433</span></span>
+<span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Acetaminophen", "Acetaminophen 160 MG Oral Tablet", …</span></span>
+<span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Drug", "Drug", "Drug"</span></span>
+<span><span class="co">#&gt; $ vocabulary_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "RxNorm", "RxNorm", "RxNorm"</span></span>
+<span><span class="co">#&gt; $ standard_concept <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "S", "S", "S"</span></span></code></pre></div>
 <p>Lastly, we could also restrict to a particular dose form. Let’s try
 to see if there are any injection dose form of acetaminophen.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -138,13 +172,12 @@ to see if there are any injection dose form of acetaminophen.</p>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"acetaminophen"</span>,</span>
 <span>  doseForm <span class="op">=</span> <span class="st">"injection"</span>,</span>
-<span>  withConceptDetails <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  type <span class="op">=</span> <span class="st">"codelist_with_details"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: No descendant codes found</span></span>
 <span></span>
-<span><span class="va">acetaminophen_injections</span><span class="op">$</span><span class="va">acetaminophen</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  NULL</span></span></code></pre></div>
+<span><span class="va">acetaminophen_injections</span></span>
+<span><span class="co">#&gt; list()</span></span></code></pre></div>
 <p>In this case we see that in Eunomia there no concept for
 acetaminophen with an injection dose form.</p>
 <p>The previous examples have focused on single drug ingredient. We can
@@ -161,11 +194,7 @@ codelist back for each.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">2 codelists</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - 161_acetaminophen (7 codes)</span></span>
-<span><span class="co">#&gt; - 5224_heparin (1 codes)</span></span>
-<span><span class="va">acetaminophen_heparin_codes</span><span class="op">$</span><span class="va">acetaminophen</span></span>
-<span><span class="co">#&gt; NULL</span></span>
-<span><span class="va">acetaminophen_heparin_codes</span><span class="op">$</span><span class="va">heparin</span> </span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span><span class="co">#&gt; - 5224_heparin (1 codes)</span></span></code></pre></div>
 <p>And if we don´t specify an ingredient, we´ll get a codelist for every
 drug ingredient in the vocabularies.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -241,18 +270,21 @@ details rather than as a codelist.</p>
 <code class="sourceCode R"><span><span class="va">arthropathy_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getICD10StandardCodes.html">getICD10StandardCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm_mock</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"arthropathies"</span>, </span>
-<span>  withConceptDetails <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  type <span class="op">=</span> <span class="st">"codelist_with_details"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">arthropathy_codes</span></span>
-<span><span class="co">#&gt; $`1234_arthropathies`</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; - 1234_arthropathies (6 codes)</span></span>
+<span></span>
+<span><span class="va">arthropathy_codes</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
 <span><span class="co">#&gt;   name              concept_id concept_name domain_id vocabulary_id concept_code</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1234_arthropathi…          3 Arthritis    Condition SNOMED        1234        </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 1234_arthropathi…          4 Osteoarthri… Condition SNOMED        1234        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1234_arthropathi…          5 Osteoarthri… Condition SNOMED        1234</span></span>
-<span><span class="va">arthropathy_codes</span><span class="op">$</span><span class="va">arthropathies</span></span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1234_arthropathi…          5 Osteoarthri… Condition SNOMED        1234</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

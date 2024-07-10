@@ -49,7 +49,7 @@
 <span>  doseForm <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  doseUnit <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  routeCategory <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  withConceptDetails <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  type <span class="op">=</span> <span class="st">"codelist"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -90,20 +90,14 @@ will be returned. If NULL, descendant codes will be returned regardless
 of dose form.</p></dd>
 
 
-<dt id="arg-withconceptdetails">withConceptDetails<a class="anchor" aria-label="anchor" href="#arg-withconceptdetails"></a></dt>
-<dd><p>If FALSE, each item in the list of results (one per
-ATC group) will contain a vector of concept IDs for each ingredient. If
-TRUE each item in the list of results will contain a tibble with additional
-information on the identified concepts.</p></dd>
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
+<dd><p>Can be "codelist", "codelist_with_details", or
+"concept_set_expression"</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A named list, with each item containing a vector of descendant
-concepts of an ATC group (if withConceptDetails was set as FALSE) or a
-tibble with the descendant concepts along with additional details about them
-(if withConceptDetails was set as TRUE). Names start with the concept code
-followed by concept name.</p>
+    <p>Concepts with their format based on the type argument.</p>
     </div>
 
     <div class="section level2">

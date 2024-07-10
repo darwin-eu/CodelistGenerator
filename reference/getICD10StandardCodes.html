@@ -47,7 +47,7 @@
 <span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ICD10 Chapter"</span>, <span class="st">"ICD10 SubChapter"</span><span class="op">)</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  withConceptDetails <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  type <span class="op">=</span> <span class="st">"codelist"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,10 +74,9 @@ to standard codes will be returned. If TRUE descendants of standard concepts
 will also be included.</p></dd>
 
 
-<dt id="arg-withconceptdetails">withConceptDetails<a class="anchor" aria-label="anchor" href="#arg-withconceptdetails"></a></dt>
-<dd><p>If FALSE a vector of concept IDs will be returned
-for each ICD group If TRUE a tibble will be returned with additional
-information on the identified concepts.</p></dd>
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
+<dd><p>Can be "codelist", "codelist_with_details", or
+"concept_set_expression"</p></dd>
 
 </dl></div>
     <div class="section level2">
