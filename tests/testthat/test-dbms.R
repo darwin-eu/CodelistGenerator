@@ -373,6 +373,24 @@ test_that("postgres", {
                     stratifyByRouteCategory(cdm = cdm) |>
                     stratifyByDoseUnit(cdm = cdm))
 
+ drugs_milligram_transdermal <-  getDrugIngredientCodes(cdm,
+                         name = c("metformin","diclofenac"),
+                         doseUnit = "milligram",
+                         routeCategory = "transdermal")
+
+ drugs_milligram_transdermal_2 <- getDrugIngredientCodes(cdm,
+                                                  name = c("metformin","diclofenac")) |>
+   subsetOnRouteCategory(cdm, "transdermal") |>
+   subsetOnDoseUnit(cdm, "milligram")
+ expect_identical(drugs_milligram_transdermal,
+                  drugs_milligram_transdermal_2)
+
+
+ atc <- getATCCodes(cdm, name = "alimentary tract and metabolism")
+ expect_no_error(atc |>
+   stratifyByRouteCategory(cdm = cdm) |>
+   stratifyByDoseUnit(cdm = cdm))
+
   # make sure no extra domains added to the results
   codes <- getCandidateCodes(
     cdm = cdm,
