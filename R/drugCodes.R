@@ -31,16 +31,10 @@
 #' @param routeCategory Only descendants codes with the specified route
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
-#' @param withConceptDetails If FALSE, each item in the list of results (one per
-#' ATC group) will contain a vector of concept IDs for each ingredient. If
-#' TRUE each item in the list of results will contain a tibble with additional
-#' information on the identified concepts.
+#' @param type Can be "codelist", "codelist_with_details", or
+#' "concept_set_expression"
 #'
-#' @return A named list, with each item containing a vector of descendant
-#' concepts of an ATC group (if withConceptDetails was set as FALSE) or a
-#' tibble with the descendant concepts along with additional details about them
-#' (if withConceptDetails was set as TRUE). Names start with the concept code
-#' followed by concept name.
+#' @return Concepts with their format based on the type argument.
 #' @export
 #'
 #' @examples
@@ -55,7 +49,12 @@ getATCCodes <- function(cdm,
                         doseForm = NULL,
                         doseUnit = NULL,
                         routeCategory = NULL,
-                        withConceptDetails = FALSE) {
+                        type = "codelist") {
+
+
+  if(type == "concept_set_expression"){
+    cli::cli_abort("concept_set_expression not yet supported")
+  }
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
@@ -77,7 +76,7 @@ getATCCodes <- function(cdm,
     add = errorMessage,
     null.ok = TRUE
   )
-  checkmate::assertLogical(withConceptDetails, len = 1)
+  checkmate::assertCharacter(type, len = 1)
   checkmate::reportAssertions(collection = errorMessage)
 
   atc_groups <- cdm$concept %>%
@@ -152,7 +151,7 @@ getATCCodes <- function(cdm,
 
     # for each item in the list - pull out concepts and name
     for (i in seq_along(atc_descendants)) {
-      if(isFALSE(withConceptDetails)){
+      if(type == "codelist"){
       atc_descendants[[i]] <- atc_descendants[[i]] %>%
         dplyr::select("concept_id") %>%
         dplyr::distinct() %>%
@@ -165,7 +164,7 @@ getATCCodes <- function(cdm,
     }
   }
 
-  if(isFALSE(withConceptDetails)){
+  if(type == "codelist"){
     atc_descendants <- omopgenerics::newCodelist(atc_descendants)
   } else {
     atc_descendants <- omopgenerics::newCodelistWithDetails(atc_descendants)
@@ -206,16 +205,10 @@ getATCCodes <- function(cdm,
 #' two with the first element the minimum number of ingredients allowed and
 #' the second the maximum. A value of c(2, 2) would restrict to only concepts
 #' associated with two ingredients.
-#' @param withConceptDetails If FALSE, each item in the list of results (one per
-#' ingredient) will contain a vector of concept IDs for each ingredient. If
-#' TRUE each item in the list of results will contain a tibble with additional
-#' information on the identified concepts.
+#' @param type Can be "codelist", "codelist_with_details", or
+#' "concept_set_expression"
 #'
-#' @return A named list, with each item containing a vector of descendant
-#' concepts of an ingredient (if withConceptDetails was set as FALSE) or a
-#' tibble with the descendant concepts along with additional details about them
-#' (if withConceptDetails was set as TRUE).Names start with the concept code
-#' followed by concept name.
+#' @return Concepts with their format based on the type argument.
 #' @export
 #'
 #' @examples
@@ -230,7 +223,12 @@ getDrugIngredientCodes <- function(cdm,
                                    doseUnit = NULL,
                                    routeCategory = NULL,
                                    ingredientRange = c(1, Inf),
-                                   withConceptDetails = FALSE) {
+                                   type = "codelist") {
+
+
+  if(type == "concept_set_expression"){
+    cli::cli_abort("concept_set_expression not yet supported")
+  }
 
   errorMessage <- checkmate::makeAssertCollection()
   checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
@@ -238,7 +236,7 @@ getDrugIngredientCodes <- function(cdm,
     add = errorMessage,
     null.ok = TRUE
   )
-  checkmate::assertLogical(withConceptDetails, len = 1)
+  checkmate::assertCharacter(type, len = 1)
   checkmate::reportAssertions(collection = errorMessage)
 
   ingredientConcepts <- cdm$concept %>%
@@ -318,7 +316,7 @@ getDrugIngredientCodes <- function(cdm,
 
     # for each item in the list - pull out concepts and name
     for (i in seq_along(ingredientCodes)) {
-      if(isFALSE(withConceptDetails)){
+      if(type == "codelist"){
         ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
           dplyr::select("concept_id") %>%
           dplyr::distinct() %>%
@@ -330,7 +328,7 @@ getDrugIngredientCodes <- function(cdm,
       }
     }
 
-    if(isFALSE(withConceptDetails)){
+    if(type == "codelist"){
     ingredientCodes <- omopgenerics::newCodelist(ingredientCodes)
     } else {
     ingredientCodes <- omopgenerics::newCodelistWithDetails(ingredientCodes)

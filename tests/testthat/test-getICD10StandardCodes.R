@@ -45,7 +45,7 @@ test_that("db without icd10 codes loaded", {
   # with details
   codes5 <- getICD10StandardCodes(cdm = cdm,
                                   level = "ICD10 SubChapter",
-                                  withConceptDetails = TRUE)
+                                  type = "codelist_with_details")
   expect_true(!is.null(codes5[[1]]$concept_name))
 
   if (backends[[i]] == "database") {
