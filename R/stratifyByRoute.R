@@ -112,6 +112,7 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
 
   CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
 
+  result <- result[order(names(result))]
 
   if(isFALSE(withDetails)){
     result <- omopgenerics::newCodelist(result)
@@ -119,7 +120,6 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
     result <- omopgenerics::newCodelistWithDetails(result)
   }
 
-  result <- result[order(names(result))]
 
   result
 

@@ -76,6 +76,12 @@ stratifyByConcept <- function(x,
 
   x <- x[order(names(x))]
 
+  if(inherits(x_start, "codelist")){
+    x  <- omopgenerics::newCodelist(x)
+  } else{
+    x  <- omopgenerics::newCodelistWithDetails(x)
+  }
+
   x
 
 }
