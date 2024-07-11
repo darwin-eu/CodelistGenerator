@@ -38,7 +38,7 @@ stratifyByConcept <- function(x,
   for(i in seq_along(x)){
     x[[i]] <- x[[i]] |>
       dplyr::mutate(c_name = names(x[i])) |>
-      dplyr::mutate(new_c_name = paste0(c_name, "_",
+      dplyr::mutate(new_c_name = paste0(.data$c_name, "_",
                                       omopgenerics::toSnakeCase(.data$concept_name)))
   }
 
