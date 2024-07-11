@@ -324,6 +324,12 @@ test_that("postgres", {
   codes <- getDrugIngredientCodes(cdm, "metformin")
   codes[["asthma"]] <- 317009
 
+  expect_no_error(stratifyByDoseUnit(codes, cdm))
+  expect_no_error(stratifyByDoseUnit(codes, cdm, keepOriginal = TRUE))
+  expect_no_error(stratifyByRouteCategory(codes, cdm))
+  expect_no_error(stratifyByRouteCategory(codes, cdm, keepOriginal = TRUE))
+
+
   drug_codes <- getDrugIngredientCodes(cdm, name = c("metformin",
                                                      "diclofenac"))
 

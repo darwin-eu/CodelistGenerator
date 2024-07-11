@@ -2,7 +2,8 @@
 % Please edit documentation in R/summariseOrphanCodes.R
 \name{summariseOrphanCodes}
 \alias{summariseOrphanCodes}
-\title{Find orphan codes related to a codelist}
+\title{Find orphan codes related to a codelist using achilles counts and, if
+available, PHOEBE concept recommendations}
 \usage{
 summariseOrphanCodes(
   x,
@@ -24,7 +25,8 @@ A summarised result containg the frequency of codes related
 to (but not in) the codelist
 }
 \description{
-Find orphan codes related to a codelist
+Find orphan codes related to a codelist using achilles counts and, if
+available, PHOEBE concept recommendations
 }
 \examples{
 \dontrun{
