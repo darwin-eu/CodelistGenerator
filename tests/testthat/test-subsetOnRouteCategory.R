@@ -12,7 +12,7 @@ test_that("subset on route category", {
 
   ing_codes_sub <- subsetOnRouteCategory(ing_codes,  cdm, "oral")
 
-  ing_codes_sub2 <- subsetOnRouteCategory(ing_codes,  cdm, "unclassified route")
+  ing_codes_sub2 <- subsetOnRouteCategory(ing_codes,  cdm, "unclassified_route")
   expect_identical(ing_codes, ing_codes_sub2)
 
   # expected errors

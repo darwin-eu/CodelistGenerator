@@ -69,7 +69,7 @@ subsetOnRouteCategory <- function(x, cdm, routeCategory){
       ) |>
       dplyr::mutate(route_category = dplyr::if_else(
         is.na(.data$route_category),
-        "unclassified route",
+        "unclassified_route",
         .data$route_category
       )) |>
       dplyr::filter(.data$route_category %in% .env$routeCategory) |>
