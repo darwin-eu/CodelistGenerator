@@ -128,6 +128,8 @@ stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
     result <- omopgenerics::newCodelistWithDetails(result)
   }
 
+  result <- result[order(names(result))]
+
   result
 
 }

@@ -327,6 +327,12 @@ test_that("postgres", {
   drug_codes <- getDrugIngredientCodes(cdm, name = c("metformin",
                                                      "diclofenac"))
 
+  # we can stratify by each concept contained
+  drug_codes_by_concept <- stratifyByConcept(drug_codes,
+                                             cdm = cdm)
+
+  drug_codes_by_concept_used <- subsetToCodesInUse(drug_codes_by_concept, cdm)
+
   # if we subset to oral both should still have codes
   expect_true(length(subsetOnRouteCategory(drug_codes, cdm,
                           routeCategory = "oral")) == 2)
