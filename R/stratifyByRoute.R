@@ -71,7 +71,7 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
       ) |>
       dplyr::mutate(route_category = dplyr::if_else(
         is.na(.data$route_category),
-        "unclassified route",
+        "unclassified_route",
         .data$route_category
       )) |>
       dplyr::select("concept_id", "route_category") |>
