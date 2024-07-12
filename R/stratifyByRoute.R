@@ -32,6 +32,7 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
     withDetails <- TRUE
     x <- codelistFromCodelistWithDetails(x)
   } else {
+    omopgenerics::newCodelist(x)
     withDetails <- FALSE
   }
 
@@ -59,23 +60,28 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
     workingName <- names(x)[i]
 
     workingCodesWithRoute <- cdm[[tableCodelist]] |>
+      dplyr::left_join(cdm$concept |>
+                         dplyr::select("concept_id", "domain_id"),
+                       by = "concept_id") |>
       dplyr::left_join(cdm$concept_relationship |>
                           dplyr::filter(.data$relationship_id == "RxNorm has dose form"),
                         by = c("concept_id" = "concept_id_1")
       ) |>
       dplyr::select("concept_id",
-                    "concept_id_2") |>
+                    "concept_id_2",
+                    "domain_id") |>
       dplyr::collect() |>
       dplyr::left_join(
         doseRouteData, by = c("concept_id_2" = "dose_form_concept_id")
       ) |>
       dplyr::mutate(route_category = dplyr::if_else(
-        is.na(.data$route_category),
+        is.na(.data$route_category) & (tolower(.data$domain_id) == "drug"),
         "unclassified_route",
         .data$route_category
       )) |>
       dplyr::select("concept_id", "route_category") |>
       dplyr::distinct() |>
+      dplyr::filter(!is.na(.data$route_category)) |>
       dplyr::collect()
 
     if(isTRUE(withDetails)){
@@ -89,8 +95,10 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
       workingCodesWithRoute[, c("route_category")]
     )
 
+    if(length(workingCodesWithRoute) > 0){
     names(workingCodesWithRoute) <- paste0(workingName, "_",
                                            names(workingCodesWithRoute))
+    }
 
     if(isFALSE(withDetails)){
     for(j in seq_along(workingCodesWithRoute)){

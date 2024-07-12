@@ -69,10 +69,12 @@ stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
     workingName <- names(x)[i]
 
     workingCodesWithDoseUnit <- cdm[[tableCodelist]] |>
+      dplyr::left_join(cdm$concept,
+                       by = "concept_id")|>
       dplyr::left_join(drugStrengthNamed,
                         by = c("concept_id" = "drug_concept_id")
       ) |>
-      dplyr::select("concept_id",
+      dplyr::select("concept_id", "domain_id",
                     "amount_concept_name",
                     "numerator_concept_name") |>
       dplyr::distinct() |>
@@ -83,9 +85,10 @@ stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
         unit_group = dplyr::case_when(
           !is.na(.data$amount_concept_name) ~ omopgenerics::toSnakeCase(.data$amount_concept_name),
           !is.na(.data$numerator_concept_name) ~ omopgenerics::toSnakeCase(.data$numerator_concept_name),
-          .default = "unkown_dose_unit"
+          tolower(.data$domain_id) == "drug" ~ "unkown_dose_unit"
         )
-      )
+      ) |>
+      dplyr::filter(!is.na(.data$unit_group))
 
     if(isTRUE(withDetails)){
       workingCodesWithDoseUnit <-  x_original[[i]] |>
@@ -98,8 +101,10 @@ stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
       workingCodesWithDoseUnit[, c("unit_group")]
     )
 
+    if(length(workingCodesWithDoseUnit)>0){
     names(workingCodesWithDoseUnit) <- paste0(workingName, "_",
                                            names(workingCodesWithDoseUnit))
+    }
 
     if(isFALSE(withDetails)){
       for(j in seq_along(workingCodesWithDoseUnit)){

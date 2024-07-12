@@ -1,4 +1,5 @@
-#' Find orphan codes related to a codelist
+#' Find orphan codes related to a codelist using achilles counts and, if
+#' available, PHOEBE concept recommendations
 #'
 #' @param x A codelist for which to find related codes used in the database
 #' @param cdm cdm_reference via CDMConnector
@@ -68,7 +69,7 @@ summariseOrphanCodes <- function(x,
   } else {
     phoebe <- FALSE
     cli::cli_inform(c("PHOEBE results not available",
-                      "i" = "The concept_recommened table is not present in the cdm."))
+                      "i" = "The concept_recommended table is not present in the cdm."))
   }
 
   orphanCodes <- list()
