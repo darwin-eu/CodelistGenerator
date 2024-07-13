@@ -158,7 +158,7 @@ tableOrphanCodes <- function(result,
     .options = .options
   )
 
-
+  return(x)
 }
 
 internalTableAchillesResult <- function(result,
@@ -269,6 +269,5 @@ internalTableAchillesResult <- function(result,
 
 emptyResultTable <- function(type){
 
-  empty_result <- dplyr::tibble()
-
+  dplyr::tibble()
 }
