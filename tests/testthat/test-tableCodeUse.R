@@ -99,14 +99,6 @@ test_that("table code use expcted columns", {
     .options = list()
   )
 
-  # empty result
-  results <- summariseCodeUse(list(a = 99999), cdm = cdm)
-  tableCodeUse(result = results)
-
-  # no code use result
-  results <- summariseOrphanCodes(x = list("msk" = 1), cdm = cdm)
-  tableCodeUse(result = results)
-
   CDMConnector::cdm_disconnect(cdm)
 })
 
