@@ -1,22 +1,30 @@
 #' Format the result of summariseAchillesCodeUse into a table.
 #'
-#' @param result A summarised result with results of the type
+#' @param result A `<summarised_result>` with results of the type
 #' "achilles_code_use".
-#' @param type Type of desired formatted table, possibilities: "gt",
-#' "flextable", "tibble".
-#' @param header A vector containing which elements should go into the header
-#' in order. Allowed are: `cdm_name`, `group`, `strata`, `additional`,
-#' `variable`, `estimate`, `settings`.
-#' @param conceptId If TRUE concept ids will be displayed.
-#' @param standard If TRUE a column indicating if the code is standard will be
-#' displayed.
-#' @param vocabulary If TRUE vocabulary id will be displayed.
-#' @param groupColumns Columns to use as group labels. Allowed columns are
-#' `cdm_name` and/or `codelist_name`.
-#' @param excludeColumns Columns to drop from the output table.
+#' @param type Type of desired formatted table. To see supported formats
+#' use visOmopResults::tableType()
+#' @param header A vector specifying the elements to include in the header. The
+#' order of elements matters, with the first being the topmost header.
+#' The header vector can contain one of the following variables: "cdm_name",
+#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
+#' "estimate_name", "standard_concept", "vocabulary_id".
+#' Alternatively, it can include other names to use as overall header labels.
+#' @param groupColumns Variables to use as group labels. Allowed columns are:
+#' "cdm_name", "codelist_name", "domain_id", "standard_concept_name",
+#' "standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
+#' These cannot be used in header.
+#' @param hide Table columns to exclude, options are:  "cdm_name",
+#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
+#' "estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
+#' header or groupColumn.
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::optionsVisOmopTable() shows allowed arguments and
 #' their default values.
+#' @param excludeColumns Deprecated.
+#' @param conceptId Deprecated.
+#' @param standard Deprecated.
+#' @param vocabulary Deprecated.
 #'
 #' @return A table with a formatted version of the summariseCohortCodeUse
 #' result.
@@ -35,15 +43,42 @@
 tableAchillesCodeUse <- function(result,
                                  type = "gt",
                                  header = c("cdm_name", "estimate"),
-                                 conceptId = TRUE,
-                                 standard = TRUE,
-                                 vocabulary = TRUE,
-                                 groupColumns = NULL,
-                                 excludeColumns = c("result_id", "estimate_type"),
-                                 .options = list()) {
+                                 groupColumns = character(),
+                                 hide = character(),
+                                 .options = list(),
+                                 conceptId = lifecycle::deprecated(),
+                                 standard = lifecycle::deprecated(),
+                                 vocabulary = lifecycle::deprecated(),
+                                 excludeColumns = lifecycle::deprecated()) {
+  # lifecyle deprecate warns
+  if (lifecycle::is_present(conceptId)) {
+    lifecycle::deprecate_soft(
+      when = "2.2.4",  what = "tableAchillesCodeUse(conceptId)",
+      with = "tableAchillesCodeUse(hide)"
+    )
+  }
+  if (lifecycle::is_present(standard)) {
+    lifecycle::deprecate_soft(
+      when = "2.2.4",  what = "tableAchillesCodeUse(standard)",
+      with = "tableAchillesCodeUse(hide)"
+    )
+  }
+  if (lifecycle::is_present(vocabulary)) {
+    lifecycle::deprecate_soft(
+      when = "2.2.4",  what = "tableAchillesCodeUse(vocabulary)",
+      with = "tableAchillesCodeUse(hide)"
+    )
+  }
+  if (lifecycle::is_present(excludeColumns)) {
+    lifecycle::deprecate_soft(
+      when = "2.2.4",  what = "tableAchillesCodeUse(excludeColumns)",
+      with = "tableAchillesCodeUse(hide)"
+    )
+  }
 
+  # checks
   if(nrow(result) == 0){
-    cli::cli_warn("result object is empty")
+    cli::cli_warn("`result` object is empty")
     return(emptyResultTable(type = type))
   }
 
@@ -60,13 +95,13 @@ tableAchillesCodeUse <- function(result,
     resultType = "achilles_code_use",
     type = type,
     header = header,
-    conceptId = conceptId,
-    standard = standard,
-    vocabulary =  vocabulary,
-    relationship = FALSE,
+    # conceptId = conceptId,
+    # standard = standard,
+    # vocabulary =  vocabulary,
+    # relationship = FALSE,
     groupColumns = groupColumns,
-    settings = character(),
-    excludeColumns = excludeColumns,
+    # settings = character(),
+    hide = hide,
     .options = .options
   )
 
@@ -77,21 +112,29 @@ tableAchillesCodeUse <- function(result,
 #'
 #' @param result A summarised result with results of the type
 #' "orphan_codes".
-#' @param type Type of desired formatted table, possibilities: "gt",
-#' "flextable", "tibble".
-#' @param header A vector containing which elements should go into the header
-#' in order. Allowed are: `cdm_name`, `group`, `strata`, `additional`,
-#' `variable`, `estimate`, `settings`.
-#' @param conceptId If TRUE concept ids will be displayed.
-#' @param standard If TRUE a column indicating if the code is standard will be
-#' displayed.
-#' @param vocabulary If TRUE vocabulary id will be displayed.
-#' @param groupColumns Columns to use as group labels. Allowed columns are
-#' `cdm_name` and/or `codelist_name`.
-#' @param excludeColumns Columns to drop from the output table.
+#' @param type Type of desired formatted table. To see supported formats
+#' use visOmopResults::tableType()
+#' @param header A vector specifying the elements to include in the header. The
+#' order of elements matters, with the first being the topmost header.
+#' The header vector can contain one of the following variables: "cdm_name",
+#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
+#' "estimate_name", "standard_concept", "vocabulary_id".
+#' Alternatively, it can include other names to use as overall header labels.
+#' @param groupColumns Variables to use as group labels. Allowed columns are:
+#' "cdm_name", "codelist_name", "domain_id", "standard_concept_name",
+#' "standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
+#' These cannot be used in header.
+#' @param hide Table columns to exclude, options are:  "cdm_name",
+#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
+#' "estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
+#' header or groupColumn.
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::optionsVisOmopTable() shows allowed arguments and
 #' their default values.
+#' @param excludeColumns Deprecated.
+#' @param conceptId Deprecated.
+#' @param standard Deprecated.
+#' @param vocabulary Deprecated.
 #'
 #' @return A table with a formatted version of the summariseOrphanCodes
 #' result.
@@ -123,15 +166,29 @@ tableAchillesCodeUse <- function(result,
 tableOrphanCodes <- function(result,
                              type = "gt",
                              header = c("cdm_name", "estimate"),
-                             conceptId = TRUE,
-                             standard = TRUE,
-                             vocabulary = TRUE,
-                             groupColumns = NULL,
-                             excludeColumns = c("result_id", "estimate_type"),
-                             .options = list()) {
+                             groupColumns = character(),
+                             hide = character(),
+                             .options = list(),
+                             conceptId = lifecycle::deprecated(),
+                             standard = lifecycle::deprecated(),
+                             vocabulary = lifecycle::deprecated(),
+                             excludeColumns = lifecycle::deprecated()) {
+  # lifecyle deprecate warns
+  if (lifecycle::is_present(conceptId)) {
+    lifecycle::deprecate_soft(when = "2.2.4", what = "conceptId", with = "hide")
+  }
+  if (lifecycle::is_present(standard)) {
+    lifecycle::deprecate_soft(when = "2.2.4", what = "standard", with = "hide")
+  }
+  if (lifecycle::is_present(vocabulary)) {
+    lifecycle::deprecate_soft(when = "2.2.4", what = "vocabulary", with = "hide")
+  }
+  if (lifecycle::is_present(excludeColumns)) {
+    lifecycle::deprecate_soft(when = "2.2.4", what = "excludeColumns", with = "hide")
+  }
 
   if(nrow(result) == 0){
-    cli::cli_warn("Result object is empty")
+    cli::cli_warn("`result` object is empty")
     return(emptyResultTable(type = type))
   }
 
@@ -148,13 +205,13 @@ tableOrphanCodes <- function(result,
     resultType = "orphan_code_use",
     type = type,
     header = header,
-    conceptId = conceptId,
-    standard = standard,
-    vocabulary =  vocabulary,
-    relationship = FALSE,
+    # conceptId = conceptId,
+    # standard = standard,
+    # vocabulary =  vocabulary,
+    # relationship = FALSE,
     groupColumns = groupColumns,
-    settings = character(),
-    excludeColumns = excludeColumns,
+    # settings = character(),
+    hide = hide,
     .options = .options
   )
 
@@ -165,102 +222,40 @@ internalTableAchillesResult <- function(result,
                                         type,
                                         resultType,
                                         header,
-                                        conceptId,
-                                        standard,
-                                        vocabulary,
-                                        relationship,
+                                        # conceptId,
+                                        # standard,
+                                        # vocabulary,
+                                        # relationship,
                                         groupColumns,
-                                        settings,
-                                        excludeColumns,
+                                        # settings,
+                                        hide,
                                         .options) {
-  # checks
-  if (inherits(groupColumns, "list")) {
-    checkmate::assertList(groupColumns, len = 1)
-    groupCheck <- groupColumns[[1]]
-  } else if (inherits(groupColumns, "character")) {
-    groupCheck <- groupColumns
-  } else {
-    groupCheck <- NULL
-  }
-  if (!is.null(groupCheck)) {
-    idsErr <- !groupCheck %in% c("cdm_name", "codelist_name")
-    if (sum(idsErr) > 0) {
-      cli::cli_abort("Allowed group columns are `cdm_name` and/or `codelist_name`.")
-    }
-  }
-  checkmate::assertLogical(conceptId, len = 1, any.missing = FALSE)
-  checkmate::assertLogical(standard, len = 1, any.missing = FALSE)
-  checkmate::assertLogical(vocabulary, len = 1, any.missing = FALSE)
-  if (standard & vocabulary & any(grepl("additional", excludeColumns))) {
-    cli::cli_abort(
-      c("!" = "Incompatible input arguments.",
-        "i" = "`additional` columns cannot be excluded while both `standard` and `vocabulary` are TRUE.")
-    )
-  }
 
   # filter result + nice estimate name
   x <- result |>
     visOmopResults::filterSettings(.data$result_type == .env$resultType) |>
-    dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
+    dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name))) |>
+    visOmopResults::splitAll() |>
+    dplyr::rename(
+      "standard_concept_name" = "variable_name",
+      "standard_concept_id" = "variable_level"
+    )
 
-  # additional:
-    condition <- !standard & !vocabulary
+  # hide
+  hide <- c(hide, "result_id", "estimate_type")
 
-  if (any(grepl("additional", excludeColumns)) & !condition) {
-    # remove additonal from exclude columns
-    excludeColumns <- excludeColumns[!grepl("additional", excludeColumns)]
-  } else if (!any(grepl("additional", excludeColumns)) & condition) {
-    # add additional to exclude
-    excludeColumns <- c(excludeColumns, "additional_name", "additional_level")
-  }
-
-  if (!condition) {
-    toInclude <- c("standard_concept", "vocabulary_id", "relationship_id")[c(standard, vocabulary, relationship)]
-    if (length(settings) > 0) {
-      toInclude <- c(toInclude, settings)
-    }
-    x <- x |>
-      dplyr::left_join(
-        omopgenerics::settings(x),
-        by = "result_id"
-      ) |>
-      visOmopResults::splitAdditional() |>
-      visOmopResults::uniteAdditional(cols = toInclude) |>
-      dplyr::select(omopgenerics::resultColumns())
-  }
-
-  # concept name and id
-  if (!conceptId) {
-    renameColumns = c("Standard concept name" = "variable_name")
-    excludeColumns <- c(excludeColumns, "variable_level")
-  } else {
-    x <- x
-    renameColumns = c("Standard concept name" = "variable_name",
-                      "Standard concept id" = "variable_level")
-  }
-
-  # split:
-  split <- c("group", "strata", "additional")
-  if (any(grepl("group", excludeColumns))) {
-    split <- split[!split %in% "group"]
-  }
-  if (any(grepl("strata", excludeColumns))) {
-    split <- split[!split %in% "strata"]
-  }
-  if (any(grepl("additional", excludeColumns))) {
-    split <- split[!split %in% "additional"]
-  }
-
-  # visOmopTable
-  x <- visOmopResults::visOmopTable(
+  # visTable
+  x <- visOmopResults::visTable(
     result = x,
-    formatEstimateName = character(),
+    estimateName = character(),
     header = header,
-    split = split,
     groupColumn = groupColumns,
     type = type,
-    renameColumns = renameColumns,
-    excludeColumns = excludeColumns,
+    rename = c(
+      "Domain ID" = "domain_id", "Vocabulary ID" = "vocabulary_id",
+      "Database name" = "cdm_name", "Standard concept ID" = "standard_concept_id"
+    ),
+    hide = hide,
     .options = .options
   )
 
@@ -268,6 +263,5 @@ internalTableAchillesResult <- function(result,
 }
 
 emptyResultTable <- function(type){
-
   dplyr::tibble()
 }
