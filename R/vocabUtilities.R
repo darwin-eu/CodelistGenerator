@@ -518,10 +518,10 @@ filterOnDoseForm <- function(concepts, conceptDoseForms, doseForm){
 }
 
 addIngredientCount <- function(cdm, concepts) {
-
  ingredient_ancestor <- cdm$concept_ancestor %>%
     dplyr::inner_join(cdm$concept %>%
-                        dplyr::filter(.data$concept_class_id == "Ingredient") %>%
+                        dplyr::filter(.data$concept_class_id == "Ingredient",
+                                      .data$standard_concept == "S") %>%
                         dplyr::select("concept_id"),
                by = c("ancestor_concept_id" = "concept_id"))
 
