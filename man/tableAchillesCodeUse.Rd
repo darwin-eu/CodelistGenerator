@@ -7,7 +7,7 @@
 tableAchillesCodeUse(
   result,
   type = "gt",
-  header = c("cdm_name", "estimate"),
+  header = c("cdm_name", "estimate_name"),
   groupColumns = character(),
   hide = character(),
   .options = list(),
@@ -42,7 +42,7 @@ These cannot be used in header.}
 header or groupColumn.}
 
 \item{.options}{Named list with additional formatting options.
-visOmopResults::optionsVisOmopTable() shows allowed arguments and
+visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
 
 \item{conceptId}{Deprecated.}

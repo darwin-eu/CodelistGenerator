@@ -19,7 +19,7 @@
 #' "estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
 #' header or groupColumn.
 #' @param .options Named list with additional formatting options.
-#' visOmopResults::optionsVisOmopTable() shows allowed arguments and
+#' visOmopResults::tableOptions() shows allowed arguments and
 #' their default values.
 #' @param excludeColumns Deprecated.
 #' @param conceptId Deprecated.
@@ -42,7 +42,7 @@
 #'
 tableAchillesCodeUse <- function(result,
                                  type = "gt",
-                                 header = c("cdm_name", "estimate"),
+                                 header = c("cdm_name", "estimate_name"),
                                  groupColumns = character(),
                                  hide = character(),
                                  .options = list(),
@@ -95,12 +95,7 @@ tableAchillesCodeUse <- function(result,
     resultType = "achilles_code_use",
     type = type,
     header = header,
-    # conceptId = conceptId,
-    # standard = standard,
-    # vocabulary =  vocabulary,
-    # relationship = FALSE,
     groupColumns = groupColumns,
-    # settings = character(),
     hide = hide,
     .options = .options
   )
@@ -129,7 +124,7 @@ tableAchillesCodeUse <- function(result,
 #' "estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
 #' header or groupColumn.
 #' @param .options Named list with additional formatting options.
-#' visOmopResults::optionsVisOmopTable() shows allowed arguments and
+#' visOmopResults::tableOptions() shows allowed arguments and
 #' their default values.
 #' @param excludeColumns Deprecated.
 #' @param conceptId Deprecated.
@@ -165,7 +160,7 @@ tableAchillesCodeUse <- function(result,
 #'
 tableOrphanCodes <- function(result,
                              type = "gt",
-                             header = c("cdm_name", "estimate"),
+                             header = c("cdm_name", "estimate_name"),
                              groupColumns = character(),
                              hide = character(),
                              .options = list(),
@@ -175,16 +170,28 @@ tableOrphanCodes <- function(result,
                              excludeColumns = lifecycle::deprecated()) {
   # lifecyle deprecate warns
   if (lifecycle::is_present(conceptId)) {
-    lifecycle::deprecate_soft(when = "2.2.4", what = "conceptId", with = "hide")
+    lifecycle::deprecate_soft(
+      when = "2.2.4",  what = "tableOrphanCodes(conceptId)",
+      with = "tableOrphanCodes(hide)"
+    )
   }
   if (lifecycle::is_present(standard)) {
-    lifecycle::deprecate_soft(when = "2.2.4", what = "standard", with = "hide")
+    lifecycle::deprecate_soft(
+      when = "2.2.4",  what = "tableOrphanCodes(standard)",
+      with = "tableOrphanCodes(hide)"
+    )
   }
   if (lifecycle::is_present(vocabulary)) {
-    lifecycle::deprecate_soft(when = "2.2.4", what = "vocabulary", with = "hide")
+    lifecycle::deprecate_soft(
+      when = "2.2.4",  what = "tableOrphanCodes(vocabulary)",
+      with = "tableOrphanCodes(hide)"
+    )
   }
   if (lifecycle::is_present(excludeColumns)) {
-    lifecycle::deprecate_soft(when = "2.2.4", what = "excludeColumns", with = "hide")
+    lifecycle::deprecate_soft(
+      when = "2.2.4",  what = "tableOrphanCodes(excludeColumns)",
+      with = "tableOrphanCodes(hide)"
+    )
   }
 
   if(nrow(result) == 0){
@@ -205,12 +212,7 @@ tableOrphanCodes <- function(result,
     resultType = "orphan_code_use",
     type = type,
     header = header,
-    # conceptId = conceptId,
-    # standard = standard,
-    # vocabulary =  vocabulary,
-    # relationship = FALSE,
     groupColumns = groupColumns,
-    # settings = character(),
     hide = hide,
     .options = .options
   )
@@ -222,30 +224,25 @@ internalTableAchillesResult <- function(result,
                                         type,
                                         resultType,
                                         header,
-                                        # conceptId,
-                                        # standard,
-                                        # vocabulary,
-                                        # relationship,
                                         groupColumns,
-                                        # settings,
                                         hide,
                                         .options) {
+  omopgenerics::assertCharacter(header, null = TRUE)
+  omopgenerics::assertCharacter(hide, null = TRUE)
+  if (!is.list(groupColumns) & !is.null(groupColumns)) groupColumns <- list(groupColumns)
+  omopgenerics::assertCharacter(groupColumns[[1]], null = TRUE)
 
   # filter result + nice estimate name
   x <- result |>
     visOmopResults::filterSettings(.data$result_type == .env$resultType) |>
-    dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name))) |>
-    visOmopResults::splitAll() |>
-    dplyr::rename(
-      "standard_concept_name" = "variable_name",
-      "standard_concept_id" = "variable_level"
-    )
+    dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
 
-  # hide
-  hide <- c(hide, "result_id", "estimate_type")
+  header <- reformulateTableAchilles(header)
+  groupColumns[[1]] <- reformulateTableAchilles(groupColumns[[1]])
+  hide <- reformulateTableAchilles(hide)
 
-  # visTable
-  x <- visOmopResults::visTable(
+  # visOmopTable
+  x <- visOmopResults::visOmopTable(
     result = x,
     estimateName = character(),
     header = header,
@@ -253,15 +250,33 @@ internalTableAchillesResult <- function(result,
     type = type,
     rename = c(
       "Domain ID" = "domain_id", "Vocabulary ID" = "vocabulary_id",
-      "Database name" = "cdm_name", "Standard concept ID" = "standard_concept_id"
+      "Database name" = "cdm_name", "Standard concept ID" = "variable_level",
+      "Standard concept name" = "variable_name"
     ),
     hide = hide,
     .options = .options
-  )
+  ) |>
+    suppressWarnings() # to remove after next release of visOmopResults
 
   return(x)
 }
 
 emptyResultTable <- function(type){
   dplyr::tibble()
+}
+
+reformulateTableAchilles <- function(vect) {
+  if (length(vect) > 0) {
+    purrr::map(vect, function(x) {
+      if (x == "standard_concept_id") {
+        "variable_level"
+      } else if (x == "standard_concept_name") {
+        "variable_name"
+      } else {
+        x
+      }
+    }) |> unlist()
+  } else {
+    vect
+  }
 }

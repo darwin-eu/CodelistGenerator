@@ -7,38 +7,30 @@ test_that("table achilles code use expcted columns", {
   result <- summariseAchillesCodeUse(list(knee_oa = 4,
                                           hip_oa = 5),
                                      cdm = cdm)
-  expect_no_error(
-    tableAchillesCodeUse(result,
+      tableAchillesCodeUse(result,
                          type = "gt",
                          header = c("cdm_name", "estimate_name"),
                          .options = list())
-  )
 
-  expect_no_error(
     tableAchillesCodeUse(result = result,
                          type = "gt",
                          header = c("codelist_name", "cdm_name", "estimate_name"),
                          hide = c("standard_concept", "standard_concept_id", "vocabulary_id"),
                          .options = list())
-  )
 
-  expect_no_error(
     tableAchillesCodeUse(result = result,
                                  type = "flextable",
                                  header = c("cdm_name", "estimate_name"),
                                  groupColumns = "codelist_name",
                                  hide = c("standard_concept", "standard_concept_id", "vocabulary_id"),
                                  .options = list())
-  )
 
-  expect_no_error(
     tableAchillesCodeUse(result = result,
                          type = "flextable",
                          header = c("estimate_name"),
                          groupColumns = "codelist_name",
                          hide = c("cdm_name"),
                          .options = list(includeHeaderName = FALSE))
-  )
 
   # expected error
   expect_error(tableAchillesCodeUse(result,
@@ -88,7 +80,7 @@ test_that("test table orphan codes work", {
   # empty result
   result <- summariseOrphanCodes(list(a = 99999),
                                  cdm = cdm)
-  expect_no_error(tableOrphanCodes(result))
+  tableOrphanCodes(result)
 
   # not an orphan code use result result
   cond <- dplyr::tibble("person_id" = 1,
@@ -102,9 +94,8 @@ test_that("test table orphan codes work", {
                                    table = cond)
   result <- summariseCodeUse(list(knee_oa = 4, hip_oa = 5),
                              cdm = cdm)
-  expect_no_error(tableAchillesCodeUse(result))
+  tableAchillesCodeUse(result)
 
   CDMConnector::cdm_disconnect(cdm)
-
 })
 
