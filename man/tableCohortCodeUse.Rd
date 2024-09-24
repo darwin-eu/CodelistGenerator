@@ -7,42 +7,56 @@
 tableCohortCodeUse(
   result,
   type = "gt",
-  header = c("cdm_name", "estimate"),
-  splitStrata = TRUE,
-  conceptId = TRUE,
-  sourceConcept = TRUE,
-  timing = FALSE,
+  header = c("cdm_name", "estimate_name"),
   groupColumns = NULL,
-  excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-  .options = list()
+  timing = FALSE,
+  hide = character(),
+  .options = list(),
+  excludeColumns = lifecycle::deprecated(),
+  splitStrata = lifecycle::deprecated(),
+  conceptId = lifecycle::deprecated(),
+  sourceConcept = lifecycle::deprecated()
 )
 }
 \arguments{
 \item{result}{A summarised result with results of the type "cohort_code_use".}
 
-\item{type}{Type of desired formatted table, possibilities: "gt",
-"flextable", "tibble".}
+\item{type}{Type of desired formatted table. To see supported formats
+use visOmopResults::tableType()}
 
-\item{header}{A vector containing which elements should go into the header
-in order. Allowed are: \code{cdm_name}, \code{group}, \code{strata}, \code{additional},
-\code{variable}, \code{estimate}, \code{settings}.}
+\item{header}{A vector specifying the elements to include in the header. The
+order of elements matters, with the first being the topmost header.
+The header vector can contain one of the following variables: "cdm_name",
+"codelist_name", "standard_concept_name", "standard_concept_id",
+"estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
+results are stratified, "year", "sex", "age_group" can also be used.
+Alternatively, it can include other names to use as overall header labels.}
 
-\item{splitStrata}{If TRUE strata will be split.}
-
-\item{conceptId}{If TRUE concept ids will be displayed.}
-
-\item{sourceConcept}{If TRUE source concepts will be displayed.}
+\item{groupColumns}{Variables to use as group labels. Allowed columns are:
+"cdm_name", "codelist_name", "standard_concept_name", "standard_concept_id",
+"estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
+results are stratified, "year", "sex", "age_group" can also be used.
+These cannot be used in header.}
 
 \item{timing}{If TRUE the timing setting will be displayed.}
 
-\item{groupColumns}{Columns to use as group labels. Allowed columns are
-\code{cdm_name}, \code{cohort_name} and/or \code{codelist_name}.}
-
-\item{excludeColumns}{Columns to drop from the output table.}
+\item{hide}{Table columns to exclude, options are: "cdm_name",
+"codelist_name", "year", "sex", "age_group", "standard_concept_name",
+"standard_concept_id", "estimate_name", "source_concept_name",
+"source_concept_id", "domain_id". If results are stratified, "year", "sex",
+"age_group" can also be used. These cannot be used in header or groupColumn.}
 
 \item{.options}{Named list with additional formatting options.
-visOmopResults::optionsVisOmopTable() shows allowed arguments and
+visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
+
+\item{excludeColumns}{Deprecated.}
+
+\item{splitStrata}{Deprecated.}
+
+\item{conceptId}{Deprecated.}
+
+\item{sourceConcept}{Deprecated.}
 }
 \value{
 A table with a formatted version of the summariseCohortCodeUse
