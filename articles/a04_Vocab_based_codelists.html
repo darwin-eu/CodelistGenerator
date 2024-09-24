@@ -103,7 +103,7 @@ IDs we could get them with details such as their name and domain.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - 161_acetaminophen (5 codes)</span></span>
+<span><span class="co">#&gt; - 161_acetaminophen (7 codes)</span></span>
 <span></span>
 <span><span class="va">acetaminophen_codes_with_details</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -129,7 +129,7 @@ one more drug ingredient (i.e. combination therapies) are returned.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - 161_acetaminophen (5 codes)</span></span>
+<span><span class="co">#&gt; - 161_acetaminophen (4 codes)</span></span>
 <span></span>
 <span><span class="va">acetaminophen_two_or_more_ingredients</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -154,7 +154,7 @@ acetaminophen and no other drug ingredient.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - 161_acetaminophen (5 codes)</span></span>
+<span><span class="co">#&gt; - 161_acetaminophen (3 codes)</span></span>
 <span></span>
 <span><span class="va">acetaminophen_one_ingredient</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -203,17 +203,13 @@ drug ingredient in the vocabularies.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">91 codelists</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - 26225_ondansetron (2 codes)</span></span>
-<span><span class="co">#&gt; - 6754_meperidine (2 codes)</span></span>
-<span><span class="co">#&gt; - 28889_loratadine (3 codes)</span></span>
-<span><span class="co">#&gt; - 7052_morphine (2 codes)</span></span>
-<span><span class="co">#&gt; - 1191_aspirin (2 codes)</span></span>
-<span><span class="co">#&gt; - 7258_naproxen (3 codes)</span></span>
-<span><span class="co">#&gt; - 140587_celecoxib (1 codes)</span></span>
-<span><span class="co">#&gt; - 3289_dextromethorphan (2 codes)</span></span>
-<span><span class="co">#&gt; - 3355_diclofenac (1 codes)</span></span>
-<span><span class="co">#&gt; - 7804_oxycodone (2 codes)</span></span>
-<span><span class="co">#&gt; along with 81 more codelists</span></span></code></pre></div>
+<span><span class="co">#&gt; - 10318_tacrine (2 codes)</span></span>
+<span><span class="co">#&gt; - 10582_levothyroxine (2 codes)</span></span>
+<span><span class="co">#&gt; - 11170_verapamil (2 codes)</span></span>
+<span><span class="co">#&gt; - 11248_vitamin_b_12 (2 codes)</span></span>
+<span><span class="co">#&gt; - 11289_warfarin (2 codes)</span></span>
+<span><span class="co">#&gt; - 11636_drospirenone (2 codes)</span></span>
+<span><span class="co">#&gt; along with 85 more codelists</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="medication-codelists-based-on-atc-classifications">Medication codelists based on ATC classifications<a class="anchor" aria-label="anchor" href="#medication-codelists-based-on-atc-classifications"></a>
@@ -223,7 +219,85 @@ drug ingredient in the vocabularies.</p>
 particular ATC class. To show this, we´ll use a the mock vocabulary from
 CodelistGenerator.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cdm_mock</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cdm_mock</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 5 column in <span style="font-weight: bold;">person</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `person_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `gender_concept_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `year_of_birth` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `race_concept_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `ethnicity_concept_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 3 column in <span style="font-weight: bold;">observation_period</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `observation_period_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `person_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `period_type_concept_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 8 column in <span style="font-weight: bold;">cdm_source</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cdm_source_abbreviation` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cdm_holder` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `source_description` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `source_documentation_reference` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cdm_etl_reference` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `source_release_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `cdm_release_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `vocabulary_version` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 3 column in <span style="font-weight: bold;">concept</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `valid_start_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `valid_end_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `invalid_reason` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 1 column in <span style="font-weight: bold;">vocabulary</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `vocabulary_concept_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 3 column in <span style="font-weight: bold;">concept_relationship</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `valid_start_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `valid_end_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `invalid_reason` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 1 column in <span style="font-weight: bold;">concept_synonym</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `language_concept_id` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 2 column in <span style="font-weight: bold;">concept_ancestor</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `min_levels_of_separation` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `max_levels_of_separation` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 7 column in <span style="font-weight: bold;">drug_strength</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `amount_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `amount_unit_concept_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `numerator_unit_concept_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `denominator_unit_concept_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `box_size` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `valid_start_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `valid_end_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 8 column in <span style="font-weight: bold;">achilles_analysis</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `analysis_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `analysis_name` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_1_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_2_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_3_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_4_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_5_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `category` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 7 column in <span style="font-weight: bold;">achilles_results</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `analysis_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_1` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_2` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_3` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_4` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_5` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `count_value` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; Warning: <span style="color: #BBBB00;">!</span> 16 column in <span style="font-weight: bold;">achilles_results_dist</span> do not match expected column type:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `analysis_id` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_1` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_2` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_3` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_4` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stratum_5` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `min_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `max_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `avg_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `stdev_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `median_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `p10_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `p25_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `p75_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `p90_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `count_value` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
+<span><span class="co">#&gt; Warning in validateCdmReference(cdm, soft = .softValidation): There are observation period end dates after the current date: 2024-09-24</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The latest max observation period end date found is 2025-12-31</span></span></code></pre></div>
 <p>In this example, we will produce an ATC level 1 codelist based on
 Alimentary Tract and Metabolism Drugs.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -276,7 +350,7 @@ details rather than as a codelist.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - 1234_arthropathies (6 codes)</span></span>
+<span><span class="co">#&gt; - 1234_arthropathies (3 codes)</span></span>
 <span></span>
 <span><span class="va">arthropathy_codes</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
@@ -297,7 +371,7 @@ details rather than as a codelist.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

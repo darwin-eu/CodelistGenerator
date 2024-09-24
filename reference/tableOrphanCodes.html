@@ -45,13 +45,14 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tableOrphanCodes</span><span class="op">(</span></span>
 <span>  <span class="va">result</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"gt"</span>,</span>
-<span>  header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cdm_name"</span>, <span class="st">"estimate"</span><span class="op">)</span>,</span>
-<span>  conceptId <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  standard <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  vocabulary <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  groupColumns <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  excludeColumns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"result_id"</span>, <span class="st">"estimate_type"</span><span class="op">)</span>,</span>
-<span>  .options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  header <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cdm_name"</span>, <span class="st">"estimate_name"</span><span class="op">)</span>,</span>
+<span>  groupColumns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  hide <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  .options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  conceptId <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  standard <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  vocabulary <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  excludeColumns <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -65,42 +66,53 @@
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>Type of desired formatted table, possibilities: "gt",
-"flextable", "tibble".</p></dd>
+<dd><p>Type of desired formatted table. To see supported formats
+use visOmopResults::tableType()</p></dd>
 
 
 <dt id="arg-header">header<a class="anchor" aria-label="anchor" href="#arg-header"></a></dt>
-<dd><p>A vector containing which elements should go into the header
-in order. Allowed are: <code>cdm_name</code>, <code>group</code>, <code>strata</code>, <code>additional</code>,
-<code>variable</code>, <code>estimate</code>, <code>settings</code>.</p></dd>
-
-
-<dt id="arg-conceptid">conceptId<a class="anchor" aria-label="anchor" href="#arg-conceptid"></a></dt>
-<dd><p>If TRUE concept ids will be displayed.</p></dd>
-
-
-<dt id="arg-standard">standard<a class="anchor" aria-label="anchor" href="#arg-standard"></a></dt>
-<dd><p>If TRUE a column indicating if the code is standard will be
-displayed.</p></dd>
-
-
-<dt id="arg-vocabulary">vocabulary<a class="anchor" aria-label="anchor" href="#arg-vocabulary"></a></dt>
-<dd><p>If TRUE vocabulary id will be displayed.</p></dd>
+<dd><p>A vector specifying the elements to include in the header. The
+order of elements matters, with the first being the topmost header.
+The header vector can contain one of the following variables: "cdm_name",
+"codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
+"estimate_name", "standard_concept", "vocabulary_id".
+Alternatively, it can include other names to use as overall header labels.</p></dd>
 
 
 <dt id="arg-groupcolumns">groupColumns<a class="anchor" aria-label="anchor" href="#arg-groupcolumns"></a></dt>
-<dd><p>Columns to use as group labels. Allowed columns are
-<code>cdm_name</code> and/or <code>codelist_name</code>.</p></dd>
+<dd><p>Variables to use as group labels. Allowed columns are:
+"cdm_name", "codelist_name", "domain_id", "standard_concept_name",
+"standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
+These cannot be used in header.</p></dd>
 
 
-<dt id="arg-excludecolumns">excludeColumns<a class="anchor" aria-label="anchor" href="#arg-excludecolumns"></a></dt>
-<dd><p>Columns to drop from the output table.</p></dd>
+<dt id="arg-hide">hide<a class="anchor" aria-label="anchor" href="#arg-hide"></a></dt>
+<dd><p>Table columns to exclude, options are:  "cdm_name",
+"codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
+"estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
+header or groupColumn.</p></dd>
 
 
 <dt id="arg--options">.options<a class="anchor" aria-label="anchor" href="#arg--options"></a></dt>
 <dd><p>Named list with additional formatting options.
-visOmopResults::optionsVisOmopTable() shows allowed arguments and
+visOmopResults::tableOptions() shows allowed arguments and
 their default values.</p></dd>
+
+
+<dt id="arg-conceptid">conceptId<a class="anchor" aria-label="anchor" href="#arg-conceptid"></a></dt>
+<dd><p>Deprecated.</p></dd>
+
+
+<dt id="arg-standard">standard<a class="anchor" aria-label="anchor" href="#arg-standard"></a></dt>
+<dd><p>Deprecated.</p></dd>
+
+
+<dt id="arg-vocabulary">vocabulary<a class="anchor" aria-label="anchor" href="#arg-vocabulary"></a></dt>
+<dd><p>Deprecated.</p></dd>
+
+
+<dt id="arg-excludecolumns">excludeColumns<a class="anchor" aria-label="anchor" href="#arg-excludecolumns"></a></dt>
+<dd><p>Deprecated.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -143,7 +155,7 @@ result.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
