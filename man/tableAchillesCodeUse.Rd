@@ -7,41 +7,51 @@
 tableAchillesCodeUse(
   result,
   type = "gt",
-  header = c("cdm_name", "estimate"),
-  conceptId = TRUE,
-  standard = TRUE,
-  vocabulary = TRUE,
-  groupColumns = NULL,
-  excludeColumns = c("result_id", "estimate_type"),
-  .options = list()
+  header = c("cdm_name", "estimate_name"),
+  groupColumns = character(),
+  hide = character(),
+  .options = list(),
+  conceptId = lifecycle::deprecated(),
+  standard = lifecycle::deprecated(),
+  vocabulary = lifecycle::deprecated(),
+  excludeColumns = lifecycle::deprecated()
 )
 }
 \arguments{
-\item{result}{A summarised result with results of the type
+\item{result}{A \verb{<summarised_result>} with results of the type
 "achilles_code_use".}
 
-\item{type}{Type of desired formatted table, possibilities: "gt",
-"flextable", "tibble".}
+\item{type}{Type of desired formatted table. To see supported formats
+use visOmopResults::tableType()}
 
-\item{header}{A vector containing which elements should go into the header
-in order. Allowed are: \code{cdm_name}, \code{group}, \code{strata}, \code{additional},
-\code{variable}, \code{estimate}, \code{settings}.}
+\item{header}{A vector specifying the elements to include in the header. The
+order of elements matters, with the first being the topmost header.
+The header vector can contain one of the following variables: "cdm_name",
+"codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
+"estimate_name", "standard_concept", "vocabulary_id".
+Alternatively, it can include other names to use as overall header labels.}
 
-\item{conceptId}{If TRUE concept ids will be displayed.}
+\item{groupColumns}{Variables to use as group labels. Allowed columns are:
+"cdm_name", "codelist_name", "domain_id", "standard_concept_name",
+"standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
+These cannot be used in header.}
 
-\item{standard}{If TRUE a column indicating if the code is standard will be
-displayed.}
-
-\item{vocabulary}{If TRUE vocabulary id will be displayed.}
-
-\item{groupColumns}{Columns to use as group labels. Allowed columns are
-\code{cdm_name} and/or \code{codelist_name}.}
-
-\item{excludeColumns}{Columns to drop from the output table.}
+\item{hide}{Table columns to exclude, options are:  "cdm_name",
+"codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
+"estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
+header or groupColumn.}
 
 \item{.options}{Named list with additional formatting options.
-visOmopResults::optionsVisOmopTable() shows allowed arguments and
+visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
+
+\item{conceptId}{Deprecated.}
+
+\item{standard}{Deprecated.}
+
+\item{vocabulary}{Deprecated.}
+
+\item{excludeColumns}{Deprecated.}
 }
 \value{
 A table with a formatted version of the summariseCohortCodeUse
