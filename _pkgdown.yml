@@ -28,7 +28,7 @@ reference:
   - matches("codesInUse|compareCodelists|subsetToCodesInUse|restrictToCodesInUse|subsetOnRouteCategory|stratifyByRouteCategory|stratifyByDoseUnit|stratifyByConcept|subsetOnDoseUnit")
 - subtitle: Vocabulary utility functions
 - contents:
-  - matches("getVocabVersion|getVocabularies|getConceptClassId|getDomains|getDescendants|getDoseForm|doseFormToRoute|getRouteCategories|getRoutes|getDoseUnit|getRelationshipId|getMappings|sourceCodesInUse")
+  - matches("getVocabVersion|getVocabularies|getConceptClassId|getDomains|getDescendants|getDoseForm|doseFormToRoute|getRouteCategories|getRoutes|getDoseUnit|getRelationshipId|getMappings|sourceCodesInUse|availableATC|availableICD10|availableIngredients")
 - subtitle: Create a mock dataset that contains vocabulary tables
 - contents:
   - matches("mockVocabRef")
