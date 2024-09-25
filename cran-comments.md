@@ -1,3 +1,3 @@
 ## R CMD check results
 
-This is a new release.
+This release addresses a breaking change in a dependency.

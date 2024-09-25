@@ -189,6 +189,6 @@ fetchAchillesCounts <- function(cdm, analysisId, conceptId = NULL){
   # the same code might appear in multiple tables so we will sum them
   analyses %>%
     dplyr::group_by(.data$concept_id) |>
-    dplyr::summarise(n = sum(n, na.rm = TRUE)) |>
+    dplyr::summarise(n = sum(.data$n, na.rm = TRUE)) |>
     dplyr::mutate(n = as.integer(.data$n))
 }

@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Identify Relevant Clinical Codes and Evaluate Their Use
-Version: 3.1.0.900
+Version: 3.2.0
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
@@ -8,9 +8,11 @@ Authors@R: c(
     person("Marti", "Catala", email = "marti.catalasabate@ndorms.ox.ac.uk", 
     role = c("ctb"), 
     comment = c(ORCID = "0000-0003-3308-9905")),
-    person("Xihang", " Chen", email = "xihang.chen@ndorms.ox.ac.uk", 
-    role = c("ctb"), 
+    person("Xihang", "Chen", email = "xihang.chen@ndorms.ox.ac.uk", 
+    role = c("aut"), 
     comment = c(ORCID = "0009-0001-8112-8959")),
+    person("Nuria", "Mercade-Besora", email = "nuria.mercadebesora@ndorms.ox.ac.uk", 
+    role = c("aut"), comment = c(ORCID = "0009-0006-7948-3747")),
     person("Mike", "Du", email = "mike.du@ndorms.ox.ac.uk", 
     role = c("ctb"), 
     comment = c(ORCID = "0000-0002-9517-8834")),
