@@ -12,6 +12,9 @@
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/index.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/news/index.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/CodelistGenerator-package.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/availableATC.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/availableICD10.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/availableIngredients.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesFromCohort.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesFromConceptSet.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/codesInUse.html</loc></url>
