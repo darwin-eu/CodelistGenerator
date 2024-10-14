@@ -191,6 +191,8 @@ getATCCodes <- function(cdm,
 #' @param name Names of ingredients of interest. For example, c("acetaminophen",
 #' "codeine"), would result in a list of length two with the descendant
 #' concepts for these two particular drug ingredients.
+#' @param nameStyle Name style to apply to returned list. Can be one of
+#' "{concept_code}_{concept_name}", "{concept_code}", or "{concept_name}".
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
@@ -214,11 +216,13 @@ getATCCodes <- function(cdm,
 #' @examples
 #' \dontrun{
 #' cdm <- mockVocabRef()
-#' getDrugIngredientCodes(cdm = cdm, name = "Adalimumab")
+#' getDrugIngredientCodes(cdm = cdm, name = "Adalimumab",
+#'                        nameStyle = "{concept_name}")
 #' CDMConnector::cdmDisconnect(cdm)
 #'}
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,
+                                   nameStyle = "{concept_code}_{concept_name}",
                                    doseForm = NULL,
                                    doseUnit = NULL,
                                    routeCategory = NULL,
@@ -236,6 +240,10 @@ getDrugIngredientCodes <- function(cdm,
     add = errorMessage,
     null.ok = TRUE
   )
+  checkmate::assert_choice(x = nameStyle,
+                           choices = c("{concept_code}_{concept_name}",
+                                       "{concept_code}",
+                                       "{concept_name}"))
   checkmate::assertCharacter(type, len = 1)
   checkmate::reportAssertions(collection = errorMessage)
 
@@ -303,14 +311,13 @@ getDrugIngredientCodes <- function(cdm,
       f = as.factor(ingredientCodes$ancestor_concept_id),
       drop = TRUE
     )
-
     names(ingredientCodes) <- dplyr::tibble(concept_id = names(ingredientCodes)) |>
     dplyr::mutate(seq = dplyr::row_number()) |>
       dplyr::left_join(ingredientConcepts |>
                           dplyr::mutate(concept_id = as.character(.data$concept_id)),
                        by= "concept_id") |>
-      dplyr::mutate(new_name = paste0(.data$concept_code, "_",
-                                      omopgenerics::toSnakeCase(.data$concept_name))) |>
+      dplyr::mutate(concept_name = paste0(omopgenerics::toSnakeCase(.data$concept_name)),
+                    new_name = glue::glue(nameStyle)) |>
       dplyr::arrange(seq) |>
       dplyr::pull("new_name")
 

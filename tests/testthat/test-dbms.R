@@ -49,8 +49,22 @@ test_that("redshift", {
   expect_true(nrow(asthma) > 0)
 
   # drug ingredients
-  expect_no_error(metformin <- getDrugIngredientCodes(cdm, "metformin"))
+  expect_no_error(metformin <- getDrugIngredientCodes(cdm, "metformin",
+                                                      nameStyle = "{concept_name}"))
   expect_true(inherits(metformin, "codelist"))
+  expect_true("metformin" %in% names(metformin))
+
+  expect_no_error(metformin_2 <- getDrugIngredientCodes(cdm, "metformin",
+                                                      nameStyle = "{concept_code}"))
+  expect_true("6809" %in% names(metformin_2))
+
+  expect_no_error(metformin_3 <- getDrugIngredientCodes(cdm, "metformin",
+                                                        nameStyle = "{concept_code}_{concept_name}"))
+  expect_true("6809_metformin" %in% names(metformin_3))
+
+  expect_error(getDrugIngredientCodes(cdm, "metformin",
+                                         nameStyle = "something else"))
+
 
   # achilles
   cdm$achilles_results <- cdm$condition_occurrence %>%

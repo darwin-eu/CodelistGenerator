@@ -395,6 +395,14 @@ test_that("no duplicate names example 1",{
                                  overwrite = TRUE)
   attr(cdm, "write_schema") <- "main"
 
+  expect_error(getDrugIngredientCodes(
+    cdm = cdm, name = "Adalimumab", nameStyle = "{concept_name}"
+  ))
+
+  expect_no_error(getDrugIngredientCodes(
+    cdm = cdm, name = "Adalimumab", nameStyle = "{concept_code}"
+  ))
+
   ingredient_list <- getDrugIngredientCodes(
     cdm = cdm, name = "Adalimumab"
   )
