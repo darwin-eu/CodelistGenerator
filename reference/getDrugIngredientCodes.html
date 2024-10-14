@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.2.0.900</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getDrugIngredientCodes</span><span class="op">(</span></span>
 <span>  <span class="va">cdm</span>,</span>
 <span>  name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nameStyle <span class="op">=</span> <span class="st">"{concept_code}_{concept_name}"</span>,</span>
 <span>  doseForm <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  doseUnit <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  routeCategory <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -65,6 +66,11 @@
 <dd><p>Names of ingredients of interest. For example, c("acetaminophen",
 "codeine"), would result in a list of length two with the descendant
 concepts for these two particular drug ingredients.</p></dd>
+
+
+<dt id="arg-namestyle">nameStyle<a class="anchor" aria-label="anchor" href="#arg-namestyle"></a></dt>
+<dd><p>Name style to apply to returned list. Can be one of
+"concept_code_concept_name", "concept_code", or "concept_name".</p></dd>
 
 
 <dt id="arg-doseform">doseForm<a class="anchor" aria-label="anchor" href="#arg-doseform"></a></dt>
@@ -107,7 +113,8 @@ associated with two ingredients.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">getDrugIngredientCodes</span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"Adalimumab"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">getDrugIngredientCodes</span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"Adalimumab"</span>,</span></span>
+<span class="r-in"><span>                       nameStyle <span class="op">=</span> <span class="st">"{concept_name}"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmDisconnect.html" class="external-link">cdmDisconnect</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
