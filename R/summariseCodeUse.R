@@ -31,7 +31,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' con <- DBI::dbConnect(duckdb::duckdb(),
 #'                       dbdir = CDMConnector::eunomia_dir())
 #' cdm <- CDMConnector::cdm_from_con(con,
@@ -126,7 +126,7 @@ summariseCodeUse <- function(x,
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' con <- DBI::dbConnect(duckdb::duckdb(),
 #'                       dbdir = CDMConnector::eunomia_dir())
 #' cdm <- CDMConnector::cdm_from_con(con,
