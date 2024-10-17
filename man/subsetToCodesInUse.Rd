@@ -30,7 +30,7 @@ Use achilles counts to filter a codelist to keep only the codes
 used in the database
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef("database")
 codes <- getCandidateCodes(cdm = cdm,
                            keywords = "arthritis",

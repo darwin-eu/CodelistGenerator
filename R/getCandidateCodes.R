@@ -50,13 +50,12 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- CodelistGenerator::mockVocabRef()
 #' CodelistGenerator::getCandidateCodes(
 #'   cdm = cdm,
 #'   keywords = "osteoarthritis"
 #'  )
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getCandidateCodes <- function(cdm,
                               keywords,

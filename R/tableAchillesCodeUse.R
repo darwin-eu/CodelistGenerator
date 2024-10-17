@@ -32,7 +32,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
 #' result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id), cdm = cdm)
@@ -137,7 +137,7 @@ tableAchillesCodeUse <- function(result,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' codes <- getCandidateCodes(cdm = cdm,
 #' keywords = "Musculoskeletal disorder",
@@ -145,13 +145,7 @@ tableAchillesCodeUse <- function(result,
 #' includeDescendants = FALSE)
 #'
 #' orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
-#' cdm = cdm,
-#' domains = "Condition",
-#' standardConcept = "Standard",
-#' searchInSynonyms = FALSE,
-#' searchNonStandard = FALSE,
-#' includeDescendants = TRUE,
-#' includeAncestor = FALSE)
+#' cdm = cdm)
 #'
 #' tableOrphanCodes(orphan_codes)
 #'

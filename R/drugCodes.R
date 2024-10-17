@@ -38,10 +38,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getATCCodes(cdm = cdm, level = "ATC 1st")
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getATCCodes <- function(cdm,
                         level = c("ATC 1st"),
@@ -214,11 +213,10 @@ getATCCodes <- function(cdm,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getDrugIngredientCodes(cdm = cdm, name = "Adalimumab",
 #'                        nameStyle = "{concept_name}")
-#' CDMConnector::cdmDisconnect(cdm)
 #'}
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,

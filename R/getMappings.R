@@ -25,7 +25,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- CodelistGenerator::mockVocabRef()
 #' codes <- CodelistGenerator::getCandidateCodes(
 #'   cdm = cdm,
@@ -36,7 +36,6 @@
 #'   candidateCodelist = codes,
 #'   nonStandardVocabularies = "READ"
 #')
-#'CDMConnector::cdmDisconnect(cdm)
 #'}
 getMappings <- function(candidateCodelist,
                          cdm = NULL,

@@ -25,7 +25,7 @@ tibble
 Show mappings from non-standard vocabularies to standard
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- CodelistGenerator::mockVocabRef()
 codes <- CodelistGenerator::getCandidateCodes(
   cdm = cdm,
@@ -36,6 +36,5 @@ CodelistGenerator::getMappings(
   candidateCodelist = codes,
   nonStandardVocabularies = "READ"
 )
-CDMConnector::cdmDisconnect(cdm)
 }
 }

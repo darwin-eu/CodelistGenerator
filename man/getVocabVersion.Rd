@@ -16,9 +16,8 @@ the vocabulary version being used
 getVocabVersion
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getVocabVersion(cdm = cdm)
-CDMConnector::cdmDisconnect(cdm)
 }
 }

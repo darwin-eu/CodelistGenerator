@@ -22,10 +22,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' cdm
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 mockVocabRef <- function(backend = "data_frame") {
   errorMessage <- checkmate::makeAssertCollection()

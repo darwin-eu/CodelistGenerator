@@ -31,13 +31,12 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getICD10StandardCodes(cdm = cdm, level = c(
 #'   "ICD10 Chapter",
 #'   "ICD10 SubChapter"
 #' ))
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getICD10StandardCodes <- function(cdm,
                                   level = c(

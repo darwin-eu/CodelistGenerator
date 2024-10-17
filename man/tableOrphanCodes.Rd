@@ -61,7 +61,7 @@ result.
 Format the result of summariseOrphanCodes into a table.
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef("database")
 codes <- getCandidateCodes(cdm = cdm,
 keywords = "Musculoskeletal disorder",
@@ -69,13 +69,7 @@ domains = "Condition",
 includeDescendants = FALSE)
 
 orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
-cdm = cdm,
-domains = "Condition",
-standardConcept = "Standard",
-searchInSynonyms = FALSE,
-searchNonStandard = FALSE,
-includeDescendants = TRUE,
-includeAncestor = FALSE)
+cdm = cdm)
 
 tableOrphanCodes(orphan_codes)
 

@@ -33,7 +33,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' con <- DBI::dbConnect(duckdb::duckdb(),
 #'                       dbdir = CDMConnector::eunomia_dir())
 #' cdm <- CDMConnector::cdm_from_con(con,
@@ -150,7 +150,7 @@ tableCodeUse <- function(result,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' con <- DBI::dbConnect(duckdb::duckdb(),
 #'                       dbdir = CDMConnector::eunomia_dir())
 #' cdm <- CDMConnector::cdm_from_con(con,

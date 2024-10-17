@@ -66,7 +66,7 @@ result.
 Format the result of summariseCohortCodeUse into a table.
 }
 \examples{
-\dontrun{
+\donttest{
 con <- DBI::dbConnect(duckdb::duckdb(),
                       dbdir = CDMConnector::eunomia_dir())
 cdm <- CDMConnector::cdm_from_con(con,

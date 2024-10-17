@@ -17,7 +17,7 @@ table of cdm.
 Get all ingredients codes from the cdm
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 availableIngredients(cdm)
 }

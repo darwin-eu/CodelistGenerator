@@ -53,10 +53,9 @@ Concepts with their format based on the type argument.
 Get descendant codes for drug ingredients
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getDrugIngredientCodes(cdm = cdm, name = "Adalimumab",
                        nameStyle = "{concept_name}")
-CDMConnector::cdmDisconnect(cdm)
 }
 }

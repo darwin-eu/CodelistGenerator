@@ -20,9 +20,8 @@ The domains of the cdm
 getDomains
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getDomains(cdm = cdm)
-CDMConnector::cdmDisconnect(cdm)
 }
 }

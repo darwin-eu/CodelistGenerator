@@ -19,7 +19,7 @@ concept table of cdm.
 Get all ICD codes from the cdm
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 availableICD10(cdm)
 }

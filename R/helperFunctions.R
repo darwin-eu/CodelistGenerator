@@ -24,7 +24,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' availableIngredients(cdm)
 #'}
@@ -53,7 +53,7 @@ availableIngredients <- function(cdm) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' availableATC(cdm)
 #'}
@@ -97,7 +97,7 @@ availableATC <- function(cdm,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' availableICD10(cdm)
 #'}
