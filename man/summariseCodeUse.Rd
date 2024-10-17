@@ -40,7 +40,7 @@ A tibble with results overall and, if specified, by strata
 Summarise code use in patient-level data
 }
 \examples{
-\donttest{
+\dontrun{
 con <- DBI::dbConnect(duckdb::duckdb(),
                       dbdir = CDMConnector::eunomia_dir())
 cdm <- CDMConnector::cdm_from_con(con,

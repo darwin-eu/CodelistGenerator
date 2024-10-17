@@ -62,7 +62,7 @@ A table with a formatted version of the summariseCodeUse result.
 Format the result of summariseCodeUse into a table.
 }
 \examples{
-\donttest{
+\dontrun{
 con <- DBI::dbConnect(duckdb::duckdb(),
                       dbdir = CDMConnector::eunomia_dir())
 cdm <- CDMConnector::cdm_from_con(con,
