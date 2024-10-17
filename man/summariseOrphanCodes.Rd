@@ -29,7 +29,7 @@ Find orphan codes related to a codelist using achilles counts and, if
 available, PHOEBE concept recommendations
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef("database")
 codes <- getCandidateCodes(cdm = cdm,
 keywords = "Musculoskeletal disorder",

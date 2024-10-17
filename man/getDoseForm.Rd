@@ -16,9 +16,8 @@ The dose forms available for drug concepts
 getDoseForm
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getDoseForm(cdm = cdm)
-CDMConnector::cdmDisconnect(cdm)
 }
 }

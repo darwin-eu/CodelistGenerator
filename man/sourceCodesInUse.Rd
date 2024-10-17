@@ -22,7 +22,7 @@ A list of source codes used in the database.
 Use achilles counts to get source codes used in the database
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef("database")
 x <- sourceCodesInUse(cdm = cdm)
 x

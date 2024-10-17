@@ -26,7 +26,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' x <- codesFromConceptSet(cdm = cdm,
 #'                          path =  system.file(package = "CodelistGenerator",

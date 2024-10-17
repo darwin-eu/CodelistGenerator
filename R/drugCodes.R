@@ -38,10 +38,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getATCCodes(cdm = cdm, level = "ATC 1st")
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getATCCodes <- function(cdm,
                         level = c("ATC 1st"),
@@ -192,7 +191,7 @@ getATCCodes <- function(cdm,
 #' "codeine"), would result in a list of length two with the descendant
 #' concepts for these two particular drug ingredients.
 #' @param nameStyle Name style to apply to returned list. Can be one of
-#' "{concept_code}_{concept_name}", "{concept_code}", or "{concept_name}".
+#' `"{concept_code}_{concept_name}"`, `"{concept_code}"`, or `"{concept_name}"`.
 #' @param doseForm Only descendants codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
 #' of dose form.
@@ -214,11 +213,10 @@ getATCCodes <- function(cdm,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getDrugIngredientCodes(cdm = cdm, name = "Adalimumab",
 #'                        nameStyle = "{concept_name}")
-#' CDMConnector::cdmDisconnect(cdm)
 #'}
 getDrugIngredientCodes <- function(cdm,
                                    name = NULL,

@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
 #' result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id), cdm = cdm)

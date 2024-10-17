@@ -22,9 +22,8 @@ The concept class used for a given set of domains
 getConceptClassId
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getConceptClassId(cdm = cdm, domain = "drug")
-CDMConnector::cdmDisconnect(cdm)
 }
 }

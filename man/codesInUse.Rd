@@ -25,7 +25,7 @@ A list of integers indicating codes being used in the database.
 Use achilles counts to get codes used in the database
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef("database")
 x <- codesInUse(cdm = cdm)
 x

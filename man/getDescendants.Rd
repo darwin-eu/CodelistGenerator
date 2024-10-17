@@ -37,9 +37,8 @@ The descendants of a given concept id
 getDescendants
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getDescendants(cdm = cdm, conceptId = 1)
-CDMConnector::cdmDisconnect(cdm)
 }
 }

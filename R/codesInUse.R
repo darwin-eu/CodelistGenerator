@@ -26,7 +26,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' codes <- getCandidateCodes(cdm = cdm,
 #'                            keywords = "arthritis",
@@ -96,7 +96,7 @@ subsetToCodesInUse <- function(x,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' codes <- getCandidateCodes(cdm = cdm,
 #'                            keywords = "arthritis",
@@ -141,7 +141,7 @@ restrictToCodesInUse <- function(x,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' x <- codesInUse(cdm = cdm)
 #' x
@@ -175,7 +175,7 @@ codesInUse <- function(cdm,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' x <- sourceCodesInUse(cdm = cdm)
 #' x

@@ -23,7 +23,7 @@ getDrugIngredientCodes(
 concepts for these two particular drug ingredients.}
 
 \item{nameStyle}{Name style to apply to returned list. Can be one of
-"{concept_code}_{concept_name}", "{concept_code}", or "{concept_name}".}
+\code{"{concept_code}_{concept_name}"}, \code{"{concept_code}"}, or \code{"{concept_name}"}.}
 
 \item{doseForm}{Only descendants codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
@@ -53,10 +53,9 @@ Concepts with their format based on the type argument.
 Get descendant codes for drug ingredients
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getDrugIngredientCodes(cdm = cdm, name = "Adalimumab",
                        nameStyle = "{concept_name}")
-CDMConnector::cdmDisconnect(cdm)
 }
 }

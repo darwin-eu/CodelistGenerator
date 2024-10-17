@@ -22,10 +22,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getVocabVersion(cdm = cdm)
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getVocabVersion <- function(cdm) {
   errorMessage <- checkmate::makeAssertCollection()
@@ -59,10 +58,9 @@ getVocabVersion <- function(cdm) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getDomains(cdm = cdm)
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getDomains <- function(cdm,
                        standardConcept = "Standard") {
@@ -131,10 +129,9 @@ getDomains <- function(cdm,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getVocabularies(cdm = cdm)
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 
 getVocabularies <- function(cdm) {
@@ -171,10 +168,9 @@ getVocabularies <- function(cdm) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getConceptClassId(cdm = cdm, domain = "drug")
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getConceptClassId <- function(cdm,
                               standardConcept = "Standard",
@@ -254,10 +250,9 @@ getConceptClassId <- function(cdm,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getDoseForm(cdm = cdm)
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 
 getDoseForm <- function(cdm) {
@@ -313,10 +308,9 @@ getDoseForm <- function(cdm) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getDescendants(cdm = cdm, conceptId = 1)
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 
 getDescendants <- function(cdm,
@@ -562,10 +556,9 @@ addIngredientCount <- function(cdm, concepts) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef()
 #' getRelationshipId(cdm = cdm)
-#' CDMConnector::cdmDisconnect(cdm)
 #' }
 getRelationshipId <- function(cdm,
                               standardConcept1 = "standard",

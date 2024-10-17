@@ -34,9 +34,8 @@ A character vector with unique values
 Get relationship ID values from the concept relationship table
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getRelationshipId(cdm = cdm)
-CDMConnector::cdmDisconnect(cdm)
 }
 }

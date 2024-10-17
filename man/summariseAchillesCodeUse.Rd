@@ -28,7 +28,7 @@ A tibble with results
 Summarise code use from achilles counts
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef("database")
 oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
 result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id), cdm = cdm)

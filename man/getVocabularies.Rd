@@ -16,9 +16,8 @@ Names of available vocabularies
 getVocabularies
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getVocabularies(cdm = cdm)
-CDMConnector::cdmDisconnect(cdm)
 }
 }

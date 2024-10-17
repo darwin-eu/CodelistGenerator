@@ -20,7 +20,7 @@ concept table of cdm.
 Get all ATC codes from the cdm
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 availableATC(cdm)
 }

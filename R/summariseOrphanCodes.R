@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cdm <- mockVocabRef("database")
 #' codes <- getCandidateCodes(cdm = cdm,
 #' keywords = "Musculoskeletal disorder",

@@ -46,9 +46,8 @@ Concepts with their format based on the type argument.
 Get descendant codes for ATC levels
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef()
 getATCCodes(cdm = cdm, level = "ATC 1st")
-CDMConnector::cdmDisconnect(cdm)
 }
 }

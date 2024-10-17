@@ -21,7 +21,7 @@ Named list with concept_ids for each concept set
 Get concept ids from a provided path to json files
 }
 \examples{
-\dontrun{
+\donttest{
 cdm <- mockVocabRef("database")
 x <- codesFromConceptSet(cdm = cdm,
                          path =  system.file(package = "CodelistGenerator",
