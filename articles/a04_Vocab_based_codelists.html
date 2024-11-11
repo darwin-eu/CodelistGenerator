@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -296,7 +296,7 @@ CodelistGenerator.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `p75_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `p90_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `count_value` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">integer</span></span></span>
-<span><span class="co">#&gt; Warning in validateCdmReference(cdm, soft = .softValidation): There are observation period end dates after the current date: 2024-10-17</span></span>
+<span><span class="co">#&gt; Warning in validateCdmReference(cdm, soft = .softValidation): There are observation period end dates after the current date: 2024-11-11</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The latest max observation period end date found is 2025-12-31</span></span></code></pre></div>
 <p>In this example, we will produce an ATC level 1 codelist based on
 Alimentary Tract and Metabolism Drugs.</p>
@@ -331,13 +331,16 @@ arthropathies.</p>
 <span>  cdm <span class="op">=</span> <span class="va">cdm_mock</span>,</span>
 <span>  name <span class="op">=</span> <span class="st">"arthropathies"</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Getting non-standard ICD10 concepts</span></span>
+<span><span class="co">#&gt; Mapping from non-standard to standard concepts</span></span>
+<span><span class="co">#&gt; Getting descendant concepts</span></span>
 <span><span class="va">arthropathy_codes</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - 1234_arthropathies (3 codes)</span></span>
+<span><span class="co">#&gt; - arthropathies (3 codes)</span></span>
 <span><span class="va">arthropathy_codes</span><span class="op">$</span><span class="va">arthropathies</span></span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 3 4 5</span></span></code></pre></div>
 <p>As with the above functions, we could return concepts with their
 details rather than as a codelist.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -346,6 +349,9 @@ details rather than as a codelist.</p>
 <span>  name <span class="op">=</span> <span class="st">"arthropathies"</span>, </span>
 <span>  type <span class="op">=</span> <span class="st">"codelist_with_details"</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Getting non-standard ICD10 concepts</span></span>
+<span><span class="co">#&gt; Mapping from non-standard to standard concepts</span></span>
+<span><span class="co">#&gt; Getting descendant concepts</span></span>
 <span><span class="va">arthropathy_codes</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist with details</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>

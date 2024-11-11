@@ -37,11 +37,11 @@
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/mockVocabRef.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/pipe.html</loc></url>
-<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/restrictToCodesInUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/sourceCodesInUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/stratifyByConcept.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/stratifyByDoseUnit.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/stratifyByRouteCategory.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/subsetOnDomain.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/subsetOnDoseUnit.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/subsetOnRouteCategory.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/subsetToCodesInUse.html</loc></url>
@@ -49,9 +49,11 @@
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCodeUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseCohortCodeUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseOrphanCodes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/summariseUnmappedCodes.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableAchillesCodeUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableCodeUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableCohortCodeUse.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableOrphanCodes.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/tableUnmappedCodes.html</loc></url>
 </urlset>
 
