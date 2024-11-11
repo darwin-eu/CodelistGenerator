@@ -237,6 +237,7 @@ listJsonFromPath <- function(path) {
 }
 
 extractCodes <- function(file, unknown) {
+
   json <- RJSONIO::fromJSON(file)[["ConceptSets"]]
   codelistTibble <- NULL
   for (k in seq_along(json)) {

@@ -10,11 +10,7 @@ tableOrphanCodes(
   header = c("cdm_name", "estimate_name"),
   groupColumns = character(),
   hide = character(),
-  .options = list(),
-  conceptId = lifecycle::deprecated(),
-  standard = lifecycle::deprecated(),
-  vocabulary = lifecycle::deprecated(),
-  excludeColumns = lifecycle::deprecated()
+  .options = list()
 )
 }
 \arguments{
@@ -44,14 +40,6 @@ header or groupColumn.}
 \item{.options}{Named list with additional formatting options.
 visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
-
-\item{conceptId}{Deprecated.}
-
-\item{standard}{Deprecated.}
-
-\item{vocabulary}{Deprecated.}
-
-\item{excludeColumns}{Deprecated.}
 }
 \value{
 A table with a formatted version of the summariseOrphanCodes

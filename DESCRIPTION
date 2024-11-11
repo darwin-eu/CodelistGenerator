@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Identify Relevant Clinical Codes and Evaluate Their Use
-Version: 3.2.1
+Version: 3.3.0
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
@@ -41,10 +41,9 @@ Imports:
     purrr,
     lubridate,
     PatientProfiles (>= 1.1.0),
-    RJSONIO,
     vctrs,
     visOmopResults (>= 0.3.0),
-    lifecycle
+    RJSONIO
 Suggests: 
     covr,
     duckdb,

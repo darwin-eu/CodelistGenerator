@@ -11,11 +11,7 @@ tableCohortCodeUse(
   groupColumns = NULL,
   timing = FALSE,
   hide = character(),
-  .options = list(),
-  excludeColumns = lifecycle::deprecated(),
-  splitStrata = lifecycle::deprecated(),
-  conceptId = lifecycle::deprecated(),
-  sourceConcept = lifecycle::deprecated()
+  .options = list()
 )
 }
 \arguments{
@@ -49,14 +45,6 @@ These cannot be used in header.}
 \item{.options}{Named list with additional formatting options.
 visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
-
-\item{excludeColumns}{Deprecated.}
-
-\item{splitStrata}{Deprecated.}
-
-\item{conceptId}{Deprecated.}
-
-\item{sourceConcept}{Deprecated.}
 }
 \value{
 A table with a formatted version of the summariseCohortCodeUse

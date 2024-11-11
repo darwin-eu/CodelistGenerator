@@ -23,10 +23,6 @@
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::tableOptions() shows allowed arguments and
 #' their default values.
-#' @param excludeColumns Deprecated.
-#' @param conceptId Deprecated.
-#' @param splitStrata Deprecated.
-#' @param sourceConcept Deprecated.
 #'
 #' @return A table with a formatted version of the summariseCodeUse result.
 #'
@@ -55,35 +51,7 @@ tableCodeUse <- function(result,
                          header = c("cdm_name", "estimate_name"),
                          groupColumns = character(),
                          hide = character(),
-                         .options = list(),
-                         splitStrata = lifecycle::deprecated(),
-                         conceptId = lifecycle::deprecated(),
-                         sourceConcept = lifecycle::deprecated(),
-                         excludeColumns = lifecycle::deprecated()) {
-  # lifecyle deprecate warns
-  if (lifecycle::is_present(conceptId)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableCodeUse(conceptId)",
-      with = "tableCodeUse(hide)"
-    )
-  }
-  if (lifecycle::is_present(sourceConcept)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableCodeUse(sourceConcept)",
-      with = "tableCodeUse(hide)"
-    )
-  }
-  if (lifecycle::is_present(splitStrata)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableCodeUse(splitStrata)"
-    )
-  }
-  if (lifecycle::is_present(excludeColumns)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableCodeUse(excludeColumns)",
-      with = "tableCodeUse(hide)"
-    )
-  }
+                         .options = list()) {
 
   # checks
   if(nrow(result) == 0){
@@ -139,10 +107,6 @@ tableCodeUse <- function(result,
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::tableOptions() shows allowed arguments and
 #' their default values.
-#' @param excludeColumns Deprecated.
-#' @param conceptId Deprecated.
-#' @param splitStrata Deprecated.
-#' @param sourceConcept Deprecated.
 #'
 #' @return A table with a formatted version of the summariseCohortCodeUse
 #' result.
@@ -179,35 +143,7 @@ tableCohortCodeUse <- function(result,
                                groupColumns = NULL,
                                timing = FALSE,
                                hide = character(),
-                               .options = list(),
-                               excludeColumns = lifecycle::deprecated(),
-                               splitStrata = lifecycle::deprecated(),
-                               conceptId = lifecycle::deprecated(),
-                               sourceConcept = lifecycle::deprecated()) {
-  # lifecyle deprecate warns
-  if (lifecycle::is_present(conceptId)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableCohortCodeUse(conceptId)",
-      with = "tableCohortCodeUse(hide)"
-    )
-  }
-  if (lifecycle::is_present(sourceConcept)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableCohortCodeUse(sourceConcept)",
-      with = "tableCohortCodeUse(hide)"
-    )
-  }
-  if (lifecycle::is_present(splitStrata)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableCohortCodeUse(splitStrata)"
-    )
-  }
-  if (lifecycle::is_present(excludeColumns)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableCohortCodeUse(excludeColumns)",
-      with = "tableCohortCodeUse(hide)"
-    )
-  }
+                               .options = list()) {
 
   # checks
   if(nrow(result) == 0){

@@ -83,54 +83,6 @@ subsetToCodesInUse <- function(x,
 
 }
 
-
-#' Use achilles counts to filter a codelist to keep only the codes
-#' used in the database
-#'
-#' @param x A codelist
-#' @param cdm cdm_reference via CDMConnector
-#' @param minimumCount Any codes with a frequency under this will be removed.
-#' @param table cdm table
-#'
-#' @return Use achilles counts to filter codelist to only the codes used in the database
-#' @export
-#'
-#' @examples
-#' \donttest{
-#' cdm <- mockVocabRef("database")
-#' codes <- getCandidateCodes(cdm = cdm,
-#'                            keywords = "arthritis",
-#'                            domains = "Condition",
-#'                            includeDescendants = FALSE)
-#' x <- restrictToCodesInUse(list("cs1" = codes$concept_id,
-#'                                "cs2" = 999),
-#'                                 cdm = cdm)
-#'
-#' x
-#' CDMConnector::cdmDisconnect(cdm)
-#' }
-restrictToCodesInUse <- function(x,
-                               cdm,
-                               minimumCount = 0L,
-                               table = c("condition_occurrence",
-                                         "device_exposure",
-                                         "drug_exposure",
-                                         "measurement",
-                                         "observation",
-                                         "procedure_occurrence",
-                                         "visit_occurrence")){
-
-  lifecycle::deprecate_warn("3.1.0",
-                            "CodelistGenerator::restrictToCodesInUse()",
-                            "CodelistGenerator::subsetToCodesInUse()")
-
-  subsetToCodesInUse(x = x,
-                     cdm = cdm,
-                     minimumCount = minimumCount,
-                     table = table)
-
-}
-
 #' Use achilles counts to get codes used in the database
 #'
 #' @param cdm cdm_reference via CDMConnector
@@ -204,8 +156,7 @@ unmappedSourceCodesInUse <- function(cdm,
                                                    "drug_exposure",
                                                    "measurement",
                                                    "observation",
-                                                   "procedure_occurrence",
-                                                   "visit_occurrence")){
+                                                   "procedure_occurrence")){
 
   # note, no achilles query for this so will have to query the cdm
 
@@ -218,8 +169,7 @@ unmappedSourceCodesInUse <- function(cdm,
       workingTable == "drug_exposure" ~ "drug_concept_id",
       workingTable == "measurement" ~ "measurement_concept_id",
       workingTable == "observation" ~ "observation_concept_id",
-      workingTable == "procedure_occurrence" ~ "procedure_concept_id",
-      workingTable == "visit_occurrence" ~ "visit_concept_id"
+      workingTable == "procedure_occurrence" ~ "procedure_concept_id"
     )
 
     workingConcept <- dplyr::case_when(
@@ -228,8 +178,7 @@ unmappedSourceCodesInUse <- function(cdm,
       workingTable == "drug_exposure" ~ "drug_source_concept_id",
       workingTable == "measurement" ~ "measurement_source_concept_id",
       workingTable == "observation" ~ "observation_source_concept_id",
-      workingTable == "procedure_occurrence" ~ "procedure_source_concept_id",
-      workingTable == "visit_occurrence" ~ "visit_source_concept_id"
+      workingTable == "procedure_occurrence" ~ "procedure_source_concept_id"
     )
 
     # keep unmapped codes
@@ -246,22 +195,24 @@ unmappedSourceCodesInUse <- function(cdm,
   codes
 }
 
-fetchAchillesCodesInUse <- function(cdm, minimumCount = 0, collect = TRUE){
- codes <- cdm[["achilles_results"]] %>%
+fetchAchillesCodesInUse <- function(cdm, minimumCount = 0L, collect = TRUE){
+
+  minimumCount <- as.integer(minimumCount)
+  codes <- cdm[["achilles_results"]] %>%
     dplyr::filter(.data$analysis_id %in%
       c(
-        401, # condition occurrence
-        701, # drug_exposure
-        801, # observation
-        1801, # measurement
-        201, # visit_occurrence
-        601, # procedure_occurrence
-        2101 # device_exposure
-      )) %>%
-    dplyr::filter(.data$count_value >= .env$minimumCount) %>%
+        401L, # condition occurrence
+        701L, # drug_exposure
+        801L, # observation
+        1801L, # measurement
+        201L, # visit_occurrence
+        601L, # procedure_occurrence
+        2101L # device_exposure
+      ),
+      .data$count_value >= .env$minimumCount) %>%
     dplyr::select("concept_id" = "stratum_1") %>%
-    dplyr::distinct() %>%
-    dplyr::mutate(concept_id = as.integer(.data$concept_id))
+    dplyr::mutate(concept_id = as.integer(.data$concept_id)) %>%
+    dplyr::distinct()
 
  if(isTRUE(collect)){
   codes <- codes %>%
@@ -272,17 +223,20 @@ fetchAchillesCodesInUse <- function(cdm, minimumCount = 0, collect = TRUE){
 
 }
 
-fetchAchillesSourceCodesInUse <- function(cdm, minimumCount = 0){
+fetchAchillesSourceCodesInUse <- function(cdm, minimumCount = 0L){
+
+  minimumCount <- as.integer(minimumCount)
+
   cdm[["achilles_results"]] %>%
     dplyr::filter(.data$analysis_id %in%
                     c(
-                      425, # condition occurrence
-                      725, # drug_exposure
-                      825, # observation
-                      1825, # measurement
-                      225, # visit_occurrence
-                      625, # procedure_occurrence
-                      2125 # device_exposure
+                      425L, # condition occurrence
+                      725L, # drug_exposure
+                      825L, # observation
+                      1825L, # measurement
+                      225L, # visit_occurrence
+                      625L, # procedure_occurrence
+                      2125L # device_exposure
                     )) %>%
     dplyr::filter(.data$count_value >= .env$minimumCount) %>%
     dplyr::select("stratum_1") %>%

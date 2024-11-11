@@ -14,8 +14,7 @@ summariseCohortCodeUse(
   byConcept = TRUE,
   byYear = FALSE,
   bySex = FALSE,
-  ageGroup = NULL,
-  minCellCount = lifecycle::deprecated()
+  ageGroup = NULL
 )
 }
 \arguments{
@@ -41,8 +40,6 @@ person-level counts}
 \item{bySex}{TRUE or FALSE. If TRUE code use will be summarised by sex.}
 
 \item{ageGroup}{If not NULL, a list of ageGroup vectors of length two.}
-
-\item{minCellCount}{\verb{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}}
 }
 \value{
 A tibble with results overall and, if specified, by strata

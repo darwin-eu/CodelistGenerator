@@ -8,8 +8,8 @@ test_that("db without icd10 codes loaded", {
                                    "ICD10 SubChapter"
                                  ))
   expect_true(length(codes) == 2)
-  expect_true("1234_arthropathies" %in% names(codes))
-  expect_true("1234_diseases_of_the_musculoskeletal_system_and_connective_tissue" %in%
+  expect_true("arthropathies" %in% names(codes))
+  expect_true("diseases_of_the_musculoskeletal_system_and_connective_tissue" %in%
                 names(codes))
   # we should pick up mapping and descendants
   expect_true(all(c(3,4,5) %in% codes[[1]]))
@@ -78,12 +78,4 @@ test_that("expected errors", {
     "Not an ICD10 Chapter"
   )))
 
-})
-
-test_that("change of name", {
-  skip_on_cran()
-  cdm <- mockVocabRef()
-  code_icd10 <- getICD10StandardCodes(cdm = cdm)
-
-  expect_true(all(startsWith(names(code_icd10), "1234_")))
 })

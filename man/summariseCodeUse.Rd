@@ -11,8 +11,7 @@ summariseCodeUse(
   byConcept = TRUE,
   byYear = FALSE,
   bySex = FALSE,
-  ageGroup = NULL,
-  minCellCount = lifecycle::deprecated()
+  ageGroup = NULL
 )
 }
 \arguments{
@@ -23,15 +22,14 @@ summariseCodeUse(
 \item{countBy}{Either "record" for record-level counts or "person" for
 person-level counts}
 
-\item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by}
+\item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by
+concept}
 
 \item{byYear}{TRUE or FALSE. If TRUE code use will be summarised by year.}
 
 \item{bySex}{TRUE or FALSE. If TRUE code use will be summarised by sex.}
 
 \item{ageGroup}{If not NULL, a list of ageGroup vectors of length two.}
-
-\item{minCellCount}{\verb{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}}
 }
 \value{
 A tibble with results overall and, if specified, by strata

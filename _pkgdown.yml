@@ -16,16 +16,16 @@ reference:
   - matches("getDrugIngredientCodes|getATCCodes|getICD10StandardCodes")
 - subtitle: Run codelist diagnostics
 - contents:
-  - matches("summariseAchillesCodeUse|summariseCodeUse|summariseCohortCodeUse|summariseOrphanCodes")
+  - matches("summariseAchillesCodeUse|summariseCodeUse|summariseCohortCodeUse|summariseOrphanCodes|summariseUnmappedCodes")
 - subtitle: Present codelist diagnostics results in a table
 - contents:
-  - matches("tableAchillesCodeUse|tableCodeUse|tableCohortCodeUse|tableOrphanCodes")
+  - matches("tableAchillesCodeUse|tableCodeUse|tableCohortCodeUse|tableOrphanCodes|tableUnmappedCodes")
 - subtitle: Extract codelists from JSON files
 - contents:
   - matches("codesFromCohort|codesFromConceptSet")
 - subtitle: Codelist utility functions
 - contents:
-  - matches("codesInUse|compareCodelists|subsetToCodesInUse|restrictToCodesInUse|subsetOnRouteCategory|stratifyByRouteCategory|stratifyByDoseUnit|stratifyByConcept|subsetOnDoseUnit")
+  - matches("codesInUse|compareCodelists|subsetToCodesInUse|restrictToCodesInUse|subsetOnRouteCategory|stratifyByRouteCategory|stratifyByDoseUnit|stratifyByConcept|subsetOnDoseUnit|subsetOnDomain")
 - subtitle: Vocabulary utility functions
 - contents:
   - matches("getVocabVersion|getVocabularies|getConceptClassId|getDomains|getDescendants|getDoseForm|doseFormToRoute|getRouteCategories|getRoutes|getDoseUnit|getRelationshipId|getMappings|sourceCodesInUse|availableATC|availableICD10|availableIngredients")

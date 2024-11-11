@@ -21,10 +21,6 @@
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::tableOptions() shows allowed arguments and
 #' their default values.
-#' @param excludeColumns Deprecated.
-#' @param conceptId Deprecated.
-#' @param standard Deprecated.
-#' @param vocabulary Deprecated.
 #'
 #' @return A table with a formatted version of the summariseCohortCodeUse
 #' result.
@@ -45,36 +41,7 @@ tableAchillesCodeUse <- function(result,
                                  header = c("cdm_name", "estimate_name"),
                                  groupColumns = character(),
                                  hide = character(),
-                                 .options = list(),
-                                 conceptId = lifecycle::deprecated(),
-                                 standard = lifecycle::deprecated(),
-                                 vocabulary = lifecycle::deprecated(),
-                                 excludeColumns = lifecycle::deprecated()) {
-  # lifecyle deprecate warns
-  if (lifecycle::is_present(conceptId)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableAchillesCodeUse(conceptId)",
-      with = "tableAchillesCodeUse(hide)"
-    )
-  }
-  if (lifecycle::is_present(standard)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableAchillesCodeUse(standard)",
-      with = "tableAchillesCodeUse(hide)"
-    )
-  }
-  if (lifecycle::is_present(vocabulary)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableAchillesCodeUse(vocabulary)",
-      with = "tableAchillesCodeUse(hide)"
-    )
-  }
-  if (lifecycle::is_present(excludeColumns)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableAchillesCodeUse(excludeColumns)",
-      with = "tableAchillesCodeUse(hide)"
-    )
-  }
+                                 .options = list()) {
 
   # checks
   if(nrow(result) == 0){
@@ -126,10 +93,6 @@ tableAchillesCodeUse <- function(result,
 #' @param .options Named list with additional formatting options.
 #' visOmopResults::tableOptions() shows allowed arguments and
 #' their default values.
-#' @param excludeColumns Deprecated.
-#' @param conceptId Deprecated.
-#' @param standard Deprecated.
-#' @param vocabulary Deprecated.
 #'
 #' @return A table with a formatted version of the summariseOrphanCodes
 #' result.
@@ -157,36 +120,7 @@ tableOrphanCodes <- function(result,
                              header = c("cdm_name", "estimate_name"),
                              groupColumns = character(),
                              hide = character(),
-                             .options = list(),
-                             conceptId = lifecycle::deprecated(),
-                             standard = lifecycle::deprecated(),
-                             vocabulary = lifecycle::deprecated(),
-                             excludeColumns = lifecycle::deprecated()) {
-  # lifecyle deprecate warns
-  if (lifecycle::is_present(conceptId)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableOrphanCodes(conceptId)",
-      with = "tableOrphanCodes(hide)"
-    )
-  }
-  if (lifecycle::is_present(standard)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableOrphanCodes(standard)",
-      with = "tableOrphanCodes(hide)"
-    )
-  }
-  if (lifecycle::is_present(vocabulary)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableOrphanCodes(vocabulary)",
-      with = "tableOrphanCodes(hide)"
-    )
-  }
-  if (lifecycle::is_present(excludeColumns)) {
-    lifecycle::deprecate_soft(
-      when = "2.2.4",  what = "tableOrphanCodes(excludeColumns)",
-      with = "tableOrphanCodes(hide)"
-    )
-  }
+                             .options = list()) {
 
   if(nrow(result) == 0){
     cli::cli_warn("`result` object is empty")

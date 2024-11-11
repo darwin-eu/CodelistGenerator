@@ -76,8 +76,8 @@ summariseOrphanCodes <- function(x,
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
 
-  #
   for(i in seq_along(x)){
+    cli::cli_inform("Getting orphan codes for {names(x)[i]}")
     cdm <- omopgenerics::insertTable(cdm = cdm,
                                      name = tableCodelist,
                                      table = dplyr::tibble(concept_id = x[[i]]),
@@ -93,10 +93,11 @@ summariseOrphanCodes <- function(x,
       dplyr::distinct() |>
       dplyr::pull("concept_id")
 
-    # get ancestors used in db
+    # get direct ancestors used in db
     orphanAncestors <- cdm[[tableCodelist]] |>
       dplyr::left_join(ancestorsUsed,
                        by = c("concept_id" = "descendant_concept_id")) |>
+      dplyr::filter(.data$min_levels_of_separation == 1) |>
       dplyr::select("concept_id" = "ancestor_concept_id")  |>
       dplyr::filter(!is.na(.data$concept_id)) |>
       dplyr::distinct() |>
@@ -156,13 +157,11 @@ summariseOrphanCodes <- function(x,
         )
       )
   } else {
-    orphanCodes <- summariseAchillesCodeUse(orphanCodes, cdm)
+    orphanCodes <- subsetOnDomain(orphanCodes,
+                                  cdm = cdm,
+                                  domain = domain)
+    orphanCodes <- summariseAchillesCodeUse(orphanCodes, cdm = cdm)
     attr(orphanCodes, "settings")$result_type <- "orphan_code_use"
-  }
-
-  if(nrow(orphanCodes) >= 1){
-    orphanCodes <- orphanCodes |>
-      dplyr::filter(.data$strata_level %in% .env$domain)
   }
 
   orphanCodes

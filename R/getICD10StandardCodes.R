@@ -62,6 +62,7 @@ getICD10StandardCodes <- function(cdm,
   checkmate::reportAssertions(collection = errorMessage)
 
   # first get non standard codes
+  cli::cli_inform("Getting non-standard ICD10 concepts")
   ICD10NonStandardCodes <- getICD10NonStandardCodes(
     cdm = cdm,
     level = level,
@@ -84,6 +85,7 @@ getICD10StandardCodes <- function(cdm,
   }
 
   # map from non-standard to standard and add descendants
+  cli::cli_inform("Mapping from non-standard to standard concepts")
   for (i in seq_along(ICD10NonStandardCodes)) {
     ICD10NonStandardCodes[[i]] <- dplyr::tibble(
       concept_id = ICD10NonStandardCodes[[i]],
@@ -91,7 +93,6 @@ getICD10StandardCodes <- function(cdm,
     )
   }
   ICD10NonStandardCodes <- dplyr::bind_rows(ICD10NonStandardCodes)
-
   # map to standard
   ICD10NonStandardCodes <- ICD10NonStandardCodes %>%
     dplyr::inner_join(
@@ -118,6 +119,7 @@ getICD10StandardCodes <- function(cdm,
 
   # add descendants
   if (isTRUE(includeDescendants)) {
+    cli::cli_inform("Getting descendant concepts")
     ICD10MapsTo <- ICD10MapsTo %>%
       dplyr::left_join(cdm$concept_ancestor,
         by = c("concept_id" = "ancestor_concept_id")
@@ -130,7 +132,6 @@ getICD10StandardCodes <- function(cdm,
       CDMConnector::compute_query()
       }
   }
-
   if(type == "codelist_with_details") {
     ICD10MapsTo <- ICD10MapsTo %>%
       dplyr::left_join(cdm[["concept"]] %>%
@@ -153,17 +154,15 @@ getICD10StandardCodes <- function(cdm,
   } else {
     # split into list (only returning vector of concept ids)
     ICD10StandardCodes <- ICD10MapsTo %>%
-      dplyr::collect() %>%
-      dplyr::left_join(cdm[["concept"]] %>% dplyr::select("concept_id", "concept_code"),
-                       by = "concept_id",
-                       copy = T) %>%
-      dplyr::mutate(name = paste0(.data$concept_code,"_", .data$name))
+      dplyr::left_join(cdm[["concept"]] %>%
+                         dplyr::select("concept_id"),
+                       by = "concept_id") %>%
+      dplyr::collect()
     ICD10StandardCodes <- split(
       x = ICD10StandardCodes$concept_id,
       f = ICD10StandardCodes$name
     )
   }
-
   if(type == "codelist"){
     ICD10StandardCodes <- omopgenerics::newCodelist(ICD10StandardCodes)
   } else{

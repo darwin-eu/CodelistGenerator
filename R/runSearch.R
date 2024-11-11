@@ -76,8 +76,9 @@ runSearch <- function(keywords,
       dplyr::select(-c("domain_id", "standard_concept"))
 
     conceptSynonym <- conceptSynonymDb %>%
-      # dplyr::collect() %>%
       dplyr::rename_with(tolower)
+  } else {
+    conceptSynonym <- NULL
   }
 
   # collect the drug_strength table if drug
@@ -91,7 +92,6 @@ runSearch <- function(keywords,
       ) %>%
       dplyr::filter(.data$domain_id %in% .env$domains &
                       .data$standard_concept %in% .env$standardConceptFlags) %>%
-      # dplyr::collect() %>%
       dplyr::rename_with(tolower)
   }
 
@@ -101,7 +101,7 @@ runSearch <- function(keywords,
   workingConcept <- concept %>%
     dplyr::filter(.data$domain_id %in% .env$domains)
 
-  if (exists("conceptSynonym") == TRUE) {
+  if (!is.null(conceptSynonym)) {
     workingconceptSynonym <- conceptSynonym %>%
       dplyr::left_join(
         concept %>%

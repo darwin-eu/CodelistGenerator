@@ -89,16 +89,6 @@ test_that("table code use expcted columns", {
     .options = list()
   )
 
-  tableCohortCodeUse(
-    result = results_cohort,
-    type = "gt",
-    header = c("cdm_name", "estimate_name"),
-    groupColumn = "timing",
-    timing = TRUE,
-    excludeColumns = c("result_id", "estimate_type", "additional_name", "additional_level"),
-    .options = list()
-  )
-
   CDMConnector::cdm_disconnect(cdm)
 })
 
@@ -136,30 +126,7 @@ test_that("table code use output formats", {
                groupColumn = "codelist_name",
                .options = list())
 
-  tableCodeUse(result = results |>  dplyr::filter(variable_name == "overall", strata_name == "overall"),
-               type = "gt",
-               header = character(),
-               split = TRUE,
-               groupColumn = "cdm_name",
-               conceptId = TRUE,
-               sourceConcept = FALSE,
-               excludeColumns = c("result_id", "estimate_type",
-                                  "variable_name", "variable_level",
-                                  "additional_name", "additional_level"),
-               .options = list())
 
-  tableCodeUse(result = results |>
-                 dplyr::filter(variable_name == "overall", strata_name == "overall"),
-               type = "gt",
-               header = character(),
-               split = TRUE,
-               groupColumn = c("cdm_name", "codelist_name"),
-               conceptId = TRUE,
-               sourceConcept = FALSE,
-               excludeColumns = c("result_id", "estimate_type",
-                                  "variable_name", "variable_level",
-                                  "additional_name", "additional_level"),
-               .options = list())
 
   CDMConnector::cdm_disconnect(cdm)
 })

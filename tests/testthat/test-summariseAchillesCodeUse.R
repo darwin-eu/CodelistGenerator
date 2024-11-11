@@ -1,6 +1,9 @@
 test_that("achilles code use", {
   # mock db
   cdm <- mockVocabRef("database")
+
+  expect_message(summariseAchillesCodeUse(x = omopgenerics::emptyCodelist(), cdm))
+
   oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
   # two codes: "Osteoarthritis of knee" "Osteoarthritis of hip"
   result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id),
