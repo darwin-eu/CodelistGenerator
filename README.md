@@ -9,8 +9,7 @@
 status](https://www.r-pkg.org/badges/version/CodelistGenerator)](https://CRAN.R-project.org/package=CodelistGenerator)
 [![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
 [![R-CMD-check](https://github.com/darwin-eu/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CodelistGenerator/actions)
-[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](https://lifecycle.r-lib.org/articles/stages.html)
-[![R-CMD-check](https://github.com/darwin-eu/CodelistGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/darwin-eu/CodelistGenerator/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 ## Installation
@@ -62,9 +61,9 @@ classes of standard concepts used for drugs
 getConceptClassId(cdm,
                   standardConcept = "Standard",
                   domain = "Drug")
-#> [1] "Ingredient"          "Quant Clinical Drug" "Branded Drug"       
-#> [4] "Quant Branded Drug"  "Clinical Drug Comp"  "Branded Drug Comp"  
-#> [7] "CVX"                 "Clinical Drug"       "Branded Pack"
+#> [1] "Branded Drug"        "Branded Drug Comp"   "Branded Pack"       
+#> [4] "Clinical Drug"       "Clinical Drug Comp"  "CVX"                
+#> [7] "Ingredient"          "Quant Branded Drug"  "Quant Clinical Drug"
 ```
 
 ## Vocabulary based codelists using CodelistGenerator
@@ -75,29 +74,16 @@ we can use, for example, to get all the concept IDs used to represent
 aspirin.
 
 ``` r
-getDrugIngredientCodes(cdm = cdm, name = "aspirin")
+getDrugIngredientCodes(cdm = cdm, name = "aspirin", nameStyle = "{concept_name}")
 #> 
 #> - aspirin (2 codes)
-```
-
-If we also want the details of these concept IDs we can get these like
-so.
-
-``` r
-getDrugIngredientCodes(cdm = cdm, name = "aspirin", withConceptDetails = TRUE)
-#> $aspirin
-#> # A tibble: 2 × 4
-#>   concept_id concept_name              domain_id vocabulary_id
-#>        <int> <chr>                     <chr>     <chr>        
-#> 1   19059056 Aspirin 81 MG Oral Tablet Drug      RxNorm       
-#> 2    1112807 Aspirin                   Drug      RxNorm
 ```
 
 And if we want codelists for all drug ingredients we can simply omit the
 name argument and all ingredients will be returned.
 
 ``` r
-ing <- getDrugIngredientCodes(cdm = cdm)
+ing <- getDrugIngredientCodes(cdm = cdm, nameStyle = "{concept_name}")
 ing$aspirin
 #> [1] 19059056  1112807
 ing$diclofenac
@@ -123,7 +109,7 @@ asthma_codes1 <- getCandidateCodes(
   keywords = "asthma",
   domains = "Condition"
 ) 
-asthma_codes1 %>% 
+asthma_codes1 |> 
   glimpse()
 #> Rows: 2
 #> Columns: 6
@@ -145,7 +131,7 @@ asthma_codes2 <- getCandidateCodes(
   exclude = "childhood",
   domains = "Condition"
 ) 
-asthma_codes2 %>% 
+asthma_codes2 |> 
   glimpse()
 #> Rows: 1
 #> Columns: 6
@@ -179,7 +165,7 @@ Gastrointestinal_hemorrhage <- getCandidateCodes(
   keywords = "Gastrointestinal hemorrhage",
   domains = "Condition"
 )
-Gastrointestinal_hemorrhage %>% 
+Gastrointestinal_hemorrhage |> 
   glimpse()
 #> Rows: 1
 #> Columns: 6
@@ -195,7 +181,7 @@ Gastrointestinal_hemorrhage %>%
 
 ``` r
 summariseCodeUse(list("asthma" = asthma_codes1$concept_id),  
-                 cdm = cdm) %>% 
+                 cdm = cdm) |> 
   glimpse()
 #> Rows: 6
 #> Columns: 13
@@ -206,10 +192,10 @@ summariseCodeUse(list("asthma" = asthma_codes1$concept_id),
 #> $ strata_name      <chr> "overall", "overall", "overall", "overall", "overall"…
 #> $ strata_level     <chr> "overall", "overall", "overall", "overall", "overall"…
 #> $ variable_name    <chr> "overall", "Childhood asthma", "Asthma", "overall", "…
-#> $ variable_level   <chr> NA, "4051466", "317009", NA, "4051466", "317009"
+#> $ variable_level   <chr> NA, "4051466", "317009", NA, "317009", "4051466"
 #> $ estimate_name    <chr> "record_count", "record_count", "record_count", "pers…
 #> $ estimate_type    <chr> "integer", "integer", "integer", "integer", "integer"…
-#> $ estimate_value   <chr> "101", "96", "5", "101", "96", "5"
+#> $ estimate_value   <chr> "101", "96", "5", "101", "5", "96"
 #> $ additional_name  <chr> "overall", "source_concept_name &&& source_concept_id…
 #> $ additional_level <chr> "overall", "Childhood asthma &&& 4051466 &&& conditio…
 ```

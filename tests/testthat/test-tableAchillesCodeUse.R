@@ -21,14 +21,14 @@ test_that("table achilles code use expcted columns", {
     tableAchillesCodeUse(result = result,
                                  type = "flextable",
                                  header = c("cdm_name", "estimate_name"),
-                                 groupColumns = "codelist_name",
+                                 groupColumn = "codelist_name",
                                  hide = c("standard_concept", "standard_concept_id", "vocabulary_id"),
                                  .options = list())
 
     tableAchillesCodeUse(result = result,
                          type = "flextable",
                          header = c("estimate_name"),
-                         groupColumns = "codelist_name",
+                         groupColumn = "codelist_name",
                          hide = c("cdm_name"),
                          .options = list(includeHeaderName = FALSE))
 
@@ -36,7 +36,7 @@ test_that("table achilles code use expcted columns", {
   expect_error(tableAchillesCodeUse(result,
                                     type = "gt",
                                     header = c("cdm_name", "estimate_name"),
-                                    groupColumns = "estimate_name",
+                                    groupColumn = "estimate_name",
                                     .options = list()))
 
   # empty result
@@ -50,7 +50,8 @@ test_that("table achilles code use expcted columns", {
                         "condition_start_date" = as.Date("2000-01-01"),
                         "condition_type_concept_id" = 1L,
                         "condition_concept_id" = 4,
-                        "condition_source_concept_id" = 1)
+                        "condition_source_concept_id" = 1,
+                        "condition_source_value" = "a")
   cdm <- omopgenerics::insertTable(cdm,
                                    name = "condition_occurrence",
                                    table = cond)
@@ -88,7 +89,8 @@ test_that("test table orphan codes work", {
                         "condition_start_date" = as.Date("2000-01-01"),
                         "condition_type_concept_id" = 1L,
                         "condition_concept_id" = 4,
-                        "condition_source_concept_id" = 1)
+                        "condition_source_concept_id" = 1,
+                        "condition_source_value" = "a")
   cdm <- omopgenerics::insertTable(cdm,
                                    name = "condition_occurrence",
                                    table = cond)

@@ -8,7 +8,7 @@ tableUnmappedCodes(
   result,
   type = "gt",
   header = c("cdm_name", "estimate_name"),
-  groupColumns = character(),
+  groupColumn = character(),
   hide = character(),
   .options = list()
 )
@@ -27,7 +27,7 @@ The header vector can contain one of the following variables: "cdm_name",
 "estimate_name", "standard_concept", "vocabulary_id".
 Alternatively, it can include other names to use as overall header labels.}
 
-\item{groupColumns}{Variables to use as group labels. Allowed columns are:
+\item{groupColumn}{Variables to use as group labels. Allowed columns are:
 "cdm_name", "codelist_name", "domain_id", "standard_concept_name",
 "standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
 These cannot be used in header.}

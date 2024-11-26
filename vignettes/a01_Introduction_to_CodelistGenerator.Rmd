@@ -71,19 +71,19 @@ codesFromDescendants <- tbl(
     vocabularyDatabaseSchema,
     ".concept_ancestor"
   ))
-) %>%
-  filter(ancestor_concept_id == "4182210") %>%
-  select("descendant_concept_id") %>%
-  rename("concept_id" = "descendant_concept_id") %>%
+) |>
+  filter(ancestor_concept_id == "4182210") |>
+  select("descendant_concept_id") |>
+  rename("concept_id" = "descendant_concept_id") |>
   left_join(tbl(db, sql(paste0(
     "SELECT * FROM ",
     vocabularyDatabaseSchema,
     ".concept"
-  )))) %>%
+  )))) |>
   select(
     "concept_id", "concept_name",
     "domain_id", "vocabulary_id"
-  ) %>%
+  ) |>
   collect()
 ```
 
@@ -93,7 +93,7 @@ codesFromDescendants <- readRDS(system.file("introData01.RData",
 ```
 
 ```{r,  message=FALSE, warning=FALSE }  
-codesFromDescendants %>% 
+codesFromDescendants |> 
   glimpse()
 ```
 
@@ -118,7 +118,7 @@ dementiaCodes1 <- readRDS(system.file("introData02.RData",
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-dementiaCodes1%>% 
+dementiaCodes1|> 
   glimpse()
 ```
 
@@ -138,15 +138,15 @@ codeComparison <- readRDS(system.file("introData03.RData",
 ```
 
 ```{r,  message=FALSE, warning=FALSE } 
-codeComparison %>%
-  group_by(codelist) %>%
+codeComparison |>
+  group_by(codelist) |>
   tally()
 ```
 
 What are these extra codes picked up by CodelistGenerator?
 ```{r,  message=FALSE, warning=FALSE }
-codeComparison %>%
-  filter(codelist == "Only codelist 2") %>% 
+codeComparison |>
+  filter(codelist == "Only codelist 2") |> 
   glimpse()
 ```
 
@@ -167,7 +167,7 @@ icdMappings <- getMappings(
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-icdMappings %>% 
+icdMappings |> 
   glimpse()
 ```
 
@@ -186,6 +186,6 @@ readMappings <- getMappings(
 ```
 
 ```{r,  message=FALSE, warning=FALSE }
-readMappings %>% 
+readMappings |> 
   glimpse()
 ```

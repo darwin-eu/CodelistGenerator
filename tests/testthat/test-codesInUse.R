@@ -62,11 +62,11 @@ test_that("sql server with achilles", {
                                                cdm = cdm)
 
 expect_equal(sort(asthma_codes_present[[1]]),
-             sort(cdm$condition_occurrence %>%
+             sort(cdm$condition_occurrence |>
    dplyr::filter(.data$condition_concept_id %in%
-                   !!asthma_codes$concept_id) %>%
-   dplyr::select("condition_concept_id") %>%
-   dplyr::distinct() %>%
+                   !!asthma_codes$concept_id) |>
+   dplyr::select("condition_concept_id") |>
+   dplyr::distinct() |>
    dplyr::pull()))
 
 

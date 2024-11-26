@@ -50,7 +50,7 @@ summariseAchillesCodeUse <- function(x,
   allCodes <-  purrr::list_c(x)
 
   codesWithDetails <- addDetails(x, cdm)
-  codesWithDetails <- purrr::list_rbind(codesWithDetails) %>%
+  codesWithDetails <- purrr::list_rbind(codesWithDetails) |>
     dplyr::distinct()
 
   codeUse <- list()
@@ -58,19 +58,19 @@ summariseAchillesCodeUse <- function(x,
   if("record" %in% countBy){
     allRecordCount <- getAchillesRecordCounts(cdm = cdm, conceptId = allCodes)
     if(nrow(allRecordCount)>=1){
-      allRecordCount <- allRecordCount %>%
-        dplyr::mutate(concept_id = as.character(.data$concept_id)) %>%
-        dplyr::left_join(codesWithDetails %>%
+      allRecordCount <- allRecordCount |>
+        dplyr::mutate(concept_id = as.character(.data$concept_id)) |>
+        dplyr::left_join(codesWithDetails |>
                            dplyr::mutate(concept_id = as.character(.data$concept_id)),
                          by = "concept_id")
       for(i in seq_along(x)){
-        codeUse[[paste0(i, "_record")]] <- allRecordCount %>%
-          dplyr::filter(.data$concept_id %in% x[[i]]) %>%
+        codeUse[[paste0(i, "_record")]] <- allRecordCount |>
+          dplyr::filter(.data$concept_id %in% x[[i]]) |>
           dplyr::rename(
             "variable_name" = "concept_name", # standard concept name
             "variable_level" = "concept_id"   # standard concept id
-          ) %>%
-          dplyr::mutate(estimate_name = "record_count") %>%
+          ) |>
+          dplyr::mutate(estimate_name = "record_count") |>
           dplyr::mutate(group_level = names(x)[i])
       }
     }
@@ -79,19 +79,19 @@ summariseAchillesCodeUse <- function(x,
   if("person" %in% countBy){
     allPersonCount <- getAchillesPersonCounts(cdm = cdm, conceptId = allCodes)
     if(nrow(allPersonCount)>=1){
-      allPersonCount <- allPersonCount %>%
-        dplyr::mutate(concept_id = as.character(.data$concept_id)) %>%
-        dplyr::left_join(codesWithDetails %>%
+      allPersonCount <- allPersonCount |>
+        dplyr::mutate(concept_id = as.character(.data$concept_id)) |>
+        dplyr::left_join(codesWithDetails |>
                            dplyr::mutate(concept_id = as.character(.data$concept_id)),
                          by = "concept_id")
       for(i in seq_along(x)){
-        codeUse[[paste0(i, "_person")]] <- allPersonCount %>%
-          dplyr::filter(.data$concept_id %in% x[[i]]) %>%
+        codeUse[[paste0(i, "_person")]] <- allPersonCount |>
+          dplyr::filter(.data$concept_id %in% x[[i]]) |>
           dplyr::rename(
             "variable_name" = "concept_name", # standard concept name
             "variable_level" = "concept_id"   # standard concept id
-          ) %>%
-          dplyr::mutate(estimate_name = "person_count") %>%
+          ) |>
+          dplyr::mutate(estimate_name = "person_count") |>
           dplyr::mutate(group_level = names(x)[i])
       }
     }
@@ -104,7 +104,7 @@ summariseAchillesCodeUse <- function(x,
       ))
     return(omopgenerics::emptySummarisedResult())
   } else {
-    codeUse <- dplyr::bind_rows(codeUse) %>%
+    codeUse <- dplyr::bind_rows(codeUse) |>
       dplyr::mutate(
         result_id = as.integer(1),
         cdm_name = CDMConnector::cdmName(cdm),
@@ -112,9 +112,9 @@ summariseAchillesCodeUse <- function(x,
         domain_id = tolower(.data$domain_id),
         estimate_type = "integer",
         estimate_value = as.character(.data$n)
-      ) %>%
-      visOmopResults::uniteAdditional(cols = c("standard_concept", "vocabulary_id")) %>%
-      visOmopResults::uniteStrata(cols = c("domain_id")) %>%
+      ) |>
+      visOmopResults::uniteAdditional(cols = c("standard_concept", "vocabulary_id")) |>
+      visOmopResults::uniteStrata(cols = c("domain_id")) |>
       dplyr::select(dplyr::any_of(omopgenerics::resultColumns("summarised_result")))
 
     codeUse <- codeUse |>
@@ -138,13 +138,13 @@ achillesVersionDate <- function(cdm){
     cli::cli_abort("No achilles tables found in cdm reference")
   }
 
-  cdm[["achilles_results"]] %>%
-    dplyr::filter(.data$analysis_id == 0) %>%
-    dplyr::collect() %>%
+  cdm[["achilles_results"]] |>
+    dplyr::filter(.data$analysis_id == 0) |>
+    dplyr::collect() |>
     dplyr::mutate(achilles_version = paste0("Using achilles results from version ",
                                             .data$stratum_2,
                                             " which was run on ",
-                                            .data$stratum_3)) %>%
+                                            .data$stratum_3)) |>
     dplyr::pull("achilles_version")
 
 }
@@ -176,20 +176,20 @@ getAchillesRecordCounts <- function(cdm, conceptId = NULL){
 }
 
 fetchAchillesCounts <- function(cdm, analysisId, conceptId = NULL){
-  analyses <- cdm[["achilles_results"]] %>%
-    dplyr::filter(.data$analysis_id %in%  .env$analysisId) %>%
-    dplyr::select("stratum_1", "count_value") %>%
+  analyses <- cdm[["achilles_results"]] |>
+    dplyr::filter(.data$analysis_id %in%  .env$analysisId) |>
+    dplyr::select("stratum_1", "count_value") |>
     dplyr::rename("concept_id" = "stratum_1",
-                  "n"="count_value") %>%
+                  "n"="count_value") |>
     dplyr::collect()
 
   if(!is.null(conceptId)){
-    analyses <- analyses %>%
+    analyses <- analyses |>
       dplyr::filter(.data$concept_id %in%  .env$conceptId)
   }
 
   # the same code might appear in multiple tables so we will sum them
-  analyses %>%
+  analyses |>
     dplyr::group_by(.data$concept_id) |>
     dplyr::summarise(n = sum(.data$n, na.rm = TRUE)) |>
     dplyr::mutate(n = as.integer(.data$n))

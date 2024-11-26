@@ -21,8 +21,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/CodelistGenerator)](https://CRAN.R-project.org/package=CodelistGenerator)
 [![codecov.io](https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CodelistGenerator?branch=main)
 [![R-CMD-check](https://github.com/darwin-eu/CodelistGenerator/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CodelistGenerator/actions)
-[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](https://lifecycle.r-lib.org/articles/stages.html)
-[![R-CMD-check](https://github.com/darwin-eu/CodelistGenerator/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/darwin-eu/CodelistGenerator/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle:stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 ## Installation
@@ -65,17 +64,12 @@ getConceptClassId(cdm,
 ## Vocabulary based codelists using CodelistGenerator
 CodelistGenerator provides functions to extract code lists based on vocabulary hierarchies. One example is `getDrugIngredientCodes, which we can use, for example, to get all the concept IDs used to represent aspirin. 
 ```{r}
-getDrugIngredientCodes(cdm = cdm, name = "aspirin")
-```
-
-If we also want the details of these concept IDs we can get these like so.
-```{r}
-getDrugIngredientCodes(cdm = cdm, name = "aspirin", withConceptDetails = TRUE)
+getDrugIngredientCodes(cdm = cdm, name = "aspirin", nameStyle = "{concept_name}")
 ```
 
 And if we want codelists for all drug ingredients we can simply omit the name argument and all ingredients will be returned.
 ```{r}
-ing <- getDrugIngredientCodes(cdm = cdm)
+ing <- getDrugIngredientCodes(cdm = cdm, nameStyle = "{concept_name}")
 ing$aspirin
 ing$diclofenac
 ing$celecoxib
@@ -91,7 +85,7 @@ asthma_codes1 <- getCandidateCodes(
   keywords = "asthma",
   domains = "Condition"
 ) 
-asthma_codes1 %>% 
+asthma_codes1 |> 
   glimpse()
 ```
 
@@ -103,7 +97,7 @@ asthma_codes2 <- getCandidateCodes(
   exclude = "childhood",
   domains = "Condition"
 ) 
-asthma_codes2 %>% 
+asthma_codes2 |> 
   glimpse()
 ```
 
@@ -119,7 +113,7 @@ Gastrointestinal_hemorrhage <- getCandidateCodes(
   keywords = "Gastrointestinal hemorrhage",
   domains = "Condition"
 )
-Gastrointestinal_hemorrhage %>% 
+Gastrointestinal_hemorrhage |> 
   glimpse()
 ```
 
@@ -127,7 +121,7 @@ Gastrointestinal_hemorrhage %>%
 
 ```{r}
 summariseCodeUse(list("asthma" = asthma_codes1$concept_id),  
-                 cdm = cdm) %>% 
+                 cdm = cdm) |> 
   glimpse()
 
 ```

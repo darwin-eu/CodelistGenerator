@@ -34,8 +34,8 @@ test_that("achilles code use", {
 
   a<- candidateCodes
 
-  a<-cdm$condition_occurrence %>%
-    dplyr::filter(condition_concept_id == 0) %>%
+  a<-cdm$condition_occurrence |>
+    dplyr::filter(condition_concept_id == 0) |>
     dplyr::collect()
 
 

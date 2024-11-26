@@ -86,7 +86,7 @@ oaCodes1 <- getCandidateCodes(
 
 What is the candidate codelist?
 ```{r,  message=FALSE, warning=FALSE }  
-oaCodes1 %>% 
+oaCodes1 |> 
   glimpse()
 ```
 
@@ -116,11 +116,11 @@ oaCodes2 <- getCandidateCodes(
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-newCodes1To2 <- compareCodelists(oaCodes1, oaCodes2) %>%
-  filter(codelist == "Only codelist 2") %>%
+newCodes1To2 <- compareCodelists(oaCodes1, oaCodes2) |>
+  filter(codelist == "Only codelist 2") |>
   select(-"codelist")
 
-newCodes1To2 %>% 
+newCodes1To2 |> 
   glimpse()
 ```
 
@@ -149,11 +149,11 @@ oaCodes3 <- getCandidateCodes(
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-newCodes1To3 <- compareCodelists(oaCodes1, oaCodes3) %>%
-  filter(codelist == "Only codelist 2") %>%
+newCodes1To3 <- compareCodelists(oaCodes1, oaCodes3) |>
+  filter(codelist == "Only codelist 2") |>
   select(-"codelist")
 
-newCodes1To3 %>% 
+newCodes1To3 |> 
   glimpse()
 ```
 
@@ -182,11 +182,11 @@ oaCodes4 <- getCandidateCodes(
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-newCodes1To4 <- compareCodelists(oaCodes1, oaCodes4) %>%
-  filter(codelist == "Only codelist 2") %>%
+newCodes1To4 <- compareCodelists(oaCodes1, oaCodes4) |>
+  filter(codelist == "Only codelist 2") |>
   select(-"codelist")
 
-newCodes1To4 %>% 
+newCodes1To4 |> 
   glimpse()
 ```
 
@@ -215,11 +215,11 @@ oaCodes5 <- getCandidateCodes(
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-newCodes1To5 <- compareCodelists(oaCodes1, oaCodes5) %>%
-  filter(codelist == "Only codelist 2") %>%
+newCodes1To5 <- compareCodelists(oaCodes1, oaCodes5) |>
+  filter(codelist == "Only codelist 2") |>
   select(-"codelist")
 
-newCodes1To5 %>% 
+newCodes1To5 |> 
   glimpse()
 ```
 
@@ -248,10 +248,10 @@ oaCodes8 <- getCandidateCodes(
 
 What new codes do we pick up?
 ```{r,  message=FALSE, warning=FALSE }  
-newCodes1To8 <- compareCodelists(oaCodes1, oaCodes8) %>%
-  filter(codelist == "Only codelist 2") %>%
+newCodes1To8 <- compareCodelists(oaCodes1, oaCodes8) |>
+  filter(codelist == "Only codelist 2") |>
   select(-"codelist")
 
-newCodes1To8 %>% 
+newCodes1To8 |> 
   glimpse()
 ```

@@ -30,16 +30,15 @@ skip_on_cran()
 
   # min cell counts:
    expect_true(
-     all(is.na(
+     all(
      omopgenerics::suppress(results) |>
      dplyr::filter(
      variable_name == "overall",
      strata_level == "1909",
      group_level == "acetiminophen"
      ) |>
-       dplyr::pull("estimate_value")
-     ))
-   )
+       dplyr::pull("estimate_value") == "-"
+   ))
 
   # check is a summarised result
   expect_true("summarised_result" %in%  class(results))
@@ -47,129 +46,129 @@ skip_on_cran()
                colnames(results))
 
   # overall record count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(group_name == "codelist_name" &
                                 strata_name == "overall" &
                                 strata_level == "overall" &
                                 group_level == "acetiminophen" &
                                 estimate_name == "record_count",
-                              variable_name == "overall") %>%
+                              variable_name == "overall") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$drug_exposure %>%
-                dplyr::filter(drug_concept_id %in%  acetiminophen) %>%
-                dplyr::tally() %>%
+                cdm$drug_exposure |>
+                dplyr::filter(drug_concept_id %in%  acetiminophen) |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # overall person count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(group_name == "codelist_name" &
                                 strata_name == "overall" &
                                 strata_level == "overall" &
                                 group_level == "acetiminophen" &
                                 estimate_name == "person_count",
-                              variable_name == "overall") %>%
+                              variable_name == "overall") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric()  ==
-                cdm$drug_exposure %>%
-                dplyr::filter(drug_concept_id %in% acetiminophen) %>%
-                dplyr::select("person_id") %>%
-                dplyr::distinct() %>%
-                dplyr::tally() %>%
+                cdm$drug_exposure |>
+                dplyr::filter(drug_concept_id %in% acetiminophen) |>
+                dplyr::select("person_id") |>
+                dplyr::distinct() |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # by year
   # overall record count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(group_name == "codelist_name" &
                                 strata_name == "year" &
                                 strata_level == "2008" &
                                 group_level == "acetiminophen" &
                                 estimate_name == "record_count",
-                              variable_name == "overall") %>%
+                              variable_name == "overall") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric()  ==
-                cdm$drug_exposure %>%
-                dplyr::filter(drug_concept_id %in% acetiminophen) %>%
-                dplyr::filter(year(drug_exposure_start_date) == 2008) %>%
-                dplyr::tally() %>%
+                cdm$drug_exposure |>
+                dplyr::filter(drug_concept_id %in% acetiminophen) |>
+                dplyr::filter(year(drug_exposure_start_date) == 2008) |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # overall person count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(group_name == "codelist_name" &
                                 strata_name == "year" &
                                 strata_level == "2008" &
                                 group_level == "acetiminophen" &
                                 estimate_name == "person_count",
-                              variable_name == "overall") %>%
+                              variable_name == "overall") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$drug_exposure %>%
-                dplyr::filter(drug_concept_id %in% acetiminophen) %>%
-                dplyr::filter(year(drug_exposure_start_date) == 2008) %>%
-                dplyr::select("person_id") %>%
-                dplyr::distinct() %>%
-                dplyr::tally() %>%
+                cdm$drug_exposure |>
+                dplyr::filter(drug_concept_id %in% acetiminophen) |>
+                dplyr::filter(year(drug_exposure_start_date) == 2008) |>
+                dplyr::select("person_id") |>
+                dplyr::distinct() |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # by age group and sex
   # overall record count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(group_name == "codelist_name" &
                                 strata_name == "sex" &
                                 strata_level == "Male" &
                                 group_level == "acetiminophen" &
                                 estimate_name == "record_count",
-                              variable_name == "overall") %>%
+                              variable_name == "overall") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$drug_exposure %>%
-                dplyr::filter(drug_concept_id %in% acetiminophen) %>%
-                PatientProfiles::addSex() %>%
-                dplyr::filter(sex == "Male") %>%
-                dplyr::tally() %>%
+                cdm$drug_exposure |>
+                dplyr::filter(drug_concept_id %in% acetiminophen) |>
+                PatientProfiles::addSex() |>
+                dplyr::filter(sex == "Male") |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(group_name == "codelist_name" &
                                 strata_name == "age_group &&& sex" &
                                 strata_level == "18 to 65 &&& Male" &
                                 group_level == "acetiminophen" &
                                 estimate_name == "record_count",
-                              variable_name == "overall") %>%
+                              variable_name == "overall") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$drug_exposure %>%
-                dplyr::filter(drug_concept_id %in% acetiminophen) %>%
-                PatientProfiles::addAge(indexDate = "drug_exposure_start_date") %>%
-                PatientProfiles::addSex() %>%
+                cdm$drug_exposure |>
+                dplyr::filter(drug_concept_id %in% acetiminophen) |>
+                PatientProfiles::addAge(indexDate = "drug_exposure_start_date") |>
+                PatientProfiles::addSex() |>
                 dplyr::filter(sex == "Male" &
                                 age >= "18" &
-                                age <= "65") %>%
-                dplyr::tally() %>%
+                                age <= "65") |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # overall person count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(group_name == "codelist_name" &
                                 strata_name == "age_group &&& sex" &
                                 strata_level == "18 to 65 &&& Male" &
                                 group_level == "acetiminophen" &
                                 estimate_name == "person_count",
-                              variable_name == "overall") %>%
+                              variable_name == "overall") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$drug_exposure %>%
-                dplyr::filter(drug_concept_id %in% acetiminophen) %>%
-                PatientProfiles::addAge(indexDate = "drug_exposure_start_date") %>%
-                PatientProfiles::addSex() %>%
+                cdm$drug_exposure |>
+                dplyr::filter(drug_concept_id %in% acetiminophen) |>
+                PatientProfiles::addAge(indexDate = "drug_exposure_start_date") |>
+                PatientProfiles::addSex() |>
                 dplyr::filter(sex == "Male" &
                                 age >= "18" &
-                                age <= "65") %>%
-                dplyr::select("person_id") %>%
-                dplyr::distinct() %>%
-                dplyr::tally() %>%
+                                age <= "65") |>
+                dplyr::select("person_id") |>
+                dplyr::distinct() |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   results <- summariseCodeUse(list("acetiminophen" = acetiminophen),
@@ -177,9 +176,9 @@ skip_on_cran()
                               byYear = FALSE,
                               bySex = FALSE,
                               ageGroup = NULL)
-  expect_true(nrow(results %>%
+  expect_true(nrow(results |>
                      dplyr::filter(estimate_name == "person_count")) > 0)
-  expect_true(nrow(results %>%
+  expect_true(nrow(results |>
                      dplyr::filter(estimate_name == "record_count")) == 0)
 
   results <- summariseCodeUse(list("acetiminophen" = acetiminophen),
@@ -187,9 +186,9 @@ skip_on_cran()
                               byYear = FALSE,
                               bySex = FALSE,
                               ageGroup = NULL)
-  expect_true(nrow(results %>%
+  expect_true(nrow(results |>
                      dplyr::filter(estimate_name == "person_count")) == 0)
-  expect_true(nrow(results %>%
+  expect_true(nrow(results |>
                      dplyr::filter(estimate_name == "record_count")) > 0)
 
   # domains covered
@@ -322,21 +321,21 @@ test_that("summarise cohort code use - eunomia", {
                                            timing = "any")
 
   expect_true(inherits(results_cohort, "summarised_result"))
-  expect_true(all(colnames(omopgenerics::settings(results_cohort)) %in%
-                    c("result_id", "result_type", "package_name", "package_version", "timing")))
+  expect_true(all(c("result_id", "result_type", "package_name", "package_version", "timing") %in%
+                  colnames(omopgenerics::settings(results_cohort))))
 
-  expect_true(results_cohort %>%
+  expect_true(results_cohort |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "overall" &
                                 strata_level == "overall" &
-                                estimate_name == "person_count") %>%
+                                estimate_name == "person_count") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric() <
-                results_all %>%
+                results_all |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "overall" &
                                 strata_level == "overall" &
-                                estimate_name == "person_count") %>%
+                                estimate_name == "person_count") |>
                 dplyr::pull("estimate_value") |>
                 as.numeric())
 
@@ -348,39 +347,39 @@ test_that("summarise cohort code use - eunomia", {
                                            cdm = cdm,
                                            cohortTable = "pharyngitis",
                                            timing = "entry")
-  results_cohort %>%
+  results_cohort |>
     dplyr::filter(variable_name == "overall" &
                     strata_name == "overall" &
                     strata_level == "overall" &
-                    estimate_name == "person_count") %>%
+                    estimate_name == "person_count") |>
     dplyr::pull("estimate_value") |>
     as.numeric() ==
-    CDMConnector::cohortCount(cdm$pharyngitis) %>%
+    CDMConnector::cohortCount(cdm$pharyngitis) |>
     dplyr::pull("number_subjects")
 
 
 
   # 260139
   # on index
-  index_260139 <- cdm$pharyngitis %>%
+  index_260139 <- cdm$pharyngitis |>
     dplyr::left_join(cdm$condition_occurrence,
-                     by=c("subject_id"="person_id")) %>%
-    dplyr::filter(condition_start_date == cohort_start_date) %>%
-    dplyr::filter(condition_concept_id == 260139) %>%
-    dplyr::select("subject_id") %>%
-    dplyr::distinct() %>%
-    dplyr::count() %>%
+                     by=c("subject_id"="person_id")) |>
+    dplyr::filter(condition_start_date == cohort_start_date) |>
+    dplyr::filter(condition_concept_id == 260139) |>
+    dplyr::select("subject_id") |>
+    dplyr::distinct() |>
+    dplyr::count() |>
     dplyr::pull()
 
   results_cohort_260139 <- summariseCohortCodeUse(list(cs = 260139),
                                                   cdm = cdm,
                                                   cohortTable = "pharyngitis",
                                                   timing = "entry")
-  expect_equal(results_cohort_260139 %>%
+  expect_equal(results_cohort_260139 |>
                  dplyr::filter(variable_name == "overall" &
                                  strata_name == "overall" &
                                  strata_level == "overall" &
-                                 estimate_name == "person_count") %>%
+                                 estimate_name == "person_count") |>
                  dplyr::pull("estimate_value") |>
                  as.numeric(), index_260139)
 
@@ -388,39 +387,39 @@ test_that("summarise cohort code use - eunomia", {
   # 260139 or 19133873 or 1127433
   # on index
   index_260139_19133873_1127433 <- dplyr::union_all(
-    cdm$pharyngitis %>%
+    cdm$pharyngitis |>
       dplyr::left_join(cdm$condition_occurrence,
-                       by=c("subject_id"="person_id")) %>%
-      dplyr::filter(condition_start_date == cohort_start_date) %>%
-      dplyr::filter(condition_concept_id == 260139) %>%
+                       by=c("subject_id"="person_id")) |>
+      dplyr::filter(condition_start_date == cohort_start_date) |>
+      dplyr::filter(condition_concept_id == 260139) |>
       dplyr::select("subject_id"),
-    cdm$pharyngitis %>%
+    cdm$pharyngitis |>
       dplyr::left_join(cdm$drug_exposure,
-                       by=c("subject_id"="person_id")) %>%
-      dplyr::filter(drug_exposure_start_date == cohort_start_date) %>%
-      dplyr::filter(drug_concept_id %in% c(19133873,1127433)) %>%
-      dplyr::select("subject_id")) %>%
-    dplyr::count() %>%
+                       by=c("subject_id"="person_id")) |>
+      dplyr::filter(drug_exposure_start_date == cohort_start_date) |>
+      dplyr::filter(drug_concept_id %in% c(19133873,1127433)) |>
+      dplyr::select("subject_id")) |>
+    dplyr::count() |>
     dplyr::pull()
 
   results_cohort_260139_19133873_1127433<- summariseCohortCodeUse(list(cs = c(260139,19133873,1127433)),
                                                                   cdm = cdm,
                                                                   cohortTable = "pharyngitis",
                                                                   timing = "entry")
-  expect_equal(results_cohort_260139_19133873_1127433 %>%
+  expect_equal(results_cohort_260139_19133873_1127433 |>
                  dplyr::filter(variable_name == "overall" &
                                  strata_name == "overall" &
                                  strata_level == "overall" &
-                                 estimate_name == "record_count") %>%
+                                 estimate_name == "record_count") |>
                  dplyr::pull("estimate_value") |>
                  as.numeric(),
                index_260139_19133873_1127433)
 
-  expect_equal(results_cohort_260139_19133873_1127433 %>%
-                 dplyr::filter(stringr::str_detect(variable_name, "Acute bronchitis")) %>%
+  expect_equal(results_cohort_260139_19133873_1127433 |>
+                 dplyr::filter(stringr::str_detect(variable_name, "Acute bronchitis")) |>
                  dplyr::filter(strata_name == "overall" &
                                  strata_level == "overall" &
-                                 estimate_name == "person_count") %>%
+                                 estimate_name == "person_count") |>
                  dplyr::pull("estimate_value") |>
                  as.numeric(),
                index_260139)
@@ -438,23 +437,23 @@ test_that("summarise cohort code use - eunomia", {
                                                                   cdm = cdm,
                                                                   cohortTable = "cohorts",
                                                                   timing = "entry")
-  expect_true(nrow(results_cohort_mult %>%
-                     dplyr::filter(stringr::str_detect(variable_name, "Acute bronchitis")) %>%
+  expect_true(nrow(results_cohort_mult |>
+                     dplyr::filter(stringr::str_detect(variable_name, "Acute bronchitis")) |>
     dplyr::filter(strata_name == "overall" &
                     strata_level == "overall" &
                     estimate_name == "person_count")) == 2)
 
-  expect_equal(c("a", "b"),  results_cohort_mult %>%
-                 dplyr::filter(stringr::str_detect(variable_name, "Acute bronchitis")) %>%
+  expect_equal(c("a", "b"),  results_cohort_mult |>
+                 dplyr::filter(stringr::str_detect(variable_name, "Acute bronchitis")) |>
    dplyr::filter(strata_name == "overall" &
                    strata_level == "overall" &
-                  estimate_name == "person_count") %>%
-     visOmopResults::splitGroup() %>%
+                  estimate_name == "person_count") |>
+     visOmopResults::splitGroup() |>
    dplyr::pull("cohort_name"))
 
 
   # empty cohort - no results
-  cdm$pharyngitis <-  cdm$pharyngitis %>%
+  cdm$pharyngitis <-  cdm$pharyngitis |>
     dplyr::filter(cohort_definition_id == 99)
   expect_true(nrow(summariseCohortCodeUse(list(cs = 4134304),
                                          cdm = cdm,
@@ -515,115 +514,115 @@ test_that("summarise code use - redshift", {
   expect_true(inherits(results, "summarised_result"))
 
   # overall record count
-  expect_true(results %>%
+  expect_true(results |>
     dplyr::filter(variable_name == "overall" &
                   strata_name == "overall" &
                   strata_level == "overall",
-                  estimate_name == "record_count") %>%
-    dplyr::pull("estimate_value") %>%
+                  estimate_name == "record_count") |>
+    dplyr::pull("estimate_value") |>
       as.numeric() ==
-  cdm$condition_occurrence %>%
-    dplyr::filter(condition_concept_id %in%  !!asthma[[1]]) %>%
-    dplyr::tally() %>%
+  cdm$condition_occurrence |>
+    dplyr::filter(condition_concept_id %in%  !!asthma[[1]]) |>
+    dplyr::tally() |>
     dplyr::pull("n"))
 
   # overall person count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "overall" &
                                 strata_level == "overall" &
-                                estimate_name == "person_count") %>%
-                dplyr::pull("estimate_value") %>%
+                                estimate_name == "person_count") |>
+                dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
-                dplyr::select("person_id") %>%
-                dplyr::distinct() %>%
-                dplyr::tally() %>%
+                cdm$condition_occurrence |>
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) |>
+                dplyr::select("person_id") |>
+                dplyr::distinct() |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # by year
   # overall record count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "year" &
                                 strata_level == "2008",
-                              estimate_name == "record_count") %>%
-                dplyr::pull("estimate_value") %>%
+                              estimate_name == "record_count") |>
+                dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
-                dplyr::filter(year(condition_start_date) == 2008) %>%
-                dplyr::tally() %>%
+                cdm$condition_occurrence |>
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) |>
+                dplyr::filter(year(condition_start_date) == 2008) |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # overall person count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "year" &
                                 strata_level == "2008",
-                              estimate_name == "person_count") %>%
-                dplyr::pull("estimate_value") %>%
+                              estimate_name == "person_count") |>
+                dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
-                dplyr::filter(year(condition_start_date) == 2008) %>%
-                dplyr::select("person_id") %>%
-                dplyr::distinct() %>%
-                dplyr::tally() %>%
+                cdm$condition_occurrence |>
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) |>
+                dplyr::filter(year(condition_start_date) == 2008) |>
+                dplyr::select("person_id") |>
+                dplyr::distinct() |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # by age group and sex
   # overall record count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "sex" &
                                 strata_level == "Male",
-                              estimate_name == "record_count") %>%
-                dplyr::pull("estimate_value") %>%
+                              estimate_name == "record_count") |>
+                dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
-                PatientProfiles::addSex() %>%
-                dplyr::filter(sex == "Male") %>%
-                dplyr::tally() %>%
+                cdm$condition_occurrence |>
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) |>
+                PatientProfiles::addSex() |>
+                dplyr::filter(sex == "Male") |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "age_group &&& sex" &
                                 strata_level == "18 to 65 &&& Male",
-                              estimate_name == "record_count") %>%
-                dplyr::pull("estimate_value") %>%
+                              estimate_name == "record_count") |>
+                dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
-                PatientProfiles::addAge(indexDate = "condition_start_date") %>%
-                PatientProfiles::addSex() %>%
+                cdm$condition_occurrence |>
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) |>
+                PatientProfiles::addAge(indexDate = "condition_start_date") |>
+                PatientProfiles::addSex() |>
                 dplyr::filter(sex == "Male" &
                               age >= "18" &
-                              age <= "65") %>%
-                dplyr::tally() %>%
+                              age <= "65") |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
   # overall person count
-  expect_true(results %>%
+  expect_true(results |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "age_group &&& sex" &
                                 strata_level == "18 to 65 &&& Male",
-                              estimate_name == "person_count") %>%
-                dplyr::pull("estimate_value") %>%
+                              estimate_name == "person_count") |>
+                dplyr::pull("estimate_value") |>
                 as.numeric() ==
-                cdm$condition_occurrence %>%
-                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) %>%
-                PatientProfiles::addAge(indexDate = "condition_start_date") %>%
-                PatientProfiles::addSex() %>%
+                cdm$condition_occurrence |>
+                dplyr::filter(condition_concept_id %in% !!asthma[[1]]) |>
+                PatientProfiles::addAge(indexDate = "condition_start_date") |>
+                PatientProfiles::addSex() |>
                 dplyr::filter(sex == "Male" &
                                 age >= "18" &
-                                age <= "65") %>%
-                dplyr::select("person_id") %>%
-                dplyr::distinct() %>%
-                dplyr::tally() %>%
+                                age <= "65") |>
+                dplyr::select("person_id") |>
+                dplyr::distinct() |>
+                dplyr::tally() |>
                 dplyr::pull("n"))
 
 
@@ -634,9 +633,9 @@ test_that("summarise code use - redshift", {
                               byYear = FALSE,
                               bySex = FALSE,
                               ageGroup = NULL)
-  expect_true(nrow(results %>%
+  expect_true(nrow(results |>
     dplyr::filter(estimate_name == "person_count")) > 0)
-  expect_true(nrow(results %>%
+  expect_true(nrow(results |>
     dplyr::filter(estimate_name == "record_count")) == 0)
 
   results <- summariseCodeUse(asthma,
@@ -644,9 +643,9 @@ test_that("summarise code use - redshift", {
                               byYear = FALSE,
                               bySex = FALSE,
                               ageGroup = NULL)
-  expect_true(nrow(results %>%
+  expect_true(nrow(results |>
                      dplyr::filter(estimate_name == "person_count")) == 0)
-  expect_true(nrow(results %>%
+  expect_true(nrow(results |>
                      dplyr::filter(estimate_name == "record_count")) > 0)
 
 
@@ -741,6 +740,77 @@ expect_true(nrow(results) == 0)
 
 })
 
+test_that("summarise code use - eunomia source concept id NA", {
+  skip_on_cran()
+  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
+    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
+  }
+  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
+    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
+  }
+  if (!CDMConnector::eunomia_is_available()) {
+    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
+  }
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
+  cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
 
+  acetiminophen <- c(1125315,  1127433, 40229134,
+                     40231925, 40162522, 19133768,  1127078)
 
+  cdm$drug_exposure <- cdm$drug_exposure |>
+    dplyr::mutate(drug_source_concept_id = NA_character_)
 
+  cs <- list(acetiminophen = acetiminophen)
+  results <- summariseCodeUse(cs,
+                              cdm = cdm)
+
+  expect_true(all(omopgenerics::splitAdditional(results) |>
+    dplyr::filter(variable_name != "overall") |>
+    dplyr::pull("source_concept_name") == "NA"))
+  expect_true(all(omopgenerics::splitAdditional(results) |>
+                    dplyr::filter(variable_name != "overall") |>
+                    dplyr::pull("source_concept_id") == "NA"))
+
+  CDMConnector::cdmDisconnect(cdm)
+})
+
+test_that("summarise cohort code use - eunomia source concept id NA", {
+  skip_on_cran()
+  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
+    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
+  }
+  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
+    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
+  }
+  if (!CDMConnector::eunomia_is_available()) {
+    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
+  }
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
+  cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
+
+  pharyngitis <- c(4112343)
+
+  cdm$condition_occurrence <- cdm$condition_occurrence |>
+    dplyr::mutate(condition_source_concept_id = NA_character_)
+
+  cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
+                                                conceptSet = list(pharyngitis = pharyngitis),
+                                                name = "pharyngitis",
+                                                end = "observation_period_end_date",
+                                                overwrite = TRUE)
+
+  results_cohort <- summariseCohortCodeUse(list(cs = 4134304),
+                                           cdm = cdm,
+                                           cohortTable = "pharyngitis",
+                                           timing = "any")
+
+  expect_true(all(omopgenerics::splitAdditional(results_cohort) |>
+                    dplyr::filter(variable_name != "overall") |>
+                    dplyr::pull("source_concept_name") == "NA"))
+  expect_true(all(omopgenerics::splitAdditional(results_cohort) |>
+                    dplyr::filter(variable_name != "overall") |>
+                    dplyr::pull("source_concept_id") == "NA"))
+
+  CDMConnector::cdmDisconnect(cdm)
+
+})

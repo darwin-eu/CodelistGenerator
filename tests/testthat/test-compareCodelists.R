@@ -33,24 +33,24 @@ test_that("comparing two codelists", {
     ) %in%
       names(codesCompared)))
 
-    expect_true(codesCompared %>%
-      dplyr::filter(concept_id == 3) %>%
-      dplyr::select(codelist) %>%
+    expect_true(codesCompared |>
+      dplyr::filter(concept_id == 3) |>
+      dplyr::select(codelist) |>
       dplyr::pull() == "Only codelist 1")
 
-    expect_true(codesCompared %>%
-      dplyr::filter(concept_id == 5) %>%
-      dplyr::select(codelist) %>%
+    expect_true(codesCompared |>
+      dplyr::filter(concept_id == 5) |>
+      dplyr::select(codelist) |>
       dplyr::pull() == "Only codelist 1")
 
-    expect_true(codesCompared %>%
-      dplyr::filter(concept_id == 4) %>%
-      dplyr::select(codelist) %>%
+    expect_true(codesCompared |>
+      dplyr::filter(concept_id == 4) |>
+      dplyr::select(codelist) |>
       dplyr::pull() == "Both")
 
-    expect_true(codesCompared %>%
-      dplyr::filter(concept_id == 2) %>%
-      dplyr::select(codelist) %>%
+    expect_true(codesCompared |>
+      dplyr::filter(concept_id == 2) |>
+      dplyr::select(codelist) |>
       dplyr::pull() == "Only codelist 2")
 
     # expected errors
@@ -100,24 +100,24 @@ test_that("comparing two codelists- same codes found different ways", {
     # tests
     expect_true(nrow(codesCompared) == 4)
 
-    expect_true(codesCompared %>%
-      dplyr::filter(concept_id == 3) %>%
-      dplyr::select(codelist) %>%
+    expect_true(codesCompared |>
+      dplyr::filter(concept_id == 3) |>
+      dplyr::select(codelist) |>
       dplyr::pull() == "Both")
 
-    expect_true(codesCompared %>%
-      dplyr::filter(concept_id == 4) %>%
-      dplyr::select(codelist) %>%
+    expect_true(codesCompared |>
+      dplyr::filter(concept_id == 4) |>
+      dplyr::select(codelist) |>
       dplyr::pull() == "Both")
 
-    expect_true(codesCompared %>%
-      dplyr::filter(concept_id == 5) %>%
-      dplyr::select(codelist) %>%
+    expect_true(codesCompared |>
+      dplyr::filter(concept_id == 5) |>
+      dplyr::select(codelist) |>
       dplyr::pull() == "Both")
 
-    expect_true(codesCompared %>%
-      dplyr::filter(concept_id == 2) %>%
-      dplyr::select(codelist) %>%
+    expect_true(codesCompared |>
+      dplyr::filter(concept_id == 2) |>
+      dplyr::select(codelist) |>
       dplyr::pull() == "Only codelist 2")
 
     if (backends[[i]] == "database") {

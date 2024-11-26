@@ -30,14 +30,14 @@ cdm <- CDMConnector::cdm_from_con(con = db,
 # intro vignette ----
 vocabVersion <- getVocabVersion(cdm = cdm)
 
-codesFromDescendants <- cdm$concept_ancestor %>%
-  filter(.data$ancestor_concept_id == 4182210) %>%
-  select("descendant_concept_id") %>%
-  rename("concept_id" = "descendant_concept_id") %>%
-  select("concept_id")   %>%
+codesFromDescendants <- cdm$concept_ancestor |>
+  filter(.data$ancestor_concept_id == 4182210) |>
+  select("descendant_concept_id") |>
+  rename("concept_id" = "descendant_concept_id") |>
+  select("concept_id")   |>
   left_join(cdm$concept,
-            by="concept_id")  %>%
-  select("concept_id", "concept_name", "domain_id", "vocabulary_id") %>%
+            by="concept_id")  |>
+  select("concept_id", "concept_name", "domain_id", "vocabulary_id") |>
   collect()
 
 

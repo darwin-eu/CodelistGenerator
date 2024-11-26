@@ -8,15 +8,15 @@ test_that("achilles code use", {
   # two codes: "Osteoarthritis of knee" "Osteoarthritis of hip"
   result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm)
-  expect_true(result_achilles %>%
-                dplyr::filter(stringr::str_detect(variable_level, "4")) %>%
+  expect_true(result_achilles |>
+                dplyr::filter(stringr::str_detect(variable_level, "4")) |>
     dplyr::pull("estimate_value") == "400")
-  expect_true(result_achilles %>%
-                dplyr::filter(stringr::str_detect(variable_level, "5")) %>%
+  expect_true(result_achilles |>
+                dplyr::filter(stringr::str_detect(variable_level, "5")) |>
                 dplyr::pull("estimate_value") == "200")
   expect_true(nrow(result_achilles) == 2)
   expect_equal(c("oa", "oa"),
-               result_achilles %>%
+               result_achilles |>
                  dplyr::pull("group_level"))
 
   # check is a summarised result
@@ -25,9 +25,10 @@ test_that("achilles code use", {
   # applying min cell count where estimate should be obscured
   result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id),
                                      cdm = cdm)
-  expect_true(all(is.na(result_achilles %>%
-                          omopgenerics::suppress(minCellCount = 500) %>%
-                dplyr::pull("estimate_value"))))
+  expect_true(all(result_achilles |>
+                          omopgenerics::suppress(minCellCount = 500) |>
+                dplyr::pull("estimate_value") == "-"
+                ))
 
 
  # edge cases
@@ -59,21 +60,21 @@ test_that("achilles code use: multipe codelists", {
                                           hip_oa = 5),
                                      cdm = cdm)
 
-  expect_true(result_achilles %>%
-                dplyr::filter(group_level == "knee_oa") %>%
+  expect_true(result_achilles |>
+                dplyr::filter(group_level == "knee_oa") |>
                 dplyr::pull("estimate_value") == "400")
-  expect_true(result_achilles %>%
-                dplyr::filter(group_level == "hip_oa") %>%
+  expect_true(result_achilles |>
+                dplyr::filter(group_level == "hip_oa") |>
                 dplyr::pull("estimate_value") == "200")
-  expect_true(result_achilles %>%
-                dplyr::filter(stringr::str_detect(variable_level, "4")) %>%
+  expect_true(result_achilles |>
+                dplyr::filter(stringr::str_detect(variable_level, "4")) |>
                 dplyr::pull("estimate_value") == "400")
-  expect_true(result_achilles %>%
-                dplyr::filter(stringr::str_detect(variable_level, "5")) %>%
+  expect_true(result_achilles |>
+                dplyr::filter(stringr::str_detect(variable_level, "5")) |>
                 dplyr::pull("estimate_value") == "200")
   expect_true(nrow(result_achilles) == 2)
   expect_equal(c("knee_oa", "hip_oa"),
-               result_achilles %>%
+               result_achilles |>
                 dplyr::pull("group_level"))
 
   CDMConnector::cdm_disconnect(cdm)

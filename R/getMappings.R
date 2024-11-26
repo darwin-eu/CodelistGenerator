@@ -74,15 +74,15 @@ getMappings <- function(candidateCodelist,
 
   # vocabs to upper case
   nonStandardVocabularies <- toupper(nonStandardVocabularies)
-  conceptDb <- conceptDb %>%
+  conceptDb <- conceptDb |>
     dplyr::mutate(vocabulary_id = toupper(.data$vocabulary_id))
 
   # check nonStandardVocabularies exist
   errorMessage <- checkmate::makeAssertCollection()
-  nonStandardVocabulariesInDb <- conceptDb %>%
-    dplyr::select("vocabulary_id") %>%
-    dplyr::distinct() %>%
-    dplyr::collect() %>%
+  nonStandardVocabulariesInDb <- conceptDb |>
+    dplyr::select("vocabulary_id") |>
+    dplyr::distinct() |>
+    dplyr::collect() |>
     dplyr::pull()
   for (i in seq_along(nonStandardVocabularies)) {
     nonStandardVocabulariesCheck <- nonStandardVocabularies[i] %in%
@@ -97,48 +97,48 @@ getMappings <- function(candidateCodelist,
   checkmate::reportAssertions(collection = errorMessage)
 
 
-  mappedCodes <- conceptDb %>%
-    dplyr::inner_join(conceptRelationshipDb %>%
-      dplyr::filter(.data$relationship_id == "Mapped from") %>%
-      dplyr::filter(.data$concept_id_1 %in% !!candidateCodelist$concept_id) %>%
-      dplyr::select("concept_id_1", "concept_id_2") %>%
+  mappedCodes <- conceptDb |>
+    dplyr::inner_join(conceptRelationshipDb |>
+      dplyr::filter(.data$relationship_id == "Mapped from") |>
+      dplyr::filter(.data$concept_id_1 %in% !!candidateCodelist$concept_id) |>
+      dplyr::select("concept_id_1", "concept_id_2") |>
       dplyr::rename("concept_id" = "concept_id_2"),
     by = c("concept_id")
-    ) %>%
-    dplyr::filter(.data$vocabulary_id %in% .env$nonStandardVocabularies) %>%
-    dplyr::distinct() %>%
+    ) |>
+    dplyr::filter(.data$vocabulary_id %in% .env$nonStandardVocabularies) |>
+    dplyr::distinct() |>
     dplyr::collect()
 
-  mappedCodes <- mappedCodes %>%
+  mappedCodes <- mappedCodes |>
     dplyr::select(
       "concept_id_1", "concept_id",
       "concept_name", "concept_code",
       "vocabulary_id"
     )
 
-  mappedCodes <- mappedCodes %>%
-    dplyr::select("concept_id_1") %>%
-    dplyr::rename("concept_id" = "concept_id_1") %>%
-    dplyr::left_join(conceptDb %>%
-      dplyr::filter(.data$concept_id %in% !!mappedCodes$concept_id_1) %>%
+  mappedCodes <- mappedCodes |>
+    dplyr::select("concept_id_1") |>
+    dplyr::rename("concept_id" = "concept_id_1") |>
+    dplyr::left_join(conceptDb |>
+      dplyr::filter(.data$concept_id %in% !!mappedCodes$concept_id_1) |>
       dplyr::collect(),
     by = c("concept_id")
-    ) %>%
-    dplyr::select("concept_id", "concept_name", "vocabulary_id") %>%
-    dplyr::rename("standard_vocabulary_id" = "vocabulary_id") %>%
-    dplyr::rename("concept_id_1" = "concept_id") %>%
-    dplyr::rename("standard_concept_name" = "concept_name") %>%
+    ) |>
+    dplyr::select("concept_id", "concept_name", "vocabulary_id") |>
+    dplyr::rename("standard_vocabulary_id" = "vocabulary_id") |>
+    dplyr::rename("concept_id_1" = "concept_id") |>
+    dplyr::rename("standard_concept_name" = "concept_name") |>
     dplyr::full_join(mappedCodes,
       by = "concept_id_1"
-    ) %>%
-    dplyr::rename("standard_concept_id" = "concept_id_1") %>%
-    dplyr::rename("non_standard_concept_id" = "concept_id") %>%
-    dplyr::rename("non_standard_concept_code" = "concept_code") %>%
-    dplyr::rename("non_standard_concept_name" = "concept_name") %>%
+    ) |>
+    dplyr::rename("standard_concept_id" = "concept_id_1") |>
+    dplyr::rename("non_standard_concept_id" = "concept_id") |>
+    dplyr::rename("non_standard_concept_code" = "concept_code") |>
+    dplyr::rename("non_standard_concept_name" = "concept_name") |>
     dplyr::rename("non_standard_vocabulary_id" = "vocabulary_id")
 
-  mappedCodes <- mappedCodes %>%
-    dplyr::distinct() %>%
+  mappedCodes <- mappedCodes |>
+    dplyr::distinct() |>
     dplyr::arrange(.data$standard_concept_id)
 
   return(mappedCodes)

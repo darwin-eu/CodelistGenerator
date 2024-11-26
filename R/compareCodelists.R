@@ -68,7 +68,7 @@ compareCodelists <- function(codelist1,
   checkmate::reportAssertions(collection = errorMessage)
 
 
-  all <- dplyr::bind_rows(codelist1, codelist2) %>%
+  all <- dplyr::bind_rows(codelist1, codelist2) |>
     dplyr::select("concept_id", "concept_name")
   duplicates <- all[duplicated(all), ]
   unique <- unique(all)

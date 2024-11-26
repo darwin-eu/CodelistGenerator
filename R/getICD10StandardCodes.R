@@ -94,56 +94,56 @@ getICD10StandardCodes <- function(cdm,
   }
   ICD10NonStandardCodes <- dplyr::bind_rows(ICD10NonStandardCodes)
   # map to standard
-  ICD10NonStandardCodes <- ICD10NonStandardCodes %>%
+  ICD10NonStandardCodes <- ICD10NonStandardCodes |>
     dplyr::inner_join(
-      cdm[["concept_relationship"]] %>%
+      cdm[["concept_relationship"]] |>
         dplyr::filter(.data$relationship_id == "Maps to"),
       by = c("concept_id" = "concept_id_1"),
       copy = TRUE,
       relationship = "many-to-many"
-    ) %>%
-    dplyr::select("concept_id_2", "name") %>%
+    ) |>
+    dplyr::select("concept_id_2", "name") |>
     dplyr::rename("concept_id" = "concept_id_2")
 
-  ICD10MapsTo <- cdm$concept %>%
-    dplyr::select("concept_id") %>%
+  ICD10MapsTo <- cdm$concept |>
+    dplyr::select("concept_id") |>
     dplyr::inner_join(ICD10NonStandardCodes,
       by = "concept_id",
       copy = TRUE
-    ) %>%
+    ) |>
     dplyr::distinct()
   if(!is.null(attr(cdm, "dbcon"))){
-    ICD10MapsTo <- ICD10MapsTo %>%
-      CDMConnector::compute_query()
+    ICD10MapsTo <- ICD10MapsTo |>
+      dplyr::compute()
   }
 
   # add descendants
   if (isTRUE(includeDescendants)) {
     cli::cli_inform("Getting descendant concepts")
-    ICD10MapsTo <- ICD10MapsTo %>%
+    ICD10MapsTo <- ICD10MapsTo |>
       dplyr::left_join(cdm$concept_ancestor,
         by = c("concept_id" = "ancestor_concept_id")
-      ) %>%
-      dplyr::select("name", "descendant_concept_id") %>%
+      ) |>
+      dplyr::select("name", "descendant_concept_id") |>
       dplyr::rename("concept_id" = "descendant_concept_id")
 
     if(!is.null(attr(cdm, "dbcon"))){
-      ICD10MapsTo <- ICD10MapsTo  %>%
-      CDMConnector::compute_query()
+      ICD10MapsTo <- ICD10MapsTo  |>
+      dplyr::compute()
       }
   }
   if(type == "codelist_with_details") {
-    ICD10MapsTo <- ICD10MapsTo %>%
-      dplyr::left_join(cdm[["concept"]] %>%
+    ICD10MapsTo <- ICD10MapsTo |>
+      dplyr::left_join(cdm[["concept"]] |>
                          dplyr::select("concept_id", "concept_name",
                                          "domain_id", "vocabulary_id"),
                        by = "concept_id")
     # split into list
-    ICD10StandardCodes <- ICD10MapsTo %>%
-      dplyr::collect() %>%
-      dplyr::left_join(cdm[["concept"]] %>% dplyr::select("concept_id", "concept_code"),
+    ICD10StandardCodes <- ICD10MapsTo |>
+      dplyr::collect() |>
+      dplyr::left_join(cdm[["concept"]] |> dplyr::select("concept_id", "concept_code"),
                        by = "concept_id",
-                       copy = T) %>%
+                       copy = T) |>
       dplyr::mutate(name = paste0(.data$concept_code,"_", .data$name))
 
     ICD10StandardCodes <- split(
@@ -153,10 +153,10 @@ getICD10StandardCodes <- function(cdm,
     )
   } else {
     # split into list (only returning vector of concept ids)
-    ICD10StandardCodes <- ICD10MapsTo %>%
-      dplyr::left_join(cdm[["concept"]] %>%
+    ICD10StandardCodes <- ICD10MapsTo |>
+      dplyr::left_join(cdm[["concept"]] |>
                          dplyr::select("concept_id"),
-                       by = "concept_id") %>%
+                       by = "concept_id") |>
       dplyr::collect()
     ICD10StandardCodes <- split(
       x = ICD10StandardCodes$concept_id,
@@ -184,7 +184,7 @@ getICD10NonStandardCodes <- function(cdm,
 
 
   if(!is.null(name)){
-    conceptDb <- cdm[["concept"]] %>%
+    conceptDb <- cdm[["concept"]] |>
       dplyr::filter(tolower(.data$concept_name) == tolower(.env$name))
   } else {
     conceptDb <- cdm[["concept"]]
@@ -192,25 +192,25 @@ getICD10NonStandardCodes <- function(cdm,
 
   if ("ICD10 SubChapter" %in% level) {
     # go down two levels to get specific codes
-    icd_sub <- conceptDb %>%
-      dplyr::filter(.data$vocabulary_id == "ICD10") %>%
-      dplyr::filter(.data$concept_class_id %in% "ICD10 SubChapter") %>%
+    icd_sub <- conceptDb |>
+      dplyr::filter(.data$vocabulary_id == "ICD10") |>
+      dplyr::filter(.data$concept_class_id %in% "ICD10 SubChapter") |>
       dplyr::select("concept_id", "concept_name", "concept_code")
     if(!is.null(attr(cdm, "dbcon"))){
-      icd_sub <- icd_sub %>%
+      icd_sub <- icd_sub |>
       dplyr::compute()
       }
 
     icd_sub1 <- get_subsumed_concepts(
       cdm = cdm,
-      concepts = icd_sub %>%
+      concepts = icd_sub |>
         dplyr::rename(
           "concept_id_1" =
             "concept_id"
         )
     )
     if(!is.null(attr(cdm, "dbcon"))){
-      icd_sub1 <- icd_sub1  %>%
+      icd_sub1 <- icd_sub1  |>
       dplyr::compute()
       }
     # one more level down
@@ -220,14 +220,14 @@ getICD10NonStandardCodes <- function(cdm,
     )
 
     if(!is.null(attr(cdm, "dbcon"))){
-      icd_sub2 <-  icd_sub2 %>%
+      icd_sub2 <-  icd_sub2 |>
       dplyr::compute()}
 
-    icd_subchapter <- icd_sub2 %>%
-      dplyr::collect() %>%
-      dplyr::mutate(name = stringr::str_to_lower(.data$concept_name)) %>%
-      dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) %>%
-      dplyr::select("concept_id_1", "name") %>%
+    icd_subchapter <- icd_sub2 |>
+      dplyr::collect() |>
+      dplyr::mutate(name = stringr::str_to_lower(.data$concept_name)) |>
+      dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) |>
+      dplyr::select("concept_id_1", "name") |>
       dplyr::distinct()
   } else {
     icd_subchapter <- dplyr::tibble()
@@ -235,25 +235,25 @@ getICD10NonStandardCodes <- function(cdm,
 
   if ("ICD10 Chapter" %in% level) {
     # go down three levels to get specific codes
-    icd_ch <- conceptDb %>%
-      dplyr::filter(.data$vocabulary_id == "ICD10") %>%
-      dplyr::filter(.data$concept_class_id %in% "ICD10 Chapter") %>%
+    icd_ch <- conceptDb |>
+      dplyr::filter(.data$vocabulary_id == "ICD10") |>
+      dplyr::filter(.data$concept_class_id %in% "ICD10 Chapter") |>
       dplyr::select("concept_id", "concept_name", "concept_code")
     if(!is.null(attr(cdm, "dbcon"))){
-      icd_ch <-icd_ch  %>%
+      icd_ch <-icd_ch  |>
       dplyr::compute()
       }
 
     icd_ch1 <- get_subsumed_concepts(
       cdm = cdm,
-      concepts = icd_ch %>%
+      concepts = icd_ch |>
         dplyr::rename(
           "concept_id_1" =
             "concept_id"
         )
     )
     if(!is.null(attr(cdm, "dbcon"))){
-      icd_ch1 <- icd_ch1 %>%
+      icd_ch1 <- icd_ch1 |>
       dplyr::compute()
     }
     # one more level down
@@ -262,7 +262,7 @@ getICD10NonStandardCodes <- function(cdm,
       concepts = icd_ch1
     )
     if(!is.null(attr(cdm, "dbcon"))){
-      icd_ch2 <- icd_ch2 %>%
+      icd_ch2 <- icd_ch2 |>
       dplyr::compute()
     }
     # and one more level down
@@ -271,14 +271,14 @@ getICD10NonStandardCodes <- function(cdm,
       concepts = icd_ch2
     )
     if(!is.null(attr(cdm, "dbcon"))){
-      icd_ch3 <-icd_ch3 %>%
+      icd_ch3 <-icd_ch3 |>
       dplyr::compute()}
 
-    icd_chapter <- icd_ch3 %>%
-      dplyr::collect() %>%
-      dplyr::mutate(name = stringr::str_to_lower(.data$concept_name)) %>%
-      dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) %>%
-      dplyr::select("concept_id_1", "name") %>%
+    icd_chapter <- icd_ch3 |>
+      dplyr::collect() |>
+      dplyr::mutate(name = stringr::str_to_lower(.data$concept_name)) |>
+      dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) |>
+      dplyr::select("concept_id_1", "name") |>
       dplyr::distinct()
   } else {
     icd_chapter <- dplyr::tibble()
@@ -301,11 +301,11 @@ getICD10NonStandardCodes <- function(cdm,
 # run again to get next set of subsumed)
 get_subsumed_concepts <- function(cdm,
                                   concepts) {
-  concepts %>%
+  concepts |>
     dplyr::inner_join(cdm[["concept_relationship"]],
       by = "concept_id_1"
-    ) %>%
-    dplyr::filter(.data$relationship_id == "Subsumes") %>%
-    dplyr::select("concept_id_2", "concept_name", "concept_code") %>%
+    ) |>
+    dplyr::filter(.data$relationship_id == "Subsumes") |>
+    dplyr::select("concept_id_2", "concept_name", "concept_code") |>
     dplyr::rename("concept_id_1" = "concept_id_2")
 }

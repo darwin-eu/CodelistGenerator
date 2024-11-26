@@ -182,10 +182,10 @@ unmappedSourceCodesInUse <- function(cdm,
     )
 
     # keep unmapped codes
-    codes[[i]] <- as.integer(cdm[[workingTable]] %>%
-      dplyr::filter(!!rlang::sym(standardConcept) == 0) %>%
-      dplyr::select(dplyr::all_of(workingConcept)) %>%
-      dplyr::distinct() %>%
+    codes[[i]] <- as.integer(cdm[[workingTable]] |>
+      dplyr::filter(!!rlang::sym(standardConcept) == 0) |>
+      dplyr::select(dplyr::all_of(workingConcept)) |>
+      dplyr::distinct() |>
       dplyr::pull())
     codes[[i]] <- stats::na.omit(codes[[i]])
   }
@@ -198,7 +198,7 @@ unmappedSourceCodesInUse <- function(cdm,
 fetchAchillesCodesInUse <- function(cdm, minimumCount = 0L, collect = TRUE){
 
   minimumCount <- as.integer(minimumCount)
-  codes <- cdm[["achilles_results"]] %>%
+  codes <- cdm[["achilles_results"]] |>
     dplyr::filter(.data$analysis_id %in%
       c(
         401L, # condition occurrence
@@ -209,13 +209,13 @@ fetchAchillesCodesInUse <- function(cdm, minimumCount = 0L, collect = TRUE){
         601L, # procedure_occurrence
         2101L # device_exposure
       ),
-      .data$count_value >= .env$minimumCount) %>%
-    dplyr::select("concept_id" = "stratum_1") %>%
-    dplyr::mutate(concept_id = as.integer(.data$concept_id)) %>%
+      .data$count_value >= .env$minimumCount) |>
+    dplyr::select("concept_id" = "stratum_1") |>
+    dplyr::mutate(concept_id = as.integer(.data$concept_id)) |>
     dplyr::distinct()
 
  if(isTRUE(collect)){
-  codes <- codes %>%
+  codes <- codes |>
     dplyr::pull("concept_id")
  }
 
@@ -227,7 +227,7 @@ fetchAchillesSourceCodesInUse <- function(cdm, minimumCount = 0L){
 
   minimumCount <- as.integer(minimumCount)
 
-  cdm[["achilles_results"]] %>%
+  cdm[["achilles_results"]] |>
     dplyr::filter(.data$analysis_id %in%
                     c(
                       425L, # condition occurrence
@@ -237,10 +237,10 @@ fetchAchillesSourceCodesInUse <- function(cdm, minimumCount = 0L){
                       225L, # visit_occurrence
                       625L, # procedure_occurrence
                       2125L # device_exposure
-                    )) %>%
-    dplyr::filter(.data$count_value >= .env$minimumCount) %>%
-    dplyr::select("stratum_1") %>%
-    dplyr::distinct() %>%
-    dplyr::mutate(stratum_1 = as.integer(.data$stratum_1)) %>%
+                    )) |>
+    dplyr::filter(.data$count_value >= .env$minimumCount) |>
+    dplyr::select("stratum_1") |>
+    dplyr::distinct() |>
+    dplyr::mutate(stratum_1 = as.integer(.data$stratum_1)) |>
     dplyr::pull("stratum_1")
 }

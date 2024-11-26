@@ -50,14 +50,14 @@ codesFromConceptSet <- function(path,
   } else {
     conceptSets <- dplyr::tibble(concept_set_path = .env$path)
   }
-  conceptSets <- conceptSets %>%
-    dplyr::filter(tools::file_ext(.data$concept_set_path) == "json") %>%
+  conceptSets <- conceptSets |>
+    dplyr::filter(tools::file_ext(.data$concept_set_path) == "json") |>
     dplyr::mutate(
       concept_set_name =
         tools::file_path_sans_ext(basename(.data$concept_set_path))
-    ) %>%
+    ) |>
     dplyr::mutate(cohort_definition_id = dplyr::row_number())
-  if (conceptSets %>% nrow() == 0) {
+  if (conceptSets |> nrow() == 0) {
     cli::cli_abort(glue::glue("No 'json' file found in {path}"))
   }
 
@@ -94,8 +94,8 @@ codesFromConceptSet <- function(path,
 
 
   if(any(conceptList$include_mapped == TRUE)){
-    exc <- paste(conceptList %>%
-                   dplyr::filter(.data$include_mapped == TRUE) %>%
+    exc <- paste(conceptList |>
+                   dplyr::filter(.data$include_mapped == TRUE) |>
                    dplyr::pull("cohort_name"), collapse = "; ")
     cli::cli_abort(
       glue::glue("Mapped as TRUE not supported (found in {exc})"))
@@ -155,7 +155,7 @@ codesFromCohort <- function(path,
   codelistTibble <- NULL
   unknown <- 1
   for (k in seq_along(files)) {
-    codelistTibble <- codelistTibble %>%
+    codelistTibble <- codelistTibble |>
       dplyr::union_all(extractCodes(files[k], unknown))
   }
 
@@ -271,11 +271,11 @@ extractCodes <- function(file, unknown) {
         includeDescendants, ifelse(is.null(incD), FALSE, incD)
       )
     }
-    codelistTibble <- codelistTibble %>%
+    codelistTibble <- codelistTibble |>
       dplyr::union_all(dplyr::tibble(
         codelist_name = name, concept_id = conceptId,
         include_descendants = includeDescendants, is_excluded = isExcluded
-      ) %>%
+      ) |>
         dplyr::mutate(filename = file))
   }
   return(codelistTibble)
@@ -283,32 +283,32 @@ extractCodes <- function(file, unknown) {
 
 appendDescendants <- function(cdm, codelistTable) {
 
-  cdm[[codelistTable]] %>%
-    dplyr::mutate(concept_id = as.integer(.data$concept_id)) %>%
-    dplyr::filter(.data$include_descendants == TRUE) %>%
-    dplyr::rename("ancestor_concept_id" = "concept_id") %>%
+  cdm[[codelistTable]] |>
+    dplyr::mutate(concept_id = as.integer(.data$concept_id)) |>
+    dplyr::filter(.data$include_descendants == TRUE) |>
+    dplyr::rename("ancestor_concept_id" = "concept_id") |>
     dplyr::inner_join(
-      cdm[["concept_ancestor"]] %>%
-        dplyr::select("ancestor_concept_id", "descendant_concept_id") %>%
+      cdm[["concept_ancestor"]] |>
+        dplyr::select("ancestor_concept_id", "descendant_concept_id") |>
         dplyr::mutate(ancestor_concept_id = as.integer(.data$ancestor_concept_id)),
       by = "ancestor_concept_id"
-    ) %>%
-    dplyr::select(-"ancestor_concept_id") %>%
-    dplyr::rename("concept_id" = "descendant_concept_id") %>%
+    ) |>
+    dplyr::select(-"ancestor_concept_id") |>
+    dplyr::rename("concept_id" = "descendant_concept_id") |>
     dplyr::union_all(
-      cdm[[codelistTable]]  %>%
+      cdm[[codelistTable]]  |>
         dplyr::filter(.data$include_descendants == "FALSE")
-    ) %>%
+    ) |>
     dplyr::select(-"include_descendants")
 
 }
 
 excludeCodes <- function(codelistTibble) {
-  codelistTibble %>%
-    dplyr::filter(.data$is_excluded == FALSE) %>%
-    dplyr::select(-"is_excluded") %>%
+  codelistTibble |>
+    dplyr::filter(.data$is_excluded == FALSE) |>
+    dplyr::select(-"is_excluded") |>
     dplyr::anti_join(
-      codelistTibble %>%
+      codelistTibble |>
         dplyr::filter(.data$is_excluded == TRUE),
       by = c("codelist_name", "concept_id")
     )
@@ -316,15 +316,15 @@ excludeCodes <- function(codelistTibble) {
 
 tibbleToList <- function(codelistTibble) {
 
-  codelistTibble <- codelistTibble %>%
+  codelistTibble <- codelistTibble |>
     dplyr::mutate(nam = paste0(.data$codelist_name, "; ",
                                .data$filename))
 
   nam <- unique(codelistTibble$nam)
   codelist <- lapply(nam, function(x) {
-    codelistTibble %>%
-      dplyr::filter(.data$nam == .env$x) %>%
-      dplyr::pull("concept_id") %>%
+    codelistTibble |>
+      dplyr::filter(.data$nam == .env$x) |>
+      dplyr::pull("concept_id") |>
       unique()
   })
   names(codelist) <- nam
@@ -376,27 +376,27 @@ addDetails <- function(conceptList, cdm){
                                    overwrite = TRUE,
                                    temporary = FALSE)
 
-  conceptList <- cdm[[tableConceptList]] %>%
-     dplyr::left_join(cdm[["concept"]] %>%
+  conceptList <- cdm[[tableConceptList]] |>
+     dplyr::left_join(cdm[["concept"]] |>
       dplyr::select("concept_id", "concept_name",
                 "domain_id", "vocabulary_id",
                 "standard_concept"),
-                     by = "concept_id") %>%
+                     by = "concept_id") |>
     dplyr::mutate(
       standard_concept = ifelse(is.na(.data$standard_concept),
                                 "non-standard", .data$standard_concept
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       standard_concept = ifelse(.data$standard_concept == "C",
                                 "classification", .data$standard_concept
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       standard_concept = ifelse(.data$standard_concept == "S",
                                 "standard", .data$standard_concept
       )
-    )  %>%
+    )  |>
     dplyr::collect()
 
   CDMConnector::dropTable(cdm = cdm, name = tableConceptList)
@@ -404,13 +404,13 @@ addDetails <- function(conceptList, cdm){
 
   if(isFALSE(inputIsTbl)){
    conceptList <- split(
-    x = conceptList %>% dplyr::select(!"concept_set"),
+    x = conceptList |> dplyr::select(!"concept_set"),
     f = as.factor(conceptList$concept_set)
    )
    }
 
   for(i in seq_along(conceptList)){
-    conceptList[[i]] <- conceptList[[i]] %>%
+    conceptList[[i]] <- conceptList[[i]] |>
       dplyr::arrange(.data$concept_name)
   }
 
@@ -427,46 +427,46 @@ addDetails <- function(conceptList, cdm){
 #' @return list of concept_ids and respective cohort_definition_ids of interest
 #' @noRd
 formatConceptList <- function(cdm, conceptListTable) {
-  conceptList <- cdm[[conceptListTable]] %>%
-    dplyr::filter(.data$include_descendants == FALSE) %>%
+  conceptList <- cdm[[conceptListTable]] |>
+    dplyr::filter(.data$include_descendants == FALSE) |>
     dplyr::union_all(
-      cdm[["concept_ancestor"]] %>%
+      cdm[["concept_ancestor"]] |>
         dplyr::select(
           "concept_id" = "ancestor_concept_id",
           "descendant_concept_id"
-        ) %>%
-        dplyr::mutate(concept_id = as.integer(.data$concept_id)) %>%
+        ) |>
+        dplyr::mutate(concept_id = as.integer(.data$concept_id)) |>
         dplyr::right_join(
-          cdm[[conceptListTable]] %>%
-            dplyr::mutate(concept_id = as.integer(.data$concept_id)) %>%
+          cdm[[conceptListTable]] |>
+            dplyr::mutate(concept_id = as.integer(.data$concept_id)) |>
             dplyr::filter(.data$include_descendants == TRUE),
           by = "concept_id"
-        ) %>%
+        ) |>
         dplyr::mutate(descendant_concept_id = dplyr::if_else(
           # in case concept is not in ancestor table
           # (even though it should be)
           is.na(.data$descendant_concept_id),
-          .data$concept_id, .data$descendant_concept_id)) %>%
-        dplyr::select(-"concept_id") %>%
+          .data$concept_id, .data$descendant_concept_id)) |>
+        dplyr::select(-"concept_id") |>
         dplyr::rename("concept_id" = "descendant_concept_id")
-    ) %>%
-    dplyr::select(-"include_descendants") %>%
+    ) |>
+    dplyr::select(-"include_descendants") |>
     dplyr::collect()
   # eliminate the ones that is_excluded = TRUE
-  conceptList <- conceptList %>%
-    dplyr::filter(.data$is_excluded == FALSE) %>%
-    dplyr::select("cohort_name", "concept_id") %>%
+  conceptList <- conceptList |>
+    dplyr::filter(.data$is_excluded == FALSE) |>
+    dplyr::select("cohort_name", "concept_id") |>
     dplyr::anti_join(
-      conceptList %>%
+      conceptList |>
         dplyr::filter(.data$is_excluded == TRUE),
       by = c("cohort_name","concept_id")
     )
 
   conceptFinalList <- list()
-  for(n in conceptList[["cohort_name"]] %>% unique()) {
-    conceptFinalList[[n]] <- conceptList %>%
-      dplyr::filter(.data$cohort_name == n) %>%
-      dplyr::select("concept_id") %>%
+  for(n in conceptList[["cohort_name"]] |> unique()) {
+    conceptFinalList[[n]] <- conceptList |>
+      dplyr::filter(.data$cohort_name == n) |>
+      dplyr::select("concept_id") |>
       dplyr::pull()
   }
   return(conceptFinalList)
@@ -500,14 +500,14 @@ readConceptSet <- function(conceptSets) {
       x <- append(x, x[["concept"]])
       x[["concept"]] <- NULL
       return(x)
-    }) %>%
-      dplyr::bind_rows() %>%
+    }) |>
+      dplyr::bind_rows() |>
       dplyr::mutate(
         cohort_name = conceptSetName
       )
     # Add columns missing from the read file with default values
     conceptSet[setdiff(names, names(conceptSet))] <- as.character(NA)
-    conceptSet <- conceptSet %>%
+    conceptSet <- conceptSet |>
       dplyr::mutate(
         isExcluded = ifelse(is.na(.data$isExcluded), FALSE, .data$isExcluded),
         includeMapped = ifelse(
@@ -524,7 +524,7 @@ readConceptSet <- function(conceptSets) {
       conceptList <- dplyr::bind_rows(conceptList, conceptSet)
     }
   }
-  conceptList <- conceptList %>%
+  conceptList <- conceptList |>
     dplyr::select(
       "cohort_name",
       "concept_id" = "CONCEPT_ID",

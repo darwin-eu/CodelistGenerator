@@ -191,7 +191,7 @@ mockVocabRef <- function(backend = "data_frame") {
       concept_id = 3L,
       concept_synonym_name = "Osteoarthrosis"
     )
-  )%>%
+  )|>
     dplyr::mutate(language_concept_id  = NA)
   conceptRelationship <- dplyr::bind_rows(
     data.frame(
@@ -239,7 +239,7 @@ mockVocabRef <- function(backend = "data_frame") {
       concept_id_2 = 3L,
       relationship_id = "Maps to"
     )
-  ) %>%
+  ) |>
     dplyr::mutate(valid_start_date = NA,
                   valid_end_date = NA,
                   invalid_reason = NA)

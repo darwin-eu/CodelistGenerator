@@ -273,7 +273,7 @@ test_that("no duplicate names example 1",{
       concept_id = 3L,
       concept_synonym_name = "Osteoarthrosis"
     )
-  )%>%
+  )|>
     dplyr::mutate(language_concept_id  = NA)
 
   vocabulary <- dplyr::bind_rows(
@@ -370,7 +370,7 @@ test_that("no duplicate names example 1",{
       concept_id_2 = 3L,
       relationship_id = "Maps to"
     )
-  ) %>%
+  ) |>
     dplyr::mutate(valid_start_date = NA,
                   valid_end_date = NA,
                   invalid_reason = NA)
@@ -413,7 +413,7 @@ test_that("no duplicate names example 1",{
                2
               )
 
-  expect_equal(names(ingredient_list) %>%
+  expect_equal(names(ingredient_list) |>
                  unique()|>
                  length() |>
                  as.numeric(),
@@ -593,7 +593,7 @@ test_that("no duplicate names example 2",{
       concept_id = 3L,
       concept_synonym_name = "Osteoarthrosis"
     )
-  )%>%
+  )|>
     dplyr::mutate(language_concept_id  = NA)
 
   conceptRelationship <- dplyr::bind_rows(
@@ -642,7 +642,7 @@ test_that("no duplicate names example 2",{
       concept_id_2 = 3L,
       relationship_id = "Maps to"
     )
-  ) %>%
+  ) |>
     dplyr::mutate(valid_start_date = NA,
                   valid_end_date = NA,
                   invalid_reason = NA)
@@ -725,7 +725,7 @@ test_that("no duplicate names example 2",{
                2
   )
 
-  expect_equal(names(atc_list) %>%
+  expect_equal(names(atc_list) |>
                  unique()|>
                  length() |>
                  as.numeric(),

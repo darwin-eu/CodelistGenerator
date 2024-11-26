@@ -67,13 +67,13 @@ test_that("redshift", {
 
 
   # achilles
-  cdm$achilles_results <- cdm$condition_occurrence %>%
-    dplyr::group_by(condition_concept_id) %>%
-    dplyr::tally(name = "count_value") %>%
-    dplyr::rename("stratum_1" = "condition_concept_id") %>%
+  cdm$achilles_results <- cdm$condition_occurrence |>
+    dplyr::group_by(condition_concept_id) |>
+    dplyr::tally(name = "count_value") |>
+    dplyr::rename("stratum_1" = "condition_concept_id") |>
     dplyr::mutate(stratum_2 = NA,
                   stratum_3 = NA,
-                  analysis_id = 401) %>%
+                  analysis_id = 401) |>
     dplyr::compute()
 
   asthma <- list(asthma = c(317009, 257581))
@@ -81,35 +81,35 @@ test_that("redshift", {
                                      cdm = cdm)
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                  dplyr::filter(stringr::str_detect(variable_level, "317009"),
-                               estimate_name == "record_count") %>%
+                               estimate_name == "record_count") |>
                  dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(variable_level == 317009,
-                               estimate_name == "record_count") %>%
+                               estimate_name == "record_count") |>
                  dplyr::pull("estimate_value"))
 
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                  dplyr::filter(stringr::str_detect(variable_level, "257581"),
-                               estimate_name == "record_count") %>%
+                               estimate_name == "record_count") |>
                  dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(variable_level == 257581,
-                               estimate_name == "record_count") %>%
+                               estimate_name == "record_count") |>
                  dplyr::pull("estimate_value"))
 
 
-  cdm$achilles_results <- cdm$condition_occurrence %>%
-    dplyr::group_by(person_id, condition_concept_id) %>%
-    dplyr::tally() %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(condition_concept_id) %>%
-    dplyr::tally(name = "count_value") %>%
-    dplyr::rename("stratum_1" = "condition_concept_id") %>%
+  cdm$achilles_results <- cdm$condition_occurrence |>
+    dplyr::group_by(person_id, condition_concept_id) |>
+    dplyr::tally() |>
+    dplyr::ungroup() |>
+    dplyr::group_by(condition_concept_id) |>
+    dplyr::tally(name = "count_value") |>
+    dplyr::rename("stratum_1" = "condition_concept_id") |>
     dplyr::mutate(stratum_2 = NA,
                   stratum_3 = NA,
-                  analysis_id = 400) %>%
+                  analysis_id = 400) |>
     dplyr::compute()
 
   asthma <- list(asthma = c(317009, 257581))
@@ -117,22 +117,22 @@ test_that("redshift", {
                                      cdm = cdm)
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                  dplyr::filter(stringr::str_detect(variable_level, "317009"),
-                               estimate_name == "person_count") %>%
+                               estimate_name == "person_count") |>
                  dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(variable_level == 317009,
-                               estimate_name == "person_count") %>%
+                               estimate_name == "person_count") |>
                  dplyr::pull("estimate_value"))
 
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                  dplyr::filter(stringr::str_detect(variable_level, "257581"),
-                               estimate_name == "person_count") %>%
+                               estimate_name == "person_count") |>
                  dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(variable_level == 257581,
-                               estimate_name == "person_count") %>%
+                               estimate_name == "person_count") |>
                  dplyr::pull("estimate_value"))
 
 
@@ -207,13 +207,13 @@ test_that("snowflake", {
   expect_no_error(getDrugIngredientCodes(cdm, "metformin"))
 
   # achilles
-  cdm$achilles_results <- cdm$condition_occurrence %>%
-    dplyr::group_by(condition_concept_id) %>%
-    dplyr::tally(name = "count_value") %>%
-    dplyr::rename("stratum_1" = "condition_concept_id") %>%
+  cdm$achilles_results <- cdm$condition_occurrence |>
+    dplyr::group_by(condition_concept_id) |>
+    dplyr::tally(name = "count_value") |>
+    dplyr::rename("stratum_1" = "condition_concept_id") |>
     dplyr::mutate(stratum_2 = NA,
                   stratum_3 = NA,
-                  analysis_id = 401) %>%
+                  analysis_id = 401) |>
     dplyr::compute()
 
   asthma <- list(asthma = c(317009, 257581))
@@ -221,34 +221,34 @@ test_that("snowflake", {
                                      cdm = cdm)
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                             dplyr::filter(variable_level == "317009",
-                                          variable_name == "record_count") %>%
+                                          variable_name == "record_count") |>
                             dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(variable_level == "317009",
-                               variable_name == "record_count ") %>%
+                               variable_name == "record_count ") |>
                  dplyr::pull("estimate_value"))
 
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                  dplyr::filter(variable_level == "257581",
-                               variable_name == "record_count") %>%
+                               variable_name == "record_count") |>
                  dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(variable_level == "257581",
-                               variable_name == "record_count ") %>%
+                               variable_name == "record_count ") |>
                  dplyr::pull("estimate_value"))
 
-  cdm$achilles_results <- cdm$condition_occurrence %>%
-    dplyr::group_by(person_id, condition_concept_id) %>%
-    dplyr::tally() %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(condition_concept_id) %>%
-    dplyr::tally(name = "count_value") %>%
-    dplyr::rename("stratum_1" = "condition_concept_id") %>%
+  cdm$achilles_results <- cdm$condition_occurrence |>
+    dplyr::group_by(person_id, condition_concept_id) |>
+    dplyr::tally() |>
+    dplyr::ungroup() |>
+    dplyr::group_by(condition_concept_id) |>
+    dplyr::tally(name = "count_value") |>
+    dplyr::rename("stratum_1" = "condition_concept_id") |>
     dplyr::mutate(stratum_2 = NA,
                   stratum_3 = NA,
-                  analysis_id = 400) %>%
+                  analysis_id = 400) |>
     dplyr::compute()
 
   asthma <- list(asthma = c(317009, 257581))
@@ -256,32 +256,32 @@ test_that("snowflake", {
                                      cdm = cdm)
   result_cdm <- summariseCodeUse(asthma, cdm = cdm)
 
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                  dplyr::filter(variable_level == "317009",
-                               variable_name == "record_count") %>%
+                               variable_name == "record_count") |>
                  dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(variable_level == "317009",
-                               variable_name == "record_count ") %>%
+                               variable_name == "record_count ") |>
                  dplyr::pull("estimate_value"))
 
 
 
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                             dplyr::filter(group_level == "317009",
-                                          variable_name == "person_count") %>%
+                                          variable_name == "person_count") |>
                             dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(group_level ==  "317009",
-                               variable_name == "person_count") %>%
+                               variable_name == "person_count") |>
                  dplyr::pull("estimate_value"))
-  expect_equal(result_achilles %>%
+  expect_equal(result_achilles |>
                  dplyr::filter(group_level == "257581",
-                               variable_name == "person_count") %>%
+                               variable_name == "person_count") |>
                  dplyr::pull("estimate_value"),
-               result_cdm %>%
+               result_cdm |>
                  dplyr::filter(group_level ==  "257581",
-                               variable_name == "person_count") %>%
+                               variable_name == "person_count") |>
                  dplyr::pull("estimate_value"))
 
   # edge cases

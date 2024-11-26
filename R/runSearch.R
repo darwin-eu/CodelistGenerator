@@ -44,7 +44,7 @@ runSearch <- function(keywords,
   standardConceptFlags <- standardConcept
 
   # formatting of conceptDb variables
-  conceptDb <- conceptDb %>%
+  conceptDb <- conceptDb |>
     dplyr::mutate(
       domain_id = tolower(.data$domain_id),
       standard_concept = dplyr::case_when(
@@ -56,26 +56,26 @@ runSearch <- function(keywords,
     )
 
   cli::cli_inform("Limiting to domains of interest")
-  concept <- conceptDb %>%
+  concept <- conceptDb |>
     dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags,
                   .data$domain_id %in% .env$domains) |>
     dplyr::compute()
 
   # will only collect conceptSynonym later if needed
   if (searchInSynonyms == TRUE) {
-    conceptSynonymDb <- conceptSynonymDb %>%
+    conceptSynonymDb <- conceptSynonymDb |>
       dplyr::left_join(
-        conceptDb %>%
+        conceptDb |>
           dplyr::select("concept_id", "domain_id", "standard_concept"),
         by = "concept_id"
       )
 
-    conceptSynonymDb <- conceptSynonymDb %>%
+    conceptSynonymDb <- conceptSynonymDb |>
       dplyr::filter(.data$domain_id %in% .env$domains &
-                      .data$standard_concept %in% .env$standardConceptFlags) %>%
+                      .data$standard_concept %in% .env$standardConceptFlags) |>
       dplyr::select(-c("domain_id", "standard_concept"))
 
-    conceptSynonym <- conceptSynonymDb %>%
+    conceptSynonym <- conceptSynonymDb |>
       dplyr::rename_with(tolower)
   } else {
     conceptSynonym <- NULL
@@ -83,32 +83,32 @@ runSearch <- function(keywords,
 
   # collect the drug_strength table if drug
   if ("drug" %in% domains) {
-    drugStrength <- drugStrengthDb %>%
+    drugStrength <- drugStrengthDb |>
       dplyr::left_join(
-        conceptDb %>%
-          dplyr::rename("drug_concept_id" = "concept_id") %>%
+        conceptDb |>
+          dplyr::rename("drug_concept_id" = "concept_id") |>
           dplyr::select("drug_concept_id", "domain_id", "standard_concept"),
         by = "drug_concept_id"
-      ) %>%
+      ) |>
       dplyr::filter(.data$domain_id %in% .env$domains &
-                      .data$standard_concept %in% .env$standardConceptFlags) %>%
+                      .data$standard_concept %in% .env$standardConceptFlags) |>
       dplyr::rename_with(tolower)
   }
 
 
   candidateCodesList <- list()
 
-  workingConcept <- concept %>%
+  workingConcept <- concept |>
     dplyr::filter(.data$domain_id %in% .env$domains)
 
   if (!is.null(conceptSynonym)) {
-    workingconceptSynonym <- conceptSynonym %>%
+    workingconceptSynonym <- conceptSynonym |>
       dplyr::left_join(
-        concept %>%
+        concept |>
           dplyr::select("concept_id", "domain_id"),
         by = "concept_id"
-      ) %>%
-      dplyr::filter(.data$domain_id %in% .env$domains) %>%
+      ) |>
+      dplyr::filter(.data$domain_id %in% .env$domains) |>
       dplyr::select(!"domain_id")
   }
 
@@ -135,20 +135,20 @@ runSearch <- function(keywords,
     conceptDf = workingConcept
   )
 
-  candidateCodes <- candidateCodes %>%
+  candidateCodes <- candidateCodes |>
     dplyr::mutate(found_from = "From initial search",
-                  found_id = 1L) %>%
+                  found_id = 1L) |>
     dplyr::compute()
 
   # run exclusion
   if (length(exclude) > 0) {
-    if (excludeCodes %>%
-        utils::head(10) %>%
-        dplyr::tally() %>%
+    if (excludeCodes |>
+        utils::head(10) |>
+        dplyr::tally() |>
         dplyr::pull("n") > 0) {
-      candidateCodes <- candidateCodes %>%
+      candidateCodes <- candidateCodes |>
         dplyr::anti_join(
-          excludeCodes %>%
+          excludeCodes |>
             dplyr::select("concept_id"),
           by = "concept_id"
         )
@@ -161,33 +161,33 @@ runSearch <- function(keywords,
     cli::cli_inform("Adding concepts using synonymns")
     candidateCodesInSynonyms <- getMatches(
       words = tidyWords(keywords),
-      conceptDf = workingconceptSynonym %>%
+      conceptDf = workingconceptSynonym |>
         dplyr::rename("concept_name" = "concept_synonym_name")
-    ) %>%
-      dplyr::select("concept_id") %>%
-      dplyr::distinct() %>%
+    ) |>
+      dplyr::select("concept_id") |>
+      dplyr::distinct() |>
       dplyr::left_join(workingConcept,
                        by = "concept_id"
       )
 
     candidateCodes <- dplyr::union_all(
       candidateCodes,
-      candidateCodesInSynonyms %>%
+      candidateCodesInSynonyms |>
         dplyr::mutate(found_from = "In synonyms",
                       found_id = 2L)
-    ) %>%
+    ) |>
       dplyr::distinct()
   }
 
   # run exclusion
   if (length(exclude) > 0) {
-    if (excludeCodes %>%
-        utils::head(10) %>%
-        dplyr::tally() %>%
+    if (excludeCodes |>
+        utils::head(10) |>
+        dplyr::tally() |>
         dplyr::pull("n") > 0) {
-      candidateCodes <- candidateCodes %>%
+      candidateCodes <- candidateCodes |>
         dplyr::anti_join(
-          excludeCodes %>%
+          excludeCodes |>
             dplyr::select("concept_id"),
           by = "concept_id"
         ) |>
@@ -200,9 +200,9 @@ runSearch <- function(keywords,
 
   # 5) add any codes lower in the hierarchy
   if (includeDescendants == TRUE) {
-    if (candidateCodes %>%
-        utils::head(10) %>%
-        dplyr::tally() %>%
+    if (candidateCodes |>
+        utils::head(10) |>
+        dplyr::tally() |>
         dplyr::pull("n") > 0) {
       cli::cli_inform("Adding descendants")
       candidateCodeDescendants <- addDescendants(
@@ -213,22 +213,22 @@ runSearch <- function(keywords,
 
       candidateCodes <- dplyr::union_all(
         candidateCodes,
-        candidateCodeDescendants %>%
+        candidateCodeDescendants |>
           dplyr::mutate(found_from = "From descendants",
-                        found_id = 3L) %>%
-          dplyr::anti_join(candidateCodes %>%
+                        found_id = 3L) |>
+          dplyr::anti_join(candidateCodes |>
                              dplyr::select("concept_id"),
-                           by = "concept_id")) %>%
+                           by = "concept_id")) |>
         dplyr::compute()
 
       # run exclusion
       if (length(exclude) > 0) {
-        if (excludeCodes %>%
-            utils::head(10) %>%
-            dplyr::tally() %>%
+        if (excludeCodes |>
+            utils::head(10) |>
+            dplyr::tally() |>
             dplyr::pull("n") > 0) {
-          candidateCodes <- candidateCodes %>%
-            dplyr::anti_join(excludeCodes %>%
+          candidateCodes <- candidateCodes |>
+            dplyr::anti_join(excludeCodes |>
                                dplyr::select("concept_id"),
                              by = "concept_id"
             )|>
@@ -240,9 +240,9 @@ runSearch <- function(keywords,
 
   # 6) add any codes one level above in the hierarchy
   if (includeAncestor == TRUE) {
-    if (candidateCodes %>%
-        utils::head(10) %>%
-        dplyr::tally() %>%
+    if (candidateCodes |>
+        utils::head(10) |>
+        dplyr::tally() |>
         dplyr::pull("n") > 0) {
       cli::cli_inform("Adding ancestor")
 
@@ -254,21 +254,21 @@ runSearch <- function(keywords,
 
       candidateCodes <- dplyr::union_all(
         candidateCodes,
-        candidateCodeAncestor %>%
+        candidateCodeAncestor |>
           dplyr::mutate(found_from = "From ancestor",
                         found_id = 4L)
-      ) %>%
-        dplyr::distinct() %>%
+      ) |>
+        dplyr::distinct() |>
         dplyr::compute()
 
       # run exclusion
       if (length(exclude) > 0) {
-        if (excludeCodes %>%
-            utils::head(10) %>%
-            dplyr::tally() %>%
+        if (excludeCodes |>
+            utils::head(10) |>
+            dplyr::tally() |>
             dplyr::pull("n") > 0) {
-          candidateCodes <- candidateCodes %>%
-            dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
+          candidateCodes <- candidateCodes |>
+            dplyr::anti_join(excludeCodes |> dplyr::select("concept_id"),
                              by = "concept_id"
             )|>
             dplyr::compute()
@@ -283,13 +283,13 @@ runSearch <- function(keywords,
   # are multiple mappings
   if (searchNonStandard == TRUE) {
     cli::cli_inform("Adding codes from non-standard")
-    conceptNs <- conceptDb %>%
-      dplyr::filter(.data$standard_concept == "non-standard") %>%
+    conceptNs <- conceptDb |>
+      dplyr::filter(.data$standard_concept == "non-standard") |>
       dplyr::rename_with(tolower)
 
-    if (conceptNs %>%
-        utils::head(10) %>%
-        dplyr::tally() %>%
+    if (conceptNs |>
+        utils::head(10) |>
+        dplyr::tally() |>
         dplyr::pull("n") > 0) {
       candidateCodesNs <- getMatches(
         words = tidyWords(keywords),
@@ -297,42 +297,42 @@ runSearch <- function(keywords,
       )
     }
 
-    if (conceptNs %>%
-        utils::head(10) %>%
-        dplyr::tally() %>%
+    if (conceptNs |>
+        utils::head(10) |>
+        dplyr::tally() |>
         dplyr::pull("n") > 0) {
-      candidateCodesNs <- candidateCodesNs %>%
-        dplyr::select("concept_id") %>%
+      candidateCodesNs <- candidateCodesNs |>
+        dplyr::select("concept_id") |>
         dplyr::left_join(
-          conceptRelationshipDb %>%
-            dplyr::filter(.data$relationship_id == "Mapped from") %>%
+          conceptRelationshipDb |>
+            dplyr::filter(.data$relationship_id == "Mapped from") |>
             dplyr::rename_with(tolower),
           by = c("concept_id" = "concept_id_2")
-        ) %>%
-        dplyr::select("concept_id"= "concept_id_1") %>%
-        dplyr::distinct() %>%
+        ) |>
+        dplyr::select("concept_id"= "concept_id_1") |>
+        dplyr::distinct() |>
         dplyr::left_join(concept,
                          by = "concept_id"
-        ) %>%
+        ) |>
         dplyr::compute()
 
       candidateCodes <- dplyr::union_all(
         candidateCodes,
-        candidateCodesNs %>%
+        candidateCodesNs |>
           dplyr::mutate(found_from = "From non-standard",
                         found_id = 5L)
-      )  %>%
+      )  |>
         dplyr::compute()
     }
 
     # run exclusion
     if (length(exclude) > 0) {
-      if (excludeCodes %>%
-          utils::head(10) %>%
-          dplyr::tally() %>%
+      if (excludeCodes |>
+          utils::head(10) |>
+          dplyr::tally() |>
           dplyr::pull("n") > 0) {
-        candidateCodes <- candidateCodes %>%
-          dplyr::anti_join(excludeCodes %>% dplyr::select("concept_id"),
+        candidateCodes <- candidateCodes |>
+          dplyr::anti_join(excludeCodes |> dplyr::select("concept_id"),
                            by = "concept_id"
           )|>
           dplyr::compute()
@@ -340,14 +340,14 @@ runSearch <- function(keywords,
     }
   }
 
-  candidateCodes <- candidateCodes %>%
-    dplyr::select(c("concept_id", "found_from", "found_id")) %>%
-    dplyr::inner_join(cdm[["concept"]] %>%
+  candidateCodes <- candidateCodes |>
+    dplyr::select(c("concept_id", "found_from", "found_id")) |>
+    dplyr::inner_join(cdm[["concept"]] |>
                        dplyr::select("concept_id", "concept_name",
                                      "domain_id", "vocabulary_id",
                                      "standard_concept"),
-                     by = "concept_id") %>%
-    dplyr::distinct() %>%
+                     by = "concept_id") |>
+    dplyr::distinct() |>
     dplyr::collect()
 
   if (nrow(candidateCodes) > 0) {
@@ -358,10 +358,10 @@ runSearch <- function(keywords,
     # keep first time it was found
     # for drug,  same concept_id with different ingredient_concept_id
     # will be removed as well (with only the first kept).
-    candidateCodes <- candidateCodes %>%
-      dplyr::arrange(.data$found_id) %>%
-      dplyr::group_by(.data$concept_id)  %>%
-      dplyr::filter(dplyr::row_number(.data$concept_id) == 1) %>%
+    candidateCodes <- candidateCodes |>
+      dplyr::arrange(.data$found_id) |>
+      dplyr::group_by(.data$concept_id)  |>
+      dplyr::filter(dplyr::row_number(.data$concept_id) == 1) |>
       dplyr::ungroup() |>
       dplyr::select(!"found_id")
 
@@ -404,7 +404,7 @@ tidyWords <- function(words) {
 
 getMatches <- function(words,
                        conceptDf) {
-  conceptDf <- conceptDf %>% # start with all
+  conceptDf <- conceptDf |> # start with all
     dplyr::mutate(concept_name = tolower(.data$concept_name))
 
   # because there may be a lot of synonyms, get these from a loop
@@ -425,17 +425,17 @@ getMatches <- function(words,
       if (nchar(workingExclude[j]) >= 1) {
 
       cToSearch <-  paste0("%", workingExclude[j], "%")
-      workingConcepts <- workingConcepts %>%
+      workingConcepts <- workingConcepts |>
         dplyr::filter(stringr::str_like(.data$concept_name, .env$cToSearch))
 
       }
     }
-    conceptsFound[[i]] <- workingConcepts %>%
+    conceptsFound[[i]] <- workingConcepts |>
       dplyr::compute()
   }
 
   if(length(conceptsFound)==1){
-    conceptsFound <- conceptsFound[[1]] %>% dplyr::distinct()
+    conceptsFound <- conceptsFound[[1]] |> dplyr::distinct()
   } else {
     conceptsFoundList <- list()
     conceptsFoundList[[1]] <- conceptsFound[[1]]
@@ -444,7 +444,7 @@ getMatches <- function(words,
                                                  conceptsFound[[i+1]])
 
     }
-    conceptsFound <- conceptsFoundList[[1]] %>% dplyr::distinct()
+    conceptsFound <- conceptsFoundList[[1]] |> dplyr::distinct()
   }
 
   return(conceptsFound)
@@ -454,18 +454,18 @@ addDescendants <- function(workingCandidateCodes,
                            conceptAncestorDf,
                            conceptDf) {
 
-  candidateCodeDescendants <- workingCandidateCodes %>%
-    dplyr::select("concept_id") %>%
-    dplyr::rename("ancestor_concept_id" = "concept_id") %>%
+  candidateCodeDescendants <- workingCandidateCodes |>
+    dplyr::select("concept_id") |>
+    dplyr::rename("ancestor_concept_id" = "concept_id") |>
     dplyr::left_join(
       conceptAncestorDf,
       by = "ancestor_concept_id"
-    ) %>%
-    dplyr::select("concept_id" = "descendant_concept_id") %>%
-    dplyr::distinct() %>%
+    ) |>
+    dplyr::select("concept_id" = "descendant_concept_id") |>
+    dplyr::distinct() |>
     dplyr::compute()
 
-  candidateCodeDescendants <- candidateCodeDescendants %>%
+  candidateCodeDescendants <- candidateCodeDescendants |>
     dplyr::left_join(conceptDf, by = "concept_id") |>
     dplyr::compute()
 
@@ -475,23 +475,23 @@ addDescendants <- function(workingCandidateCodes,
 addAncestor <- function(workingCandidateCodes,
                         conceptAncestorDf,
                         conceptDf) {
-  candidateCodeAncestor <- workingCandidateCodes %>%
-    dplyr::select("concept_id") %>%
-    dplyr::rename("descendant_concept_id" = "concept_id") %>%
+  candidateCodeAncestor <- workingCandidateCodes |>
+    dplyr::select("concept_id") |>
+    dplyr::rename("descendant_concept_id" = "concept_id") |>
     dplyr::left_join(conceptAncestorDf,
                      by = "descendant_concept_id"
-    ) %>%
-    dplyr::filter(.data$min_levels_of_separation == "1") %>%
-    dplyr::select("ancestor_concept_id") %>%
-    dplyr::rename("concept_id" = "ancestor_concept_id") %>%
+    ) |>
+    dplyr::filter(.data$min_levels_of_separation == "1") |>
+    dplyr::select("ancestor_concept_id") |>
+    dplyr::rename("concept_id" = "ancestor_concept_id") |>
     dplyr::left_join(conceptDf,
                      by = "concept_id"
     )
 
   # keep if not already in candidateCodes
-  candidateCodeAncestor <- candidateCodeAncestor %>%
+  candidateCodeAncestor <- candidateCodeAncestor |>
     dplyr::anti_join(
-      workingCandidateCodes %>%
+      workingCandidateCodes |>
         dplyr::select("concept_id"),
       by = "concept_id"
     )

@@ -34,10 +34,10 @@ test_that("tests with mock db", {
     )
     expect_true(nrow(codes) == 2)
     expect_true("Osteoarthritis of knee" %in%
-      (codes %>%
+      (codes |>
       dplyr::pull("concept_name")))
     expect_true("Osteoarthritis of hip" %in%
-                  (codes %>%
+                  (codes |>
                      dplyr::pull("concept_name")))
 
     # test include descendants

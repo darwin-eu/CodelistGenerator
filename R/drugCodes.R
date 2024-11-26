@@ -78,14 +78,14 @@ getATCCodes <- function(cdm,
   checkmate::assertCharacter(type, len = 1)
   checkmate::reportAssertions(collection = errorMessage)
 
-  atc_groups <- cdm$concept %>%
-    dplyr::filter(.data$vocabulary_id == "ATC") %>%
-    dplyr::filter(.data$concept_class_id %in% .env$level) %>%
-    dplyr::select("concept_id", "concept_name", "concept_code") %>%
+  atc_groups <- cdm$concept |>
+    dplyr::filter(.data$vocabulary_id == "ATC") |>
+    dplyr::filter(.data$concept_class_id %in% .env$level) |>
+    dplyr::select("concept_id", "concept_name", "concept_code") |>
     dplyr::collect()
 
   if (!is.null(name)) {
-    atc_groups <- atc_groups %>%
+    atc_groups <- atc_groups |>
       dplyr::filter(tidyWords(.data$concept_name) %in% tidyWords(.env$name))
   }
 
@@ -108,10 +108,10 @@ getATCCodes <- function(cdm,
 }
 
   if (nrow(atc_descendants) > 0) {
-    atc_descendants <- atc_descendants %>%
+    atc_descendants <- atc_descendants |>
       dplyr::select("concept_id", "concept_name",
                       "domain_id", "vocabulary_id",
-                      "ancestor_concept_id") %>%
+                      "ancestor_concept_id") |>
       # split different ancestors into multiple cols
       tidyr::separate_wider_delim(
         cols = "ancestor_concept_id",
@@ -120,7 +120,7 @@ getATCCodes <- function(cdm,
         too_few = "align_start"
       )
 
-    atc_descendants <- atc_descendants %>%
+    atc_descendants <- atc_descendants |>
       # one row per concept + ancestor
       tidyr::pivot_longer(cols = !c("concept_id", "concept_name",
                              "domain_id", "vocabulary_id"),
@@ -151,13 +151,13 @@ getATCCodes <- function(cdm,
     # for each item in the list - pull out concepts and name
     for (i in seq_along(atc_descendants)) {
       if(type == "codelist"){
-      atc_descendants[[i]] <- atc_descendants[[i]] %>%
-        dplyr::select("concept_id") %>%
-        dplyr::distinct() %>%
+      atc_descendants[[i]] <- atc_descendants[[i]] |>
+        dplyr::select("concept_id") |>
+        dplyr::distinct() |>
         dplyr::pull()
 
       } else {
-        atc_descendants[[i]] <- atc_descendants[[i]] %>%
+        atc_descendants[[i]] <- atc_descendants[[i]] |>
           dplyr::select(!"ancestor_concept_id")
       }
     }
@@ -245,14 +245,14 @@ getDrugIngredientCodes <- function(cdm,
   checkmate::assertCharacter(type, len = 1)
   checkmate::reportAssertions(collection = errorMessage)
 
-  ingredientConcepts <- cdm$concept %>%
-    dplyr::filter(.data$standard_concept == "S") %>%
-    dplyr::filter(.data$concept_class_id == "Ingredient") %>%
-    dplyr::select("concept_id", "concept_name", "concept_code") %>%
+  ingredientConcepts <- cdm$concept |>
+    dplyr::filter(.data$standard_concept == "S") |>
+    dplyr::filter(.data$concept_class_id == "Ingredient") |>
+    dplyr::select("concept_id", "concept_name", "concept_code") |>
     dplyr::collect()
 
   if (!is.null(name)) {
-    ingredientConcepts <- ingredientConcepts %>%
+    ingredientConcepts <- ingredientConcepts |>
       dplyr::filter(tidyWords(.data$concept_name) %in% tidyWords(.env$name))
   }
 
@@ -279,11 +279,11 @@ getDrugIngredientCodes <- function(cdm,
     cli::cli_warn("No descendant codes found")
     return(invisible(list()))
   }
-      ingredientCodes <- ingredientCodes  %>%
+      ingredientCodes <- ingredientCodes  |>
         dplyr::select("concept_id", "concept_name",
                       "domain_id", "vocabulary_id",
                       "standard_concept",
-                      "ancestor_concept_id") %>%
+                      "ancestor_concept_id") |>
       # split different ancestors into multiple cols
       tidyr::separate_wider_delim(
         cols = "ancestor_concept_id",
@@ -292,7 +292,7 @@ getDrugIngredientCodes <- function(cdm,
         too_few = "align_start"
       )
 
-    ingredientCodes <- ingredientCodes %>%
+    ingredientCodes <- ingredientCodes |>
       # one row per concept + ancestor
       tidyr::pivot_longer(cols = !c("concept_id", "concept_name",
                                     "domain_id", "vocabulary_id",
@@ -322,13 +322,13 @@ getDrugIngredientCodes <- function(cdm,
     # for each item in the list - pull out concepts and name
     for (i in seq_along(ingredientCodes)) {
       if(type == "codelist"){
-        ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
-          dplyr::select("concept_id") %>%
-          dplyr::distinct() %>%
+        ingredientCodes[[i]] <- ingredientCodes[[i]] |>
+          dplyr::select("concept_id") |>
+          dplyr::distinct() |>
           dplyr::pull()
 
       } else {
-        ingredientCodes[[i]] <- ingredientCodes[[i]] %>%
+        ingredientCodes[[i]] <- ingredientCodes[[i]] |>
           dplyr::select(!"ancestor_concept_id")
       }
     }

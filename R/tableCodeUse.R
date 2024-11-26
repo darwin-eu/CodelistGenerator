@@ -10,7 +10,7 @@
 #' "estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
 #' results are stratified, "year", "sex", "age_group" can also be used.
 #' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumns Variables to use as group labels. Allowed columns are:
+#' @param groupColumn Variables to use as group labels. Allowed columns are:
 #' "cdm_name", "codelist_name", "standard_concept_name", "standard_concept_id",
 #' "estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
 #' results are stratified, "year", "sex", "age_group" can also be used.
@@ -49,7 +49,7 @@
 tableCodeUse <- function(result,
                          type = "gt",
                          header = c("cdm_name", "estimate_name"),
-                         groupColumns = character(),
+                         groupColumn = character(),
                          hide = character(),
                          .options = list()) {
 
@@ -72,7 +72,7 @@ tableCodeUse <- function(result,
     resultType = "code_use",
     type = type,
     header = header,
-    groupColumns = groupColumns,
+    groupColumn = groupColumn,
     timing = FALSE,
     hide = hide,
     .options = .options
@@ -93,7 +93,7 @@ tableCodeUse <- function(result,
 #' "estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
 #' results are stratified, "year", "sex", "age_group" can also be used.
 #' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumns Variables to use as group labels. Allowed columns are:
+#' @param groupColumn Variables to use as group labels. Allowed columns are:
 #' "cdm_name", "codelist_name", "standard_concept_name", "standard_concept_id",
 #' "estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
 #' results are stratified, "year", "sex", "age_group" can also be used.
@@ -140,7 +140,7 @@ tableCodeUse <- function(result,
 tableCohortCodeUse <- function(result,
                                type = "gt",
                                header = c("cdm_name", "estimate_name"),
-                               groupColumns = NULL,
+                               groupColumn = NULL,
                                timing = FALSE,
                                hide = character(),
                                .options = list()) {
@@ -165,7 +165,7 @@ tableCohortCodeUse <- function(result,
     resultType = "cohort_code_use",
     type = type,
     header = header,
-    groupColumns = groupColumns,
+    groupColumn = groupColumn,
     timing = timing,
     hide = hide,
     .options = .options
@@ -178,14 +178,14 @@ internalTableCodeUse <- function(result,
                                  resultType,
                                  type,
                                  header,
-                                 groupColumns,
+                                 groupColumn,
                                  timing,
                                  hide,
                                  .options) {
   omopgenerics::assertCharacter(header, null = TRUE)
   omopgenerics::assertCharacter(hide, null = TRUE)
-  if (!is.list(groupColumns) & !is.null(groupColumns)) groupColumns <- list(groupColumns)
-  omopgenerics::assertCharacter(groupColumns[[1]], null = TRUE)
+  if (!is.list(groupColumn) & !is.null(groupColumn)) groupColumn <- list(groupColumn)
+  omopgenerics::assertCharacter(groupColumn[[1]], null = TRUE)
 
    # .options
   .options <- optionsCodeUse(.options)
@@ -201,7 +201,7 @@ internalTableCodeUse <- function(result,
     dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
 
   header <- reformulateTableAchilles(header)
-  groupColumns[[1]] <- reformulateTableAchilles(groupColumns[[1]])
+  groupColumn[[1]] <- reformulateTableAchilles(groupColumn[[1]])
   hide <- reformulateTableAchilles(hide)
 
   # visTable
@@ -209,7 +209,7 @@ internalTableCodeUse <- function(result,
     result = x,
     estimateName = character(),
     header = header,
-    groupColumn = groupColumns,
+    groupColumn = groupColumn,
     type = type,
     settingsColumns = settingsColumns,
     rename = c(

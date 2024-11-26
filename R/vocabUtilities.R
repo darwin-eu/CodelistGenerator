@@ -39,10 +39,10 @@ getVocabVersion <- function(cdm) {
   }
   checkmate::reportAssertions(collection = errorMessage)
 
-  version <- as.character(cdm$vocabulary %>%
-    dplyr::rename_with(tolower) %>%
-    dplyr::filter(.data$vocabulary_id == "None") %>%
-    dplyr::select("vocabulary_version") %>%
+  version <- as.character(cdm$vocabulary |>
+    dplyr::rename_with(tolower) |>
+    dplyr::filter(.data$vocabulary_id == "None") |>
+    dplyr::select("vocabulary_version") |>
     dplyr::collect())
   return(version)
 }
@@ -94,28 +94,28 @@ getDomains <- function(cdm,
   conceptDb <- cdm$concept
 
   standardConcept <- tolower(standardConcept)
-  conceptDb <- conceptDb %>%
+  conceptDb <- conceptDb |>
     dplyr::mutate(
       standard_concept = ifelse(is.na(.data$standard_concept),
         "non-standard", .data$standard_concept
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       standard_concept = ifelse(.data$standard_concept == "C",
         "classification", .data$standard_concept
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       standard_concept = ifelse(.data$standard_concept == "S",
         "standard", .data$standard_concept
       )
-    ) %>%
+    ) |>
     dplyr::filter(.data$standard_concept %in% .env$standardConcept)
 
-  domains <- conceptDb %>%
-    dplyr::select("domain_id") %>%
-    dplyr::distinct() %>%
-    dplyr::collect() %>%
+  domains <- conceptDb |>
+    dplyr::select("domain_id") |>
+    dplyr::distinct() |>
+    dplyr::collect() |>
     dplyr::pull()
 
   return(domains)
@@ -147,10 +147,10 @@ getVocabularies <- function(cdm) {
   }
   checkmate::reportAssertions(collection = errorMessage)
 
-  vocabs <- sort(cdm$concept %>%
-    dplyr::select("vocabulary_id") %>%
-    dplyr::distinct() %>%
-    dplyr::collect() %>%
+  vocabs <- sort(cdm$concept |>
+    dplyr::select("vocabulary_id") |>
+    dplyr::distinct() |>
+    dplyr::collect() |>
     dplyr::pull())
 
   return(vocabs)
@@ -207,34 +207,34 @@ getConceptClassId <- function(cdm,
   conceptDb <- cdm$concept
 
   if (!is.null(domain)) {
-    conceptDb <- conceptDb %>%
+    conceptDb <- conceptDb |>
       dplyr::filter(tolower(.data$domain_id) == tolower(.env$domain))
   }
 
   standardConcept <- tolower(standardConcept)
-  conceptDb <- conceptDb %>%
+  conceptDb <- conceptDb |>
     dplyr::mutate(
       standard_concept = ifelse(is.na(.data$standard_concept),
         "non-standard", .data$standard_concept
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       standard_concept = ifelse(.data$standard_concept == "C",
         "classification", .data$standard_concept
       )
-    ) %>%
+    ) |>
     dplyr::mutate(
       standard_concept = ifelse(.data$standard_concept == "S",
         "standard", .data$standard_concept
       )
-    ) %>%
+    ) |>
     dplyr::filter(.data$standard_concept %in% .env$standardConcept)
 
   # get overall version
-  conceptClassId <- conceptDb %>%
-    dplyr::select("concept_class_id") %>%
-    dplyr::distinct() %>%
-    dplyr::collect() %>%
+  conceptClassId <- conceptDb |>
+    dplyr::select("concept_class_id") |>
+    dplyr::distinct() |>
+    dplyr::collect() |>
     dplyr::pull()
 
   conceptClassId <- sort(conceptClassId)
@@ -268,20 +268,20 @@ getDoseForm <- function(cdm) {
   }
   checkmate::reportAssertions(collection = errorMessage)
 
-  rxDoseForm <- cdm$concept_relationship %>%
-    dplyr::filter(.data$relationship_id == "RxNorm has dose form") %>%
-    dplyr::select("concept_id_2") %>%
-    dplyr::rename("concept_id" = "concept_id_2") %>%
-    dplyr::distinct() %>%
+  rxDoseForm <- cdm$concept_relationship |>
+    dplyr::filter(.data$relationship_id == "RxNorm has dose form") |>
+    dplyr::select("concept_id_2") |>
+    dplyr::rename("concept_id" = "concept_id_2") |>
+    dplyr::distinct() |>
     dplyr::left_join(
-      cdm$concept %>%
+      cdm$concept |>
         dplyr::select(
           "concept_id", "concept_name",
           "standard_concept"
         ),
       by = "concept_id"
-    ) %>%
-    dplyr::collect() %>%
+    ) |>
+    dplyr::collect() |>
     dplyr::pull("concept_name")
 
   rxDoseForm <- sort(rxDoseForm)
@@ -354,19 +354,19 @@ if(isFALSE(withAncestor)){
 }
 
 getDescendantsOnly <- function(cdm, conceptId, ingredientRange, doseForm) {
-  descendants <- cdm$concept_ancestor %>%
-    dplyr::filter(.data$ancestor_concept_id %in% .env$conceptId) %>%
-    dplyr::select("descendant_concept_id") %>%
-    dplyr::distinct() %>%
-    dplyr::rename("concept_id" = "descendant_concept_id") %>%
+  descendants <- cdm$concept_ancestor |>
+    dplyr::filter(.data$ancestor_concept_id %in% .env$conceptId) |>
+    dplyr::select("descendant_concept_id") |>
+    dplyr::distinct() |>
+    dplyr::rename("concept_id" = "descendant_concept_id") |>
     dplyr::left_join(cdm$concept,
                      by = "concept_id")
 
   if(ingredientRange[1] != 0 &&
      ingredientRange[2] != 9999999){
-  descendants <- addIngredientCount(cdm = cdm, concepts = descendants) %>%
+  descendants <- addIngredientCount(cdm = cdm, concepts = descendants) |>
     dplyr::filter(.data$ingredient_count >= !!.env$ingredientRange[1],
-                  .data$ingredient_count <= !!.env$ingredientRange[2]) %>%
+                  .data$ingredient_count <= !!.env$ingredientRange[2]) |>
     dplyr::select(!c("ingredient_count"))
   }
 
@@ -374,7 +374,7 @@ getDescendantsOnly <- function(cdm, conceptId, ingredientRange, doseForm) {
     descendantDoseForms <- getPresentDoseForms(cdm, concepts = descendants)
   }
 
-  descendants <- descendants  %>%
+  descendants <- descendants  |>
     dplyr::collect()
 
   if(!is.null(doseForm)){
@@ -394,33 +394,33 @@ getDescendantsAndAncestor <- function(cdm, conceptId, ingredientRange, doseForm)
                             table = dplyr::tibble(ancestor_concept_id = as.integer(conceptId)),
                             overwrite = TRUE)
 
-  descendants <- cdm$concept_ancestor %>%
+  descendants <- cdm$concept_ancestor |>
     dplyr::inner_join(cdm[[conceptIdDbTable]],
-                      by = "ancestor_concept_id") %>%
-    dplyr::rename("concept_id" = "descendant_concept_id") %>%
+                      by = "ancestor_concept_id") |>
+    dplyr::rename("concept_id" = "descendant_concept_id") |>
     dplyr::left_join(cdm$concept,
-                     by = "concept_id") %>%
+                     by = "concept_id") |>
     dplyr::compute()
 
-  descendants <- addIngredientCount(cdm = cdm, concepts = descendants) %>%
+  descendants <- addIngredientCount(cdm = cdm, concepts = descendants) |>
     dplyr::filter(.data$ingredient_count >= !!ingredientRange[1],
-                  .data$ingredient_count <= !!ingredientRange[2]) %>%
+                  .data$ingredient_count <= !!ingredientRange[2]) |>
     dplyr::select(!c("ingredient_count"))
 
   if(!is.null(doseForm) &&
-     nrow(descendants %>%
-     utils::head(5) %>%
-     dplyr::tally() %>%
+     nrow(descendants |>
+     utils::head(5) |>
+     dplyr::tally() |>
      dplyr::collect()) > 0){
     descendantDoseForms <- getPresentDoseForms(cdm, concepts = descendants)
   }
 
-  descendants <- descendants %>%
-    dplyr::collect() %>%
+  descendants <- descendants |>
+    dplyr::collect() |>
     dplyr::mutate(name = paste0("concept_", .data$ancestor_concept_id))
 
     if(nrow(descendants)>0){
-descendants <- descendants %>%
+descendants <- descendants |>
         tidyr::pivot_wider(names_from = "name",
                            values_from = "ancestor_concept_id")
 
@@ -431,7 +431,7 @@ descendants <- descendants %>%
                                                       collapse = "|"),
                                       negate = TRUE)
 
-descendants <- descendants %>%
+descendants <- descendants |>
      tidyr::unite(col="ancestor_concept_id",
                   dplyr::all_of(working_cols), sep=";")
 # quicker to replace NAs afterwards rather than inside unite
@@ -444,9 +444,9 @@ descendants$ancestor_concept_id <- stringr::str_replace_all(
     }
 
   if(!is.null(doseForm) &&
-     nrow(descendants %>%
-          utils::head(5) %>%
-          dplyr::tally() %>%
+     nrow(descendants |>
+          utils::head(5) |>
+          dplyr::tally() |>
           dplyr::collect()) > 0){
     descendants <-  filterOnDoseForm(concepts = descendants,
                                      conceptDoseForms = descendantDoseForms,
@@ -462,30 +462,30 @@ descendants$ancestor_concept_id <- stringr::str_replace_all(
 
 getPresentDoseForms <- function(cdm, concepts){
 
-  presentDoseForms <- concepts %>%
+  presentDoseForms <- concepts |>
     dplyr::left_join(
-      cdm$concept_relationship %>%
-        dplyr::filter(.data$relationship_id == "RxNorm has dose form") %>%
-        dplyr::select("concept_id_1", "concept_id_2") %>%
-        dplyr::rename("concept_id" = "concept_id_2") %>%
-        dplyr::distinct() %>%
-        dplyr::left_join(cdm$concept, by = "concept_id") %>%
-        dplyr::select("concept_id_1", "concept_name") %>%
+      cdm$concept_relationship |>
+        dplyr::filter(.data$relationship_id == "RxNorm has dose form") |>
+        dplyr::select("concept_id_1", "concept_id_2") |>
+        dplyr::rename("concept_id" = "concept_id_2") |>
+        dplyr::distinct() |>
+        dplyr::left_join(cdm$concept, by = "concept_id") |>
+        dplyr::select("concept_id_1", "concept_name") |>
         dplyr::rename("concept_id"="concept_id_1",
                       "dose_form"="concept_name")  ,
       by ="concept_id"
-    ) %>%
-    dplyr::select("concept_id", "dose_form") %>%
+    ) |>
+    dplyr::select("concept_id", "dose_form") |>
     dplyr::collect()
 
-  presentDoseForms <- presentDoseForms %>%
-    dplyr::group_by(.data$concept_id) %>%
-    dplyr::mutate(seq = dplyr::row_number()) %>%
+  presentDoseForms <- presentDoseForms |>
+    dplyr::group_by(.data$concept_id) |>
+    dplyr::mutate(seq = dplyr::row_number()) |>
     tidyr::pivot_wider(
       names_from = "seq",
       values_from = "dose_form"
     )
-  presentDoseForms <- presentDoseForms %>%
+  presentDoseForms <- presentDoseForms |>
     tidyr::unite(
       col = "dose_form", 2:ncol(presentDoseForms), sep = "; ",
       na.rm = TRUE
@@ -495,15 +495,15 @@ getPresentDoseForms <- function(cdm, concepts){
 }
 
 filterOnDoseForm <- function(concepts, conceptDoseForms, doseForm){
-  concepts <- concepts %>%
+  concepts <- concepts |>
     dplyr::inner_join(
-      conceptDoseForms %>%
+      conceptDoseForms |>
         dplyr::filter(stringr::str_detect(
           string = tolower(.data$dose_form),
           pattern = paste(tolower(.env$doseForm),
                           collapse = "|"
           )
-        )) %>%
+        )) |>
         dplyr::select("concept_id"),
       by = "concept_id")
 
@@ -512,28 +512,28 @@ filterOnDoseForm <- function(concepts, conceptDoseForms, doseForm){
 }
 
 addIngredientCount <- function(cdm, concepts) {
- ingredient_ancestor <- cdm$concept_ancestor %>%
-    dplyr::inner_join(cdm$concept %>%
+ ingredient_ancestor <- cdm$concept_ancestor |>
+    dplyr::inner_join(cdm$concept |>
                         dplyr::filter(.data$concept_class_id == "Ingredient",
-                                      .data$standard_concept == "S") %>%
+                                      .data$standard_concept == "S") |>
                         dplyr::select("concept_id"),
                by = c("ancestor_concept_id" = "concept_id"))
 
- ingredient_count <- concepts %>%
-   dplyr::select("concept_id") %>%
-   dplyr::distinct() %>%
+ ingredient_count <- concepts |>
+   dplyr::select("concept_id") |>
+   dplyr::distinct() |>
    dplyr::left_join(ingredient_ancestor,
-              by = c("concept_id" = "descendant_concept_id")) %>%
-    dplyr::select("concept_id") %>%
-    dplyr::group_by(.data$concept_id) %>%
-    dplyr::tally(name = "ingredient_count") %>%
+              by = c("concept_id" = "descendant_concept_id")) |>
+    dplyr::select("concept_id") |>
+    dplyr::group_by(.data$concept_id) |>
+    dplyr::tally(name = "ingredient_count") |>
     dplyr::mutate(ingredient_count = as.integer(ingredient_count))
 
- concepts <- concepts %>%
+ concepts <- concepts |>
    dplyr::left_join(ingredient_count,
              by = "concept_id")
  if(!is.null(attr(cdm, "dbcon"))){
-   concepts <- concepts %>%
+   concepts <- concepts |>
    dplyr::compute()}
 
  concepts
@@ -598,7 +598,7 @@ getRelationshipId <- function(cdm,
   domains1 <- tolower(domains1)
   domains2 <- tolower(domains2)
 
-  cdm[["concept"]] <- cdm[["concept"]] %>%
+  cdm[["concept"]] <- cdm[["concept"]] |>
     dplyr::mutate(
       domain_id = tolower(.data$domain_id),
       standard_concept = dplyr::case_when(

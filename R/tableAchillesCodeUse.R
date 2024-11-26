@@ -10,7 +10,7 @@
 #' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
 #' "estimate_name", "standard_concept", "vocabulary_id".
 #' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumns Variables to use as group labels. Allowed columns are:
+#' @param groupColumn Variables to use as group labels. Allowed columns are:
 #' "cdm_name", "codelist_name", "domain_id", "standard_concept_name",
 #' "standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
 #' These cannot be used in header.
@@ -39,7 +39,7 @@
 tableAchillesCodeUse <- function(result,
                                  type = "gt",
                                  header = c("cdm_name", "estimate_name"),
-                                 groupColumns = character(),
+                                 groupColumn = character(),
                                  hide = character(),
                                  .options = list()) {
 
@@ -62,7 +62,7 @@ tableAchillesCodeUse <- function(result,
     resultType = "achilles_code_use",
     type = type,
     header = header,
-    groupColumns = groupColumns,
+    groupColumn = groupColumn,
     hide = hide,
     .options = .options
   )
@@ -82,7 +82,7 @@ tableAchillesCodeUse <- function(result,
 #' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
 #' "estimate_name", "standard_concept", "vocabulary_id".
 #' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumns Variables to use as group labels. Allowed columns are:
+#' @param groupColumn Variables to use as group labels. Allowed columns are:
 #' "cdm_name", "codelist_name", "domain_id", "standard_concept_name",
 #' "standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
 #' These cannot be used in header.
@@ -118,7 +118,7 @@ tableAchillesCodeUse <- function(result,
 tableOrphanCodes <- function(result,
                              type = "gt",
                              header = c("cdm_name", "estimate_name"),
-                             groupColumns = character(),
+                             groupColumn = character(),
                              hide = character(),
                              .options = list()) {
 
@@ -140,7 +140,7 @@ tableOrphanCodes <- function(result,
     resultType = "orphan_code_use",
     type = type,
     header = header,
-    groupColumns = groupColumns,
+    groupColumn = groupColumn,
     hide = hide,
     .options = .options
   )
@@ -152,13 +152,13 @@ internalTableAchillesResult <- function(result,
                                         type,
                                         resultType,
                                         header,
-                                        groupColumns,
+                                        groupColumn,
                                         hide,
                                         .options) {
   omopgenerics::assertCharacter(header, null = TRUE)
   omopgenerics::assertCharacter(hide, null = TRUE)
-  if (!is.list(groupColumns) & !is.null(groupColumns)) groupColumns <- list(groupColumns)
-  omopgenerics::assertCharacter(groupColumns[[1]], null = TRUE)
+  if (!is.list(groupColumn) & !is.null(groupColumn)) groupColumn <- list(groupColumn)
+  omopgenerics::assertCharacter(groupColumn[[1]], null = TRUE)
 
   # filter result + nice estimate name
   x <- result |>
@@ -166,7 +166,7 @@ internalTableAchillesResult <- function(result,
     dplyr::mutate(estimate_name = stringr::str_to_sentence(gsub("_", " ", .data$estimate_name)))
 
   header <- reformulateTableAchilles(header)
-  groupColumns[[1]] <- reformulateTableAchilles(groupColumns[[1]])
+  groupColumn[[1]] <- reformulateTableAchilles(groupColumn[[1]])
   hide <- reformulateTableAchilles(hide)
 
   # visOmopTable
@@ -174,7 +174,7 @@ internalTableAchillesResult <- function(result,
     result = x,
     estimateName = character(),
     header = header,
-    groupColumn = groupColumns,
+    groupColumn = groupColumn,
     type = type,
     rename = c(
       "Domain ID" = "domain_id", "Vocabulary ID" = "vocabulary_id",

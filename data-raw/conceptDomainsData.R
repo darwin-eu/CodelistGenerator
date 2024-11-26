@@ -2,7 +2,7 @@
 conceptDomainsData <- dplyr::tibble(domain_id = c("drug","condition",
                                                   "procedure",  "observation",
                                                   "measurement", "visit",
-                                                  "device")) %>%
+                                                  "device")) |>
   dplyr::mutate(table =
                   dplyr::case_when(
                     stringr::str_detect(domain_id,"condition") ~ "condition_occurrence",
@@ -13,7 +13,7 @@ conceptDomainsData <- dplyr::tibble(domain_id = c("drug","condition",
                     stringr::str_detect(domain_id,"procedure") ~ "procedure_occurrence",
                     stringr::str_detect(domain_id,"device") ~ "device_exposure"
                   )
-  ) %>%
+  ) |>
   dplyr::mutate(standard_concept =
                   dplyr::case_when(
                     stringr::str_detect(domain_id,"condition") ~ "condition_concept_id",
@@ -24,7 +24,7 @@ conceptDomainsData <- dplyr::tibble(domain_id = c("drug","condition",
                     stringr::str_detect(domain_id,"procedure") ~ "procedure_concept_id",
                     stringr::str_detect(domain_id,"device") ~ "device_concept_id"
                   )
-  ) %>%
+  ) |>
   dplyr::mutate(source_concept =
                   dplyr::case_when(
                     stringr::str_detect(domain_id,"condition") ~ "condition_source_concept_id",
@@ -35,7 +35,18 @@ conceptDomainsData <- dplyr::tibble(domain_id = c("drug","condition",
                     stringr::str_detect(domain_id,"procedure") ~ "procedure_source_concept_id",
                     stringr::str_detect(domain_id,"device") ~ "device_source_concept_id"
                   )
-  ) %>%
+  ) |>
+  dplyr::mutate(source_concept_value =
+                  dplyr::case_when(
+                    stringr::str_detect(domain_id,"condition") ~ "condition_source_value",
+                    stringr::str_detect(domain_id,"drug") ~ "drug_source_value",
+                    stringr::str_detect(domain_id,"observation") ~ "observation_source_value",
+                    stringr::str_detect(domain_id,"measurement") ~ "measurement_source_value",
+                    stringr::str_detect(domain_id,"visit") ~ "visit_source_value",
+                    stringr::str_detect(domain_id,"procedure") ~ "procedure_source_value",
+                    stringr::str_detect(domain_id,"device") ~ "device_source_value"
+                  )
+  ) |>
   dplyr::mutate(date_name =
                   dplyr::case_when(
                     stringr::str_detect(domain_id,"condition") ~ "condition_start_date",
