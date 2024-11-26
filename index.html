@@ -8,8 +8,8 @@
 <title>Identify Relevant Clinical Codes and Evaluate Their Use • CodelistGenerator</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Identify Relevant Clinical Codes and Evaluate Their Use">
 <meta name="description" content="Generate a candidate code list for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate code list will be returned.">
 <meta property="og:description" content="Generate a candidate code list for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate code list will be returned.">
@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,30 +93,21 @@
 <code class="sourceCode R"><span><span class="fu"><a href="reference/getConceptClassId.html">getConceptClassId</a></span><span class="op">(</span><span class="va">cdm</span>,</span>
 <span>                  standardConcept <span class="op">=</span> <span class="st">"Standard"</span>,</span>
 <span>                  domain <span class="op">=</span> <span class="st">"Drug"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Ingredient"          "Quant Clinical Drug" "Branded Drug"       </span></span>
-<span><span class="co">#&gt; [4] "Quant Branded Drug"  "Clinical Drug Comp"  "Branded Drug Comp"  </span></span>
-<span><span class="co">#&gt; [7] "CVX"                 "Clinical Drug"       "Branded Pack"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "Branded Drug"        "Branded Drug Comp"   "Branded Pack"       </span></span>
+<span><span class="co">#&gt; [4] "Clinical Drug"       "Clinical Drug Comp"  "CVX"                </span></span>
+<span><span class="co">#&gt; [7] "Ingredient"          "Quant Branded Drug"  "Quant Clinical Drug"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="vocabulary-based-codelists-using-codelistgenerator">Vocabulary based codelists using CodelistGenerator<a class="anchor" aria-label="anchor" href="#vocabulary-based-codelists-using-codelistgenerator"></a>
 </h2>
 <p>CodelistGenerator provides functions to extract code lists based on vocabulary hierarchies. One example is `getDrugIngredientCodes, which we can use, for example, to get all the concept IDs used to represent aspirin.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"aspirin"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"aspirin"</span>, nameStyle <span class="op">=</span> <span class="st">"{concept_name}"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - aspirin (2 codes)</span></span></code></pre></div>
-<p>If we also want the details of these concept IDs we can get these like so.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"aspirin"</span>, withConceptDetails <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $aspirin</span></span>
-<span><span class="co">#&gt; # A tibble: 2 × 4</span></span>
-<span><span class="co">#&gt;   concept_id concept_name              domain_id vocabulary_id</span></span>
-<span><span class="co">#&gt;        &lt;int&gt; &lt;chr&gt;                     &lt;chr&gt;     &lt;chr&gt;        </span></span>
-<span><span class="co">#&gt; 1   19059056 Aspirin 81 MG Oral Tablet Drug      RxNorm       </span></span>
-<span><span class="co">#&gt; 2    1112807 Aspirin                   Drug      RxNorm</span></span></code></pre></div>
 <p>And if we want codelists for all drug ingredients we can simply omit the name argument and all ingredients will be returned.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ing</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ing</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getDrugIngredientCodes.html">getDrugIngredientCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, nameStyle <span class="op">=</span> <span class="st">"{concept_name}"</span><span class="op">)</span></span>
 <span><span class="va">ing</span><span class="op">$</span><span class="va">aspirin</span></span>
 <span><span class="co">#&gt; [1] 19059056  1112807</span></span>
 <span><span class="va">ing</span><span class="op">$</span><span class="va">diclofenac</span></span>
@@ -129,13 +120,13 @@
 </h2>
 <p>CodelistGenerator can also support systematic searches of the vocabulary tables to support codelist development. A little like the process for a systematic review, the idea is that for a specified search strategy, CodelistGenerator will identify a set of concepts that may be relevant, with these then being screened to remove any irrelevant codes by clinical experts.</p>
 <p>We can do a simple search for asthma</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">asthma_codes1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"asthma"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span></span>
 <span><span class="op">)</span> </span>
-<span><span class="va">asthma_codes1</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="va">asthma_codes1</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 2</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
@@ -146,14 +137,14 @@
 <span><span class="co">#&gt; $ vocabulary_id    &lt;chr&gt; "SNOMED", "SNOMED"</span></span>
 <span><span class="co">#&gt; $ standard_concept &lt;chr&gt; "S", "S"</span></span></code></pre></div>
 <p>But perhaps we want to exclude certain concepts as part of the search strategy, in this case we can add these like so</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">asthma_codes2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"asthma"</span>,</span>
 <span>  exclude <span class="op">=</span> <span class="st">"childhood"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span></span>
 <span><span class="op">)</span> </span>
-<span><span class="va">asthma_codes2</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="va">asthma_codes2</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 1</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
@@ -164,7 +155,7 @@
 <span><span class="co">#&gt; $ vocabulary_id    &lt;chr&gt; "SNOMED"</span></span>
 <span><span class="co">#&gt; $ standard_concept &lt;chr&gt; "S"</span></span></code></pre></div>
 <p>We can compare these two code lists like so</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/compareCodelists.html">compareCodelists</a></span><span class="op">(</span><span class="va">asthma_codes1</span>, <span class="va">asthma_codes2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 2 × 3</span></span>
 <span><span class="co">#&gt;   concept_id concept_name     codelist       </span></span>
@@ -172,13 +163,13 @@
 <span><span class="co">#&gt; 1    4051466 Childhood asthma Only codelist 1</span></span>
 <span><span class="co">#&gt; 2     317009 Asthma           Both</span></span></code></pre></div>
 <p>We can then also see non-standard codes these are mapped from, for example here we can see the non-standard ICD10 code that maps to a standard snowmed code for gastrointestinal hemorrhage returned by our search</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Gastrointestinal_hemorrhage</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"Gastrointestinal hemorrhage"</span>,</span>
 <span>  domains <span class="op">=</span> <span class="st">"Condition"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">Gastrointestinal_hemorrhage</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> </span>
+<span><span class="va">Gastrointestinal_hemorrhage</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 1</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
@@ -192,9 +183,9 @@
 <div class="section level2">
 <h2 id="summarising-code-use">Summarising code use<a class="anchor" aria-label="anchor" href="#summarising-code-use"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/summariseCodeUse.html">summariseCodeUse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"asthma"</span> <span class="op">=</span> <span class="va">asthma_codes1</span><span class="op">$</span><span class="va">concept_id</span><span class="op">)</span>,  </span>
-<span>                 cdm <span class="op">=</span> <span class="va">cdm</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> </span>
+<span>                 cdm <span class="op">=</span> <span class="va">cdm</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 6</span></span>
 <span><span class="co">#&gt; Columns: 13</span></span>
@@ -205,10 +196,10 @@
 <span><span class="co">#&gt; $ strata_name      &lt;chr&gt; "overall", "overall", "overall", "overall", "overall"…</span></span>
 <span><span class="co">#&gt; $ strata_level     &lt;chr&gt; "overall", "overall", "overall", "overall", "overall"…</span></span>
 <span><span class="co">#&gt; $ variable_name    &lt;chr&gt; "overall", "Childhood asthma", "Asthma", "overall", "…</span></span>
-<span><span class="co">#&gt; $ variable_level   &lt;chr&gt; NA, "4051466", "317009", NA, "4051466", "317009"</span></span>
+<span><span class="co">#&gt; $ variable_level   &lt;chr&gt; NA, "4051466", "317009", NA, "317009", "4051466"</span></span>
 <span><span class="co">#&gt; $ estimate_name    &lt;chr&gt; "record_count", "record_count", "record_count", "pers…</span></span>
 <span><span class="co">#&gt; $ estimate_type    &lt;chr&gt; "integer", "integer", "integer", "integer", "integer"…</span></span>
-<span><span class="co">#&gt; $ estimate_value   &lt;chr&gt; "101", "96", "5", "101", "96", "5"</span></span>
+<span><span class="co">#&gt; $ estimate_value   &lt;chr&gt; "101", "96", "5", "101", "5", "96"</span></span>
 <span><span class="co">#&gt; $ additional_name  &lt;chr&gt; "overall", "source_concept_name &amp;&amp;&amp; source_concept_id…</span></span>
 <span><span class="co">#&gt; $ additional_level &lt;chr&gt; "overall", "Childhood asthma &amp;&amp;&amp; 4051466 &amp;&amp;&amp; conditio…</span></span></code></pre></div>
 </div>
@@ -258,8 +249,7 @@
 <li><a href="https://CRAN.R-project.org/package=CodelistGenerator" class="external-link"><img src="https://www.r-pkg.org/badges/version/CodelistGenerator" alt="CRAN status"></a></li>
 <li><a href="https://app.codecov.io/github/darwin-eu/CodelistGenerator?branch=main" class="external-link"><img src="https://codecov.io/github/darwin-eu/CodelistGenerator/coverage.svg?branch=main" alt="codecov.io"></a></li>
 <li><a href="https://github.com/darwin-eu/CodelistGenerator/actions" class="external-link"><img src="https://github.com/darwin-eu/CodelistGenerator/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html" class="external-link"><img src="https://img.shields.io/badge/Lifecycle-Stable-97ca00" alt="Lifecycle:Stable"></a></li>
-<li><a href="https://github.com/darwin-eu/CodelistGenerator/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/darwin-eu/CodelistGenerator/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle:stable"></a></li>
 </ul>
 </div>
 
