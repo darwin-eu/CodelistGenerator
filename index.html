@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,8 +78,11 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></span></code></pre></div>
 <p>For this example we’ll use the Eunomia dataset (which only contains a subset of the OMOP CDM vocabularies)</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomia_dir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdm_from_con.html" class="external-link">cdm_from_con</a></span><span class="op">(</span><span class="va">db</span>, cdm_schema <span class="op">=</span> <span class="st">"main"</span>, write_schema <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>prefix <span class="op">=</span> <span class="st">"cg_"</span>, schema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span><span class="va">db</span>, </span>
+<span>                  cdmSchema <span class="op">=</span> <span class="st">"main"</span>, </span>
+<span>                  writeSchema <span class="op">=</span> <span class="st">"main"</span>, </span>
+<span>                  writePrefix <span class="op">=</span> <span class="st">"cg_"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploring-the-omop-cdm-vocabulary-tables">Exploring the OMOP CDM Vocabulary tables<a class="anchor" aria-label="anchor" href="#exploring-the-omop-cdm-vocabulary-tables"></a>
@@ -190,18 +193,18 @@
 <span><span class="co">#&gt; Rows: 6</span></span>
 <span><span class="co">#&gt; Columns: 13</span></span>
 <span><span class="co">#&gt; $ result_id        &lt;int&gt; 1, 1, 1, 1, 1, 1</span></span>
-<span><span class="co">#&gt; $ cdm_name         &lt;chr&gt; "Synthea synthetic health database", "Synthea synthet…</span></span>
+<span><span class="co">#&gt; $ cdm_name         &lt;chr&gt; "An OMOP CDM database", "An OMOP CDM database", "An O…</span></span>
 <span><span class="co">#&gt; $ group_name       &lt;chr&gt; "codelist_name", "codelist_name", "codelist_name", "c…</span></span>
 <span><span class="co">#&gt; $ group_level      &lt;chr&gt; "asthma", "asthma", "asthma", "asthma", "asthma", "as…</span></span>
 <span><span class="co">#&gt; $ strata_name      &lt;chr&gt; "overall", "overall", "overall", "overall", "overall"…</span></span>
 <span><span class="co">#&gt; $ strata_level     &lt;chr&gt; "overall", "overall", "overall", "overall", "overall"…</span></span>
-<span><span class="co">#&gt; $ variable_name    &lt;chr&gt; "overall", "Childhood asthma", "Asthma", "overall", "…</span></span>
-<span><span class="co">#&gt; $ variable_level   &lt;chr&gt; NA, "4051466", "317009", NA, "317009", "4051466"</span></span>
+<span><span class="co">#&gt; $ variable_name    &lt;chr&gt; "overall", "Asthma", "Childhood asthma", "overall", "…</span></span>
+<span><span class="co">#&gt; $ variable_level   &lt;chr&gt; NA, "317009", "4051466", NA, "4051466", "317009"</span></span>
 <span><span class="co">#&gt; $ estimate_name    &lt;chr&gt; "record_count", "record_count", "record_count", "pers…</span></span>
 <span><span class="co">#&gt; $ estimate_type    &lt;chr&gt; "integer", "integer", "integer", "integer", "integer"…</span></span>
-<span><span class="co">#&gt; $ estimate_value   &lt;chr&gt; "101", "96", "5", "101", "5", "96"</span></span>
-<span><span class="co">#&gt; $ additional_name  &lt;chr&gt; "overall", "source_concept_name &amp;&amp;&amp; source_concept_id…</span></span>
-<span><span class="co">#&gt; $ additional_level &lt;chr&gt; "overall", "Childhood asthma &amp;&amp;&amp; 4051466 &amp;&amp;&amp; conditio…</span></span></code></pre></div>
+<span><span class="co">#&gt; $ estimate_value   &lt;chr&gt; "101", "5", "96", "101", "96", "5"</span></span>
+<span><span class="co">#&gt; $ additional_name  &lt;chr&gt; "source_concept_name &amp;&amp;&amp; source_concept_id &amp;&amp;&amp; source…</span></span>
+<span><span class="co">#&gt; $ additional_level &lt;chr&gt; "NA &amp;&amp;&amp; NA &amp;&amp;&amp; NA &amp;&amp;&amp; NA", "Asthma &amp;&amp;&amp; 317009 &amp;&amp;&amp; 195…</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
