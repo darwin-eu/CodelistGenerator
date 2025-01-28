@@ -31,10 +31,10 @@
 #' @examples
 #' \dontrun{
 #' con <- DBI::dbConnect(duckdb::duckdb(),
-#'                       dbdir = CDMConnector::eunomia_dir())
-#' cdm <- CDMConnector::cdm_from_con(con,
-#'                                   cdm_schem = "main",
-#'                                   write_schema = "main")
+#'                       dbdir = CDMConnector::eunomiaDir())
+#' cdm <- CDMConnector::cdmFromCon(con,
+#'                                 cdmSchema = "main",
+#'                                 writeSchema = "main")
 #'acetiminophen <- c(1125315,  1127433, 40229134,
 #'40231925, 40162522, 19133768,  1127078)
 #'poliovirus_vaccine <- c(40213160)
@@ -52,6 +52,8 @@ tableCodeUse <- function(result,
                          groupColumn = character(),
                          hide = character(),
                          .options = list()) {
+
+  rlang::check_installed("visOmopResults", version = "1.0.0")
 
   # checks
   if(nrow(result) == 0){
@@ -116,10 +118,10 @@ tableCodeUse <- function(result,
 #' @examples
 #' \dontrun{
 #' con <- DBI::dbConnect(duckdb::duckdb(),
-#'                       dbdir = CDMConnector::eunomia_dir())
-#' cdm <- CDMConnector::cdm_from_con(con,
-#'                                   cdm_schem = "main",
-#'                                   write_schema = "main")
+#'                       dbdir = CDMConnector::eunomiaDir())
+#' cdm <- CDMConnector::cdmFromCon(con,
+#'                                   cdmSchema = "main",
+#'                                   writeSchema = "main")
 #' cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
 #' conceptSet = list(a = 260139,
 #'                   b = 1127433),
@@ -144,6 +146,8 @@ tableCohortCodeUse <- function(result,
                                timing = FALSE,
                                hide = character(),
                                .options = list()) {
+
+  rlang::check_installed("visOmopResults", version = "1.0.0")
 
   # checks
   if(nrow(result) == 0){
@@ -191,9 +195,9 @@ internalTableCodeUse <- function(result,
   .options <- optionsCodeUse(.options)
 
   if (timing) {
-    settingsColumns <- "timing"
+    settingsColumn <- "timing"
   } else {
-    settingsColumns <- character()
+    settingsColumn <- character()
   }
 
   x <- result |>
@@ -211,7 +215,7 @@ internalTableCodeUse <- function(result,
     header = header,
     groupColumn = groupColumn,
     type = type,
-    settingsColumns = settingsColumns,
+    settingsColumn = settingsColumn,
     rename = c(
       "Domain ID" = "domain_id", "Database name" = "cdm_name",
       "Standard concept ID" = "standard_concept_id",

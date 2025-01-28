@@ -20,7 +20,7 @@ summariseCohortCodeUse(
 \arguments{
 \item{x}{Vector of concept IDs}
 
-\item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
+\item{cdm}{cdm_reference via CDMConnector::cdmFromCon()}
 
 \item{cohortTable}{A cohort table from the cdm reference.}
 
@@ -50,10 +50,10 @@ Summarise code use among a cohort in the cdm reference
 \examples{
 \dontrun{
 con <- DBI::dbConnect(duckdb::duckdb(),
-                      dbdir = CDMConnector::eunomia_dir())
-cdm <- CDMConnector::cdm_from_con(con,
-                                  cdm_schem = "main",
-                                  write_schema = "main")
+                      dbdir = CDMConnector::eunomiaDir())
+cdm <- CDMConnector::cdmFromCon(con,
+                                  cdmSchema = "main",
+                                  writeSchema = "main")
 cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
 conceptSet = list(a = 260139,
                   b = 1127433),

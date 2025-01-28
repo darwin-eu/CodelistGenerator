@@ -44,8 +44,11 @@ library(CodelistGenerator)
 
 For this example we'll use the Eunomia dataset (which only contains a subset of the OMOP CDM vocabularies)
 ```{r}
-db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomia_dir())
-cdm <- cdm_from_con(db, cdm_schema = "main", write_schema = c(prefix = "cg_", schema = "main"))
+db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomiaDir())
+cdm <- cdmFromCon(db, 
+                  cdmSchema = "main", 
+                  writeSchema = "main", 
+                  writePrefix = "cg_")
 ```
 
 ## Exploring the OMOP CDM Vocabulary tables

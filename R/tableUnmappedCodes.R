@@ -34,6 +34,9 @@ tableUnmappedCodes <- function(result,
                                groupColumn = character(),
                                hide = character(),
                                .options = list()) {
+
+  rlang::check_installed("visOmopResults", version = "1.0.0")
+
   # checks
   if(nrow(result) == 0){
     cli::cli_warn("`result` object is empty")

@@ -7,11 +7,11 @@ test_that("table code use expcted columns", {
   if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
     dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
   }
-  if (!CDMConnector::eunomia_is_available()) {
+  if (!CDMConnector::eunomiaIsAvailable()) {
     invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
   }
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
-  cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
   acetiminophen <- c(1125315,  1127433, 40229134,
                      40231925, 40162522, 19133768,  1127078)
@@ -27,26 +27,24 @@ test_that("table code use expcted columns", {
                               ageGroup = list(c(0,17),
                                               c(18,65),
                                               c(66, 100)))
-
-  tableCodeUse(result = results,
+  expect_no_error(tableCodeUse(result = results))
+  expect_no_error(tableCodeUse(result = results,
                type = "gt",
                header = c("cdm_name", "estimate_name"),
                groupColumn = NULL,
                hide = character(),
-               .options = list())
-
-  tableCodeUse(result = results,
+               .options = list()))
+  expect_no_error(tableCodeUse(result = results,
                type = "tibble",
                header = c("cdm_name", "estimate_name"),
                groupColumn = NULL,
                hide = "source_concept_id",
-               .options = list())
-
-  tableCodeUse(result = results,
+               .options = list()))
+  expect_no_error(tableCodeUse(result = results,
                type = "flextable",
                header = c("cdm_name", "estimate_name"),
                groupColumn = "domain_id",
-               .options = list())
+               .options = list()))
 
   # Cohort code use
   pharyngitis <- c(4112343)
@@ -89,7 +87,7 @@ test_that("table code use expcted columns", {
     .options = list()
   )
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })
 
 test_that("table code use output formats", {
@@ -101,11 +99,11 @@ test_that("table code use output formats", {
   if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
     dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
   }
-  if (!CDMConnector::eunomia_is_available()) {
+  if (!CDMConnector::eunomiaIsAvailable()) {
     invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
   }
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
-  cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
   acetiminophen <- c(1125315,  1127433, 40229134,
                      40231925, 40162522, 19133768,  1127078)
@@ -128,5 +126,5 @@ test_that("table code use output formats", {
 
 
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })

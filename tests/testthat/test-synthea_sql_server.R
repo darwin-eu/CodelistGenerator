@@ -11,10 +11,10 @@ test_that("test with synthea on sql server", {
                       TrustServerCertificate="yes",
                       Port     = Sys.getenv("CDM5_SQL_SERVER_PORT"))
 
-  cdm <- CDMConnector::cdm_from_con(
+  cdm <- CDMConnector::cdmFromCon(
     con = db,
-    cdm_schema = strsplit(Sys.getenv("CDM5_SQL_SERVER_CDM_SCHEMA"), "\\.")[[1]],
-    write_schema =  strsplit(Sys.getenv("CDM5_SQL_SERVER_SCRATCH_SCHEMA"), "\\.")[[1]])
+    cdmSchema = strsplit(Sys.getenv("CDM5_SQL_SERVER_CDM_SCHEMA"), "\\.")[[1]],
+    writeSchema =  strsplit(Sys.getenv("CDM5_SQL_SERVER_SCRATCH_SCHEMA"), "\\.")[[1]])
 
   vocabVersion <- getVocabVersion(cdm = cdm)
   expect_true(length(vocabVersion) == 1)

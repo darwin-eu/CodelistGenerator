@@ -10,7 +10,7 @@ test_that("achilles code use", {
                         user     = Sys.getenv("CDM5_REDSHIFT_USER"),
                         password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
-  cdm <- CDMConnector::cdm_from_con(con = db,
+  cdm <- CDMConnector::cdmFromCon(con = db,
                                     cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
                                     write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
@@ -39,5 +39,5 @@ test_that("achilles code use", {
     dplyr::collect()
 
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })

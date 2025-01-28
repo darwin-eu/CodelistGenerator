@@ -27,7 +27,7 @@ test_that("tests with mock db", {
  expect_message(subsetToCodesInUse(list("cs" = codes$concept_id),
                        cdm = cdm))
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 
 })
 
@@ -45,10 +45,10 @@ test_that("sql server with achilles", {
                        PWD      = Sys.getenv("CDM5_SQL_SERVER_PASSWORD"),
                        TrustServerCertificate="yes",
                        Port     = Sys.getenv("CDM5_SQL_SERVER_PORT"))
-  cdm <- CDMConnector::cdm_from_con(db,
-                                    cdm_schema = c("CDMV54", "dbo"),
-                                    achilles_schema = c("CDMV54", "dbo"),
-                                    write_schema = c("ohdsi", "dbo"))
+  cdm <- CDMConnector::cdmFromCon(db,
+                                    cdmSchema = c("CDMV54", "dbo"),
+                                    achillesSchema = c("CDMV54", "dbo"),
+                                    writeSchema = c("ohdsi", "dbo"))
 
   asthma_codes <- getCandidateCodes(
     cdm = cdm,
@@ -70,5 +70,5 @@ expect_equal(sort(asthma_codes_present[[1]]),
    dplyr::pull()))
 
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })

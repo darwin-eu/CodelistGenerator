@@ -17,7 +17,7 @@
 #' Summarise code use in patient-level data
 #'
 #' @param x List of concept IDs
-#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
+#' @param cdm cdm_reference via CDMConnector::cdmFromCon()
 #' @param countBy Either "record" for record-level counts or "person" for
 #' person-level counts
 #' @param byConcept TRUE or FALSE. If TRUE code use will be summarised by
@@ -32,10 +32,10 @@
 #' @examples
 #' \dontrun{
 #' con <- DBI::dbConnect(duckdb::duckdb(),
-#'                       dbdir = CDMConnector::eunomia_dir())
-#' cdm <- CDMConnector::cdm_from_con(con,
-#'                                   cdm_schem = "main",
-#'                                   write_schema = "main")
+#'                       dbdir = CDMConnector::eunomiaDir())
+#' cdm <- CDMConnector::cdmFromCon(con,
+#'                                 cdmSchema = "main",
+#'                                 writeSchema = "main")
 #'acetiminophen <- c(1125315,  1127433, 40229134,
 #'40231925, 40162522, 19133768,  1127078)
 #'poliovirus_vaccine <- c(40213160)
@@ -101,7 +101,7 @@ summariseCodeUse <- function(x,
 #' Summarise code use among a cohort in the cdm reference
 #'
 #' @param x Vector of concept IDs
-#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
+#' @param cdm cdm_reference via CDMConnector::cdmFromCon()
 #' @param cohortTable A cohort table from the cdm reference.
 #' @param cohortId A vector of cohort IDs to include
 #' @param timing When to assess the code use relative cohort dates. This can
@@ -121,10 +121,10 @@ summariseCodeUse <- function(x,
 #' @examples
 #' \dontrun{
 #' con <- DBI::dbConnect(duckdb::duckdb(),
-#'                       dbdir = CDMConnector::eunomia_dir())
-#' cdm <- CDMConnector::cdm_from_con(con,
-#'                                   cdm_schem = "main",
-#'                                   write_schema = "main")
+#'                       dbdir = CDMConnector::eunomiaDir())
+#' cdm <- CDMConnector::cdmFromCon(con,
+#'                                   cdmSchema = "main",
+#'                                   writeSchema = "main")
 #' cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
 #' conceptSet = list(a = 260139,
 #'                   b = 1127433),
@@ -203,7 +203,7 @@ summariseCohortCodeUse <- function(x,
         )
       )
   } else {
-    codeUse <- omopgenerics::emptySummarisedResult()
+    cohortCodeUse <- omopgenerics::emptySummarisedResult()
   }
 
   return(cohortCodeUse)
@@ -321,8 +321,8 @@ getCodeUse <- function(x,
         "variable_name" = dplyr::if_else(is.na(.data$standard_concept_name), "overall", .data$standard_concept_name),
         "variable_level" = as.character(.data$standard_concept_id)
       ) |>
-      visOmopResults::uniteGroup(cols = c("cohort_name", "codelist_name")) |>
-      visOmopResults::uniteAdditional(
+      omopgenerics::uniteGroup(cols = c("cohort_name", "codelist_name")) |>
+      omopgenerics::uniteAdditional(
         cols = c("source_concept_name", "source_concept_id",
                  "source_concept_value", "domain_id"),
         ignore = "overall"
@@ -334,7 +334,7 @@ getCodeUse <- function(x,
       )
 
   } else {
-    codeCounts <- dplyr::tibble()
+    codeCounts <- omopgenerics::emptySummarisedResult()
     cli::cli_inform(c(
       "i" = "No records found in the cdm for the concepts provided."
     ))
@@ -715,7 +715,7 @@ getGroupedRecordCount <- function(records,
       dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
       dplyr::collect()
     )  |>
-    visOmopResults::uniteStrata(cols = groupBy) |>
+    omopgenerics::uniteStrata(cols = groupBy) |>
     dplyr::mutate(estimate_name = "record_count")
 
   return(groupedCounts)
@@ -749,7 +749,7 @@ getGroupedPersonCount <- function(records,
       dplyr::tally(name = "estimate_value") |>
       dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
       dplyr::collect()) |>
-    visOmopResults::uniteStrata(cols = groupBy) |>
+    omopgenerics::uniteStrata(cols = groupBy) |>
     dplyr::mutate(estimate_name = "person_count")
 
   return(groupedCounts)

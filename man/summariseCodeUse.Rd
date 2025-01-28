@@ -17,7 +17,7 @@ summariseCodeUse(
 \arguments{
 \item{x}{List of concept IDs}
 
-\item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
+\item{cdm}{cdm_reference via CDMConnector::cdmFromCon()}
 
 \item{countBy}{Either "record" for record-level counts or "person" for
 person-level counts}
@@ -40,10 +40,10 @@ Summarise code use in patient-level data
 \examples{
 \dontrun{
 con <- DBI::dbConnect(duckdb::duckdb(),
-                      dbdir = CDMConnector::eunomia_dir())
-cdm <- CDMConnector::cdm_from_con(con,
-                                  cdm_schem = "main",
-                                  write_schema = "main")
+                      dbdir = CDMConnector::eunomiaDir())
+cdm <- CDMConnector::cdmFromCon(con,
+                                cdmSchema = "main",
+                                writeSchema = "main")
 acetiminophen <- c(1125315,  1127433, 40229134,
 40231925, 40162522, 19133768,  1127078)
 poliovirus_vaccine <- c(40213160)

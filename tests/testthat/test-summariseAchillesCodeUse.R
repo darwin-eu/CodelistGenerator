@@ -47,7 +47,7 @@ test_that("achilles code use", {
                  cdm = cdm,
                  countBy = "not an option"))
 
- CDMConnector::cdm_disconnect(cdm)
+ CDMConnector::cdmDisconnect(cdm)
 })
 
 test_that("achilles code use: multipe codelists", {
@@ -77,5 +77,5 @@ test_that("achilles code use: multipe codelists", {
                result_achilles |>
                 dplyr::pull("group_level"))
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })

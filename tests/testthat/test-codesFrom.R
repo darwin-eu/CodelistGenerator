@@ -139,9 +139,9 @@ test_that("test inputs - redshift", {
                         password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
 
-  cdm <- CDMConnector::cdm_from_con(con = db,
-                                    cdm_schema = "cdmv531",
-                                    write_schema = "public")
+  cdm <- CDMConnector::cdmFromCon(con = db,
+                                    cdmSchema = "cdmv531",
+                                    writeSchema = "public")
 
   # working example
   x <- codesFromConceptSet(

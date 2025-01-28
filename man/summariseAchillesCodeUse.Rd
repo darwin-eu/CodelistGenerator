@@ -9,7 +9,7 @@ summariseAchillesCodeUse(x, cdm, countBy = c("record", "person"))
 \arguments{
 \item{x}{Codelist}
 
-\item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
+\item{cdm}{cdm_reference via CDMConnector::cdmFromCon()}
 
 \item{countBy}{Either "record" for record-level counts or "person" for
 person-level counts}

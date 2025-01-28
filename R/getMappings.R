@@ -18,7 +18,7 @@
 #' Show mappings from non-standard vocabularies to standard
 #'
 #' @param candidateCodelist Dataframe
-#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
+#' @param cdm cdm_reference via CDMConnector::cdmFromCon()
 #' @param nonStandardVocabularies Character vector
 #'
 #' @return tibble

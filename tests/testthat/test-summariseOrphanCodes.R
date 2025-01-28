@@ -56,6 +56,6 @@ test_that("tests with mock db", {
    expect_error(summariseOrphanCodes(x = list("msk" = codes$concept_id),
                                       cdm = cdm))
 
-   CDMConnector::cdm_disconnect(cdm)
+   CDMConnector::cdmDisconnect(cdm)
 
 })

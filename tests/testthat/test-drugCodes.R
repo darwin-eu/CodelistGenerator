@@ -21,7 +21,7 @@ test_that("getATCCodes working", {
   expect_true(inherits(atcCodes3, "codelist_with_details"))
 
   if (backends[[i]] == "database") {
-    CDMConnector::cdm_disconnect(cdm)
+    CDMConnector::cdmDisconnect(cdm)
   }
 
   }
@@ -38,7 +38,7 @@ test_that("getATCCodes expected errors", {
                              name = "Not an ATC name"))
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 
@@ -99,7 +99,7 @@ test_that("getDrugIngredientCodes working", {
 
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
 
   }
@@ -113,7 +113,7 @@ test_that("getDrugIngredientCodes expected errors", {
     expect_error(getDrugIngredientCodes(cdm, name = "Not an Ingredient"))
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 

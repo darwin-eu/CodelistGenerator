@@ -132,7 +132,7 @@ test_that("tests with mock db", {
 
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 })

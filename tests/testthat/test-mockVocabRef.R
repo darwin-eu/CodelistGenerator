@@ -9,5 +9,5 @@ test_that("mock vocab db", {
                     conceptFromDf,
                     ignore_attr = TRUE)
 
-  CDMConnector::cdm_disconnect(cdm = cdmDb)
+  CDMConnector::cdmDisconnect(cdm = cdmDb)
   })

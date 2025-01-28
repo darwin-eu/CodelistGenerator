@@ -49,7 +49,7 @@ test_that("db without icd10 codes loaded", {
   expect_true(!is.null(codes5[[1]]$concept_name))
 
   if (backends[[i]] == "database") {
-    CDMConnector::cdm_disconnect(cdm)
+    CDMConnector::cdmDisconnect(cdm)
   }
 
   }
@@ -64,7 +64,7 @@ test_that("db without icd10 codes loaded", {
   expect_message(codes <- getICD10StandardCodes(cdm = cdm))
   expect_true(length(codes) == 0)
   if (backends[[i]] == "database") {
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
   }
   }
 

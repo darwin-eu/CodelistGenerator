@@ -40,9 +40,9 @@ db <- DBI::dbConnect(RPostgres::Postgres(),
 )
 
 # create cdm reference
-cdm <- CDMConnector::cdm_from_con(
+cdm <- CDMConnector::cdmFromCon(
   con = db,
-  cdm_schema = Sys.getenv("vocabulary_schema")
+  cdmSchema = Sys.getenv("vocabulary_schema")
 )
 ```
 

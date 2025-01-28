@@ -64,7 +64,7 @@ test_that("comparing two codelists", {
     ))
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 })
@@ -121,7 +121,7 @@ test_that("comparing two codelists- same codes found different ways", {
       dplyr::pull() == "Only codelist 2")
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 })

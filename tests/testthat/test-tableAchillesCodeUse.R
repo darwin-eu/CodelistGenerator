@@ -59,7 +59,7 @@ test_that("table achilles code use expcted columns", {
                              cdm = cdm)
   expect_no_error(tableAchillesCodeUse(result))
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })
 
 test_that("test table orphan codes work", {
@@ -98,6 +98,6 @@ test_that("test table orphan codes work", {
                              cdm = cdm)
   tableAchillesCodeUse(result)
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })
 

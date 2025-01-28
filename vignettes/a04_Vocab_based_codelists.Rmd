@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 library(CDMConnector)
 if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
 if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-if (!eunomia_is_available()) downloadEunomiaData()
+if (!eunomiaIsAvailable()) downloadEunomiaData()
 ```
 
 For this vignette we are going to produce codelists based on the OMOP CDM vocabulary tables. First we will create medication codelists based on ATC classifications and drug ingredients. Second, we will create condition codes based on ICD10 chapters and subchapters.
@@ -31,11 +31,11 @@ library(dplyr)
 library(tidyr)
 
 db <- DBI::dbConnect(duckdb::duckdb(), 
-                     dbdir = CDMConnector::eunomia_dir())
-cdm <- cdm_from_con(
+                     dbdir = CDMConnector::eunomiaDir())
+cdm <- cdmFromCon(
   con = db,
-  cdm_schema = "main", 
-  write_schema = "main"
+  cdmSchema = "main", 
+  writeSchema = "main"
 )
 ```
 

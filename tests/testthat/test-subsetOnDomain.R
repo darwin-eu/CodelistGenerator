@@ -37,7 +37,7 @@ test_that("subset on domain", {
     expect_error(subsetOnDomain(ing_codes,  cdm, 1234))
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 

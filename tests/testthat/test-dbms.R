@@ -12,9 +12,9 @@ test_that("redshift", {
                         user     = Sys.getenv("CDM5_REDSHIFT_USER"),
                         password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
-  cdm <- CDMConnector::cdm_from_con(con = db,
-                                    cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
-                                    write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
+  cdm <- CDMConnector::cdmFromCon(con = db,
+                                    cdmSchema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
+                                    writeSchema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
 
   expect_no_error(routeCat <- getRouteCategories(cdm))
@@ -160,7 +160,7 @@ test_that("redshift", {
   expect_true(761485 %in% x$oa_desc)
 
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })
 
 test_that("snowflake", {
@@ -179,10 +179,10 @@ test_that("snowflake", {
   cdm_schema <- strsplit(Sys.getenv("SNOWFLAKE_CDM_SCHEMA"), "\\.")[[1]]
   write_schema <- strsplit(Sys.getenv("SNOWFLAKE_SCRATCH_SCHEMA"), "\\.")[[1]]
 
-  cdm <- CDMConnector::cdm_from_con(con = con,
-                                    cdm_schema = cdm_schema,
-                                    write_schema = write_schema,
-                                    cdm_name = "snowflake")
+  cdm <- CDMConnector::cdmFromCon(con = con,
+                                    cdmSchema = cdm_schema,
+                                    writeSchema = write_schema,
+                                    cdmName = "snowflake")
 
 
   # candidate code search
@@ -298,7 +298,7 @@ test_that("snowflake", {
                                cdm = cdm,
                                countBy = "not an option"))
 
-  CDMConnector::cdm_disconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 })
 
 test_that("postgres", {
@@ -311,12 +311,12 @@ test_that("postgres", {
                        host = Sys.getenv("CDM5_POSTGRESQL_HOST"),
                        user = Sys.getenv("CDM5_POSTGRESQL_USER"),
                        password = Sys.getenv("CDM5_POSTGRESQL_PASSWORD"))
-  cdm <- CDMConnector::cdm_from_con(
+  cdm <- CDMConnector::cdmFromCon(
     con = db,
-    cdm_schema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA"),
-    write_schema = c(schema =  Sys.getenv("CDM5_POSTGRESQL_SCRATCH_SCHEMA"),
-                     prefix = "incp_"),
-    achilles_schema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA")
+    cdmSchema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA"),
+    writeSchema = Sys.getenv("CDM5_POSTGRESQL_SCRATCH_SCHEMA"),
+    writePrefix = "incp_",
+    achillesSchema = Sys.getenv("CDM5_POSTGRESQL_CDM_SCHEMA")
   )
 
   # check orphan code use
@@ -467,10 +467,10 @@ test_that("sql server", {
                        PWD      = Sys.getenv("CDM5_SQL_SERVER_PASSWORD"),
                        TrustServerCertificate="yes",
                        Port     = Sys.getenv("CDM5_SQL_SERVER_PORT"))
-  cdm <- CDMConnector::cdm_from_con(db,
-                                    cdm_schema = c("CDMV54", "dbo"),
-                                    achilles_schema = c("CDMV54", "dbo"),
-                                    write_schema = c("ohdsi", "dbo"))
+  cdm <- CDMConnector::cdmFromCon(db,
+                                    cdmSchema = c("CDMV54", "dbo"),
+                                    achillesSchema = c("CDMV54", "dbo"),
+                                    writeSchema = c("ohdsi", "dbo"))
 
   # check orphan code use
   expect_no_error(summariseOrphanCodes(list("asthma"=317009L), cdm))

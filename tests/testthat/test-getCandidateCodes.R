@@ -264,7 +264,7 @@ test_that("tests with mock db", {
     ))
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 })
@@ -300,7 +300,7 @@ test_that("tests with mock db - multiple domains", {
       c(4,5,9) %in% codes$concept_id))
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 })
@@ -310,8 +310,8 @@ test_that("tests with eunomia", {
   skip_on_cran()
   skip_on_ci()
   db <- DBI::dbConnect(duckdb::duckdb(),
-                       dbdir = CDMConnector::eunomia_dir())
-  cdm <- CDMConnector::cdm_from_con(
+                       dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(
     con = db,
     cdm_schema = "main",
     write_schema = "main"

@@ -32,7 +32,7 @@ test_that("stratify by route works", {
 
 
     if (backends[[i]] == "database") {
-      CDMConnector::cdm_disconnect(cdm)
+      CDMConnector::cdmDisconnect(cdm)
     }
   }
 })

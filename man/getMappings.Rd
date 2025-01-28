@@ -14,7 +14,7 @@ getMappings(
 \arguments{
 \item{candidateCodelist}{Dataframe}
 
-\item{cdm}{cdm_reference via CDMConnector::cdm_from_con()}
+\item{cdm}{cdm_reference via CDMConnector::cdmFromCon()}
 
 \item{nonStandardVocabularies}{Character vector}
 }

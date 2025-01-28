@@ -23,9 +23,9 @@ db <- dbConnect(RPostgres::Postgres(),
 vocabularyDatabaseSchema <- Sys.getenv("DB_VOCAB_SCHEMA")
 
 # create cdm reference
-cdm <- CDMConnector::cdm_from_con(con = db,
-                                  cdm_schema = vocabularyDatabaseSchema,
-                                  write_schema = "results")
+cdm <- CDMConnector::cdmFromCon(con = db,
+                                  cdmSchema = vocabularyDatabaseSchema,
+                                  writeSchema = "results")
 
 # intro vignette ----
 vocabVersion <- getVocabVersion(cdm = cdm)

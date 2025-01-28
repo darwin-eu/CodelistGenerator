@@ -21,7 +21,7 @@ test_that("subset on route category", {
   expect_error(subsetOnRouteCategory(ing_codes,  cdm, 1234))
 
   if (backends[[i]] == "database") {
-    CDMConnector::cdm_disconnect(cdm)
+    CDMConnector::cdmDisconnect(cdm)
   }
   }
 

@@ -6,11 +6,11 @@ skip_on_cran()
   if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
     dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
   }
-  if (!CDMConnector::eunomia_is_available()) {
+  if (!CDMConnector::eunomiaIsAvailable()) {
     invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
   }
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
-  cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
   acetiminophen <- c(1125315,  1127433, 40229134,
                     40231925, 40162522, 19133768,  1127078)
@@ -298,11 +298,11 @@ test_that("summarise cohort code use - eunomia", {
   if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
     dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
   }
-  if (!CDMConnector::eunomia_is_available()) {
+  if (!CDMConnector::eunomiaIsAvailable()) {
     invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
   }
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
-  cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
   pharyngitis <- c(4112343)
 
@@ -497,9 +497,9 @@ test_that("summarise code use - redshift", {
                  user     = Sys.getenv("CDM5_REDSHIFT_USER"),
                  password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
-  cdm <- CDMConnector::cdm_from_con(con = db,
-                                    cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
-                                    write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
+  cdm <- CDMConnector::cdmFromCon(con = db,
+                                  cdmSchema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
+                                  writeSchema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
 
   asthma <- list(asthma = c(317009, 257581))
 
@@ -748,11 +748,11 @@ test_that("summarise code use - eunomia source concept id NA", {
   if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
     dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
   }
-  if (!CDMConnector::eunomia_is_available()) {
+  if (!CDMConnector::eunomiaIsAvailable()) {
     invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
   }
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
-  cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
   acetiminophen <- c(1125315,  1127433, 40229134,
                      40231925, 40162522, 19133768,  1127078)
@@ -782,11 +782,11 @@ test_that("summarise cohort code use - eunomia source concept id NA", {
   if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
     dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
   }
-  if (!CDMConnector::eunomia_is_available()) {
+  if (!CDMConnector::eunomiaIsAvailable()) {
     invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
   }
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomia_dir())
-  cdm <- CDMConnector::cdm_from_con(con, cdm_schem = "main", write_schema = "main")
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
   pharyngitis <- c(4112343)
 
@@ -812,5 +812,39 @@ test_that("summarise cohort code use - eunomia source concept id NA", {
                     dplyr::pull("source_concept_id") == "NA"))
 
   CDMConnector::cdmDisconnect(cdm)
+
+})
+
+test_that("empty cohort", {
+  skip_on_cran()
+  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
+    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
+  }
+  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
+    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
+  }
+  if (!CDMConnector::eunomia_is_available()) {
+    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
+  }
+  con <- DBI::dbConnect(duckdb::duckdb(),
+                        dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(con,
+                                  cdmSchema = "main",
+                                  writeSchema = "main",
+                                  cdmName = "test")
+  cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
+                                                conceptSet = list(a = 260139,
+                                                                  b = 1127433),
+                                                name = "cohorts",
+                                                end = "observation_period_end_date",
+                                                overwrite = TRUE)
+ results_cohort_mult <- summariseCohortCodeUse(list(cs = as.numeric()),
+                           cdm = cdm,
+                           cohortTable = "cohorts",
+                           timing = "entry")
+ expect_true(inherits(results_cohort_mult, "summarised_result"))
+ expect_true(nrow(results_cohort_mult) == 0)
+
+ CDMConnector::cdmDisconnect(cdm)
 
 })

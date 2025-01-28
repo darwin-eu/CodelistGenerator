@@ -1,7 +1,7 @@
 #' Summarise code use from achilles counts
 #'
 #' @param x Codelist
-#' @param cdm cdm_reference via CDMConnector::cdm_from_con()
+#' @param cdm cdm_reference via CDMConnector::cdmFromCon()
 #' @param countBy Either "record" for record-level counts or "person" for
 #' person-level counts
 #'
@@ -113,8 +113,8 @@ summariseAchillesCodeUse <- function(x,
         estimate_type = "integer",
         estimate_value = as.character(.data$n)
       ) |>
-      visOmopResults::uniteAdditional(cols = c("standard_concept", "vocabulary_id")) |>
-      visOmopResults::uniteStrata(cols = c("domain_id")) |>
+      omopgenerics::uniteAdditional(cols = c("standard_concept", "vocabulary_id")) |>
+      omopgenerics::uniteStrata(cols = c("domain_id")) |>
       dplyr::select(dplyr::any_of(omopgenerics::resultColumns("summarised_result")))
 
     codeUse <- codeUse |>

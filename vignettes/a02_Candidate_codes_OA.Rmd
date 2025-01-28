@@ -52,9 +52,9 @@ db <- dbConnect(RPostgres::Postgres(),
 vocabularyDatabaseSchema <- "vocabulary"
 
 # create cdm reference
-cdm <- CDMConnector::cdm_from_con(
+cdm <- CDMConnector::cdmFromCon(
   con = db,
-  cdm_schema = vocabularyDatabaseSchema
+  cdmSchema = vocabularyDatabaseSchema
 )
 ```
 

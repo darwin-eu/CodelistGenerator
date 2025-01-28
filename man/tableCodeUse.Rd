@@ -52,10 +52,10 @@ Format the result of summariseCodeUse into a table.
 \examples{
 \dontrun{
 con <- DBI::dbConnect(duckdb::duckdb(),
-                      dbdir = CDMConnector::eunomia_dir())
-cdm <- CDMConnector::cdm_from_con(con,
-                                  cdm_schem = "main",
-                                  write_schema = "main")
+                      dbdir = CDMConnector::eunomiaDir())
+cdm <- CDMConnector::cdmFromCon(con,
+                                cdmSchema = "main",
+                                writeSchema = "main")
 acetiminophen <- c(1125315,  1127433, 40229134,
 40231925, 40162522, 19133768,  1127078)
 poliovirus_vaccine <- c(40213160)
