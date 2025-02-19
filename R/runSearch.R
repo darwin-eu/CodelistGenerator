@@ -391,7 +391,9 @@ tidyWords <- function(words) {
   Encoding(words) <- "latin1"
 
   # some generic formatting
-  workingWords <- stringi::stri_trans_nfkc(words)
+  workingWords <- stringr::str_remove_all(words, "[^\\x20-\\x7E]")
+  workingWords <- stringi::stri_trans_nfkc(workingWords)
+  workingWords <- trimws(workingWords)
   workingWords <- trimws(words)
   workingWords <- stringr::str_replace_all(workingWords, "-", " ")
   workingWords <- stringr::str_replace_all(workingWords, "[[:punct:]]", "")

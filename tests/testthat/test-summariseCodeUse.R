@@ -18,6 +18,7 @@ skip_on_cran()
   cs <- list(acetiminophen = acetiminophen,
              poliovirus_vaccine = poliovirus_vaccine)
   startNames <- CDMConnector::listSourceTables(cdm)
+
   results <- summariseCodeUse(cs,
                               cdm = cdm,
                               byYear = TRUE,
@@ -171,6 +172,73 @@ skip_on_cran()
                 dplyr::tally() |>
                 dplyr::pull("n"))
 
+  # Check date range
+  results <- summariseCodeUse(cs,
+                              cdm = cdm,
+                              byYear = TRUE,
+                              bySex = TRUE,
+                              ageGroup = list(c(0,17),
+                                              c(18,65),
+                                              c(66, 100)),
+                              dateRange = as.Date(c("2010-01-01","2015-01-01")))
+  expect_equal(results |>
+                 omopgenerics::settings() |>
+                 dplyr::select("date_range_start", "date_range_end") |>
+                 as.character(),
+               c("2010-01-01","2015-01-01"))
+
+  # overall record count
+  expect_true(results |>
+                dplyr::filter(group_name == "codelist_name" &
+                                strata_name == "overall" &
+                                strata_level == "overall" &
+                                group_level == "acetiminophen" &
+                                estimate_name == "record_count",
+                              variable_name == "overall") |>
+                dplyr::pull("estimate_value") |>
+                as.numeric() ==
+                cdm$drug_exposure |>
+                dplyr::filter(drug_exposure_start_date >= as.Date("2010-01-01"),
+                              drug_exposure_start_date <= as.Date("2015-01-01")) |>
+                dplyr::filter(drug_concept_id %in%  acetiminophen) |>
+                dplyr::tally() |>
+                dplyr::pull("n"))
+
+  # overall person count
+  expect_true(results |>
+                dplyr::filter(group_name == "codelist_name" &
+                                strata_name == "overall" &
+                                strata_level == "overall" &
+                                group_level == "acetiminophen" &
+                                estimate_name == "person_count",
+                              variable_name == "overall") |>
+                dplyr::pull("estimate_value") |>
+                as.numeric()  ==
+                cdm$drug_exposure |>
+                dplyr::filter(drug_concept_id %in% acetiminophen) |>
+                dplyr::filter(drug_exposure_start_date >= as.Date("2010-01-01"),
+                              drug_exposure_start_date <= as.Date("2014-12-31")) |>
+                dplyr::select("person_id") |>
+                dplyr::distinct() |>
+                dplyr::tally() |>
+                dplyr::pull("n"))
+
+  # by year
+  expect_true(
+    results |>
+      dplyr::filter(strata_name == "year") |>
+      dplyr::pull("strata_level") |>
+      unique() |>
+      as.numeric() |> max() == 2014)
+  expect_true(
+    results |>
+      dplyr::filter(strata_name == "year") |>
+      dplyr::pull("strata_level") |>
+      unique() |>
+      as.numeric() |> min() == 2010)
+
+
+
   results <- summariseCodeUse(list("acetiminophen" = acetiminophen),
                               cdm = cdm, countBy = "person",
                               byYear = FALSE,
@@ -284,10 +352,10 @@ skip_on_cran()
                                 bySex = FALSE,
                                 ageGroup = list(c(0,17),
                                                 c(15,20))))
-
+  expect_error(summariseCodeUse(list(a = 123),
+                                cdm = cdm,
+                                dateRange = c("a","b")))
   CDMConnector::cdmDisconnect(cdm)
-
-
 })
 
 test_that("summarise cohort code use - eunomia", {
@@ -302,7 +370,7 @@ test_that("summarise cohort code use - eunomia", {
     invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
   }
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
+  cdm <- CDMConnector::cdmFromCon(cdmName = "cdm", con, cdmSchema = "main", writeSchema = "main")
 
   pharyngitis <- c(4112343)
 
@@ -497,9 +565,11 @@ test_that("summarise code use - redshift", {
                  user     = Sys.getenv("CDM5_REDSHIFT_USER"),
                  password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
-  cdm <- CDMConnector::cdmFromCon(con = db,
+  cdm <- CDMConnector::cdmFromCon(cdmName = "cdm",
+                                  con = db,
                                   cdmSchema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
-                                  writeSchema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
+                                  writeSchema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"),
+                                  cdmVersion = "5.3")
 
   asthma <- list(asthma = c(317009, 257581))
 
@@ -823,7 +893,7 @@ test_that("empty cohort", {
   if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
     dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
   }
-  if (!CDMConnector::eunomia_is_available()) {
+  if (!CDMConnector::eunomiaIsAvailable()) {
     invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
   }
   con <- DBI::dbConnect(duckdb::duckdb(),
@@ -848,3 +918,4 @@ test_that("empty cohort", {
  CDMConnector::cdmDisconnect(cdm)
 
 })
+

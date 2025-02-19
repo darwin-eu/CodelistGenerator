@@ -140,8 +140,9 @@ test_that("test inputs - redshift", {
 
 
   cdm <- CDMConnector::cdmFromCon(con = db,
-                                    cdmSchema = "cdmv531",
-                                    writeSchema = "public")
+                                  cdmSchema = "cdmv531",
+                                  writeSchema = "public",
+                                  cdmVersion = "5.3")
 
   # working example
   x <- codesFromConceptSet(

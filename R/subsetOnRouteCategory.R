@@ -44,7 +44,7 @@ subsetOnRouteCategory <- function(x, cdm, routeCategory){
     cli::cli_abort("routeCategory must be a character vector")
   }
 
-  doseRouteData <- get0("doseFormToRoute", envir = asNamespace("CodelistGenerator"))
+  doseRouteData <- get("doseFormToRoute")
 
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())

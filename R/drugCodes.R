@@ -189,7 +189,8 @@ getATCCodes <- function(cdm,
 #' @param cdm cdm_reference via CDMConnector
 #' @param name Names of ingredients of interest. For example, c("acetaminophen",
 #' "codeine"), would result in a list of length two with the descendant
-#' concepts for these two particular drug ingredients.
+#' concepts for these two particular drug ingredients. Users can also specify the
+#' concept ID instead of the name (e.g., c(1125315, 42948451)) using a numeric vector.
 #' @param nameStyle Name style to apply to returned list. Can be one of
 #' `"{concept_code}_{concept_name}"`, `"{concept_code}"`, or `"{concept_name}"`.
 #' @param doseForm Only descendants codes with the specified dose form
@@ -227,23 +228,31 @@ getDrugIngredientCodes <- function(cdm,
                                    ingredientRange = c(1, Inf),
                                    type = "codelist") {
 
-
   if(type == "concept_set_expression"){
     cli::cli_abort("concept_set_expression not yet supported")
   }
 
-  errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  checkmate::assertVector(name,
-    add = errorMessage,
-    null.ok = TRUE
-  )
-  checkmate::assert_choice(x = nameStyle,
-                           choices = c("{concept_code}_{concept_name}",
-                                       "{concept_code}",
-                                       "{concept_name}"))
-  checkmate::assertCharacter(type, len = 1)
-  checkmate::reportAssertions(collection = errorMessage)
+  omopgenerics::assertClass(cdm, "cdm_reference")
+  omopgenerics::assertChoice(nameStyle, choices = c("{concept_code}_{concept_name}",
+                                                    "{concept_code}",
+                                                    "{concept_name}"))
+  omopgenerics::assertChoice(type, length = 1, choices = c("codelist", "codelist_with_details", "concept_set_expression"))
+  omopgenerics::assertNumeric(ingredientRange, length = 2, min = 0)
+  omopgenerics::assertTrue(ingredientRange[1] <= ingredientRange[2])
+  omopgenerics::assertCharacter(doseForm, null = TRUE)
+  omopgenerics::assertCharacter(doseUnit, null = TRUE)
+  omopgenerics::assertCharacter(routeCategory, null = TRUE)
+
+  if(!is.null(name)){
+    if(is.character(name)){
+      omopgenerics::assertCharacter(name)
+    }else if(is.numeric(name)){
+      omopgenerics::assertNumeric(name)
+    }else{
+      cli::cli_abort("Argument `name` must be either a character vector with the ingredients' names, a
+                                numerical vector with the ingredients' concepts ID or NULL")
+    }
+  }
 
   ingredientConcepts <- cdm$concept |>
     dplyr::filter(.data$standard_concept == "S") |>
@@ -251,20 +260,13 @@ getDrugIngredientCodes <- function(cdm,
     dplyr::select("concept_id", "concept_name", "concept_code") |>
     dplyr::collect()
 
-  if (!is.null(name)) {
+  if (!is.null(name)){
     ingredientConcepts <- ingredientConcepts |>
-      dplyr::filter(tidyWords(.data$concept_name) %in% tidyWords(.env$name))
+      filterIngredientConcepts(name)
   }
 
-  errorMessage <- checkmate::makeAssertCollection()
-  ingredientCheck <- nrow(ingredientConcepts) > 0
-  if (!isTRUE(ingredientCheck)) {
-    errorMessage$push(
-      "- No matching Ingredient codes found"
-    )
-  }
-  checkmate::assertTRUE(ingredientCheck, add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+  omopgenerics::assertTrue(nrow(ingredientConcepts) > 0,
+                           msg = "- No matching Ingredient codes found")
 
   # to avoid potential memory problems will batch
   if (nrow(ingredientConcepts) > 0) {
@@ -352,6 +354,16 @@ getDrugIngredientCodes <- function(cdm,
     }
 
     return(ingredientCodes)
+}
+
+filterIngredientConcepts <- function(ingredientConcepts, name){
+  if(is.character(name)){
+    ingredientConcepts |>
+      dplyr::filter(tidyWords(.data$concept_name) %in% tidyWords(.env$name))
+  }else if(is.numeric(name)){
+    ingredientConcepts |>
+      dplyr::filter(.data$concept_id %in% .env$name)
+  }
 }
 
 fetchBatchedDescendants <- function(cdm,

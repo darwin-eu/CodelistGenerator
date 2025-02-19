@@ -25,6 +25,7 @@
 #' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
 #' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
 #' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
+#' @param dateRange Two dates. The first indicating the earliest cohort start date and the second indicating the latest possible cohort end date. If NULL or the first date is set as missing, the earliest observation_start_date in the observation_period table will be used for the former. If NULL or the second date is set as missing, the latest observation_end_date in the observation_period table will be used for the latter.
 #'
 #' @return A tibble with results overall and, if specified, by strata
 #' @export
@@ -49,10 +50,11 @@
 summariseCodeUse <- function(x,
                              cdm,
                              countBy = c("record", "person"),
-                             byConcept = TRUE,
+                               byConcept = TRUE,
                              byYear = FALSE,
                              bySex = FALSE,
-                             ageGroup = NULL){
+                             ageGroup = NULL,
+                             dateRange = as.Date(c(NA, NA))){
 
   checkmate::assertList(x)
   if(length(names(x)) != length(x)){
@@ -71,7 +73,8 @@ summariseCodeUse <- function(x,
                                byConcept = byConcept,
                                byYear = byYear,
                                bySex = bySex,
-                               ageGroup = ageGroup)
+                               ageGroup = ageGroup,
+                               dateRange = dateRange)
   }
   codeUse <- dplyr::bind_rows(codeUse)
 
@@ -86,7 +89,9 @@ summariseCodeUse <- function(x,
           result_id = as.integer(1),
           result_type = "code_use",
           package_name = "CodelistGenerator",
-          package_version = as.character(utils::packageVersion("CodelistGenerator"))
+          package_version = as.character(utils::packageVersion("CodelistGenerator")),
+          date_range_start = as.character(dateRange[1]),
+          date_range_end   = as.character(dateRange[2])
         )
       )
   } else {
@@ -183,7 +188,8 @@ summariseCohortCodeUse <- function(x,
                                                        byConcept = byConcept,
                                                        byYear = byYear,
                                                        bySex = bySex,
-                                                       ageGroup = ageGroup)
+                                                       ageGroup = ageGroup,
+                                                       dateRange = as.Date(c(NA,NA)))
     }}
   cohortCodeUse <- dplyr::bind_rows(cohortCodeUse)
 
@@ -195,6 +201,7 @@ summariseCohortCodeUse <- function(x,
       ) |>
       omopgenerics::newSummarisedResult(
         settings = dplyr::tibble(
+
           result_id = as.integer(1),
           result_type = "cohort_code_use",
           package_name = "CodelistGenerator",
@@ -219,6 +226,7 @@ getCodeUse <- function(x,
                        byYear,
                        bySex,
                        ageGroup,
+                       dateRange,
                        call = parent.frame()) {
 
   errorMessage <- checkmate::makeAssertCollection()
@@ -236,6 +244,8 @@ getCodeUse <- function(x,
   checkmate::assert_logical(bySex, add = errorMessage)
   checkmate::reportAssertions(collection = errorMessage)
   checkAgeGroup(ageGroup = ageGroup)
+
+  omopgenerics::assertDate(dateRange, length = 2, na = TRUE)
 
   if(is.null(attr(cdm, "write_schema"))){
     cli::cli_abort("cdm must have a write_schema specified",
@@ -284,6 +294,11 @@ getCodeUse <- function(x,
 
   if(!is.null(records) &&
      (records |> utils::head(1) |> dplyr::tally() |> dplyr::pull("n") > 0)) {
+
+    if((!is.na(dateRange[1])) | (!is.na(dateRange[2]))){
+      records <- filterDateRange(records, cdm, dateRange)
+    }
+
     if(bySex == TRUE | !is.null(ageGroup)){
       records <- records |>
         PatientProfiles::addDemographicsQuery(age = !is.null(ageGroup),
@@ -346,7 +361,7 @@ getCodeUse <- function(x,
   cdm[[tableCodelist]] <- NULL
   CDMConnector::dropTable(
     cdm = cdm,
-    name = tidyselect::starts_with(intermediateTable)
+    name = dplyr::starts_with(intermediateTable)
   )
 
   return(codeCounts)
@@ -567,6 +582,12 @@ getRelevantRecords <- function(cdm,
 
 }
 
+filterDateRange <- function(records, cdm, dateRange){
+  dateRange <- getDateRange(cdm, dateRange)
+  records |>
+    dplyr::filter(.data$date >= !!dateRange[1],
+                  .data$date <= !!dateRange[2])
+}
 
 getSummaryCounts <- function(records,
                              cdm,
@@ -838,4 +859,27 @@ checkAgeGroup <- function(ageGroup, overlap = FALSE) {
     }
   }
   return(ageGroup)
+}
+
+getDateRange <- function(cdm, dateRange) {
+
+  if(is.na(dateRange[1])){
+    obs_date_range <- cdm[["observation_period"]] |>
+      dplyr::summarise(
+        min_start = as.Date(min(.data$observation_period_start_date, na.rm = TRUE))
+      ) |>
+      dplyr::collect()
+    dateRange[1] <- obs_date_range$min_start
+  }
+
+  if(is.na(dateRange[2])){
+    obs_date_range <- cdm[["observation_period"]] |>
+      dplyr::summarise(
+        max_end = as.Date(max(.data$observation_period_end_date, na.rm = TRUE))
+      ) |>
+      dplyr::collect()
+    dateRange[2] <- obs_date_range$max_end
+  }
+
+  return(dateRange)
 }

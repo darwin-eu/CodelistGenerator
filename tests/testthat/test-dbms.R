@@ -13,8 +13,9 @@ test_that("redshift", {
                         password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
   cdm <- CDMConnector::cdmFromCon(con = db,
-                                    cdmSchema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
-                                    writeSchema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
+                                  cdmSchema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
+                                  writeSchema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"),
+                                  cdmVersion = "5.3")
 
 
   expect_no_error(routeCat <- getRouteCategories(cdm))

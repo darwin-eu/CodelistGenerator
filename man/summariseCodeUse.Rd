@@ -11,7 +11,8 @@ summariseCodeUse(
   byConcept = TRUE,
   byYear = FALSE,
   bySex = FALSE,
-  ageGroup = NULL
+  ageGroup = NULL,
+  dateRange = as.Date(c(NA, NA))
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ concept}
 \item{bySex}{TRUE or FALSE. If TRUE code use will be summarised by sex.}
 
 \item{ageGroup}{If not NULL, a list of ageGroup vectors of length two.}
+
+\item{dateRange}{Two dates. The first indicating the earliest cohort start date and the second indicating the latest possible cohort end date. If NULL or the first date is set as missing, the earliest observation_start_date in the observation_period table will be used for the former. If NULL or the second date is set as missing, the latest observation_end_date in the observation_period table will be used for the latter.}
 }
 \value{
 A tibble with results overall and, if specified, by strata

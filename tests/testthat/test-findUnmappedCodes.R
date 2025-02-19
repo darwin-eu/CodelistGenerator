@@ -11,8 +11,9 @@ test_that("achilles code use", {
                         password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
   cdm <- CDMConnector::cdmFromCon(con = db,
-                                    cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
-                                    write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"))
+                                  cdm_schema = Sys.getenv("CDM5_REDSHIFT_CDM_SCHEMA"),
+                                  write_schema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"),
+                                  cdmVersion = "5.3")
 
 
   x <- "Nonallopathic lesions"

@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Identify Relevant Clinical Codes and Evaluate Their Use
-Version: 3.3.2
+Version: 3.4.0
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
@@ -30,12 +30,11 @@ Imports:
     checkmate (>= 2.0.0),
     DBI (>= 1.1.0),
     dplyr (>= 1.1.0),
-    omopgenerics (>= 0.4.1),
+    omopgenerics (>= 1.0.0),
     rlang (>= 1.0.0),
     glue (>= 1.5.0),
     stringr (>= 1.4.0),
     stringi (>= 1.8.1),
-    tidyselect (>= 1.2.0),
     tidyr (>= 1.2.0),
     cli (>= 3.1.0),
     purrr,

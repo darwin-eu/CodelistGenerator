@@ -313,8 +313,8 @@ test_that("tests with eunomia", {
                        dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(
     con = db,
-    cdm_schema = "main",
-    write_schema = "main"
+    cdmSchema = "main",
+    writeSchema = "main"
   )
 
  codes <- getCandidateCodes(cdm=cdm,

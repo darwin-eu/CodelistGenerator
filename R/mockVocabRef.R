@@ -28,9 +28,10 @@
 #' }
 mockVocabRef <- function(backend = "data_frame") {
   errorMessage <- checkmate::makeAssertCollection()
-  checkmate::assertTRUE(backend %in% c("database", "data_frame"))
-  checkmate::assertTRUE(length(backend) == 1)
-  checkmate::reportAssertions(collection = errorMessage)
+
+  omopgenerics::assertChoice(backend,
+                             choices = c("database", "data_frame"),
+                             length = 1)
 
   if(backend == "database"){
     rlang::check_installed("duckdb")
@@ -97,10 +98,9 @@ mockVocabRef <- function(backend = "data_frame") {
       "ICD Code","ICD Code", "Ingredient"
     ),
     concept_code = "1234",
-    valid_start_date = NA,
-    valid_end_date = NA,
-    invalid_reason =
-      NA
+    valid_start_date = as.Date(NA),
+    valid_end_date = as.Date(NA),
+    invalid_reason = NA_character_
   )
   conceptAncestor <- dplyr::bind_rows(
     data.frame(
@@ -192,7 +192,7 @@ mockVocabRef <- function(backend = "data_frame") {
       concept_synonym_name = "Osteoarthrosis"
     )
   )|>
-    dplyr::mutate(language_concept_id  = NA)
+    dplyr::mutate(language_concept_id  = NA_integer_)
   conceptRelationship <- dplyr::bind_rows(
     data.frame(
       concept_id_1 = 2L,
@@ -240,9 +240,9 @@ mockVocabRef <- function(backend = "data_frame") {
       relationship_id = "Maps to"
     )
   ) |>
-    dplyr::mutate(valid_start_date = NA,
-                  valid_end_date = NA,
-                  invalid_reason = NA)
+    dplyr::mutate(valid_start_date = as.Date(NA),
+                  valid_end_date = as.Date(NA),
+                  invalid_reason = NA_character_)
   vocabulary <- dplyr::bind_rows(
     data.frame(
       vocabulary_id = "SNOMED",
@@ -264,30 +264,30 @@ mockVocabRef <- function(backend = "data_frame") {
     data.frame(
       drug_concept_id = 10L,
       ingredient_concept_id = 10L,
-      amount_value = NA,
+      amount_value = NA_real_,
       amount_unit_concept_id = 8576,
       numerator_value = 0.010,
       numerator_unit_concept_id = 8576,
       denominator_value = 0.5,
       denominator_unit_concept_id = 8587,
-      box_size = NA,
-      valid_start_date = NA,
-      valid_end_date = NA
+      box_size = NA_integer_,
+      valid_start_date = as.Date(NA),
+      valid_end_date = as.Date(NA)
     )
   )
 
   cdmSource <- dplyr::as_tibble(
     data.frame(
       cdm_source_name  = "mock",
-      cdm_source_abbreviation = NA,
-      cdm_holder = NA,
-      source_description = NA,
-      source_documentation_reference = NA,
-      cdm_etl_reference = NA,
-      source_release_date = NA,
-      cdm_release_date = NA,
+      cdm_source_abbreviation = NA_character_,
+      cdm_holder = NA_character_,
+      source_description = NA_character_,
+      source_documentation_reference = NA_character_,
+      cdm_etl_reference = NA_character_,
+      source_release_date = as.Date(NA),
+      cdm_release_date = as.Date(NA),
       cdm_version = "5.3",
-      vocabulary_version  = NA
+      vocabulary_version  = NA_character_
     )
   )
 
@@ -295,36 +295,36 @@ mockVocabRef <- function(backend = "data_frame") {
   # count of 400 records for knee osteoarthritis
   # count of 200 records for hip osteoarthritis
   achillesAnalysis <- dplyr::tibble(analysis_id = 1,
-                                    analysis_name = 1,
-                                    stratum_1_name = NA,
-                                    stratum_2_name = NA,
-                                    stratum_3_name = NA,
-                                    stratum_4_name = NA,
-                                    stratum_5_name = NA,
+                                    analysis_name = "1",
+                                    stratum_1_name = NA_character_,
+                                    stratum_2_name = NA_character_,
+                                    stratum_3_name = NA_character_,
+                                    stratum_4_name = NA_character_,
+                                    stratum_5_name = NA_character_,
                                     is_default = NA,
-                                    category = NA )
+                                    category = NA_character_)
   achillesResults <- dplyr::tibble(analysis_id = c(401, 401, 401),
-                             stratum_1 = c(4, 5, 9),
-                             stratum_2 = NA,
-                             stratum_3 = NA,
-                             stratum_4 = NA,
-                             stratum_5 = NA,
+                             stratum_1 = c("4", "5", "9"),
+                             stratum_2 = NA_character_,
+                             stratum_3 = NA_character_,
+                             stratum_4 = NA_character_,
+                             stratum_5 = NA_character_,
                              count_value = c(400, 200, 100))
   achillesResultsDist <- dplyr::tibble(analysis_id = 1,
-                                       stratum_1 = NA,
-                                       stratum_2 = NA,
-                                       stratum_3 = NA,
-                                       stratum_4 = NA,
-                                       stratum_5 = NA,
-                                       min_value = NA,
-                                       max_value = NA,
-                                       avg_value = NA,
-                                       stdev_value = NA,
-                                       median_value = NA,
-                                       p10_value = NA,
-                                       p25_value = NA,
-                                       p75_value = NA,
-                                       p90_value = NA,
+                                       stratum_1 = NA_character_,
+                                       stratum_2 = NA_character_,
+                                       stratum_3 = NA_character_,
+                                       stratum_4 = NA_character_,
+                                       stratum_5 = NA_character_,
+                                       min_value = NA_integer_,
+                                       max_value = NA_integer_,
+                                       avg_value = NA_real_,
+                                       stdev_value = NA_real_,
+                                       median_value = NA_real_,
+                                       p10_value = NA_real_,
+                                       p25_value = NA_real_,
+                                       p75_value = NA_real_,
+                                       p90_value = NA_real_,
                                   count_value = 5)
 
   cdm_df <- omopgenerics::cdmFromTables(tables = list(person = person,

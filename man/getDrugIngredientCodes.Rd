@@ -20,7 +20,8 @@ getDrugIngredientCodes(
 
 \item{name}{Names of ingredients of interest. For example, c("acetaminophen",
 "codeine"), would result in a list of length two with the descendant
-concepts for these two particular drug ingredients.}
+concepts for these two particular drug ingredients. Users can also specify the
+concept ID instead of the name (e.g., c(1125315, 42948451)) using a numeric vector.}
 
 \item{nameStyle}{Name style to apply to returned list. Can be one of
 \code{"{concept_code}_{concept_name}"}, \code{"{concept_code}"}, or \code{"{concept_name}"}.}

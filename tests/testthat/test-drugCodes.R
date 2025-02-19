@@ -57,6 +57,10 @@ test_that("getDrugIngredientCodes working", {
     expect_true(all(ing_codes2[[1]] == c(10,13)))
     expect_true(names(ing_codes2) == "1234_adalimumab")
 
+    ing_codes2 <- getDrugIngredientCodes(cdm, name = 10)
+    expect_true(all(ing_codes2[[1]] == c(10,13)))
+    expect_true(names(ing_codes2) == "1234_adalimumab")
+
     ing_codes3 <- getDrugIngredientCodes(cdm,
                                          name = "Adalimumab",
                                          doseForm = "injectable")
@@ -111,6 +115,7 @@ test_that("getDrugIngredientCodes expected errors", {
   for (i in seq_along(backends)) {
     cdm <- mockVocabRef(backend = backends[i])
     expect_error(getDrugIngredientCodes(cdm, name = "Not an Ingredient"))
+    expect_error(getDrugIngredientCodes(cdm, name = -99))
 
     if (backends[[i]] == "database") {
       CDMConnector::cdmDisconnect(cdm)
