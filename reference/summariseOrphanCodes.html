@@ -9,7 +9,7 @@ available, PHOEBE concept recommendations"><meta property="og:image" content="ht
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,62 +80,9 @@ to (but not in) the codelist</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="st">"database"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 8 column in <span style="font-weight: bold;">cdm_source</span> do not match expected column type:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `cdm_source_abbreviation` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `cdm_holder` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `source_description` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `source_documentation_reference` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `cdm_etl_reference` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `source_release_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `cdm_release_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `vocabulary_version` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 3 column in <span style="font-weight: bold;">concept</span> do not match expected column type:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `valid_start_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `valid_end_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `invalid_reason` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 3 column in <span style="font-weight: bold;">concept_relationship</span> do not match expected column type:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `valid_start_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `valid_end_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `invalid_reason` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 1 column in <span style="font-weight: bold;">concept_synonym</span> do not match expected column type:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `language_concept_id` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">integer</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 4 column in <span style="font-weight: bold;">drug_strength</span> do not match expected column type:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `amount_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `box_size` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">integer</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `valid_start_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `valid_end_date` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">date</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 7 column in <span style="font-weight: bold;">achilles_analysis</span> do not match expected column type:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `analysis_name` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_1_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_2_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_3_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_4_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_5_name` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `category` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 5 column in <span style="font-weight: bold;">achilles_results</span> do not match expected column type:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_1` is <span style="color: #0000BB;">numeric</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_2` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_3` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_4` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_5` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> 14 column in <span style="font-weight: bold;">achilles_results_dist</span> do not match expected column type:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_1` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_2` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_3` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_4` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stratum_5` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">character</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `min_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">integer</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `max_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">integer</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `avg_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `stdev_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `median_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `p10_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `p25_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `p75_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `p90_value` is <span style="color: #0000BB;">logical</span> but expected <span style="color: #0000BB;">numeric</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are observation period end dates after the current date: 2025-01-28</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are observation period end dates after the current date: 2025-02-19</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The latest max observation period end date found is 2025-12-31</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are observation period end dates after the current date: 2025-01-28</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are observation period end dates after the current date: 2025-02-19</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The latest max observation period end date found is 2025-12-31</span>
 <span class="r-in"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>,</span></span>
 <span class="r-in"><span>keywords <span class="op">=</span> <span class="st">"Musculoskeletal disorder"</span>,</span></span>
@@ -163,7 +110,7 @@ to (but not in) the codelist</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: variable_name &lt;chr&gt;, variable_level &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   estimate_name &lt;chr&gt;, estimate_type &lt;chr&gt;, estimate_value &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   additional_name &lt;chr&gt;, additional_level &lt;chr&gt;</span></span>
-<span class="r-in"><span><span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmDisconnect.html" class="external-link">cdmDisconnect</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu">cdmDisconnect</span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

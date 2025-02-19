@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,8 @@
 <span>  byConcept <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  byYear <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  bySex <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  ageGroup <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  ageGroup <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dateRange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -86,6 +87,10 @@ concept</p></dd>
 <dt id="arg-agegroup">ageGroup<a class="anchor" aria-label="anchor" href="#arg-agegroup"></a></dt>
 <dd><p>If not NULL, a list of ageGroup vectors of length two.</p></dd>
 
+
+<dt id="arg-daterange">dateRange<a class="anchor" aria-label="anchor" href="#arg-daterange"></a></dt>
+<dd><p>Two dates. The first indicating the earliest cohort start date and the second indicating the latest possible cohort end date. If NULL or the first date is set as missing, the earliest observation_start_date in the observation_period table will be used for the former. If NULL or the second date is set as missing, the latest observation_end_date in the observation_period table will be used for the latter.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -107,7 +112,7 @@ concept</p></dd>
 <span class="r-in"><span>          poliovirus_vaccine <span class="op">=</span> <span class="va">poliovirus_vaccine</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">summariseCodeUse</span><span class="op">(</span><span class="va">cs</span>,cdm <span class="op">=</span> <span class="va">cdm</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">results</span></span></span>
-<span class="r-in"><span><span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmDisconnect.html" class="external-link">cdmDisconnect</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu">cdmDisconnect</span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
