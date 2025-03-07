@@ -43,7 +43,7 @@ stratifyByRouteCategory <- function(x, cdm, keepOriginal = FALSE){
   }
   checkmate::assertLogical(keepOriginal, len = 1)
 
-  doseRouteData <- doseFormToRoute
+  doseRouteData <- CodelistGenerator::doseFormToRoute
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
 
