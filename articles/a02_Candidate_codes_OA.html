@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,10 +103,11 @@ strategies.</p>
 <h3 id="condition-domain-without-searching-synonyms-with-exclusions-without-including-descendants-or-ancestor">Condition domain, without searching synonyms, with exclusions,
 without including descendants or ancestor<a class="anchor" aria-label="anchor" href="#condition-domain-without-searching-synonyms-with-exclusions-without-including-descendants-or-ancestor"></a>
 </h3>
-<p>To start we will search for “osteoarthritis”, while excluding
-“post-infection” and “post-traumatic”, but without searching synonyms,
-without searching via non-standard codes, and without including
-descendants or the direct ancestor of the included concepts.</p>
+<p>To start, we will search for “osteoarthritis” within the “Condition”,
+while excluding “post-infection” and “post-traumatic”, but without
+searching synonyms, without searching via non-standard codes, and
+without including descendants or the direct ancestor of the included
+concepts.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">oaCodes1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -166,15 +167,15 @@ descendants or the direct ancestor of the included concepts.</p>
 <span><span class="co">#&gt; $ concept_name <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Kashin-Bek disease", "Degenerative joint disease of shou…</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="including-observation-domain">Including observation domain<a class="anchor" aria-label="anchor" href="#including-observation-domain"></a>
+<h3 id="including-all-domains">Including all domains<a class="anchor" aria-label="anchor" href="#including-all-domains"></a>
 </h3>
-<p>Now we will search the observation domain as well as the condition
-domain.</p>
+<p>Now we will search in all the supported domains, that means:
+Condition, Drug, Procedure, Device, Observation, and Measurement.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">oaCodes3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
 <span>  keywords <span class="op">=</span> <span class="st">"osteoarthritis"</span>,</span>
-<span>  domains <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Condition"</span>, <span class="st">"Observation"</span><span class="op">)</span>,</span>
+<span>  domains <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  searchInSynonyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  exclude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
