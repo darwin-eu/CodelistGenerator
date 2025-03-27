@@ -31,6 +31,7 @@ Other contributors:
   \item Marti Catala \email{marti.catalasabate@ndorms.ox.ac.uk} (\href{https://orcid.org/0000-0003-3308-9905}{ORCID}) [contributor]
   \item Mike Du \email{mike.du@ndorms.ox.ac.uk} (\href{https://orcid.org/0000-0002-9517-8834}{ORCID}) [contributor]
   \item Danielle Newby \email{danielle.newby@ndorms.ox.ac.uk} (\href{https://orcid.org/0000-0002-3001-1478}{ORCID}) [contributor]
+  \item Marta Alcalde-Herraiz \email{marta.alcaldeherraiz@ndorms.ox.ac.uk} (\href{https://orcid.org/0009-0002-4405-1814}{ORCID}) [contributor]
 }
 
 }

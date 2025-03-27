@@ -238,7 +238,7 @@ listJsonFromPath <- function(path) {
 
 extractCodes <- function(file, unknown) {
 
-  json <- RJSONIO::fromJSON(file)[["ConceptSets"]]
+  json <- jsonlite::read_json(file)[["ConceptSets"]]
   codelistTibble <- NULL
   for (k in seq_along(json)) {
     name <- json[[k]][["name"]]
@@ -495,7 +495,7 @@ readConceptSet <- function(conceptSets) {
 
   for (k in 1:nrow(conceptSets)) {
     conceptSetName <- conceptSets$concept_set_name[k]
-    conceptSet <- RJSONIO::fromJSON(conceptSets$concept_set_path[k])
+    conceptSet <- jsonlite::read_json(conceptSets$concept_set_path[k])
     conceptSet <- lapply(conceptSet$items, function(x) {
       x <- append(x, x[["concept"]])
       x[["concept"]] <- NULL

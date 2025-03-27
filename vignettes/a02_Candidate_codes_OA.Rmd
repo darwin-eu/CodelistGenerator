@@ -66,7 +66,7 @@ oaCodes1 <- readRDS(system.file("optionsData01.RData",
                                             package = "CodelistGenerator"))
 ```
 
-To start we will search for "osteoarthritis", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, and without including descendants or the direct ancestor of the included concepts.
+To start, we will search for "osteoarthritis" within the "Condition", while excluding "post-infection" and "post-traumatic", but without searching synonyms, without searching via non-standard codes, and without including descendants or the direct ancestor of the included concepts.
 
 ```{r, eval=FALSE}
 oaCodes1 <- getCandidateCodes(
@@ -124,18 +124,18 @@ newCodes1To2 |>
   glimpse()
 ```
 
-### Including observation domain
+### Including all domains
 ```{r,  message=FALSE, warning=FALSE,echo=FALSE}
 oaCodes3 <- readRDS(system.file("optionsData03.RData", 
                                             package = "CodelistGenerator"))
 ```
 
-Now we will search the observation domain as well as the condition domain.
+Now we will search in all the supported domains, that means: Condition, Drug, Procedure, Device, Observation, and Measurement.
 ```{r, eval=FALSE}
 oaCodes3 <- getCandidateCodes(
   cdm = cdm,
   keywords = "osteoarthritis",
-  domains = c("Condition", "Observation"),
+  domains = NULL,
   searchInSynonyms = FALSE,
   searchNonStandard = FALSE,
   exclude = c(

@@ -1,6 +1,6 @@
 Package: CodelistGenerator
 Title: Identify Relevant Clinical Codes and Evaluate Their Use
-Version: 3.4.0
+Version: 3.4.1
 Authors@R: c(
     person("Edward", "Burn", email = "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut", "cre"),
@@ -18,7 +18,11 @@ Authors@R: c(
     comment = c(ORCID = "0000-0002-9517-8834")),
     person("Danielle", "Newby", email = "danielle.newby@ndorms.ox.ac.uk", 
     role = c("ctb"), 
-    comment = c(ORCID = "0000-0002-3001-1478")))
+    comment = c(ORCID = "0000-0002-3001-1478")),
+    person( "Marta", "Alcalde-Herraiz", email = "marta.alcaldeherraiz@ndorms.ox.ac.uk", 
+    role = c("ctb"), 
+    comment = c(ORCID = "0009-0002-4405-1814")
+    ))
 Description: Generate a candidate code list for the Observational Medical Outcomes Partnership (OMOP) common data model based on string matching. For a given search strategy, a candidate code list will be returned.
 License: Apache License (>= 2)
 Encoding: UTF-8
@@ -41,7 +45,7 @@ Imports:
     lubridate,
     PatientProfiles (>= 1.2.3),
     vctrs,
-    RJSONIO
+    jsonlite
 Suggests: 
     covr,
     duckdb,

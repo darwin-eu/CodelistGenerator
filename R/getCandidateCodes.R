@@ -28,7 +28,7 @@
 #' positions (e.g. "osteoarthritis of knee") should be identified.
 #' @param exclude  Character vector of words
 #' to identify concepts to exclude.
-#' @param domains Character vector with one or more of the OMOP CDM domain.
+#' @param domains Character vector with one or more of the OMOP CDM domain. If NULL, all supported domains are included: Condition, Drug, Procedure, Device, Observation, and Measurement.
 #' @param standardConcept  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
@@ -71,47 +71,26 @@ getCandidateCodes <- function(cdm,
 
   ## checks for standard types of user error
   errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  checkmate::assertCharacter(keywords, add = errorMessage)
-  checkmate::assertCharacter(exclude,
-    null.ok = TRUE,
-    add = errorMessage
-  )
-  checkmate::assertVector(domains, add = errorMessage)
-  checkmate::assertVector(standardConcept, add = errorMessage)
-  standardConceptCheck <- all(tolower(standardConcept) %in%
-    c(
-      "standard",
-      "classification",
-      "non-standard"
-    ))
-  if (!isTRUE(standardConceptCheck)) {
-    errorMessage$push(
-      "- standardConcept must be from Standard, Non-standard, or Classification"
-    )
+  omopgenerics::assertCharacter(keywords, null = FALSE, na = FALSE)
+  if(is.null(domains)){
+    domains <- c("Condition", "Drug", "Procedure", "Device", "Observation", "Measurement")
+  }else{
+    domains <- stringr::str_to_sentence(domains)
+    omopgenerics::assertChoice(domains, null = TRUE,
+                               choices = c("Condition", "Drug", "Procedure", "Device", "Observation", "Measurement"))
   }
-  checkmate::assertTRUE(standardConceptCheck, add = errorMessage)
-  checkmate::assert_logical(searchInSynonyms, add = errorMessage)
-  checkmate::assert_logical(searchNonStandard, add = errorMessage)
-  checkmate::assert_logical(includeDescendants, add = errorMessage)
-  checkmate::assert_logical(includeAncestor, add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+  omopgenerics::assertChoice(standardConcept, choices = c("Standard", "Classification", "Non-standard"))
+  omopgenerics::assertLogical(searchInSynonyms)
+  omopgenerics::assertLogical(searchNonStandard)
+  omopgenerics::assertLogical(includeDescendants)
+  omopgenerics::assertLogical(includeAncestor)
 
-  errorMessage <- checkmate::makeAssertCollection()
-  assertTablesExist(cdm, tableName = c("concept",
-                                       "concept_relationship",
-                                       "concept_ancestor",
-                                       "concept_synonym",
-                                       "vocabulary"),
-                    messageStore = errorMessage)
-  if ("drug" %in% tolower(domains)) {
-    assertTablesExist(cdm, tableName = c("drug_strength"),
-                      messageStore = errorMessage)
+  requiredTables <- c("concept", "concept_relationship", "concept_ancestor",
+                      "concept_synonym", "vocabulary")
+  if("Drug" %in% stringr::str_to_sentence(domains)){
+    requiredTables <- append(requiredTables, "drug_strength")
   }
-  checkmate::reportAssertions(collection = errorMessage)
-
-  errorMessage <- checkmate::makeAssertCollection()
-  checkmate::reportAssertions(collection = errorMessage)
+  omopgenerics::validateCdmArgument(cdm, requiredTables = requiredTables)
 
   # run search by domain
   searchSpecs <- data.frame(

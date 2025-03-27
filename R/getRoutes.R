@@ -31,7 +31,7 @@ getRouteCategories <- function(cdm) {
 
     # relate does form concept id with the classification established by
     # doseFormToRoute
-    doseRouteData <- get("doseFormToRoute")
+    doseRouteData <- CodelistGenerator::doseFormToRoute
 
     routeCategory <- cdm$concept_relationship |>
       # get dose form available in the cdm

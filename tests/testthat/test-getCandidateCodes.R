@@ -117,7 +117,6 @@ test_that("tests with mock db", {
     )
     expect_true(all(codes$concept_name != "Osteoarthritis of hip"))
 
-
     # test non-standard
     codes <- getCandidateCodes(
       cdm = cdm,
@@ -174,6 +173,16 @@ test_that("tests with mock db", {
     )
     expect_true(any(codes$concept_id %in% "10"))
 
+    codes <- getCandidateCodes(
+      cdm = cdm,
+      keywords = c("arthritis", "adalimumab"),
+      domains = NULL,
+      searchInSynonyms = TRUE,
+      includeDescendants = TRUE,
+      includeAncestor = TRUE
+    )
+    expect_true(all((codes$domain_id |> sort() |> unique()) == c("Condition", "Drug", "Observation")))
+
     ## Edge cases
     # check empty candidate set
    codes <- getCandidateCodes(
@@ -208,22 +217,6 @@ test_that("tests with mock db", {
     )
     expect_true(nrow(codes) == 0)
 
-    # domain that doesn´t exist
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "arthritis",
-      domains = c("Condition", "Some other table")
-    )
-    expect_true(nrow(codes) > 0)
-
-    codes <- getCandidateCodes(
-      cdm = cdm,
-      keywords = "arthritis",
-      domains = c("Some other table")
-    )
-    expect_true(nrow(codes) == 0)
-
-
     ## Expected errors
     # keyword should be a character
     expect_error(getCandidateCodes(
@@ -239,6 +232,13 @@ test_that("tests with mock db", {
       exclude = NULL,
       includeDescendants = TRUE,
       includeAncestor = FALSE
+    ))
+
+    # domain that doesn´t exist
+    expect_error(getCandidateCodes(
+      cdm = cdm,
+      keywords = "arthritis",
+      domains = c("Condition", "Some other table")
     ))
 
     # standardConcept that doesn´t exist
@@ -330,5 +330,21 @@ test_that("tests with eunomia", {
    dplyr::pull("concept_id"),
  unique(codes |>
    dplyr::pull("concept_id")))
+
+ codes1 <- getCandidateCodes(cdm=cdm,
+                            keywords= c("Protein","disease"),
+                            domains = NULL,
+                            searchInSynonyms = TRUE,
+                            searchNonStandard = TRUE,
+                            includeAncestor = TRUE)
+ codes1 <- codes1 |> dplyr::arrange(concept_id)
+ codes2 <- getCandidateCodes(cdm=cdm,
+                            keywords= c("Protein","disease"),
+                            domains = c("Condition", "Drug", "Procedure", "Device", "Observation", "Measurement"),
+                            searchInSynonyms = TRUE,
+                            searchNonStandard = TRUE,
+                            includeAncestor = TRUE)
+ codes2 <- codes2 |> dplyr::arrange(concept_id)
+ expect_identical(codes1, codes2)
 
 })

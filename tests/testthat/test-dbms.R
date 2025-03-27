@@ -25,8 +25,6 @@ test_that("redshift", {
   expect_identical(routeCat,
                    sort(getRouteCategories(cdm)))
 
-
-
   cdm$concept <- cdm$concept |>
     dplyr::mutate(concept_id = as.integer64(concept_id)) |>
     dplyr::compute()
@@ -52,6 +50,9 @@ test_that("redshift", {
   # drug ingredients
   expect_no_error(metformin <- getDrugIngredientCodes(cdm, "metformin",
                                                       nameStyle = "{concept_name}"))
+  expect_no_error(metformin <- getDrugIngredientCodes(cdm, 1503297,
+                                                      nameStyle = "{concept_name}"))
+
   expect_true(inherits(metformin, "codelist"))
   expect_true("metformin" %in% names(metformin))
 

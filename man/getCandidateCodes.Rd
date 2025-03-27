@@ -27,7 +27,7 @@ positions (e.g. "osteoarthritis of knee") should be identified.}
 \item{exclude}{Character vector of words
 to identify concepts to exclude.}
 
-\item{domains}{Character vector with one or more of the OMOP CDM domain.}
+\item{domains}{Character vector with one or more of the OMOP CDM domain. If NULL, all supported domains are included: Condition, Drug, Procedure, Device, Observation, and Measurement.}
 
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
