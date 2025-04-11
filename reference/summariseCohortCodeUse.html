@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,10 +18,14 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a01_Introduction_to_CodelistGenerator.html">Introduction to CodelistGenerator</a></li>
-    <li><a class="dropdown-item" href="../articles/a02_Candidate_codes_OA.html">CodelistGenerator search options: codes for osteoarthritis</a></li>
-    <li><a class="dropdown-item" href="../articles/a03_Options_for_CodelistGenerator.html">CodelistGenerator options: examples with a with mock vocabulary</a></li>
-    <li><a class="dropdown-item" href="../articles/a04_Vocab_based_codelists.html">Generating vocabulary based codelists</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a01_GettingOmopCdmVocabularies.html">Getting the OMOP CDM vocabularies</a></li>
+    <li><a class="dropdown-item" href="../articles/a02_ExploreCDMvocabulary.html">Exploring the OMOP CDM vocabulary tables</a></li>
+    <li><a class="dropdown-item" href="../articles/a03_GenerateCandidateCodelist.html">Generate a candidate codelist</a></li>
+    <li><a class="dropdown-item" href="../articles/a04_GenerateVocabularyBasedCodelist.html">Generating vocabulary based codelists for medications</a></li>
+    <li><a class="dropdown-item" href="../articles/a04b_icd_codes.html">Generating vocabulary based codelists for conditions</a></li>
+    <li><a class="dropdown-item" href="../articles/a05_ExtractCodelistFromJSONfile.html">Extract codelists from JSON files</a></li>
+    <li><a class="dropdown-item" href="../articles/a06_CreateSubsetsFromCodelist.html">Compare, subset or stratify codelists</a></li>
+    <li><a class="dropdown-item" href="../articles/a07_RunCodelistDiagnostics.html">Codelist diagnostics</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"></ul></div>
@@ -61,11 +65,11 @@
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>Vector of concept IDs</p></dd>
+<dd><p>A codelist.</p></dd>
 
 
 <dt id="arg-cdm">cdm<a class="anchor" aria-label="anchor" href="#arg-cdm"></a></dt>
-<dd><p>cdm_reference via CDMConnector::cdmFromCon()</p></dd>
+<dd><p>A cdm reference via CDMConnector.</p></dd>
 
 
 <dt id="arg-cohorttable">cohortTable<a class="anchor" aria-label="anchor" href="#arg-cohorttable"></a></dt>
@@ -84,11 +88,12 @@ use on individuals' cohort start date).</p></dd>
 
 <dt id="arg-countby">countBy<a class="anchor" aria-label="anchor" href="#arg-countby"></a></dt>
 <dd><p>Either "record" for record-level counts or "person" for
-person-level counts</p></dd>
+person-level counts.</p></dd>
 
 
 <dt id="arg-byconcept">byConcept<a class="anchor" aria-label="anchor" href="#arg-byconcept"></a></dt>
-<dd><p>TRUE or FALSE. If TRUE code use will be summarised by</p></dd>
+<dd><p>TRUE or FALSE. If TRUE code use will be summarised by
+concept.</p></dd>
 
 
 <dt id="arg-byyear">byYear<a class="anchor" aria-label="anchor" href="#arg-byyear"></a></dt>
@@ -111,14 +116,18 @@ person-level counts</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">duckdb</span><span class="fu">::</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                      dbdir <span class="op">=</span> <span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span><span class="va">con</span>,</span></span>
-<span class="r-in"><span>                                  cdmSchema <span class="op">=</span> <span class="st">"main"</span>,</span></span>
-<span class="r-in"><span>                                  writeSchema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu">CDMConnector</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/generateConceptCohortSet.html" class="external-link">generateConceptCohortSet</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>,</span></span>
-<span class="r-in"><span>conceptSet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">260139</span>,</span></span>
-<span class="r-in"><span>                  b <span class="op">=</span> <span class="fl">1127433</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.duckdb.org/" class="external-link">duckdb</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CDMConnector/" class="external-link">CDMConnector</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                 dbdir <span class="op">=</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span><span class="va">con</span>,</span></span>
+<span class="r-in"><span>                 cdmSchema <span class="op">=</span> <span class="st">"main"</span>,</span></span>
+<span class="r-in"><span>                 writeSchema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/generateConceptCohortSet.html" class="external-link">generateConceptCohortSet</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>,</span></span>
+<span class="r-in"><span>                  conceptSet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">260139</span>,</span></span>
+<span class="r-in"><span>                                    b <span class="op">=</span> <span class="fl">1127433</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  name <span class="op">=</span> <span class="st">"cohorts"</span>,</span></span>
 <span class="r-in"><span>                  end <span class="op">=</span> <span class="st">"observation_period_end_date"</span>,</span></span>
 <span class="r-in"><span>                  overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>

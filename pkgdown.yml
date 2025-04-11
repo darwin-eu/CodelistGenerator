@@ -2,11 +2,15 @@ pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  a01_Introduction_to_CodelistGenerator: a01_Introduction_to_CodelistGenerator.html
-  a02_Candidate_codes_OA: a02_Candidate_codes_OA.html
-  a03_Options_for_CodelistGenerator: a03_Options_for_CodelistGenerator.html
-  a04_Vocab_based_codelists: a04_Vocab_based_codelists.html
-last_built: 2025-03-27T11:43Z
+  a01_GettingOmopCdmVocabularies: a01_GettingOmopCdmVocabularies.html
+  a02_ExploreCDMvocabulary: a02_ExploreCDMvocabulary.html
+  a03_GenerateCandidateCodelist: a03_GenerateCandidateCodelist.html
+  a04_GenerateVocabularyBasedCodelist: a04_GenerateVocabularyBasedCodelist.html
+  a04b_icd_codes: a04b_icd_codes.html
+  a05_ExtractCodelistFromJSONfile: a05_ExtractCodelistFromJSONfile.html
+  a06_CreateSubsetsFromCodelist: a06_CreateSubsetsFromCodelist.html
+  a07_RunCodelistDiagnostics: a07_RunCodelistDiagnostics.html
+last_built: 2025-04-11T07:48Z
 urls:
   reference: https://darwin-eu.github.io/CodelistGenerator/reference
   article: https://darwin-eu.github.io/CodelistGenerator/articles

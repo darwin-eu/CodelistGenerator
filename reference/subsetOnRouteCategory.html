@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,10 +18,14 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a01_Introduction_to_CodelistGenerator.html">Introduction to CodelistGenerator</a></li>
-    <li><a class="dropdown-item" href="../articles/a02_Candidate_codes_OA.html">CodelistGenerator search options: codes for osteoarthritis</a></li>
-    <li><a class="dropdown-item" href="../articles/a03_Options_for_CodelistGenerator.html">CodelistGenerator options: examples with a with mock vocabulary</a></li>
-    <li><a class="dropdown-item" href="../articles/a04_Vocab_based_codelists.html">Generating vocabulary based codelists</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a01_GettingOmopCdmVocabularies.html">Getting the OMOP CDM vocabularies</a></li>
+    <li><a class="dropdown-item" href="../articles/a02_ExploreCDMvocabulary.html">Exploring the OMOP CDM vocabulary tables</a></li>
+    <li><a class="dropdown-item" href="../articles/a03_GenerateCandidateCodelist.html">Generate a candidate codelist</a></li>
+    <li><a class="dropdown-item" href="../articles/a04_GenerateVocabularyBasedCodelist.html">Generating vocabulary based codelists for medications</a></li>
+    <li><a class="dropdown-item" href="../articles/a04b_icd_codes.html">Generating vocabulary based codelists for conditions</a></li>
+    <li><a class="dropdown-item" href="../articles/a05_ExtractCodelistFromJSONfile.html">Extract codelists from JSON files</a></li>
+    <li><a class="dropdown-item" href="../articles/a06_CreateSubsetsFromCodelist.html">Compare, subset or stratify codelists</a></li>
+    <li><a class="dropdown-item" href="../articles/a07_RunCodelistDiagnostics.html">Codelist diagnostics</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"></ul></div>
@@ -42,7 +46,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">subsetOnRouteCategory</span><span class="op">(</span><span class="va">x</span>, <span class="va">cdm</span>, <span class="va">routeCategory</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">subsetOnRouteCategory</span><span class="op">(</span><span class="va">x</span>, <span class="va">cdm</span>, <span class="va">routeCategory</span>, negate <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -50,24 +54,51 @@
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>Codelist</p></dd>
+<dd><p>A codelist.</p></dd>
 
 
 <dt id="arg-cdm">cdm<a class="anchor" aria-label="anchor" href="#arg-cdm"></a></dt>
-<dd><p>A cdm reference</p></dd>
+<dd><p>A cdm reference via CDMConnector.</p></dd>
 
 
 <dt id="arg-routecategory">routeCategory<a class="anchor" aria-label="anchor" href="#arg-routecategory"></a></dt>
-<dd><p>Route category. Use getRoutes() to find the available
-route categories for a cdm</p></dd>
+<dd><p>Only codes with the specified route will be
+returned. If NULL, descendant codes will be returned regardless of route
+category. Use getRoutes() to find the available route categories.</p></dd>
+
+
+<dt id="arg-negate">negate<a class="anchor" aria-label="anchor" href="#arg-negate"></a></dt>
+<dd><p>If FALSE, only concepts with the routeCategory specified will
+be returned. If TRUE, concepts with the routeCategory specified will be excluded.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>The codelist with only those concepts associated with the
-specified route categories</p>
+specified route categories (if negate is FALSE) or the codelist without those
+concepts associated with the specified route categories (if negate is TRUE).</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are observation period end dates after the current date: 2025-04-11</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The latest max observation period end date found is 2025-12-31</span>
+<span class="r-in"><span><span class="va">codes</span> <span class="op">&lt;-</span> <span class="fu">subsetOnRouteCategory</span><span class="op">(</span></span></span>
+<span class="r-in"><span>              x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"codes"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>,<span class="fl">21</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              cdm <span class="op">=</span> <span class="va">cdm</span>,</span></span>
+<span class="r-in"><span>              routeCategory <span class="op">=</span> <span class="st">"topical"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span><span style="color: #BBBB00;">!</span> `codelist` casted to integers.</span>
+<span class="r-in"><span><span class="va">codes</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────────────────</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> - codes (1 codes)</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

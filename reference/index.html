@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,10 +18,14 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a01_Introduction_to_CodelistGenerator.html">Introduction to CodelistGenerator</a></li>
-    <li><a class="dropdown-item" href="../articles/a02_Candidate_codes_OA.html">CodelistGenerator search options: codes for osteoarthritis</a></li>
-    <li><a class="dropdown-item" href="../articles/a03_Options_for_CodelistGenerator.html">CodelistGenerator options: examples with a with mock vocabulary</a></li>
-    <li><a class="dropdown-item" href="../articles/a04_Vocab_based_codelists.html">Generating vocabulary based codelists</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/a01_GettingOmopCdmVocabularies.html">Getting the OMOP CDM vocabularies</a></li>
+    <li><a class="dropdown-item" href="../articles/a02_ExploreCDMvocabulary.html">Exploring the OMOP CDM vocabulary tables</a></li>
+    <li><a class="dropdown-item" href="../articles/a03_GenerateCandidateCodelist.html">Generate a candidate codelist</a></li>
+    <li><a class="dropdown-item" href="../articles/a04_GenerateVocabularyBasedCodelist.html">Generating vocabulary based codelists for medications</a></li>
+    <li><a class="dropdown-item" href="../articles/a04b_icd_codes.html">Generating vocabulary based codelists for conditions</a></li>
+    <li><a class="dropdown-item" href="../articles/a05_ExtractCodelistFromJSONfile.html">Extract codelists from JSON files</a></li>
+    <li><a class="dropdown-item" href="../articles/a06_CreateSubsetsFromCodelist.html">Compare, subset or stratify codelists</a></li>
+    <li><a class="dropdown-item" href="../articles/a07_RunCodelistDiagnostics.html">Codelist diagnostics</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"></ul></div>
@@ -50,7 +54,7 @@
           <code><a href="getCandidateCodes.html">getCandidateCodes()</a></code>
 
         </dt>
-        <dd>Generate candidate codelist for the OMOP CDM</dd>
+        <dd>Generate a candidate codelist</dd>
       </dl></div><div class="section level2">
 
       <h3 id="create-vocabulary-based-codelists">Create vocabulary-based codelists<a class="anchor" aria-label="anchor" href="#create-vocabulary-based-codelists"></a></h3>
@@ -64,22 +68,22 @@
 
       <dl><dt>
 
-          <code><a href="getATCCodes.html">getATCCodes()</a></code>
-
-        </dt>
-        <dd>Get descendant codes for ATC levels</dd>
-      </dl><dl><dt>
-
           <code><a href="getDrugIngredientCodes.html">getDrugIngredientCodes()</a></code>
 
         </dt>
-        <dd>Get descendant codes for drug ingredients</dd>
+        <dd>Get descendant codes of drug ingredients</dd>
+      </dl><dl><dt>
+
+          <code><a href="getATCCodes.html">getATCCodes()</a></code>
+
+        </dt>
+        <dd>Get the descendant codes of Anatomical Therapeutic Chemical (ATC) classification codes</dd>
       </dl><dl><dt>
 
           <code><a href="getICD10StandardCodes.html">getICD10StandardCodes()</a></code>
 
         </dt>
-        <dd>Get corresponding standard codes for ICD-10 chapters and sub-chapters</dd>
+        <dd>Get corresponding standard codes for International Classification of Diseases (ICD) 10 codes</dd>
       </dl></div><div class="section level2">
 
       <h3 id="run-codelist-diagnostics">Run codelist diagnostics<a class="anchor" aria-label="anchor" href="#run-codelist-diagnostics"></a></h3>
@@ -96,13 +100,13 @@
           <code><a href="summariseAchillesCodeUse.html">summariseAchillesCodeUse()</a></code>
 
         </dt>
-        <dd>Summarise code use from achilles counts</dd>
+        <dd>Summarise code use from achilles counts.</dd>
       </dl><dl><dt>
 
           <code><a href="summariseCodeUse.html">summariseCodeUse()</a></code>
 
         </dt>
-        <dd>Summarise code use in patient-level data</dd>
+        <dd>Summarise code use in patient-level data.</dd>
       </dl><dl><dt>
 
           <code><a href="summariseCohortCodeUse.html">summariseCohortCodeUse()</a></code>
@@ -120,7 +124,7 @@
           <code><a href="summariseUnmappedCodes.html">summariseUnmappedCodes()</a></code>
 
         </dt>
-        <dd>Findunmapped concepts related to codelist</dd>
+        <dd>Find unmapped concepts related to codelist</dd>
       </dl></div><div class="section level2">
 
       <h3 id="present-codelist-diagnostics-results-in-a-table">Present codelist diagnostics results in a table<a class="anchor" aria-label="anchor" href="#present-codelist-diagnostics-results-in-a-table"></a></h3>
@@ -137,7 +141,7 @@
           <code><a href="tableAchillesCodeUse.html">tableAchillesCodeUse()</a></code>
 
         </dt>
-        <dd>Format the result of summariseAchillesCodeUse into a table.</dd>
+        <dd>Format the result of summariseAchillesCodeUse into a table</dd>
       </dl><dl><dt>
 
           <code><a href="tableCodeUse.html">tableCodeUse()</a></code>
@@ -155,13 +159,13 @@
           <code><a href="tableOrphanCodes.html">tableOrphanCodes()</a></code>
 
         </dt>
-        <dd>Format the result of summariseOrphanCodes into a table.</dd>
+        <dd>Format the result of summariseOrphanCodes into a table</dd>
       </dl><dl><dt>
 
           <code><a href="tableUnmappedCodes.html">tableUnmappedCodes()</a></code>
 
         </dt>
-        <dd>Format the result of summariseUnmappedCodeUse into a table.</dd>
+        <dd>Format the result of summariseUnmappedCodeUse into a table</dd>
       </dl></div><div class="section level2">
 
       <h3 id="extract-codelists-from-json-files">Extract codelists from JSON files<a class="anchor" aria-label="anchor" href="#extract-codelists-from-json-files"></a></h3>
@@ -178,13 +182,13 @@
           <code><a href="codesFromCohort.html">codesFromCohort()</a></code>
 
         </dt>
-        <dd>Get concept ids from a provided path to cohort json files</dd>
+        <dd>Get concept ids from JSON files containing cohort definitions</dd>
       </dl><dl><dt>
 
           <code><a href="codesFromConceptSet.html">codesFromConceptSet()</a></code>
 
         </dt>
-        <dd>Get concept ids from a provided path to json files</dd>
+        <dd>Get concept ids from JSON files containing concept sets</dd>
       </dl></div><div class="section level2">
 
       <h3 id="codelist-utility-functions">Codelist utility functions<a class="anchor" aria-label="anchor" href="#codelist-utility-functions"></a></h3>
@@ -198,46 +202,16 @@
 
       <dl><dt>
 
-          <code><a href="codesInUse.html">codesInUse()</a></code>
-
-        </dt>
-        <dd>Use achilles counts to get codes used in the database</dd>
-      </dl><dl><dt>
-
           <code><a href="compareCodelists.html">compareCodelists()</a></code>
 
         </dt>
-        <dd>Compare two codelists</dd>
+        <dd>Compare overlap between two sets of codes</dd>
       </dl><dl><dt>
 
-          <code><a href="stratifyByConcept.html">stratifyByConcept()</a></code>
+          <code><a href="subsetToCodesInUse.html">subsetToCodesInUse()</a></code>
 
         </dt>
-        <dd>Stratify a codelist by the concepts included within it</dd>
-      </dl><dl><dt>
-
-          <code><a href="stratifyByDoseUnit.html">stratifyByDoseUnit()</a></code>
-
-        </dt>
-        <dd>Stratify a codelist by dose unit</dd>
-      </dl><dl><dt>
-
-          <code><a href="stratifyByRouteCategory.html">stratifyByRouteCategory()</a></code>
-
-        </dt>
-        <dd>Stratify a codelist by route category</dd>
-      </dl><dl><dt>
-
-          <code><a href="subsetOnDomain.html">subsetOnDomain()</a></code>
-
-        </dt>
-        <dd>Subset a codelist to only those codes from a particular domain</dd>
-      </dl><dl><dt>
-
-          <code><a href="subsetOnDoseUnit.html">subsetOnDoseUnit()</a></code>
-
-        </dt>
-        <dd>Subset a codelist to only those with a particular dose unit</dd>
+        <dd>Filter a codelist to keep only the codes being used in patient records</dd>
       </dl><dl><dt>
 
           <code><a href="subsetOnRouteCategory.html">subsetOnRouteCategory()</a></code>
@@ -246,10 +220,40 @@
         <dd>Subset a codelist to only those with a particular route category</dd>
       </dl><dl><dt>
 
-          <code><a href="subsetToCodesInUse.html">subsetToCodesInUse()</a></code>
+          <code><a href="subsetOnDoseUnit.html">subsetOnDoseUnit()</a></code>
 
         </dt>
-        <dd>Use achilles counts to filter a codelist to keep only the codes used in the database</dd>
+        <dd>Subset a codelist to only those with a particular dose unit.</dd>
+      </dl><dl><dt>
+
+          <code><a href="subsetOnDomain.html">subsetOnDomain()</a></code>
+
+        </dt>
+        <dd>Subset a codelist to only those codes from a particular domain.</dd>
+      </dl><dl><dt>
+
+          <code><a href="stratifyByRouteCategory.html">stratifyByRouteCategory()</a></code>
+
+        </dt>
+        <dd>Stratify a codelist by route category.</dd>
+      </dl><dl><dt>
+
+          <code><a href="stratifyByDoseUnit.html">stratifyByDoseUnit()</a></code>
+
+        </dt>
+        <dd>Stratify a codelist by dose unit.</dd>
+      </dl><dl><dt>
+
+          <code><a href="stratifyByConcept.html">stratifyByConcept()</a></code>
+
+        </dt>
+        <dd>Stratify a codelist by the concepts included within it.</dd>
+      </dl><dl><dt>
+
+          <code><a href="getMappings.html">getMappings()</a></code>
+
+        </dt>
+        <dd>Show mappings from non-standard vocabularies to standard.</dd>
       </dl></div><div class="section level2">
 
       <h3 id="vocabulary-utility-functions">Vocabulary utility functions<a class="anchor" aria-label="anchor" href="#vocabulary-utility-functions"></a></h3>
@@ -263,94 +267,88 @@
 
       <dl><dt>
 
-          <code><a href="availableATC.html">availableATC()</a></code>
-
-        </dt>
-        <dd>Get all ATC codes from the cdm</dd>
-      </dl><dl><dt>
-
-          <code><a href="availableICD10.html">availableICD10()</a></code>
-
-        </dt>
-        <dd>Get all ICD codes from the cdm</dd>
-      </dl><dl><dt>
-
-          <code><a href="availableIngredients.html">availableIngredients()</a></code>
-
-        </dt>
-        <dd>Get all ingredients codes from the cdm</dd>
-      </dl><dl><dt>
-
-          <code><a href="doseFormToRoute.html">doseFormToRoute</a></code>
-
-        </dt>
-        <dd>Equivalence from dose from concept IDs to route categories.</dd>
-      </dl><dl><dt>
-
-          <code><a href="getConceptClassId.html">getConceptClassId()</a></code>
-
-        </dt>
-        <dd>getConceptClassId</dd>
-      </dl><dl><dt>
-
-          <code><a href="getDescendants.html">getDescendants()</a></code>
-
-        </dt>
-        <dd>getDescendants</dd>
-      </dl><dl><dt>
-
-          <code><a href="getDomains.html">getDomains()</a></code>
-
-        </dt>
-        <dd>getDomains</dd>
-      </dl><dl><dt>
-
-          <code><a href="getDoseForm.html">getDoseForm()</a></code>
-
-        </dt>
-        <dd>getDoseForm</dd>
-      </dl><dl><dt>
-
-          <code><a href="getDoseUnit.html">getDoseUnit()</a></code>
-
-        </dt>
-        <dd>Get available routes in a cdm reference.</dd>
-      </dl><dl><dt>
-
-          <code><a href="getMappings.html">getMappings()</a></code>
-
-        </dt>
-        <dd>Show mappings from non-standard vocabularies to standard</dd>
-      </dl><dl><dt>
-
-          <code><a href="getRelationshipId.html">getRelationshipId()</a></code>
-
-        </dt>
-        <dd>Get relationship ID values from the concept relationship table</dd>
-      </dl><dl><dt>
-
-          <code><a href="getRouteCategories.html">getRouteCategories()</a></code>
-
-        </dt>
-        <dd>Get available routes in a cdm reference.</dd>
-      </dl><dl><dt>
-
           <code><a href="getVocabVersion.html">getVocabVersion()</a></code>
 
         </dt>
-        <dd>getVocabVersion</dd>
+        <dd>Get the version of the vocabulary used in the cdm</dd>
       </dl><dl><dt>
 
           <code><a href="getVocabularies.html">getVocabularies()</a></code>
 
         </dt>
-        <dd>getVocabularies</dd>
+        <dd>Get the vocabularies available in the cdm</dd>
+      </dl><dl><dt>
+
+          <code><a href="getConceptClassId.html">getConceptClassId()</a></code>
+
+        </dt>
+        <dd>Get the concept classes used in a given set of domains</dd>
+      </dl><dl><dt>
+
+          <code><a href="getDomains.html">getDomains()</a></code>
+
+        </dt>
+        <dd>Get the domains available in the cdm</dd>
+      </dl><dl><dt>
+
+          <code><a href="getDescendants.html">getDescendants()</a></code>
+
+        </dt>
+        <dd>Get descendant codes for a given concept</dd>
+      </dl><dl><dt>
+
+          <code><a href="getDoseForm.html">getDoseForm()</a></code>
+
+        </dt>
+        <dd>Get the dose forms available for drug concepts</dd>
+      </dl><dl><dt>
+
+          <code><a href="getRouteCategories.html">getRouteCategories()</a></code>
+
+        </dt>
+        <dd>Get available drug routes</dd>
+      </dl><dl><dt>
+
+          <code><a href="getDoseUnit.html">getDoseUnit()</a></code>
+
+        </dt>
+        <dd>Get available dose units</dd>
+      </dl><dl><dt>
+
+          <code><a href="getRelationshipId.html">getRelationshipId()</a></code>
+
+        </dt>
+        <dd>Get available relationships between concepts</dd>
+      </dl><dl><dt>
+
+          <code><a href="codesInUse.html">codesInUse()</a></code>
+
+        </dt>
+        <dd>Get the concepts being used in patient records</dd>
       </dl><dl><dt>
 
           <code><a href="sourceCodesInUse.html">sourceCodesInUse()</a></code>
 
         </dt>
-        <dd>Use achilles counts to get source codes used in the database</dd>
+        <dd>Get the source codes being used in patient records</dd>
+      </dl><dl><dt>
+
+          <code><a href="availableATC.html">availableATC()</a></code>
+
+        </dt>
+        <dd>Get the names of all available Anatomical Therapeutic Chemical (ATC) classification codes</dd>
+      </dl><dl><dt>
+
+          <code><a href="availableICD10.html">availableICD10()</a></code>
+
+        </dt>
+        <dd>Get the names of all International Classification of Diseases (ICD) 10 codes</dd>
+      </dl><dl><dt>
+
+          <code><a href="availableIngredients.html">availableIngredients()</a></code>
+
+        </dt>
+        <dd>Get the names of all available drug ingredients</dd>
       </dl></div><div class="section level2">
 
       <h3 id="create-a-mock-dataset-that-contains-vocabulary-tables">Create a mock dataset that contains vocabulary tables<a class="anchor" aria-label="anchor" href="#create-a-mock-dataset-that-contains-vocabulary-tables"></a></h3>
@@ -368,6 +366,12 @@
 
         </dt>
         <dd>Generate example vocabulary database</dd>
+      </dl><dl><dt>
+
+          <code><a href="buildAchillesTables.html">buildAchillesTables()</a></code>
+
+        </dt>
+        <dd>Add the achilles tables with specified analyses</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
