@@ -8,17 +8,17 @@ tableCohortCodeUse(
   result,
   type = "gt",
   header = c("cdm_name", "estimate_name"),
-  groupColumn = NULL,
-  timing = FALSE,
-  hide = character(),
-  .options = list()
+  groupColumn = character(),
+  hide = c("timing"),
+  .options = list(),
+  timing = lifecycle::deprecated()
 )
 }
 \arguments{
-\item{result}{A summarised result with results of the type "cohort_code_use".}
+\item{result}{A \verb{<summarised_result>} with results of the type "cohort_code_use".}
 
 \item{type}{Type of desired formatted table. To see supported formats
-use visOmopResults::tableType()}
+use visOmopResults::tableType().}
 
 \item{header}{A vector specifying the elements to include in the header. The
 order of elements matters, with the first being the topmost header.
@@ -34,8 +34,6 @@ Alternatively, it can include other names to use as overall header labels.}
 results are stratified, "year", "sex", "age_group" can also be used.
 These cannot be used in header.}
 
-\item{timing}{If TRUE the timing setting will be displayed.}
-
 \item{hide}{Table columns to exclude, options are: "cdm_name",
 "codelist_name", "year", "sex", "age_group", "standard_concept_name",
 "standard_concept_id", "estimate_name", "source_concept_name",
@@ -45,6 +43,8 @@ These cannot be used in header.}
 \item{.options}{Named list with additional formatting options.
 visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
+
+\item{timing}{deprecated.}
 }
 \value{
 A table with a formatted version of the summariseCohortCodeUse

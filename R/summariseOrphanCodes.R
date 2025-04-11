@@ -1,13 +1,12 @@
 #' Find orphan codes related to a codelist using achilles counts and, if
 #' available, PHOEBE concept recommendations
 #'
-#' @param x A codelist for which to find related codes used in the database
-#' @param cdm cdm_reference via CDMConnector
-#' @param domain The domains to restrict results too. Only concepts from these
-#' domains will be returned.
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams domainDoc
 #'
 #' @return A summarised result containg the frequency of codes related
-#' to (but not in) the codelist
+#' to (but not in) the codelist.
 #' @export
 #'
 #' @examples
@@ -33,15 +32,12 @@ summariseOrphanCodes <- function(x,
                                             "observation",
                                             "procedure",
                                             "visit")){
-
-  if(isFALSE(inherits(cdm, "cdm_reference"))){
-    cli::cli_abort("cdm is not a cdm reference but is {class(cdm)}")
-  }
-  if(isFALSE(inherits(x, "codelist")) && isFALSE(is.list(x))){
-    cli::cli_abort("x is not a codelist but is {class(cdm)}")
-  }
-
+  omopgenerics::validateCdmArgument(cdm,
+                                    requiredTables = c("achilles_analysis",
+                                                       "achilles_results",
+                                                       "achilles_results_dist"))
   x <- omopgenerics::newCodelist(x)
+  omopgenerics::assertCharacter(domain)
 
   # will only return codes that are used in the database
   # which we get from achilles tables

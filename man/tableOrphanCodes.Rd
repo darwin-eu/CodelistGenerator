@@ -2,7 +2,7 @@
 % Please edit documentation in R/tableAchillesCodeUse.R
 \name{tableOrphanCodes}
 \alias{tableOrphanCodes}
-\title{Format the result of summariseOrphanCodes into a table.}
+\title{Format the result of summariseOrphanCodes into a table}
 \usage{
 tableOrphanCodes(
   result,
@@ -14,11 +14,11 @@ tableOrphanCodes(
 )
 }
 \arguments{
-\item{result}{A summarised result with results of the type
+\item{result}{A \verb{<summarised_result>} with results of the type
 "orphan_codes".}
 
 \item{type}{Type of desired formatted table. To see supported formats
-use visOmopResults::tableType()}
+use visOmopResults::tableType().}
 
 \item{header}{A vector specifying the elements to include in the header. The
 order of elements matters, with the first being the topmost header.
@@ -46,7 +46,7 @@ A table with a formatted version of the summariseOrphanCodes
 result.
 }
 \description{
-Format the result of summariseOrphanCodes into a table.
+Format the result of summariseOrphanCodes into a table
 }
 \examples{
 \donttest{

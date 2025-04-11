@@ -1,32 +1,51 @@
-#' Format the result of summariseUnmappedCodeUse into a table.
+#' Format the result of summariseUnmappedCodeUse into a table
 #'
 #' @param result A `<summarised_result>` with results of the type
 #' "umapped_codes".
-#' @param type Type of desired formatted table. To see supported formats
-#' use visOmopResults::tableType()
-#' @param header A vector specifying the elements to include in the header. The
-#' order of elements matters, with the first being the topmost header.
-#' The header vector can contain one of the following variables: "cdm_name",
-#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "standard_concept", "vocabulary_id".
-#' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumn Variables to use as group labels. Allowed columns are:
-#' "cdm_name", "codelist_name", "domain_id", "standard_concept_name",
-#' "standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
-#' These cannot be used in header.
-#' @param hide Table columns to exclude, options are:  "cdm_name",
-#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
-#' header or groupColumn.
-#' @param .options Named list with additional formatting options.
-#' visOmopResults::tableOptions() shows allowed arguments and
-#' their default values.
+#' @inheritParams typeTableDoc
+#' @inheritParams headerDoc
+#' @inheritParams groupColumnDoc
+#' @inheritParams hideDoc
+#' @inheritParams .optionsDoc
 #'
 #' @return A table with a formatted version of the summariseUnmappedCodes
 #' result.
 #'
 #' @export
+#' @examples
+#' \donttest{
+#' cdm <- mockVocabRef("database")
+#' codes <- list("Musculoskeletal disorder" = 1)
+#' cdm <- omopgenerics::insertTable(cdm, "condition_occurrence",
+#' dplyr::tibble(person_id = 1,
+#'               condition_occurrence_id = 1,
+#'               condition_concept_id = 0,
+#'               condition_start_date  = as.Date("2000-01-01"),
+#'               condition_type_concept_id  = NA,
+#'               condition_source_concept_id = 7))
+#' unmapped_codes <- summariseUnmappedCodes(x = list("osteoarthritis" = 2),
+#' cdm = cdm, table = "condition_occurrence")
+#' tableUnmappedCodes(unmapped_codes)
 #'
+#'cdm <- omopgenerics::insertTable(
+#'  cdm,
+#'  "measurement",
+#'  dplyr::tibble(
+#'    person_id = 1,
+#'    measurement_id = 1,
+#'    measurement_concept_id = 0,
+#'    measurement_date  = as.Date("2000-01-01"),
+#'    measurement_type_concept_id  = NA,
+#'    measurement_source_concept_id = 7
+#'  )
+#')
+#' table <- summariseUnmappedCodes(x = list("cs" = 2),
+#'                                cdm = cdm,
+#'                                table = c("measurement"))
+#' tableUnmappedCodes(unmapped_codes)
+#'
+#' CDMConnector::cdmDisconnect(cdm)
+#' }
 #'
 tableUnmappedCodes <- function(result,
                                type = "gt",

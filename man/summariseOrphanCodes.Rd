@@ -13,16 +13,18 @@ summariseOrphanCodes(
 )
 }
 \arguments{
-\item{x}{A codelist for which to find related codes used in the database}
+\item{x}{A codelist.}
 
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
-\item{domain}{The domains to restrict results too. Only concepts from these
-domains will be returned.}
+\item{domain}{Character vector with one or more of the OMOP CDM domains.
+The results will be restricted to the given domains. Check the available
+ones by running getDomains(). If NULL, all supported domains are included:
+Condition, Drug, Procedure, Device, Observation, and Measurement.}
 }
 \value{
 A summarised result containg the frequency of codes related
-to (but not in) the codelist
+to (but not in) the codelist.
 }
 \description{
 Find orphan codes related to a codelist using achilles counts and, if

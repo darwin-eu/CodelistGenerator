@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -23,7 +23,7 @@ checkInputs <- function(...) {
     varName <- eval(parse(text = paste0("names(formals(", funName, "))")))
     eval(parse(text = paste0(
       funName, "(",
-      paste0( paste0("inputs[[\"", varName, "\"]]"), collapse = ", "), ")"
+      paste0(paste0("inputs[[\"", varName, "\"]]"), collapse = ", "), ")"
     )))
   })
   invisible(NULL)

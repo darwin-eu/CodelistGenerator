@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -15,17 +15,31 @@
 # limitations under the License.
 
 
-#' Stratify a codelist by dose unit
+#' Stratify a codelist by dose unit.
 #'
-#' @param x A codelist
-#' @param cdm A cdm reference
-#' @param keepOriginal Whether to keep the original codelist and append the
-#' stratify (if TRUE) or just return the stratified codelist (if FALSE).
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams keepOriginalDoc
 #'
-#' @return A codelist
+#' @return The codelist with the required stratifications, as different elements
+#' of the list.
 #' @export
-#'
+#' @examples
+#' \donttest{
+#' library(CodelistGenerator)
+#' cdm <- mockVocabRef()
+#' codes <- list("concepts" = c(20,21))
+#' new_codes <- stratifyByDoseUnit(x = codes,
+#'                                 cdm = cdm,
+#'                                 keepOriginal = TRUE)
+#' new_codes
+#' }
 stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
+
+  # initial checks
+  omopgenerics::assertList(x)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertLogical(keepOriginal, length = 1)
 
   if(inherits(x, "codelist_with_details")){
     x_original <- x
@@ -36,11 +50,6 @@ stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
   }
 
   x <- omopgenerics::newCodelist(x)
-
-  if(isFALSE(inherits(cdm, "cdm_reference"))){
-    cli::cli_abort("cdm must be a cdm reference")
-  }
-  checkmate::assertLogical(keepOriginal, len = 1)
 
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
@@ -133,7 +142,6 @@ stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
   } else{
     result <- omopgenerics::newCodelistWithDetails(result)
   }
-
 
   result
 

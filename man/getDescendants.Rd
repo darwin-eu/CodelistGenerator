@@ -2,7 +2,7 @@
 % Please edit documentation in R/vocabUtilities.R
 \name{getDescendants}
 \alias{getDescendants}
-\title{getDescendants}
+\title{Get descendant codes for a given concept}
 \usage{
 getDescendants(
   cdm,
@@ -13,12 +13,12 @@ getDescendants(
 )
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
-\item{conceptId}{concpet_id to search}
+\item{conceptId}{concept_id to search}
 
 \item{withAncestor}{If TRUE, return column with ancestor. In case of multiple
-ancestors, concepts will be separated by ";"}
+ancestors, concepts will be separated by ";".}
 
 \item{ingredientRange}{Used to restrict descendant codes to those
 associated with a specific number of drug ingredients. Must be a vector of
@@ -26,15 +26,15 @@ length two with the first element the minimum number of ingredients allowed
 and the second the maximum. A value of c(2, 2) would restrict to only
 concepts associated with two ingredients.}
 
-\item{doseForm}{Only descendants codes with the specified drug dose form
+\item{doseForm}{Only codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
-of dose form.}
+of dose form. Use 'getDoseForm()' to see the available dose forms.}
 }
 \value{
-The descendants of a given concept id
+The descendants of a given concept id.
 }
 \description{
-getDescendants
+Get descendant codes for a given concept
 }
 \examples{
 \donttest{

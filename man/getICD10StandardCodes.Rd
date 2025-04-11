@@ -2,40 +2,46 @@
 % Please edit documentation in R/getICD10StandardCodes.R
 \name{getICD10StandardCodes}
 \alias{getICD10StandardCodes}
-\title{Get corresponding standard codes for ICD-10 chapters and sub-chapters}
+\title{Get corresponding standard codes for International Classification of Diseases (ICD) 10 codes}
 \usage{
 getICD10StandardCodes(
   cdm,
   level = c("ICD10 Chapter", "ICD10 SubChapter"),
   name = NULL,
+  nameStyle = "{concept_code}_{concept_name}",
   includeDescendants = TRUE,
   type = "codelist"
 )
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
-\item{level}{Can be either "ICD10 Chapter" or "ICD10 SubChapter"}
+\item{level}{Can be either "ICD10 Chapter", "ICD10 SubChapter",
+"ICD10 Hierarchy", or "ICD10 Code".}
 
 \item{name}{Name of chapter or sub-chapter of interest. If NULL, all
 will be considered.}
 
-\item{includeDescendants}{If FALSE only direct mappings from ICD-10 codes
-to standard codes will be returned. If TRUE descendants of standard concepts
-will also be included.}
+\item{nameStyle}{Name style to apply to returned list. Can be one of
+\code{"{concept_code}"},\code{"{concept_id}"}, \code{"{concept_name}"}, or a combination (i.e.,
+\code{"{concept_code}_{concept_name}"}).}
 
-\item{type}{Can be "codelist", "codelist_with_details", or
-"concept_set_expression"}
+\item{includeDescendants}{Either TRUE or FALSE. If TRUE descendant concepts
+of identified concepts will be included in the candidate codelist. If FALSE
+only direct mappings from ICD-10 codes to standard codes will be returned.}
+
+\item{type}{Can be "codelist" or "codelist_with_details".}
 }
 \value{
 A named list, with each element containing the corresponding
-standard codes (and descendants) of ICD chapters and sub-chapters
+standard codes (and descendants) of ICD chapters and sub-chapters.
 }
 \description{
-Get corresponding standard codes for ICD-10 chapters and sub-chapters
+Get corresponding standard codes for International Classification of Diseases (ICD) 10 codes
 }
 \examples{
 \donttest{
+library(CodelistGenerator)
 cdm <- mockVocabRef()
 getICD10StandardCodes(cdm = cdm, level = c(
   "ICD10 Chapter",

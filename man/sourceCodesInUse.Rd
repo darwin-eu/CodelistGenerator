@@ -2,7 +2,7 @@
 % Please edit documentation in R/codesInUse.R
 \name{sourceCodesInUse}
 \alias{sourceCodesInUse}
-\title{Use achilles counts to get source codes used in the database}
+\title{Get the source codes being used in patient records}
 \usage{
 sourceCodesInUse(
   cdm,
@@ -11,15 +11,15 @@ sourceCodesInUse(
 )
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
-\item{table}{cdm table}
+\item{table}{cdm table of interest.}
 }
 \value{
 A list of source codes used in the database.
 }
 \description{
-Use achilles counts to get source codes used in the database
+Get the source codes being used in patient records
 }
 \examples{
 \donttest{

@@ -2,23 +2,23 @@
 % Please edit documentation in R/summariseAchillesCodeUse.R
 \name{summariseAchillesCodeUse}
 \alias{summariseAchillesCodeUse}
-\title{Summarise code use from achilles counts}
+\title{Summarise code use from achilles counts.}
 \usage{
 summariseAchillesCodeUse(x, cdm, countBy = c("record", "person"))
 }
 \arguments{
-\item{x}{Codelist}
+\item{x}{A codelist.}
 
-\item{cdm}{cdm_reference via CDMConnector::cdmFromCon()}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{countBy}{Either "record" for record-level counts or "person" for
-person-level counts}
+person-level counts.}
 }
 \value{
-A tibble with results
+A tibble with summarised counts.
 }
 \description{
-Summarise code use from achilles counts
+Summarise code use from achilles counts.
 }
 \examples{
 \donttest{

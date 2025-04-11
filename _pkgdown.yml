@@ -10,26 +10,59 @@ navbar:
 reference:
 - subtitle: Search for codes following a systematic search strategy
 - contents:
-  - matches("getCandidateCodes")
+  - getCandidateCodes
 - subtitle: Create vocabulary-based codelists
 - contents:
-  - matches("getDrugIngredientCodes|getATCCodes|getICD10StandardCodes")
+  - getDrugIngredientCodes
+  - getATCCodes
+  - getICD10StandardCodes
 - subtitle: Run codelist diagnostics
 - contents:
-  - matches("summariseAchillesCodeUse|summariseCodeUse|summariseCohortCodeUse|summariseOrphanCodes|summariseUnmappedCodes")
+  - summariseAchillesCodeUse
+  - summariseCodeUse
+  - summariseCohortCodeUse
+  - summariseOrphanCodes
+  - summariseUnmappedCodes
 - subtitle: Present codelist diagnostics results in a table
 - contents:
-  - matches("tableAchillesCodeUse|tableCodeUse|tableCohortCodeUse|tableOrphanCodes|tableUnmappedCodes")
+  - tableAchillesCodeUse
+  - tableCodeUse
+  - tableCohortCodeUse
+  - tableOrphanCodes
+  - tableUnmappedCodes
 - subtitle: Extract codelists from JSON files
 - contents:
-  - matches("codesFromCohort|codesFromConceptSet")
+  - codesFromCohort
+  - codesFromConceptSet
 - subtitle: Codelist utility functions
 - contents:
-  - matches("codesInUse|compareCodelists|subsetToCodesInUse|restrictToCodesInUse|subsetOnRouteCategory|stratifyByRouteCategory|stratifyByDoseUnit|stratifyByConcept|subsetOnDoseUnit|subsetOnDomain")
+  - compareCodelists
+  - subsetToCodesInUse
+  - subsetOnRouteCategory
+  - subsetOnDoseUnit
+  - subsetOnDomain
+  - stratifyByRouteCategory
+  - stratifyByDoseUnit
+  - stratifyByConcept
+  - getMappings
 - subtitle: Vocabulary utility functions
 - contents:
-  - matches("getVocabVersion|getVocabularies|getConceptClassId|getDomains|getDescendants|getDoseForm|doseFormToRoute|getRouteCategories|getRoutes|getDoseUnit|getRelationshipId|getMappings|sourceCodesInUse|availableATC|availableICD10|availableIngredients")
+  - getVocabVersion
+  - getVocabularies
+  - getConceptClassId
+  - getDomains
+  - getDescendants
+  - getDoseForm
+  - getRouteCategories
+  - getDoseUnit
+  - getRelationshipId
+  - codesInUse
+  - sourceCodesInUse
+  - availableATC
+  - availableICD10
+  - availableIngredients
 - subtitle: Create a mock dataset that contains vocabulary tables
 - contents:
-  - matches("mockVocabRef")
+  - mockVocabRef
+  - buildAchillesTables
 

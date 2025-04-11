@@ -58,4 +58,6 @@ test_that("tests with mock db", {
 
    CDMConnector::cdmDisconnect(cdm)
 
+   cdm <- omock::mockCdmReference()
+   expect_error(summariseOrphanCodes(x = list("a" = 1), cdm))
 })

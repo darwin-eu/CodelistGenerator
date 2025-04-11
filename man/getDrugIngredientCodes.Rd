@@ -2,7 +2,7 @@
 % Please edit documentation in R/drugCodes.R
 \name{getDrugIngredientCodes}
 \alias{getDrugIngredientCodes}
-\title{Get descendant codes for drug ingredients}
+\title{Get descendant codes of drug ingredients}
 \usage{
 getDrugIngredientCodes(
   cdm,
@@ -16,7 +16,7 @@ getDrugIngredientCodes(
 )
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{name}{Names of ingredients of interest. For example, c("acetaminophen",
 "codeine"), would result in a list of length two with the descendant
@@ -24,34 +24,34 @@ concepts for these two particular drug ingredients. Users can also specify the
 concept ID instead of the name (e.g., c(1125315, 42948451)) using a numeric vector.}
 
 \item{nameStyle}{Name style to apply to returned list. Can be one of
-\code{"{concept_code}_{concept_name}"}, \code{"{concept_code}"}, or \code{"{concept_name}"}.}
+\code{"{concept_code}"},\code{"{concept_id}"}, \code{"{concept_name}"}, or a combination (i.e.,
+\code{"{concept_code}_{concept_name}"}).}
 
-\item{doseForm}{Only descendants codes with the specified dose form
+\item{doseForm}{Only codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
-of dose form.}
+of dose form. Use 'getDoseForm()' to see the available dose forms.}
 
-\item{doseUnit}{Only descendants codes with the specified dose unit
+\item{doseUnit}{Only codes with the specified dose unit
 will be returned. If NULL, descendant codes will be returned regardless
-of dose unit}
+of dose unit Use 'getDoseUnit()' to see the available dose units.}
 
-\item{routeCategory}{Only descendants codes with the specified route
-will be returned. If NULL, descendant codes will be returned regardless
-of route category.}
+\item{routeCategory}{Only codes with the specified route will be
+returned. If NULL, descendant codes will be returned regardless of route
+category. Use getRoutes() to find the available route categories.}
 
 \item{ingredientRange}{Used to restrict descendant codes to those
-associated with a specific number of ingredients. Must be a vector of length
-two with the first element the minimum number of ingredients allowed and
-the second the maximum. A value of c(2, 2) would restrict to only concepts
-associated with two ingredients.}
+associated with a specific number of drug ingredients. Must be a vector of
+length two with the first element the minimum number of ingredients allowed
+and the second the maximum. A value of c(2, 2) would restrict to only
+concepts associated with two ingredients.}
 
-\item{type}{Can be "codelist", "codelist_with_details", or
-"concept_set_expression"}
+\item{type}{Can be "codelist" or "codelist_with_details".}
 }
 \value{
 Concepts with their format based on the type argument.
 }
 \description{
-Get descendant codes for drug ingredients
+Get descendant codes of drug ingredients
 }
 \examples{
 \donttest{

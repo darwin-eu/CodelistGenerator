@@ -2,7 +2,7 @@
 % Please edit documentation in R/tableAchillesCodeUse.R
 \name{tableAchillesCodeUse}
 \alias{tableAchillesCodeUse}
-\title{Format the result of summariseAchillesCodeUse into a table.}
+\title{Format the result of summariseAchillesCodeUse into a table}
 \usage{
 tableAchillesCodeUse(
   result,
@@ -18,7 +18,7 @@ tableAchillesCodeUse(
 "achilles_code_use".}
 
 \item{type}{Type of desired formatted table. To see supported formats
-use visOmopResults::tableType()}
+use visOmopResults::tableType().}
 
 \item{header}{A vector specifying the elements to include in the header. The
 order of elements matters, with the first being the topmost header.
@@ -46,7 +46,7 @@ A table with a formatted version of the summariseCohortCodeUse
 result.
 }
 \description{
-Format the result of summariseAchillesCodeUse into a table.
+Format the result of summariseAchillesCodeUse into a table
 }
 \examples{
 \donttest{

@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -14,20 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Summarise code use in patient-level data
+#' Summarise code use in patient-level data.
 #'
-#' @param x List of concept IDs
-#' @param cdm cdm_reference via CDMConnector::cdmFromCon()
-#' @param countBy Either "record" for record-level counts or "person" for
-#' person-level counts
-#' @param byConcept TRUE or FALSE. If TRUE code use will be summarised by
-#' concept
-#' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
-#' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
-#' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
-#' @param dateRange Two dates. The first indicating the earliest cohort start date and the second indicating the latest possible cohort end date. If NULL or the first date is set as missing, the earliest observation_start_date in the observation_period table will be used for the former. If NULL or the second date is set as missing, the latest observation_end_date in the observation_period table will be used for the latter.
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams countByDoc
+#' @inheritParams byConceptDoc
+#' @inheritParams bySexDoc
+#' @inheritParams byYearDoc
+#' @inheritParams ageGroupDoc
+#' @param dateRange Two dates. The first indicating the earliest cohort start
+#' date and the second indicating the latest possible cohort end date. If NULL
+#' or the first date is set as missing, the earliest observation_start_date in
+#' the observation_period table will be used for the former. If NULL or the
+#' second date is set as missing, the latest observation_end_date in the
+#' observation_period table will be used for the latter.
 #'
-#' @return A tibble with results overall and, if specified, by strata
+#' @return A tibble with count results overall and, if specified, by strata.
 #' @export
 #'
 #' @examples
@@ -50,16 +53,13 @@
 summariseCodeUse <- function(x,
                              cdm,
                              countBy = c("record", "person"),
-                               byConcept = TRUE,
+                             byConcept = TRUE,
                              byYear = FALSE,
                              bySex = FALSE,
                              ageGroup = NULL,
                              dateRange = as.Date(c(NA, NA))){
 
-  checkmate::assertList(x)
-  if(length(names(x)) != length(x)){
-    cli::cli_abort("Must be a named list")
-  }
+  omopgenerics::assertList(x, named = TRUE)
 
   codeUse <- list()
   for(i in seq_along(x)){
@@ -102,37 +102,38 @@ summariseCodeUse <- function(x,
 
 }
 
-
 #' Summarise code use among a cohort in the cdm reference
 #'
-#' @param x Vector of concept IDs
-#' @param cdm cdm_reference via CDMConnector::cdmFromCon()
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
 #' @param cohortTable A cohort table from the cdm reference.
 #' @param cohortId A vector of cohort IDs to include
 #' @param timing When to assess the code use relative cohort dates. This can
 #' be "any"(code use any time by individuals in the cohort) or  "entry" (code
 #' use on individuals' cohort start date).
-#' @param countBy Either "record" for record-level counts or "person" for
-#' person-level counts
-#' @param byConcept TRUE or FALSE. If TRUE code use will be summarised by
-#'
-#' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
-#' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
-#' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
+#' @inheritParams countByDoc
+#' @inheritParams byConceptDoc
+#' @inheritParams bySexDoc
+#' @inheritParams byYearDoc
+#' @inheritParams ageGroupDoc
 #'
 #' @return A tibble with results overall and, if specified, by strata
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' con <- DBI::dbConnect(duckdb::duckdb(),
-#'                       dbdir = CDMConnector::eunomiaDir())
-#' cdm <- CDMConnector::cdmFromCon(con,
-#'                                   cdmSchema = "main",
-#'                                   writeSchema = "main")
-#' cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
-#' conceptSet = list(a = 260139,
-#'                   b = 1127433),
+#' library(CodelistGenerator)
+#' library(duckdb)
+#' library(DBI)
+#' library(CDMConnector)
+#' con <- dbConnect(duckdb(),
+#'                  dbdir = eunomiaDir())
+#' cdm <- cdmFromCon(con,
+#'                  cdmSchema = "main",
+#'                  writeSchema = "main")
+#' cdm <- generateConceptCohortSet(cdm = cdm,
+#'                   conceptSet = list(a = 260139,
+#'                                     b = 1127433),
 #'                   name = "cohorts",
 #'                   end = "observation_period_end_date",
 #'                   overwrite = TRUE)
@@ -157,14 +158,11 @@ summariseCohortCodeUse <- function(x,
                                    bySex = FALSE,
                                    ageGroup = NULL) {
 
-  checkmate::assertList(x)
-  if(length(names(x)) != length(x)){
-    cli::cli_abort("Must be a named list")
-  }
-  checkDbType(cdm = cdm, type = "cdm_reference")
-  checkmate::assertTRUE("GeneratedCohortSet" %in% class(cdm[[cohortTable]]))
-  checkmate::assertTRUE(all(c("cohort_definition_id", "subject_id", "cohort_start_date",
-                              "cohort_end_date") %in%  colnames(cdm[[cohortTable]])))
+  omopgenerics::assertList(x, named = TRUE)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertTrue("GeneratedCohortSet" %in% class(cdm[[cohortTable]]))
+  omopgenerics::assertTrue(all(c("cohort_definition_id", "subject_id", "cohort_start_date",
+                               "cohort_end_date") %in% colnames(cdm[[cohortTable]])))
 
   if(is.null(cohortId)){
     cohortId <- sort(CDMConnector::settings(cdm[[cohortTable]]) |>
@@ -191,7 +189,8 @@ summariseCohortCodeUse <- function(x,
                                                        ageGroup = ageGroup,
                                                        dateRange = as.Date(c(NA,NA)))
     }}
-  cohortCodeUse <- dplyr::bind_rows(cohortCodeUse)
+  cohortCodeUse <- dplyr::bind_rows(cohortCodeUse) |>
+    dplyr::arrange(dplyr::across(!c("variable_level", "estimate_value")))
 
   if (nrow(cohortCodeUse) > 0) {
     cohortCodeUse <- cohortCodeUse |>
@@ -229,22 +228,17 @@ getCodeUse <- function(x,
                        dateRange,
                        call = parent.frame()) {
 
-  errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  checkmate::assertCharacter(timing, len = 1,
-                             add = errorMessage)
-  checkmate::assertTRUE(all(timing %in% c("any","entry")),
-                        add = errorMessage)
-  checkmate::assertTRUE(all(countBy %in% c("record", "person")),
-                        add = errorMessage)
-  checkmate::assertIntegerish(x[[1]], add = errorMessage)
-  checkmate::assertList(x, add = errorMessage)
-  checkmate::assert_logical(byConcept, add = errorMessage)
-  checkmate::assert_logical(byYear, add = errorMessage)
-  checkmate::assert_logical(bySex, add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+  # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertCharacter(timing, length = 1)
+  omopgenerics::assertChoice(timing, choices = c("any","entry"))
+  omopgenerics::assertChoice(countBy, choices = c("record", "person"))
+  omopgenerics::assertNumeric(x[[1]], integerish = T)
+  omopgenerics::assertList(x)
+  omopgenerics::assertLogical(byConcept)
+  omopgenerics::assertLogical(byYear)
+  omopgenerics::assertLogical(bySex)
   checkAgeGroup(ageGroup = ageGroup)
-
   omopgenerics::assertDate(dateRange, length = 2, na = TRUE)
 
   if(is.null(attr(cdm, "write_schema"))){
@@ -355,7 +349,6 @@ getCodeUse <- function(x,
     ))
   }
 
-
   CDMConnector::dropTable(cdm = cdm,
                           name = tableCodelist)
   cdm[[tableCodelist]] <- NULL
@@ -431,7 +424,6 @@ getCodeUse <- function(x,
 #
 # }
 
-
 getRelevantRecords <- function(cdm,
                                tableCodelist,
                                cohortTable,
@@ -491,7 +483,7 @@ getRelevantRecords <- function(cdm,
                                      temporary = FALSE)
     codeRecords <- codeRecords |>
       dplyr::mutate(date = !!dplyr::sym(dateName[[1]])) |>
-      dplyr::mutate(year = lubridate::year(date)) |>
+      dplyr::mutate(year = clock::get_year(date)) |>
       dplyr::select(dplyr::all_of(c("person_id",
                                     standardConceptIdName[[1]],
                                     sourceConceptIdName[[1]],
@@ -530,20 +522,26 @@ getRelevantRecords <- function(cdm,
             dplyr::filter(.data$cohort_start_date == !!dplyr::sym(dateName[[i+1]]))
         }
       }
+
+      tmpTblName <- omopgenerics::uniqueTableName()
+      cdm <- omopgenerics::insertTable(cdm = cdm,
+                                       name = tmpTblName,
+                                       table = codes |>
+                                         dplyr::filter(.data$table == tableName[[i+1]]) |>
+                                         dplyr::select("concept_id", "domain_id"),
+                                       overwrite = TRUE,
+                                       temporary = FALSE)
       workingRecords <-  workingRecords |>
         dplyr::mutate(date = !!dplyr::sym(dateName[[i+1]])) |>
-        dplyr::mutate(year = lubridate::year(date)) |>
+        dplyr::mutate(year = clock::get_year(date)) |>
         dplyr::select(dplyr::all_of(c("person_id",
                                       standardConceptIdName[[i+1]],
                                       sourceConceptIdName[[i+1]],
                                       "date", "year"))) |>
         dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[i+1]],
                       "source_concept_id" = .env$sourceConceptIdName[[i+1]]) |>
-        dplyr::inner_join(codes |>
-                            dplyr::filter(.data$table == tableName[[i+1]]) |>
-                            dplyr::select("concept_id", "domain_id"),
-                          by = c("standard_concept_id"="concept_id"),
-                          copy = TRUE)
+        dplyr::inner_join(cdm[[tmpTblName]],
+                          by = c("standard_concept_id"="concept_id"))
 
       if(workingRecords |> utils::head(1) |> dplyr::tally() |> dplyr::pull("n") >0){
         codeRecords <- codeRecords |>
@@ -555,7 +553,9 @@ getRelevantRecords <- function(cdm,
             overwrite = TRUE
           )
       }
-    }
+
+   omopgenerics::dropSourceTable(cdm = cdm, name = tmpTblName)
+   }
   }
 
   if(codeRecords |> utils::head(1) |> dplyr::tally() |> dplyr::pull("n") >0){
@@ -614,6 +614,14 @@ getSummaryCounts <- function(records,
           dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
           dplyr::collect()
       )
+    }else{
+      recordSummary <- recordSummary |>
+        dplyr::mutate("standard_concept_id" = NA_integer_,
+                      "standard_concept_name" = NA_character_,
+                      "source_concept_id" = NA_integer_,
+                      "source_concept_name" = NA_character_,
+                      "source_concept_value" = NA_character_,
+                      "domain_id" = NA_character_)
     }
     recordSummary <- recordSummary |>
       dplyr::mutate(
@@ -716,7 +724,6 @@ getSummaryCounts <- function(records,
   return(summary)
 }
 
-
 getGroupedRecordCount <- function(records,
                                   cdm,
                                   groupBy){
@@ -777,14 +784,8 @@ getGroupedPersonCount <- function(records,
 
 }
 
-
-
 checkCategory <- function(category, overlap = FALSE) {
-  checkmate::assertList(
-    category,
-    types = "integerish", any.missing = FALSE, unique = TRUE,
-    min.len = 1
-  )
+  omopgenerics::assertList(category, unique = T)
 
   if (is.null(names(category))) {
     names(category) <- rep("", length(category))
@@ -842,7 +843,7 @@ checkCategory <- function(category, overlap = FALSE) {
 }
 
 checkAgeGroup <- function(ageGroup, overlap = FALSE) {
-  checkmate::assertList(ageGroup, min.len = 1, null.ok = TRUE)
+  omopgenerics::assertList(ageGroup, null = TRUE)
   if (!is.null(ageGroup)) {
     if (is.numeric(ageGroup[[1]])) {
       ageGroup <- list("age_group" = ageGroup)

@@ -14,27 +14,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Subset a codelist to only those codes from a particular domain
+#' Subset a codelist to only those codes from a particular domain.
 #'
-#' @param x Codelist
-#' @param cdm A cdm reference
-#' @param domain Domains. Use getDomains() to find the available
-#' domains in a cdm
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams domainDoc
+#' @param negate If FALSE, only concepts with the domain specified will be
+#' returned. If TRUE, concepts with the domain specified will be excluded.
 #'
-#' @return The codelist with only those concepts associated with the
-#' domain
+#' @return The codelist with only those concepts associated with the domain
+#' (if negate = FALSE) or the codelist without those concepts associated with
+#' the domain (if negate = TRUE).
 #' @export
 #'
-subsetOnDomain <- function(x, cdm, domain){
+#' @examples
+#' \donttest{
+#' library(CodelistGenerator)
+#' cdm <- mockVocabRef()
+#' codes <- subsetOnDomain(
+#'               x = list("codes" = c(10,13,15)),
+#'               cdm = cdm,
+#'               domain = "Drug")
+#' codes
+#' }
+subsetOnDomain <- function(x,
+                           cdm,
+                           domain,
+                           negate = FALSE){
 
+  omopgenerics::validateCdmArgument(cdm)
+  omopgenerics::assertCharacter(domain)
+  omopgenerics::assertLogical(negate)
   x <- omopgenerics::newCodelist(x)
-
-  if(isFALSE(inherits(cdm, "cdm_reference"))){
-    cli::cli_abort("cdm must be a cdm reference")
-  }
-  if(isFALSE(is.character(domain))){
-    cli::cli_abort("domain must be a character vector")
-  }
 
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
@@ -53,12 +64,18 @@ subsetOnDomain <- function(x, cdm, domain){
       dplyr::distinct() |>
       dplyr::collect()
 
+    if(isTRUE(negate)){
+      x[[i]] <- x[[i]] |>
+        dplyr::filter(!tolower(.data$domain_id) %in% tolower(.env$domain))
+    }else{
+      x[[i]] <- x[[i]] |>
+        dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domain))
+    }
+
     x[[i]] <- x[[i]] |>
-      dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domain)) |>
       dplyr::pull("concept_id")
 
     x[[i]] <- sort(unique(x[[i]]))
-
   }
 
   x <- x |>
@@ -70,6 +87,6 @@ subsetOnDomain <- function(x, cdm, domain){
 
   CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
 
-  x
+  return(x)
 
 }

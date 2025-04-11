@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -14,15 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Use achilles counts to filter a codelist to keep only the codes
-#' used in the database
+#' Filter a codelist to keep only the codes being used in patient records
 #'
-#' @param x A codelist
-#' @param cdm cdm_reference via CDMConnector
-#' @param minimumCount Any codes with a frequency under this will be removed.
-#' @param table cdm table
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams minimumCountDoc
+#' @inheritParams tableDoc
 #'
-#' @return Use achilles counts to filter codelist to only the codes used in the database
+#' @return The filtered codelist with only the codes used in the database
 #' @export
 #'
 #' @examples
@@ -40,20 +39,24 @@
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
 subsetToCodesInUse <- function(x,
-                                 cdm,
-                                 minimumCount = 0L,
-                                 table = c("condition_occurrence",
-                                           "device_exposure",
-                                           "drug_exposure",
-                                           "measurement",
-                                           "observation",
-                                           "procedure_occurrence",
-                                           "visit_occurrence")){
+                               cdm,
+                               minimumCount = 0L,
+                               table = c("condition_occurrence",
+                                         "device_exposure",
+                                         "drug_exposure",
+                                         "measurement",
+                                         "observation",
+                                         "procedure_occurrence",
+                                         "visit_occurrence")){
 
-
-  if(is.null(cdm[["achilles_results"]])){
-    cli::cli_abort("Achilles results must be in the cdm reference")
-  }
+  # initial checks
+  omopgenerics::assertList(x)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm,
+                                           requiredTables = c("achilles_analysis",
+                                                              "achilles_results",
+                                                              "achilles_results_dist"))
+  omopgenerics::assertNumeric(minimumCount, integerish = T, min = 0, length = 1)
+  omopgenerics::assertCharacter(table)
 
   dbCodes <- codesInUse(cdm = cdm,
                         minimumCount = minimumCount,
@@ -83,11 +86,11 @@ subsetToCodesInUse <- function(x,
 
 }
 
-#' Use achilles counts to get codes used in the database
+#' Get the concepts being used in patient records
 #'
-#' @param cdm cdm_reference via CDMConnector
-#' @param minimumCount Any codes with a frequency under this will be removed.
-#' @param table cdm table
+#' @inheritParams cdmDoc
+#' @inheritParams minimumCountDoc
+#' @inheritParams tableDoc
 #'
 #' @return A list of integers indicating codes being used in the database.
 #' @export
@@ -100,7 +103,7 @@ subsetToCodesInUse <- function(x,
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
 codesInUse <- function(cdm,
-                       minimumCount = 0,
+                       minimumCount = 0L,
                        table = c("condition_occurrence",
                                  "device_exposure",
                                  "drug_exposure",
@@ -109,19 +112,23 @@ codesInUse <- function(cdm,
                                  "procedure_occurrence",
                                  "visit_occurrence")){
 
-  if(is.null(cdm[["achilles_results"]])){
-    cli::cli_abort("Achilles results must be in the cdm reference")
-  }
+  # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm,
+                                           requiredTables = c("achilles_analysis",
+                                                              "achilles_results",
+                                                              "achilles_results_dist"))
+  omopgenerics::assertNumeric(minimumCount, integerish = T, min = 0, length = 1)
+  omopgenerics::assertCharacter(table)
 
   codes <- fetchAchillesCodesInUse(cdm, minimumCount = minimumCount)
 
   codes
 }
 
-#' Use achilles counts to get source codes used in the database
+#' Get the source codes being used in patient records
 #'
-#' @param cdm cdm_reference via CDMConnector
-#' @param table cdm table
+#' @inheritParams cdmDoc
+#' @inheritParams tableDoc
 #'
 #' @return A list of source codes used in the database.
 #' @export
@@ -134,29 +141,37 @@ codesInUse <- function(cdm,
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
 sourceCodesInUse <- function(cdm,
-                                 table = c("condition_occurrence",
-                                           "device_exposure",
-                                           "drug_exposure",
-                                           "measurement",
-                                           "observation",
-                                           "procedure_occurrence",
-                                           "visit_occurrence")){
+                             table = c("condition_occurrence",
+                                       "device_exposure",
+                                       "drug_exposure",
+                                       "measurement",
+                                       "observation",
+                                       "procedure_occurrence",
+                                       "visit_occurrence")){
 
-    if(is.null(cdm[["achilles_results"]])){
-    cli::cli_abort("Achilles results must be in the cdm reference")
-    }
-    codes <- fetchAchillesSourceCodesInUse(cdm)
+  # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm,
+                                           requiredTables = c("achilles_analysis",
+                                                              "achilles_results",
+                                                              "achilles_results_dist"))
+  omopgenerics::assertCharacter(table)
+
+  codes <- fetchAchillesSourceCodesInUse(cdm)
 
   codes
 }
 
 unmappedSourceCodesInUse <- function(cdm,
-                                         table = c("condition_occurrence",
-                                                   "device_exposure",
-                                                   "drug_exposure",
-                                                   "measurement",
-                                                   "observation",
-                                                   "procedure_occurrence")){
+                                     table = c("condition_occurrence",
+                                               "device_exposure",
+                                               "drug_exposure",
+                                               "measurement",
+                                               "observation",
+                                               "procedure_occurrence")){
+
+  # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertCharacter(table)
 
   # note, no achilles query for this so will have to query the cdm
 
@@ -183,10 +198,10 @@ unmappedSourceCodesInUse <- function(cdm,
 
     # keep unmapped codes
     codes[[i]] <- as.integer(cdm[[workingTable]] |>
-      dplyr::filter(!!rlang::sym(standardConcept) == 0) |>
-      dplyr::select(dplyr::all_of(workingConcept)) |>
-      dplyr::distinct() |>
-      dplyr::pull())
+                               dplyr::filter(!!rlang::sym(standardConcept) == 0) |>
+                               dplyr::select(dplyr::all_of(workingConcept)) |>
+                               dplyr::distinct() |>
+                               dplyr::pull())
     codes[[i]] <- stats::na.omit(codes[[i]])
   }
 
@@ -200,26 +215,26 @@ fetchAchillesCodesInUse <- function(cdm, minimumCount = 0L, collect = TRUE){
   minimumCount <- as.integer(minimumCount)
   codes <- cdm[["achilles_results"]] |>
     dplyr::filter(.data$analysis_id %in%
-      c(
-        401L, # condition occurrence
-        701L, # drug_exposure
-        801L, # observation
-        1801L, # measurement
-        201L, # visit_occurrence
-        601L, # procedure_occurrence
-        2101L # device_exposure
-      ),
-      .data$count_value >= .env$minimumCount) |>
+                    c(
+                      401L, # condition occurrence
+                      701L, # drug_exposure
+                      801L, # observation
+                      1801L, # measurement
+                      201L, # visit_occurrence
+                      601L, # procedure_occurrence
+                      2101L # device_exposure
+                    ),
+                  .data$count_value >= .env$minimumCount) |>
     dplyr::select("concept_id" = "stratum_1") |>
     dplyr::mutate(concept_id = as.integer(.data$concept_id)) |>
     dplyr::distinct()
 
- if(isTRUE(collect)){
-  codes <- codes |>
-    dplyr::pull("concept_id")
- }
+  if(isTRUE(collect)){
+    codes <- codes |>
+      dplyr::pull("concept_id")
+  }
 
- codes
+  codes
 
 }
 

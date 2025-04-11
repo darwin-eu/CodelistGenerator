@@ -1,0 +1,134 @@
+---
+title: "Getting the OMOP CDM vocabularies"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a01_GettingOmopCdmVocabularies}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = NOT_CRAN
+)
+```
+
+When working with the CodelistGenerator we normally have two options of how to interact with the OMOP CDM vocabulary tables. 
+
+The first is to connect to a "live" database with patient data in the OMOP CDM format. As part of this OMOP CDM dataset we will have a version of vocabularies that corresponds to the concepts being used in the patient records we have in the various clinical tables. This is useful in that we will be working with the same vocabularies that are being used for clinical records in this dataset. However, if working on a study with multiple data partners we should take note that other data partners may be using different vocabulary versions.
+
+The second option is to create a standalone database with just a set of OMOP CDM vocabulary tables. This is convenient because we can choose whichever version and vocabularies we want. However, we will need to keep in mind that this can differ to the version used for a particular dataset.
+
+## Connect to an existing OMOP CDM database
+
+If you already have access to a database with data in the OMOP CDM format, you can use CodelistGenerator by first creating a cdm reference which will include the vocabulary tables.
+
+```{r, warning=FALSE, message=FALSE}
+library(DBI)
+library(duckdb)
+library(dplyr)
+library(CDMConnector)
+library(CodelistGenerator)
+```
+
+```{r, warning=FALSE}
+requireEunomia()
+db <- dbConnect(duckdb(), dbdir = eunomiaDir())
+cdm <- cdmFromCon(db, 
+                  cdmSchema = "main", 
+                  writeSchema = "main", 
+                  writePrefix = "cg_")
+cdm
+```
+
+We can see that we know have various OMOP CDM vocabulary tables we can work with.
+
+```{r}
+cdm$concept |> glimpse()
+cdm$concept_relationship |> glimpse()
+cdm$concept_ancestor |> glimpse()
+cdm$concept_synonym |> glimpse()
+cdm$drug_strength |> glimpse()
+```
+
+It is important to remember that our results will be tied to the vocabulary version used when this OMOP CDM database was created. Moreover, we should also take note of which vocabularies were included. A couple of CodelistGenerator utility functions can help us find this information.
+
+```{r}
+getVocabVersion(cdm)
+```
+
+```{r}
+getVocabularies(cdm)
+```
+
+## Create a local vocabulary database
+
+If you don't have access to an OMOP CDM database or if you want to work with a specific vocabulary version and set of vocabularies then you can create your own vocabulary database.
+
+### Download vocabularies from athena
+
+Your first step will be to get the vocabulary tables for the OMOP CDM. For this go to https://athena.ohdsi.org/. From here you can, after creating a free account, download the vocabularies. By default you will be getting the latest version and a default set of vocabularies. You can though choose to download an older version and expand your selection of vocabularies. In general we would suggest to select all available vocabularies.
+
+### Create a duckdb database
+
+After downloading the vocabularies you will have a set of csvs (along with a tool to add the CPT-4 codes if you wish). To quickly create a duckdb vocab database you could use the following code. Here, after pointing to the unzipped folder containg the csvs, we'll read each table into memory and write them to a duckdb database which we'll save in the same folder. We'll also add an empty person and observation period table so that you can create a cdm reference at the end. 
+
+```{r, eval = FALSE}
+library(readr)
+library(DBI)
+library(duckdb)
+library(omopgenerics)
+
+vocab_folder <- here() # add path to directory
+
+# read in files
+concept <- read_delim(here(vocab_folder, "CONCEPT.csv"),
+                      "\t",
+                      escape_double = FALSE, trim_ws = TRUE
+)
+concept_relationship <- read_delim(here(vocab_folder, "CONCEPT_RELATIONSHIP.csv"),
+                                   "\t",
+                                   escape_double = FALSE, trim_ws = TRUE
+)
+concept_ancestor <- read_delim(here(vocab_folder, "CONCEPT_ANCESTOR.csv"),
+                               "\t",
+                               escape_double = FALSE, trim_ws = TRUE
+)
+concept_synonym <- read_delim(here(vocab_folder, "CONCEPT_SYNONYM.csv"),
+                              "\t",
+                              escape_double = FALSE, trim_ws = TRUE
+)
+vocabulary <- read_delim(here(vocab_folder, "VOCABULARY.csv"), "\t",
+                         escape_double = FALSE, trim_ws = TRUE
+)
+
+# write to duckdb
+db <- dbConnect(duckdb(), here(vocab_folder,"vocab.duckdb"))
+dbWriteTable(db, "concept", concept, overwrite = TRUE)
+dbWriteTable(db, "concept_relationship", concept_relationship, overwrite = TRUE)
+dbWriteTable(db, "concept_ancestor", concept_ancestor, overwrite = TRUE)
+dbWriteTable(db, "concept_synonym", concept_synonym, overwrite = TRUE)
+dbWriteTable(db, "vocabulary", vocabulary, overwrite = TRUE)
+# add empty person and observation period tables
+person_cols <- omopColumns("person")
+person <- data.frame(matrix(ncol = length(person_cols), nrow = 0))
+colnames(person) <- person_cols
+dbWriteTable(db, "person", person, overwrite = TRUE)
+observation_period_cols <- omopColumns("observation_period")
+observation_period <- data.frame(matrix(ncol = length(observation_period_cols), nrow = 0))
+colnames(observation_period) <- observation_period_cols
+dbWriteTable(db, "observation_period", observation_period, overwrite = TRUE)
+dbDisconnect(db)
+```
+
+Now we could create a cdm reference to our OMOP CDM vocabulary database. 
+```{r, eval = FALSE}
+db <- dbConnect(duckdb(), here(vocab_folder,"vocab.duckdb"))
+cdm <- cdmFromCon(db, "main", "main", cdmName = "vocabularise", .softValidation = TRUE)
+```
+
+This vocabulary only database can be then used for the various functions for identifying codes of interest. However, as it doesn't contain patient-level records it won't be relevant for functions summarising the use of codes, etc. Here we have shown how to make a local duckdb database, but a similar approach could also be used for other database management systems.
+

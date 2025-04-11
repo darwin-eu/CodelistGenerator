@@ -2,7 +2,7 @@
 % Please edit documentation in R/getMappings.R
 \name{getMappings}
 \alias{getMappings}
-\title{Show mappings from non-standard vocabularies to standard}
+\title{Show mappings from non-standard vocabularies to standard.}
 \usage{
 getMappings(
   candidateCodelist,
@@ -12,17 +12,18 @@ getMappings(
 )
 }
 \arguments{
-\item{candidateCodelist}{Dataframe}
+\item{candidateCodelist}{Dataframe.}
 
-\item{cdm}{cdm_reference via CDMConnector::cdmFromCon()}
+\item{cdm}{A cdm reference via CDMConnector.}
 
-\item{nonStandardVocabularies}{Character vector}
+\item{nonStandardVocabularies}{Character vector.}
 }
 \value{
-tibble
+Tibble with the information of potential standard to non-standard
+mappings for the codelist of interest.
 }
 \description{
-Show mappings from non-standard vocabularies to standard
+Show mappings from non-standard vocabularies to standard.
 }
 \examples{
 \donttest{

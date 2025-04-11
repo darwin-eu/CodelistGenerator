@@ -2,7 +2,7 @@
 % Please edit documentation in R/tableUnmappedCodes.R
 \name{tableUnmappedCodes}
 \alias{tableUnmappedCodes}
-\title{Format the result of summariseUnmappedCodeUse into a table.}
+\title{Format the result of summariseUnmappedCodeUse into a table}
 \usage{
 tableUnmappedCodes(
   result,
@@ -18,7 +18,7 @@ tableUnmappedCodes(
 "umapped_codes".}
 
 \item{type}{Type of desired formatted table. To see supported formats
-use visOmopResults::tableType()}
+use visOmopResults::tableType().}
 
 \item{header}{A vector specifying the elements to include in the header. The
 order of elements matters, with the first being the topmost header.
@@ -46,5 +46,41 @@ A table with a formatted version of the summariseUnmappedCodes
 result.
 }
 \description{
-Format the result of summariseUnmappedCodeUse into a table.
+Format the result of summariseUnmappedCodeUse into a table
+}
+\examples{
+\donttest{
+cdm <- mockVocabRef("database")
+codes <- list("Musculoskeletal disorder" = 1)
+cdm <- omopgenerics::insertTable(cdm, "condition_occurrence",
+dplyr::tibble(person_id = 1,
+              condition_occurrence_id = 1,
+              condition_concept_id = 0,
+              condition_start_date  = as.Date("2000-01-01"),
+              condition_type_concept_id  = NA,
+              condition_source_concept_id = 7))
+unmapped_codes <- summariseUnmappedCodes(x = list("osteoarthritis" = 2),
+cdm = cdm, table = "condition_occurrence")
+tableUnmappedCodes(unmapped_codes)
+
+cdm <- omopgenerics::insertTable(
+ cdm,
+ "measurement",
+ dplyr::tibble(
+   person_id = 1,
+   measurement_id = 1,
+   measurement_concept_id = 0,
+   measurement_date  = as.Date("2000-01-01"),
+   measurement_type_concept_id  = NA,
+   measurement_source_concept_id = 7
+ )
+)
+table <- summariseUnmappedCodes(x = list("cs" = 2),
+                               cdm = cdm,
+                               table = c("measurement"))
+tableUnmappedCodes(unmapped_codes)
+
+CDMConnector::cdmDisconnect(cdm)
+}
+
 }

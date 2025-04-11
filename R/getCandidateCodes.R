@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Generate candidate codelist for the OMOP CDM
+#' Generate a candidate codelist
 #'
 #' @description
 #' This function generates a set of codes that
 #' can be considered for creating a phenotype
 #' using the OMOP CDM.
 #'
-#' @param cdm cdm_reference via CDMConnector
+#' @inheritParams cdmDoc
 #' @param keywords Character vector of words to search for.
 #' Where more than one word is given (e.g. "knee osteoarthritis"),
 #' all combinations of those words should be identified
@@ -29,23 +29,19 @@
 #' @param exclude  Character vector of words
 #' to identify concepts to exclude.
 #' @param domains Character vector with one or more of the OMOP CDM domain. If NULL, all supported domains are included: Condition, Drug, Procedure, Device, Observation, and Measurement.
-#' @param standardConcept  Character vector with one or more of "Standard",
-#' "Classification", and "Non-standard". These correspond to the flags used
-#' for the standard_concept field in the concept table of the cdm.
+#' @inheritParams standardConceptDoc
 #' @param searchInSynonyms Either TRUE or FALSE. If TRUE the code will also
 #' search using both the primary name in the concept table and synonyms from
 #' the concept synonym table.
 #' @param searchNonStandard Either TRUE or FALSE. If TRUE the code will also
 #' search via non-standard concepts.
-#' @param includeDescendants Either TRUE or FALSE.
-#' If TRUE descendant concepts of identified concepts
-#' will be included in the candidate codelist.
+#' @inheritParams includeDescendantsDoc
 #' @param includeAncestor Either TRUE or FALSE.
 #' If TRUE the direct ancestor concepts of identified concepts
 #'  will be included in the candidate codelist.
 
 #'
-#' @return tibble
+#' @return A tibble with the information on the potential codes of interest.
 #' @importFrom rlang .data
 #' @export
 #'
@@ -70,7 +66,6 @@ getCandidateCodes <- function(cdm,
   start <- Sys.time()
 
   ## checks for standard types of user error
-  errorMessage <- checkmate::makeAssertCollection()
   omopgenerics::assertCharacter(keywords, null = FALSE, na = FALSE)
   if(is.null(domains)){
     domains <- c("Condition", "Drug", "Procedure", "Device", "Observation", "Measurement")

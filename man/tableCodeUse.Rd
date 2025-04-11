@@ -14,10 +14,10 @@ tableCodeUse(
 )
 }
 \arguments{
-\item{result}{A summarised result with results of the type "code_use".}
+\item{result}{A \verb{<summarised_result>} with results of the type "code_use".}
 
 \item{type}{Type of desired formatted table. To see supported formats
-use visOmopResults::tableType()}
+use visOmopResults::tableType().}
 
 \item{header}{A vector specifying the elements to include in the header. The
 order of elements matters, with the first being the topmost header.

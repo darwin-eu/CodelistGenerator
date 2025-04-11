@@ -1,19 +1,11 @@
 test_that("summarise code use - eunomia", {
-skip_on_cran()
-  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
-    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
-  }
-  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
-    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-  }
-  if (!CDMConnector::eunomiaIsAvailable()) {
-    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
-  }
+  skip_on_cran()
+
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
   acetiminophen <- c(1125315,  1127433, 40229134,
-                    40231925, 40162522, 19133768,  1127078)
+                     40231925, 40162522, 19133768,  1127078)
   poliovirus_vaccine <- c(40213160)
   cs <- list(acetiminophen = acetiminophen,
              poliovirus_vaccine = poliovirus_vaccine)
@@ -29,17 +21,27 @@ skip_on_cran()
   endNames <- CDMConnector::listSourceTables(cdm)
   expect_true(length(setdiff(endNames, startNames)) == 0)
 
+  expect_no_error(results_no_by_concept <- summariseCodeUse(cs,
+                                                            cdm = cdm,
+                                                            byYear = TRUE,
+                                                            bySex = TRUE,
+                                                            byConcept = FALSE))
+  expect_true(all(results_no_by_concept |> dplyr::pull("group_level") |> unique() == c("acetiminophen","poliovirus_vaccine")))
+  expect_true(all(results_no_by_concept |>
+                    dplyr::filter(group_level == "acetiminophen", strata_level == "overall") |>
+                    dplyr::pull("estimate_value") == c("14205", "2679")))
+
   # min cell counts:
-   expect_true(
-     all(
-     omopgenerics::suppress(results) |>
-     dplyr::filter(
-     variable_name == "overall",
-     strata_level == "1909",
-     group_level == "acetiminophen"
-     ) |>
-       dplyr::pull("estimate_value") == "-"
-   ))
+  expect_true(
+    all(
+      omopgenerics::suppress(results) |>
+        dplyr::filter(
+          variable_name == "overall",
+          strata_level == "1909",
+          group_level == "acetiminophen"
+        ) |>
+        dplyr::pull("estimate_value") == "-"
+    ))
 
   # check is a summarised result
   expect_true("summarised_result" %in%  class(results))
@@ -303,8 +305,6 @@ skip_on_cran()
                                              ageGroup = NULL))
   expect_true(nrow(results) == 0)
 
-
-
   # expected errors
   expect_error(summariseCodeUse("not a concept",
                                 cdm = cdm,
@@ -360,15 +360,7 @@ skip_on_cran()
 
 test_that("summarise cohort code use - eunomia", {
   skip_on_cran()
-  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
-    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
-  }
-  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
-    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-  }
-  if (!CDMConnector::eunomiaIsAvailable()) {
-    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
-  }
+
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(cdmName = "cdm", con, cdmSchema = "main", writeSchema = "main")
 
@@ -387,10 +379,14 @@ test_that("summarise cohort code use - eunomia", {
                                            cdm = cdm,
                                            cohortTable = "pharyngitis",
                                            timing = "any")
-
+  expect_no_error(summariseCohortCodeUse(list(cs = 4134304),
+                                         cdm = cdm,
+                                         cohortTable = "pharyngitis",
+                                         timing = "any",
+                                         byConcept = FALSE))
   expect_true(inherits(results_cohort, "summarised_result"))
   expect_true(all(c("result_id", "result_type", "package_name", "package_version", "timing") %in%
-                  colnames(omopgenerics::settings(results_cohort))))
+                    colnames(omopgenerics::settings(results_cohort))))
 
   expect_true(results_cohort |>
                 dplyr::filter(variable_name == "overall" &
@@ -502,31 +498,31 @@ test_that("summarise cohort code use - eunomia", {
                                                 overwrite = TRUE)
 
   results_cohort_mult <- summariseCohortCodeUse(list(cs = c(260139,19133873,1127433)),
-                                                                  cdm = cdm,
-                                                                  cohortTable = "cohorts",
-                                                                  timing = "entry")
+                                                cdm = cdm,
+                                                cohortTable = "cohorts",
+                                                timing = "entry")
   expect_true(nrow(results_cohort_mult |>
                      dplyr::filter(stringr::str_detect(variable_name, "Acute bronchitis")) |>
-    dplyr::filter(strata_name == "overall" &
-                    strata_level == "overall" &
-                    estimate_name == "person_count")) == 2)
+                     dplyr::filter(strata_name == "overall" &
+                                     strata_level == "overall" &
+                                     estimate_name == "person_count")) == 2)
 
   expect_equal(c("a", "b"),  results_cohort_mult |>
                  dplyr::filter(stringr::str_detect(variable_name, "Acute bronchitis")) |>
-   dplyr::filter(strata_name == "overall" &
-                   strata_level == "overall" &
-                  estimate_name == "person_count") |>
-     visOmopResults::splitGroup() |>
-   dplyr::pull("cohort_name"))
+                 dplyr::filter(strata_name == "overall" &
+                                 strata_level == "overall" &
+                                 estimate_name == "person_count") |>
+                 visOmopResults::splitGroup() |>
+                 dplyr::pull("cohort_name"))
 
 
   # empty cohort - no results
   cdm$pharyngitis <-  cdm$pharyngitis |>
     dplyr::filter(cohort_definition_id == 99)
   expect_true(nrow(summariseCohortCodeUse(list(cs = 4134304),
-                                         cdm = cdm,
-                                         cohortTable = "pharyngitis",
-                                         timing = "any")) == 0)
+                                          cdm = cdm,
+                                          cohortTable = "pharyngitis",
+                                          timing = "any")) == 0)
 
   # expected errors
   expect_error(summariseCohortCodeUse(4134304,
@@ -559,11 +555,11 @@ test_that("summarise code use - redshift", {
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
 
   db <-  DBI::dbConnect(RPostgres::Redshift(),
-                 dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
-                 host     = Sys.getenv("CDM5_REDSHIFT_HOST"),
-                 port     = Sys.getenv("CDM5_REDSHIFT_PORT"),
-                 user     = Sys.getenv("CDM5_REDSHIFT_USER"),
-                 password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
+                        dbname   = Sys.getenv("CDM5_REDSHIFT_DBNAME"),
+                        host     = Sys.getenv("CDM5_REDSHIFT_HOST"),
+                        port     = Sys.getenv("CDM5_REDSHIFT_PORT"),
+                        user     = Sys.getenv("CDM5_REDSHIFT_USER"),
+                        password = Sys.getenv("CDM5_REDSHIFT_PASSWORD"))
 
   cdm <- CDMConnector::cdmFromCon(cdmName = "cdm",
                                   con = db,
@@ -585,16 +581,16 @@ test_that("summarise code use - redshift", {
 
   # overall record count
   expect_true(results |>
-    dplyr::filter(variable_name == "overall" &
-                  strata_name == "overall" &
-                  strata_level == "overall",
-                  estimate_name == "record_count") |>
-    dplyr::pull("estimate_value") |>
-      as.numeric() ==
-  cdm$condition_occurrence |>
-    dplyr::filter(condition_concept_id %in%  !!asthma[[1]]) |>
-    dplyr::tally() |>
-    dplyr::pull("n"))
+                dplyr::filter(variable_name == "overall" &
+                                strata_name == "overall" &
+                                strata_level == "overall",
+                              estimate_name == "record_count") |>
+                dplyr::pull("estimate_value") |>
+                as.numeric() ==
+                cdm$condition_occurrence |>
+                dplyr::filter(condition_concept_id %in%  !!asthma[[1]]) |>
+                dplyr::tally() |>
+                dplyr::pull("n"))
 
   # overall person count
   expect_true(results |>
@@ -670,8 +666,8 @@ test_that("summarise code use - redshift", {
                 PatientProfiles::addAge(indexDate = "condition_start_date") |>
                 PatientProfiles::addSex() |>
                 dplyr::filter(sex == "Male" &
-                              age >= "18" &
-                              age <= "65") |>
+                                age >= "18" &
+                                age <= "65") |>
                 dplyr::tally() |>
                 dplyr::pull("n"))
 
@@ -704,9 +700,9 @@ test_that("summarise code use - redshift", {
                               bySex = FALSE,
                               ageGroup = NULL)
   expect_true(nrow(results |>
-    dplyr::filter(estimate_name == "person_count")) > 0)
+                     dplyr::filter(estimate_name == "person_count")) > 0)
   expect_true(nrow(results |>
-    dplyr::filter(estimate_name == "record_count")) == 0)
+                     dplyr::filter(estimate_name == "record_count")) == 0)
 
   results <- summariseCodeUse(asthma,
                               cdm = cdm, countBy = "record",
@@ -719,79 +715,79 @@ test_that("summarise code use - redshift", {
                      dplyr::filter(estimate_name == "record_count")) > 0)
 
 
-# domains covered
+  # domains covered
 
   # condition
   expect_true(nrow(summariseCodeUse(list(cs = c(317009)),
-                              cdm = cdm,
-                              byYear = FALSE,
-                              bySex = FALSE,
-                              ageGroup = NULL))>1)
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
 
   # visit
   expect_true(nrow(summariseCodeUse(list(cs = 9201),
-                              cdm = cdm,
-                              byYear = FALSE,
-                              bySex = FALSE,
-                              ageGroup = NULL))>1)
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
 
-# drug
-expect_true(nrow(summariseCodeUse(list(cs = 19071493),
-                             cdm = cdm,
-                            byYear = FALSE,
-                            bySex = FALSE,
-                            ageGroup = NULL))>1)
+  # drug
+  expect_true(nrow(summariseCodeUse(list(cs = 19071493),
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
 
-# measurement
-expect_true(nrow(summariseCodeUse(list(cs = 2212542),
-                            cdm = cdm,
-                            byYear = FALSE,
-                            bySex = FALSE,
-                            ageGroup = NULL))>1)
+  # measurement
+  expect_true(nrow(summariseCodeUse(list(cs = 2212542),
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
 
-# procedure and condition
-expect_true(nrow(summariseCodeUse(list(cs = c(4261206,317009)),
-                            cdm = cdm,
-                            byYear = FALSE,
-                            bySex = FALSE,
-                            ageGroup = NULL))>1)
+  # procedure and condition
+  expect_true(nrow(summariseCodeUse(list(cs = c(4261206,317009)),
+                                    cdm = cdm,
+                                    byYear = FALSE,
+                                    bySex = FALSE,
+                                    ageGroup = NULL))>1)
 
-# no records
-expect_message(results <- summariseCodeUse(list(cs = c(999999)),
-                 cdm = cdm,
-                 byYear = FALSE,
-                 bySex = FALSE,
-                 ageGroup = NULL))
-expect_true(nrow(results) == 0)
+  # no records
+  expect_message(results <- summariseCodeUse(list(cs = c(999999)),
+                                             cdm = cdm,
+                                             byYear = FALSE,
+                                             bySex = FALSE,
+                                             ageGroup = NULL))
+  expect_true(nrow(results) == 0)
 
 
 
-# expected errors
+  # expected errors
   expect_error(summariseCodeUse(list(cs = "not a concept"),
-                   cdm = cdm,
-                   byYear = FALSE,
-                   bySex = FALSE,
-                   ageGroup = NULL))
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = NULL))
   expect_error(summariseCodeUse(list(cs = 123),
-                   cdm = "not a cdm",
-                   byYear = FALSE,
-                   bySex = FALSE,
-                   ageGroup = NULL))
+                                cdm = "not a cdm",
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = NULL))
   expect_error(summariseCodeUse(list(cs = 123),
-                   cdm = cdm,
-                   byYear = "Maybe",
-                   bySex = FALSE,
-                   ageGroup = NULL))
+                                cdm = cdm,
+                                byYear = "Maybe",
+                                bySex = FALSE,
+                                ageGroup = NULL))
   expect_error(summariseCodeUse(list(cs = 123),
-                   cdm = cdm,
-                   byYear = FALSE,
-                   bySex = "Maybe",
-                   ageGroup = NULL))
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = "Maybe",
+                                ageGroup = NULL))
   expect_error(summariseCodeUse(list(cs = 123),
-                   cdm = cdm,
-                   byYear = FALSE,
-                   bySex = FALSE,
-                   ageGroup = 25))
+                                cdm = cdm,
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = 25))
   expect_error(summariseCodeUse(list(cs = 123),
                                 cdm = cdm,
                                 byYear = FALSE,
@@ -799,10 +795,10 @@ expect_true(nrow(results) == 0)
                                 ageGroup = list(c(18,17))))
   expect_error(summariseCodeUse(list(cs = 123),
                                 cdm = cdm,
-                  byYear = FALSE,
-                  bySex = FALSE,
-                  ageGroup = list(c(0,17),
-                                  c(15,20))))
+                                byYear = FALSE,
+                                bySex = FALSE,
+                                ageGroup = list(c(0,17),
+                                                c(15,20))))
 
 
   CDMConnector::cdmDisconnect(cdm)
@@ -812,15 +808,7 @@ expect_true(nrow(results) == 0)
 
 test_that("summarise code use - eunomia source concept id NA", {
   skip_on_cran()
-  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
-    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
-  }
-  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
-    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-  }
-  if (!CDMConnector::eunomiaIsAvailable()) {
-    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
-  }
+
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
@@ -835,8 +823,8 @@ test_that("summarise code use - eunomia source concept id NA", {
                               cdm = cdm)
 
   expect_true(all(omopgenerics::splitAdditional(results) |>
-    dplyr::filter(variable_name != "overall") |>
-    dplyr::pull("source_concept_name") == "NA"))
+                    dplyr::filter(variable_name != "overall") |>
+                    dplyr::pull("source_concept_name") == "NA"))
   expect_true(all(omopgenerics::splitAdditional(results) |>
                     dplyr::filter(variable_name != "overall") |>
                     dplyr::pull("source_concept_id") == "NA"))
@@ -846,15 +834,7 @@ test_that("summarise code use - eunomia source concept id NA", {
 
 test_that("summarise cohort code use - eunomia source concept id NA", {
   skip_on_cran()
-  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
-    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
-  }
-  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
-    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-  }
-  if (!CDMConnector::eunomiaIsAvailable()) {
-    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
-  }
+
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
@@ -887,15 +867,7 @@ test_that("summarise cohort code use - eunomia source concept id NA", {
 
 test_that("empty cohort", {
   skip_on_cran()
-  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
-    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
-  }
-  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
-    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-  }
-  if (!CDMConnector::eunomiaIsAvailable()) {
-    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
-  }
+
   con <- DBI::dbConnect(duckdb::duckdb(),
                         dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con,
@@ -908,14 +880,14 @@ test_that("empty cohort", {
                                                 name = "cohorts",
                                                 end = "observation_period_end_date",
                                                 overwrite = TRUE)
- results_cohort_mult <- summariseCohortCodeUse(list(cs = as.numeric()),
-                           cdm = cdm,
-                           cohortTable = "cohorts",
-                           timing = "entry")
- expect_true(inherits(results_cohort_mult, "summarised_result"))
- expect_true(nrow(results_cohort_mult) == 0)
+  results_cohort_mult <- summariseCohortCodeUse(list(cs = as.numeric()),
+                                                cdm = cdm,
+                                                cohortTable = "cohorts",
+                                                timing = "entry")
+  expect_true(inherits(results_cohort_mult, "summarised_result"))
+  expect_true(nrow(results_cohort_mult) == 0)
 
- CDMConnector::cdmDisconnect(cdm)
+  CDMConnector::cdmDisconnect(cdm)
 
 })
 

@@ -14,18 +14,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Subset a codelist to only those with a particular dose unit
+#' Subset a codelist to only those with a particular dose unit.
 #'
-#' @param x Codelist
-#' @param cdm A cdm reference
-#' @param doseUnit Dose unit. Use getDoseUnit() to find the available
-#' dose units in a cdm
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams doseUnitDoc
+#' @param negate If FALSE, only concepts with the dose unit specified will be
+#' returned. If TRUE, concepts with the dose unit specified will be excluded.
 #'
 #' @return The codelist with only those concepts associated with the
-#' dose unit
+#' dose unit (if negate = FALSE) or codelist without those concepts associated with the
+#' dose unit(if negate = TRUE).
 #' @export
 #'
-subsetOnDoseUnit <- function(x, cdm, doseUnit){
+#' @examples
+#' \donttest{
+#' library(CodelistGenerator)
+#' cdm <- mockVocabRef()
+#' codes <- subsetOnDoseUnit(x = list("codes" = c(20,21)),
+#'                           cdm = cdm,
+#'                           doseUnit = c("milligram"))
+#'
+#' codes
+#' }
+subsetOnDoseUnit <- function(x,
+                             cdm,
+                             doseUnit,
+                             negate = FALSE){
 
   if(inherits(x, "codelist_with_details")){
     x_original <- x
@@ -35,6 +50,9 @@ subsetOnDoseUnit <- function(x, cdm, doseUnit){
     withDetails <- FALSE
   }
 
+  omopgenerics::validateCdmArgument(cdm)
+  omopgenerics::assertCharacter(doseUnit)
+  omopgenerics::assertLogical(negate)
   x <- omopgenerics::newCodelist(x)
 
   if(isFALSE(inherits(cdm, "cdm_reference"))){
@@ -46,7 +64,6 @@ subsetOnDoseUnit <- function(x, cdm, doseUnit){
 
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
-
 
   drugStrengthNamed <- cdm$drug_strength |>
     dplyr::left_join(cdm$concept |>
@@ -77,9 +94,17 @@ subsetOnDoseUnit <- function(x, cdm, doseUnit){
       dplyr::distinct() |>
       dplyr::collect()
 
+    if(isTRUE(negate)){
+      x[[i]] <- x[[i]] |>
+        dplyr::filter(!(tolower(.data$amount_concept_name) %in% tolower(.env$doseUnit) |
+                        tolower(.data$numerator_concept_name) %in% tolower(.env$doseUnit)))
+    }else{
+      x[[i]] <- x[[i]] |>
+        dplyr::filter(tolower(.data$amount_concept_name) %in% tolower(.env$doseUnit) |
+                        tolower(.data$numerator_concept_name) %in% tolower(.env$doseUnit))
+    }
+
     x[[i]] <- x[[i]] |>
-      dplyr::filter(tolower(.data$amount_concept_name) %in% tolower(.env$doseUnit) |
-                    tolower(.data$numerator_concept_name) %in% tolower(.env$doseUnit)) |>
       dplyr::pull("concept_id")
 
     x[[i]] <- sort(unique(x[[i]]))

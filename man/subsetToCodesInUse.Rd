@@ -2,8 +2,7 @@
 % Please edit documentation in R/codesInUse.R
 \name{subsetToCodesInUse}
 \alias{subsetToCodesInUse}
-\title{Use achilles counts to filter a codelist to keep only the codes
-used in the database}
+\title{Filter a codelist to keep only the codes being used in patient records}
 \usage{
 subsetToCodesInUse(
   x,
@@ -14,20 +13,19 @@ subsetToCodesInUse(
 )
 }
 \arguments{
-\item{x}{A codelist}
+\item{x}{A codelist.}
 
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{minimumCount}{Any codes with a frequency under this will be removed.}
 
-\item{table}{cdm table}
+\item{table}{cdm table of interest.}
 }
 \value{
-Use achilles counts to filter codelist to only the codes used in the database
+The filtered codelist with only the codes used in the database
 }
 \description{
-Use achilles counts to filter a codelist to keep only the codes
-used in the database
+Filter a codelist to keep only the codes being used in patient records
 }
 \examples{
 \donttest{

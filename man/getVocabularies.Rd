@@ -2,18 +2,18 @@
 % Please edit documentation in R/vocabUtilities.R
 \name{getVocabularies}
 \alias{getVocabularies}
-\title{getVocabularies}
+\title{Get the vocabularies available in the cdm}
 \usage{
 getVocabularies(cdm)
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 }
 \value{
-Names of available vocabularies
+Names of available vocabularies.
 }
 \description{
-getVocabularies
+Get the vocabularies available in the cdm
 }
 \examples{
 \donttest{

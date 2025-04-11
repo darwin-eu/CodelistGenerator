@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -15,14 +15,13 @@
 # limitations under the License.
 
 
-#' Get concept ids from a provided path to json files
+#' Get concept ids from JSON files containing concept sets
 #'
-#' @param path Path to a file or folder containing JSONs of concept sets
-#' @param cdm A cdm reference created with CDMConnector
-#' @param type Can be "codelist", "codelist_with_details", or
-#' "concept_set_expression"
+#' @param path Path to a file or folder containing JSONs of concept sets.
+#' @inheritParams cdmDoc
+#' @inheritParams typeBroadDoc
 #'
-#' @return Named list with concept_ids for each concept set
+#' @return Named list with concept_ids for each concept set.
 #' @export
 #'
 #' @examples
@@ -38,8 +37,10 @@ codesFromConceptSet <- function(path,
                                 cdm,
                                 type = c("codelist")) {
 
-
   # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertCharacter(type, length = 1)
+  omopgenerics::assertChoice(type, choices = c("codelist", "codelist_with_details", "concept_set_expression"))
   checkInputs(path = path, cdm = cdm)
 
   if (dir.exists(path)) {
@@ -132,20 +133,31 @@ codesFromConceptSet <- function(path,
   return(conceptFinalList)
 }
 
-#' Get concept ids from a provided path to cohort json files
+#' Get concept ids from JSON files containing cohort definitions
 #'
-#' @param path Path to a file or folder containing JSONs of cohort definitions
-#' @param cdm A cdm reference created with CDMConnector
-#' @param type Can be "codelist", "codelist_with_details", or
-#' "concept_set_expression"
+#' @param path Path to a file or folder containing JSONs of cohort definitions.
+#' @inheritParams cdmDoc
+#' @inheritParams typeBroadDoc
 #'
-#' @return Named list with concept_ids for each concept set
+#' @return Named list with concept_ids for each concept set.
 #' @export
+#' @examples
+#' \donttest{
+#' cdm <- mockVocabRef("database")
+#' x <- codesFromCohort(cdm = cdm,
+#'                      path =  system.file(package = "CodelistGenerator",
+#'                      "cohorts_for_mock"))
+#' x
+#' CDMConnector::cdmDisconnect(cdm)
+#' }
 #'
 codesFromCohort <- function(path,
                             cdm,
                             type = c("codelist")) {
   # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertCharacter(type, length = 1)
+  omopgenerics::assertChoice(type, choices = c("codelist", "codelist_with_details", "concept_set_expression"))
   checkInputs(path = path, cdm = cdm)
 
   # list jsons
@@ -421,8 +433,8 @@ addDetails <- function(conceptList, cdm){
 #' Put concept ids from all cohorts of interest in the required list format
 #'
 #' @param conceptList table with all the concept ids read, with their respective
-#' cohort, exclusion and descendant information
-#' @param cdm A cdm reference created with CDMConnector
+#' cohort, exclusion and descendant information.
+#' @inheritParams cdmDoc
 #'
 #' @return list of concept_ids and respective cohort_definition_ids of interest
 #' @noRd
@@ -474,7 +486,7 @@ formatConceptList <- function(cdm, conceptListTable) {
 
 #' Get concept ids and information from a list of json files provided
 #'
-#' @param conceptSets paths and names of all jsons to be read
+#' @param conceptSets paths and names of all jsons to be read.
 #'
 #' @return raw table with all the concept_ids read, and their information
 #' @noRd

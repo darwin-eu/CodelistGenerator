@@ -1,5 +1,3 @@
-
-
 codelistFromCodelistWithDetails <- function(x){
 
   if(isFALSE(inherits(x, "codelist_with_details"))){

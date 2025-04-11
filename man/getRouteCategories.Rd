@@ -2,18 +2,28 @@
 % Please edit documentation in R/getRoutes.R
 \name{getRouteCategories}
 \alias{getRouteCategories}
-\title{Get available routes in a cdm reference.}
+\title{Get available drug routes}
 \usage{
 getRouteCategories(cdm)
 }
 \arguments{
-\item{cdm}{A cdm reference.}
+\item{cdm}{A cdm reference via CDMConnector.}
 }
 \value{
-A character vector with available routes
+A character vector with all available routes.
 }
 \description{
 Get the dose form categories available in the database (see
 https://doi.org/10.1002/pds.5809) for more details on how routes
 were classified).
+}
+\examples{
+\donttest{
+library(CodelistGenerator)
+
+cdm <- mockVocabRef()
+
+getRouteCategories(cdm)
+
+}
 }

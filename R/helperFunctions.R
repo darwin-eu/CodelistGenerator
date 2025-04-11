@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Get all ingredients codes from the cdm
+#' Get the names of all available drug ingredients
 #'
-#' @param cdm cdm_reference via CDMConnector
+#' @inheritParams cdmDoc
 #'
-#' @return A vector list of all ingredient level codes found in the concept
-#' table of cdm.
+#' @return A vector containing the concept names for all ingredient level codes
+#' found in the concept table of cdm.
 #'
 #' @export
 #'
@@ -29,9 +29,7 @@
 #' availableIngredients(cdm)
 #'}
 availableIngredients <- function(cdm) {
-  errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
 
   ingredientConcepts <- cdm$concept |>
     dplyr::filter(.data$standard_concept == "S") |>
@@ -41,14 +39,13 @@ availableIngredients <- function(cdm) {
     return(ingredientConcepts)
 }
 
-#' Get all ATC codes from the cdm
+#' Get the names of all available Anatomical Therapeutic Chemical (ATC) classification codes
 #'
-#' @param cdm cdm_reference via CDMConnector
-#' @param level ATC level. Can be one or more of "ATC 1st", "ATC 2nd",
-#' "ATC 3rd", "ATC 4th", and "ATC 5th"
+#' @inheritParams cdmDoc
+#' @inheritParams levelATCDoc
 #'
-#' @return A vector list of all ATC codes for the chosen level(s) found in the
-#' concept table of cdm.
+#' @return A vector containing the names of ATC codes for the chosen level(s)
+#' found in the concept table of cdm.
 #'
 #' @export
 #'
@@ -60,25 +57,16 @@ availableIngredients <- function(cdm) {
 #'
 availableATC <- function(cdm,
                          level = c("ATC 1st")) {
-  errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  levelCheck <- all(level %in%
-                      c(
-                        "ATC 1st",
-                        "ATC 2nd",
-                        "ATC 3rd",
-                        "ATC 4th",
-                        "ATC 5th"
-                      ))
-  if (!isTRUE(levelCheck)) {
-    errorMessage$push(
-      "- level can only be from: ATC 1st, ATC 2nd, ATC 3rd, ATC 4th, ATC 5th"
-    )
-  }
-  checkmate::assertTRUE(levelCheck, add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertChoice(level, choices = c(
+    "ATC 1st",
+    "ATC 2nd",
+    "ATC 3rd",
+    "ATC 4th",
+    "ATC 5th"
+  ))
 
-  atc_names <- cdm$concept |>
+    atc_names <- cdm$concept |>
     dplyr::filter(.data$vocabulary_id == "ATC") |>
     dplyr::filter(.data$concept_class_id %in% .env$level) |>
     dplyr::pull("concept_name")
@@ -86,13 +74,13 @@ availableATC <- function(cdm,
   return(atc_names)
 }
 
-#' Get all ICD codes from the cdm
+#' Get the names of all International Classification of Diseases (ICD) 10 codes
 #'
-#' @param cdm cdm_reference via CDMConnector
-#' @param level Can be either "ICD10 Chapter" or "ICD10 SubChapter"
+#' @inheritParams cdmDoc
+#' @inheritParams levelICD10Doc
 #'
-#' @return A vector list of all ICD10 codes for the chosen level(s) found in the
-#' concept table of cdm.
+#' @return A vector containing the names of all ICD-10 codes for the chosen
+#' level(s) found in the concept table of cdm.
 #'
 #' @export
 #'
@@ -107,25 +95,28 @@ availableICD10 <- function(cdm,
                              "ICD10 SubChapter"
                            )){
 
-  errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  levelCheck <- all(level %in%
-                      c(
-                        "ICD10 Chapter",
-                        "ICD10 SubChapter"
-                      ))
-  if (!isTRUE(levelCheck)) {
-    errorMessage$push(
-      "- level can only be from: ICD10 Chapter, ICD10 SubChapter "
-    )
-  }
-  checkmate::assertTRUE(levelCheck, add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertChoice(level, choices = c(
+    "ICD10 Chapter",
+    "ICD10 SubChapter",
+    "ICD10 Hierarchy",
+    "ICD10 Code"
+  ))
 
-  ICD10Concepts <- cdm$concept |>
-    dplyr::filter(.data$vocabulary_id == "ICD10") |>
-    dplyr::filter(.data$concept_class_id %in% .env$level) |>
+  if("ICD10 Code" %in% level){
+    level <- c(level, "ICD10 code") # for compatability with older vocab versions
+  }
+
+  ICD10Concepts <- list()
+  for(i in seq_along(level)){
+  working_level <- level[i]
+  ICD10Concepts[[i]] <- cdm$concept |>
+    dplyr::filter(.data$vocabulary_id == "ICD10",
+                   .data$concept_class_id %in%
+                    .env$working_level) |>
     dplyr::pull("concept_name")
+  }
+  ICD10Concepts <- purrr::flatten_chr(ICD10Concepts)
 
   return(ICD10Concepts)
 }

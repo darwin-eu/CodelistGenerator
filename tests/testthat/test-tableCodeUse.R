@@ -1,15 +1,6 @@
 test_that("table code use expcted columns", {
   skip_on_cran()
 
-  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
-    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
-  }
-  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
-    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-  }
-  if (!CDMConnector::eunomiaIsAvailable()) {
-    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
-  }
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
@@ -83,7 +74,7 @@ test_that("table code use expcted columns", {
     type = "gt",
     header = c("cdm_name", "estimate_name"),
     groupColumn = list("group" = c("cohort_name", "codelist_name")),
-    timing = TRUE,
+    hide = character(),
     .options = list()
   )
 
@@ -93,15 +84,6 @@ test_that("table code use expcted columns", {
 test_that("table code use output formats", {
   skip_on_cran()
 
-  if (Sys.getenv("EUNOMIA_DATA_FOLDER") == "") {
-    Sys.setenv("EUNOMIA_DATA_FOLDER" = tempdir())
-  }
-  if (!dir.exists(Sys.getenv("EUNOMIA_DATA_FOLDER"))) {
-    dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
-  }
-  if (!CDMConnector::eunomiaIsAvailable()) {
-    invisible(utils::capture.output(CDMConnector::downloadEunomiaData(pathToData = Sys.getenv("EUNOMIA_DATA_FOLDER"))))
-  }
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 

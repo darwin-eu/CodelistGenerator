@@ -10,12 +10,12 @@ test_that("tests with mock db", {
     includeDescendants = FALSE
   )
   expect_true(all(c("4", "5") %in%
-                subsetToCodesInUse(list("cs" = codes$concept_id),
-                       cdm = cdm)[[1]]))
+                    subsetToCodesInUse(list("cs" = codes$concept_id),
+                                       cdm = cdm)[[1]]))
 
   expect_true(length(subsetToCodesInUse(list("cs1" = codes$concept_id,
-                       "cs2" = 999),
-                       cdm = cdm)) == 1) # will just have cs1
+                                             "cs2" = 999),
+                                        cdm = cdm)) == 1) # will just have cs1
 
   # no codes in db
   codes <- getCandidateCodes(
@@ -24,11 +24,14 @@ test_that("tests with mock db", {
     domains = "Condition",
     includeDescendants = FALSE
   )
- expect_message(subsetToCodesInUse(list("cs" = codes$concept_id),
-                       cdm = cdm))
+  expect_message(subsetToCodesInUse(list("cs" = codes$concept_id),
+                                    cdm = cdm))
 
   CDMConnector::cdmDisconnect(cdm)
 
+  cdm <- omock::mockCdmReference()
+  expect_error(codesInUse(cdm))
+  expect_error(subsetToCodesInUse(x = list("a" = 1), cdm = cdm))
 })
 
 test_that("sql server with achilles", {

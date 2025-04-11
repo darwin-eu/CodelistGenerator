@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -14,24 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Get corresponding standard codes for ICD-10 chapters and sub-chapters
+#' Get corresponding standard codes for International Classification of Diseases (ICD) 10 codes
 #'
-#' @param cdm cdm_reference via CDMConnector
-#' @param level Can be either "ICD10 Chapter" or "ICD10 SubChapter"
+#' @inheritParams cdmDoc
+#' @inheritParams levelICD10Doc
 #' @param name Name of chapter or sub-chapter of interest. If NULL, all
 #' will be considered.
-#' @param includeDescendants If FALSE only direct mappings from ICD-10 codes
-#' to standard codes will be returned. If TRUE descendants of standard concepts
-#' will also be included.
-#' @param type Can be "codelist", "codelist_with_details", or
-#' "concept_set_expression"
+#' @inheritParams nameStyleDoc
+#' @inheritParams includeDescendantsDoc
+#' @inheritParams typeNarrowDoc
 #'
 #' @return A named list, with each element containing the corresponding
-#' standard codes (and descendants) of ICD chapters and sub-chapters
+#' standard codes (and descendants) of ICD chapters and sub-chapters.
 #' @export
 #'
 #' @examples
 #' \donttest{
+#' library(CodelistGenerator)
 #' cdm <- mockVocabRef()
 #' getICD10StandardCodes(cdm = cdm, level = c(
 #'   "ICD10 Chapter",
@@ -39,34 +38,39 @@
 #' ))
 #' }
 getICD10StandardCodes <- function(cdm,
-                                  level = c(
-                                    "ICD10 Chapter",
-                                    "ICD10 SubChapter"
-                                  ),
+                                  level = c("ICD10 Chapter","ICD10 SubChapter"),
                                   name = NULL,
+                                  nameStyle = "{concept_code}_{concept_name}",
                                   includeDescendants = TRUE,
                                   type = "codelist") {
-  errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  levelCheck <- all(level %in%
-    c(
-      "ICD10 Chapter",
-      "ICD10 SubChapter"
-    ))
-  if (!isTRUE(levelCheck)) {
-    errorMessage$push(
-      "- level can only be from: ICD10 Chapter, ICD10 SubChapter "
-    )
+
+  if(type == "concept_set_expression"){
+    cli::cli_abort("concept_set_expression not yet supported")
   }
-  checkmate::assertTRUE(levelCheck, add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+
+  # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertChoice(level, c(
+    "ICD10 Chapter",
+    "ICD10 SubChapter",
+    "ICD10 Hierarchy",
+    "ICD10 Code"
+  ))
+  omopgenerics::assertCharacter(name, null = T)
+  omopgenerics::assertLogical(includeDescendants)
+  omopgenerics::assertChoice(type, c(
+    "codelist",
+    "codelist_with_details",
+    "concept_set_expression"))
+  nameStyle <- checkNameStyle(nameStyle)
 
   # first get non standard codes
   cli::cli_inform("Getting non-standard ICD10 concepts")
   ICD10NonStandardCodes <- getICD10NonStandardCodes(
     cdm = cdm,
     level = level,
-    name = name
+    name = name,
+    nameStyle = nameStyle
   )
 
   if (!length(ICD10NonStandardCodes) > 0) {
@@ -94,12 +98,17 @@ getICD10StandardCodes <- function(cdm,
   }
   ICD10NonStandardCodes <- dplyr::bind_rows(ICD10NonStandardCodes)
   # map to standard
-  ICD10NonStandardCodes <- ICD10NonStandardCodes |>
+  tmpTblName1 <- omopgenerics::uniqueTableName()
+  cdm <- omopgenerics::insertTable(cdm = cdm,
+                                   name = tmpTblName1,
+                                   table = ICD10NonStandardCodes,
+                                   overwrite = TRUE,
+                                   temporary = FALSE)
+  cdm[[tmpTblName1]] <- cdm[[tmpTblName1]] |>
     dplyr::inner_join(
       cdm[["concept_relationship"]] |>
         dplyr::filter(.data$relationship_id == "Maps to"),
       by = c("concept_id" = "concept_id_1"),
-      copy = TRUE,
       relationship = "many-to-many"
     ) |>
     dplyr::select("concept_id_2", "name") |>
@@ -107,11 +116,12 @@ getICD10StandardCodes <- function(cdm,
 
   ICD10MapsTo <- cdm$concept |>
     dplyr::select("concept_id") |>
-    dplyr::inner_join(ICD10NonStandardCodes,
-      by = "concept_id",
-      copy = TRUE
+    dplyr::inner_join(cdm[[tmpTblName1]],
+      by = "concept_id"
     ) |>
+    dplyr::mutate("parent_concept_id" = .data$concept_id) |>
     dplyr::distinct()
+
   if(!is.null(attr(cdm, "dbcon"))){
     ICD10MapsTo <- ICD10MapsTo |>
       dplyr::compute()
@@ -124,51 +134,46 @@ getICD10StandardCodes <- function(cdm,
       dplyr::left_join(cdm$concept_ancestor,
         by = c("concept_id" = "ancestor_concept_id")
       ) |>
-      dplyr::select("name", "descendant_concept_id") |>
-      dplyr::rename("concept_id" = "descendant_concept_id")
+      dplyr::select("name",
+                    "parent_concept_id",
+                    "concept_id" = "descendant_concept_id")
 
     if(!is.null(attr(cdm, "dbcon"))){
       ICD10MapsTo <- ICD10MapsTo  |>
       dplyr::compute()
       }
   }
+
   if(type == "codelist_with_details") {
     ICD10MapsTo <- ICD10MapsTo |>
       dplyr::left_join(cdm[["concept"]] |>
-                         dplyr::select("concept_id", "concept_name",
-                                         "domain_id", "vocabulary_id"),
-                       by = "concept_id")
+                         dplyr::select("concept_id", "concept_code", "concept_name",
+                                       "domain_id", "vocabulary_id"),
+                       by = "concept_id") |>
+      dplyr::select(-"parent_concept_id")
+
     # split into list
     ICD10StandardCodes <- ICD10MapsTo |>
-      dplyr::collect() |>
-      dplyr::left_join(cdm[["concept"]] |> dplyr::select("concept_id", "concept_code"),
-                       by = "concept_id",
-                       copy = T) |>
-      dplyr::mutate(name = paste0(.data$concept_code,"_", .data$name))
+      dplyr::collect()
 
     ICD10StandardCodes <- split(
       x = ICD10StandardCodes,
       f = as.factor(ICD10StandardCodes$name),
       drop = TRUE
-    )
-  } else {
+    ) |>
+      omopgenerics::newCodelistWithDetails()
+  } else if(type == "codelist"){
     # split into list (only returning vector of concept ids)
     ICD10StandardCodes <- ICD10MapsTo |>
-      dplyr::left_join(cdm[["concept"]] |>
-                         dplyr::select("concept_id"),
-                       by = "concept_id") |>
       dplyr::collect()
     ICD10StandardCodes <- split(
       x = ICD10StandardCodes$concept_id,
       f = ICD10StandardCodes$name
-    )
+    ) |>
+      omopgenerics::newCodelist()
   }
-  if(type == "codelist"){
-    ICD10StandardCodes <- omopgenerics::newCodelist(ICD10StandardCodes)
-  } else{
-    ICD10StandardCodes <- omopgenerics::newCodelistWithDetails(
-      ICD10StandardCodes)
-  }
+
+  omopgenerics::dropSourceTable(cdm = cdm, name = tmpTblName1)
 
   return(ICD10StandardCodes)
 }
@@ -178,10 +183,11 @@ getICD10StandardCodes <- function(cdm,
 getICD10NonStandardCodes <- function(cdm,
                                      level = c(
                                        "ICD10 Chapter",
-                                       "ICD10 SubChapter"
-                                     ),
-                                     name) {
-
+                                       "ICD10 SubChapter",
+                                       "ICD10 Hierarchy",
+                                       "ICD10 Code"),
+                                     name,
+                                     nameStyle) {
 
   if(!is.null(name)){
     conceptDb <- cdm[["concept"]] |>
@@ -193,13 +199,13 @@ getICD10NonStandardCodes <- function(cdm,
   if ("ICD10 SubChapter" %in% level) {
     # go down two levels to get specific codes
     icd_sub <- conceptDb |>
-      dplyr::filter(.data$vocabulary_id == "ICD10") |>
-      dplyr::filter(.data$concept_class_id %in% "ICD10 SubChapter") |>
+      dplyr::filter(.data$vocabulary_id == "ICD10",
+                    .data$concept_class_id %in% "ICD10 SubChapter") |>
       dplyr::select("concept_id", "concept_name", "concept_code")
     if(!is.null(attr(cdm, "dbcon"))){
       icd_sub <- icd_sub |>
       dplyr::compute()
-      }
+    }
 
     icd_sub1 <- get_subsumed_concepts(
       cdm = cdm,
@@ -225,9 +231,12 @@ getICD10NonStandardCodes <- function(cdm,
 
     icd_subchapter <- icd_sub2 |>
       dplyr::collect() |>
-      dplyr::mutate(name = stringr::str_to_lower(.data$concept_name)) |>
+      dplyr::mutate(name = tidyWords(.data$concept_name)) |>
       dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) |>
-      dplyr::select("concept_id_1", "name") |>
+      dplyr::mutate(concept_code = tidyWords(.data$concept_code)) |>
+      dplyr::mutate(concept_code = stringr::str_replace_all(.data$concept_code, " ", "_")) |>
+      dplyr::select("concept_id_1", "name",
+                    "concept_code") |>
       dplyr::distinct()
   } else {
     icd_subchapter <- dplyr::tibble()
@@ -236,8 +245,8 @@ getICD10NonStandardCodes <- function(cdm,
   if ("ICD10 Chapter" %in% level) {
     # go down three levels to get specific codes
     icd_ch <- conceptDb |>
-      dplyr::filter(.data$vocabulary_id == "ICD10") |>
-      dplyr::filter(.data$concept_class_id %in% "ICD10 Chapter") |>
+      dplyr::filter(.data$vocabulary_id == "ICD10",
+                    .data$concept_class_id %in% "ICD10 Chapter") |>
       dplyr::select("concept_id", "concept_name", "concept_code")
     if(!is.null(attr(cdm, "dbcon"))){
       icd_ch <-icd_ch  |>
@@ -273,23 +282,83 @@ getICD10NonStandardCodes <- function(cdm,
     if(!is.null(attr(cdm, "dbcon"))){
       icd_ch3 <-icd_ch3 |>
       dplyr::compute()}
-
     icd_chapter <- icd_ch3 |>
       dplyr::collect() |>
-      dplyr::mutate(name = stringr::str_to_lower(.data$concept_name)) |>
+      dplyr::mutate(name = tidyWords(.data$concept_name)) |>
       dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) |>
-      dplyr::select("concept_id_1", "name") |>
+      dplyr::mutate(concept_code = tidyWords(.data$concept_code)) |>
+      dplyr::mutate(concept_code = stringr::str_replace_all(.data$concept_code, " ", "_")) |>
+      dplyr::select("concept_id_1", "name", "concept_code") |>
       dplyr::distinct()
   } else {
     icd_chapter <- dplyr::tibble()
   }
 
+  if ("ICD10 Hierarchy" %in% level) {
+    # go down one level to get specific codes
+    icd_sub <- conceptDb |>
+      dplyr::filter(.data$vocabulary_id == "ICD10",
+                    .data$concept_class_id %in% "ICD10 Hierarchy") |>
+      dplyr::select("concept_id", "concept_name", "concept_code")
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_sub <- icd_sub |>
+        dplyr::compute()
+    }
 
+    icd_sub1 <- get_subsumed_concepts(
+      cdm = cdm,
+      concepts = icd_sub |>
+        dplyr::rename(
+          "concept_id_1" =
+            "concept_id"
+        )
+    )
+    if(!is.null(attr(cdm, "dbcon"))){
+      icd_sub1 <- icd_sub1  |>
+        dplyr::compute()
+    }
+    # one more level down
+    icd_hierarchy <- icd_sub1 |>
+      dplyr::collect() |>
+      dplyr::mutate(name = tidyWords(.data$concept_name)) |>
+      dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) |>
+      dplyr::mutate(concept_code = tidyWords(.data$concept_code)) |>
+      dplyr::mutate(concept_code = stringr::str_replace_all(.data$concept_code, " ", "_")) |>
+      dplyr::select("concept_id_1", "name",
+                    "concept_code") |>
+      dplyr::distinct()
+  } else {
+    icd_hierarchy <- dplyr::tibble()
+  }
 
-  icd <- dplyr::bind_rows(icd_chapter, icd_subchapter)
+  if ("ICD10 Code" %in% level) {
+    # same level
+    icd_code <- conceptDb |>
+      dplyr::filter(.data$vocabulary_id == "ICD10",
+                    .data$concept_class_id %in% c("ICD10 Code", "ICD10 code")) |>
+      dplyr::select("concept_id", "concept_name", "concept_code") |>
+      dplyr::collect() |>
+      dplyr::mutate(name = tidyWords(.data$concept_name)) |>
+      dplyr::mutate(name = stringr::str_replace_all(.data$name, " ", "_")) |>
+      dplyr::mutate(concept_code = tidyWords(.data$concept_code)) |>
+      dplyr::mutate(concept_code = stringr::str_replace_all(.data$concept_code, " ", "_")) |>
+      dplyr::select("concept_id_1" = "concept_id",
+                    "name",
+                    "concept_code") |>
+      dplyr::distinct()
+  } else {
+    icd_code <- dplyr::tibble()
+  }
+
+  icd <- dplyr::bind_rows(icd_chapter, icd_subchapter, icd_hierarchy, icd_code) |>
+    dplyr::rename("concept_id" = "concept_id_1",
+                  "concept_name" = "name")
+  icd <- icd |>
+    dplyr::mutate("name_styled" = glue::glue(.env$nameStyle))
+
   ICDNonStandardCodes <- split(
-    x = icd$concept_id_1,
-    f = icd$name
+    x = icd$concept_id,
+    f = icd$name_styled
   )
 
 
@@ -308,4 +377,19 @@ get_subsumed_concepts <- function(cdm,
     dplyr::filter(.data$relationship_id == "Subsumes") |>
     dplyr::select("concept_id_2", "concept_name", "concept_code") |>
     dplyr::rename("concept_id_1" = "concept_id_2")
+}
+
+
+checkNameStyle <- function(nameStyle){
+  x <- nameStyle %in% c("{concept_code}", "{concept_id}", "{concept_name}",
+                        "{concept_code}_{concept_id}", "{concept_code}_{concept_name}", "{concept_id}_{concept_code}",
+                        "{concept_id}_{concept_name}", "{concept_name}_{concept_code}", "{concept_name}_{concept_id}",
+                        "{concept_code}_{concept_id}_{concept_name}", "{concept_code}_{concept_name}_{concept_id}",
+                        "{concept_id}_{concept_code}_{concept_name}", "{concept_id}_{concept_name}_{concept_code}",
+                        "{concept_name}_{concept_code}_{concept_id}", "{concept_name}_{concept_id}_{concept_code}")
+  if(isFALSE(x)){
+    cli::cli_abort("nameStyle {nameStyle} is not supported. nameStyle argument must be a choice between {{concept_name}}, {{concept_id}}, or {{concept_code}},
+                   or any combination of the three separated by `_` (i.e., {{concept_id}}_{{concept_name}}.")}
+
+  return(nameStyle)
 }

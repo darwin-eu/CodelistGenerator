@@ -2,21 +2,33 @@
 % Please edit documentation in R/stratifyByDoseUnit.R
 \name{stratifyByDoseUnit}
 \alias{stratifyByDoseUnit}
-\title{Stratify a codelist by dose unit}
+\title{Stratify a codelist by dose unit.}
 \usage{
 stratifyByDoseUnit(x, cdm, keepOriginal = FALSE)
 }
 \arguments{
-\item{x}{A codelist}
+\item{x}{A codelist.}
 
-\item{cdm}{A cdm reference}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{keepOriginal}{Whether to keep the original codelist and append the
 stratify (if TRUE) or just return the stratified codelist (if FALSE).}
 }
 \value{
-A codelist
+The codelist with the required stratifications, as different elements
+of the list.
 }
 \description{
-Stratify a codelist by dose unit
+Stratify a codelist by dose unit.
+}
+\examples{
+\donttest{
+library(CodelistGenerator)
+cdm <- mockVocabRef()
+codes <- list("concepts" = c(20,21))
+new_codes <- stratifyByDoseUnit(x = codes,
+                                cdm = cdm,
+                                keepOriginal = TRUE)
+new_codes
+}
 }

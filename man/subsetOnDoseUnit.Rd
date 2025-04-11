@@ -2,22 +2,38 @@
 % Please edit documentation in R/subsetOnDoseUnit.R
 \name{subsetOnDoseUnit}
 \alias{subsetOnDoseUnit}
-\title{Subset a codelist to only those with a particular dose unit}
+\title{Subset a codelist to only those with a particular dose unit.}
 \usage{
-subsetOnDoseUnit(x, cdm, doseUnit)
+subsetOnDoseUnit(x, cdm, doseUnit, negate = FALSE)
 }
 \arguments{
-\item{x}{Codelist}
+\item{x}{A codelist.}
 
-\item{cdm}{A cdm reference}
+\item{cdm}{A cdm reference via CDMConnector.}
 
-\item{doseUnit}{Dose unit. Use getDoseUnit() to find the available
-dose units in a cdm}
+\item{doseUnit}{Only codes with the specified dose unit
+will be returned. If NULL, descendant codes will be returned regardless
+of dose unit Use 'getDoseUnit()' to see the available dose units.}
+
+\item{negate}{If FALSE, only concepts with the dose unit specified will be
+returned. If TRUE, concepts with the dose unit specified will be excluded.}
 }
 \value{
 The codelist with only those concepts associated with the
-dose unit
+dose unit (if negate = FALSE) or codelist without those concepts associated with the
+dose unit(if negate = TRUE).
 }
 \description{
-Subset a codelist to only those with a particular dose unit
+Subset a codelist to only those with a particular dose unit.
+}
+\examples{
+\donttest{
+library(CodelistGenerator)
+cdm <- mockVocabRef()
+codes <- subsetOnDoseUnit(x = list("codes" = c(20,21)),
+                          cdm = cdm,
+                          doseUnit = c("milligram"))
+
+codes
+}
 }

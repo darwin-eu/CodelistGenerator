@@ -2,18 +2,18 @@
 % Please edit documentation in R/vocabUtilities.R
 \name{getVocabVersion}
 \alias{getVocabVersion}
-\title{getVocabVersion}
+\title{Get the version of the vocabulary used in the cdm}
 \usage{
 getVocabVersion(cdm)
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 }
 \value{
-the vocabulary version being used
+The vocabulary version being used in the cdm.
 }
 \description{
-getVocabVersion
+Get the version of the vocabulary used in the cdm
 }
 \examples{
 \donttest{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getCandidateCodes.R
 \name{getCandidateCodes}
 \alias{getCandidateCodes}
-\title{Generate candidate codelist for the OMOP CDM}
+\title{Generate a candidate codelist}
 \usage{
 getCandidateCodes(
   cdm,
@@ -17,7 +17,7 @@ getCandidateCodes(
 )
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{keywords}{Character vector of words to search for.
 Where more than one word is given (e.g. "knee osteoarthritis"),
@@ -40,16 +40,16 @@ the concept synonym table.}
 \item{searchNonStandard}{Either TRUE or FALSE. If TRUE the code will also
 search via non-standard concepts.}
 
-\item{includeDescendants}{Either TRUE or FALSE.
-If TRUE descendant concepts of identified concepts
-will be included in the candidate codelist.}
+\item{includeDescendants}{Either TRUE or FALSE. If TRUE descendant concepts
+of identified concepts will be included in the candidate codelist. If FALSE
+only direct mappings from ICD-10 codes to standard codes will be returned.}
 
 \item{includeAncestor}{Either TRUE or FALSE.
 If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.}
 }
 \value{
-tibble
+A tibble with the information on the potential codes of interest.
 }
 \description{
 This function generates a set of codes that

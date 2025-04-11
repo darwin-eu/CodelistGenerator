@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -15,19 +15,33 @@
 # limitations under the License.
 
 
-#' Stratify a codelist by the concepts included within it
+#' Stratify a codelist by the concepts included within it.
 #'
-#' @param x A codelist
-#' @param cdm A cdm reference
-#' @param keepOriginal Whether to keep the original codelist and append the
-#' stratify (if TRUE) or just return the stratified codelist (if FALSE).
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams keepOriginalDoc
 #'
-#' @return A codelist
+#' @return The codelist or a codelist with details with the required 
+#' stratifications, as different elements of the list.
 #' @export
-#'
+#' @examples
+#' \donttest{
+#' library(CodelistGenerator)
+#' cdm <- mockVocabRef()
+#' codes <- list("concepts" = c(20,21))
+#' new_codes <- stratifyByConcept(x = codes,
+#'                                cdm = cdm,
+#'                                keepOriginal = TRUE)
+#' new_codes
+#' }
 stratifyByConcept <- function(x,
                               cdm,
                               keepOriginal = FALSE){
+
+
+  if(inherits(x, "list") & !inherits(x, "codelist_with_details")){
+    x <- omopgenerics::newCodelist(x)
+  }
 
   x_start <- x
 

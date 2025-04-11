@@ -63,6 +63,30 @@ test_that("comparing two codelists", {
       codelist2 = codes2
     ))
 
+
+
+    # compare codelist
+    codesCompared <- compareCodelists(
+    omopgenerics::newCodelist(list(a = c(1L, 2L))),
+    omopgenerics::newCodelist(list(b = c(2L, 3L)))
+    )
+
+    expect_true(codesCompared |>
+                  dplyr::filter(concept_id == 1) |>
+                  dplyr::select("codelist") |>
+                  dplyr::pull() == "Only codelist 1")
+
+    expect_true(codesCompared |>
+                  dplyr::filter(concept_id == 2) |>
+                  dplyr::select("codelist") |>
+                  dplyr::pull() == "Both")
+
+    expect_true(codesCompared |>
+                  dplyr::filter(concept_id == 3) |>
+                  dplyr::select("codelist") |>
+                  dplyr::pull() == "Only codelist 2")
+
+
     if (backends[[i]] == "database") {
       CDMConnector::cdmDisconnect(cdm)
     }

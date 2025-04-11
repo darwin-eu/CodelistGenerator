@@ -4,20 +4,36 @@
 \alias{subsetOnRouteCategory}
 \title{Subset a codelist to only those with a particular route category}
 \usage{
-subsetOnRouteCategory(x, cdm, routeCategory)
+subsetOnRouteCategory(x, cdm, routeCategory, negate = FALSE)
 }
 \arguments{
-\item{x}{Codelist}
+\item{x}{A codelist.}
 
-\item{cdm}{A cdm reference}
+\item{cdm}{A cdm reference via CDMConnector.}
 
-\item{routeCategory}{Route category. Use getRoutes() to find the available
-route categories for a cdm}
+\item{routeCategory}{Only codes with the specified route will be
+returned. If NULL, descendant codes will be returned regardless of route
+category. Use getRoutes() to find the available route categories.}
+
+\item{negate}{If FALSE, only concepts with the routeCategory specified will
+be returned. If TRUE, concepts with the routeCategory specified will be excluded.}
 }
 \value{
 The codelist with only those concepts associated with the
-specified route categories
+specified route categories (if negate is FALSE) or the codelist without those
+concepts associated with the specified route categories (if negate is TRUE).
 }
 \description{
 Subset a codelist to only those with a particular route category
+}
+\examples{
+\donttest{
+library(CodelistGenerator)
+cdm <- mockVocabRef()
+codes <- subsetOnRouteCategory(
+              x = list("codes" = c(20,21)),
+              cdm = cdm,
+              routeCategory = "topical")
+codes
+}
 }

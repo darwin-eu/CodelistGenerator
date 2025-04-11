@@ -1,0 +1,135 @@
+---
+title: "Compare, subset or stratify codelists"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a06_CreateSubsetsFromCodelist}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = NOT_CRAN)
+```
+
+```{r, include = FALSE}
+CDMConnector::requireEunomia("synpuf-1k", "5.3")
+```
+
+## Introduction: Generate codelist subsets, exploring codelist utility functions
+This vignette introduces a set of functions designed to manipulate and explore codelists within an OMOP CDM. Specifically, we will learn how to:
+
+-   **Subset a codelist** to keep only codes meeting a certain criteria.
+-   **Stratify a codelist** based on attributes like dose unit or route of administration.
+-   **Compare two codelists** to identify shared and unique concepts.
+
+First of all, we will load the required packages and connect to a mock database.
+```{r, warning=FALSE, message=FALSE}
+library(DBI)
+library(duckdb)
+library(dplyr)
+library(CDMConnector)
+library(CodelistGenerator)
+
+# Connect to the database and create the cdm object
+con <- dbConnect(duckdb(), 
+                      eunomiaDir("synpuf-1k", "5.3"))
+cdm <- cdmFromCon(con = con, 
+                  cdmName = "Eunomia Synpuf",
+                  cdmSchema   = "main",
+                  writeSchema = "main", 
+                  achillesSchema = "main")
+```
+
+We will start by generating a codelist for *acetaminophen* using `getDrugIngredientCodes()`
+```{r, warning=FALSE, message=FALSE}
+acetaminophen <- getDrugIngredientCodes(cdm,
+                                        name = "acetaminophen",
+                                        nameStyle = "{concept_name}",
+                                        type = "codelist")
+```
+
+### Subsetting a Codelist
+Subsetting a codelist will allow us to reduce a codelist to only those concepts that meet certain conditions.
+
+#### Subset to Codes in Use
+This function keeps only those codes observed in the database with at least a specified frequency (`minimumCount`) and in the table specified (`table`). Note that this function depends on ACHILLES tables being available in your CDM object.
+
+```{r}
+acetaminophen_in_use <- subsetToCodesInUse(x = acetaminophen, 
+                                           cdm, 
+                                           minimumCount = 0,
+                                           table = "drug_exposure")
+acetaminophen_in_use # Only the first 5 concepts will be shown
+```
+#### Subset by Domain
+We will now subset to those concepts that have `domain = "Drug"`. Remember that, to see the domains available in the cdm, you can use `getDomains(cdm)`.
+```{r, warning=FALSE, messages=FALSE}
+acetaminophen_drug <- subsetOnDomain(acetaminophen_in_use, cdm, domain = "Drug")
+
+acetaminophen_drug
+```
+We can use the `negate` argument to exclude concepts with a certain domain:
+
+```{r, warning=FALSE, messages=FALSE}
+acetaminophen_no_drug <- subsetOnDomain(acetaminophen_in_use, cdm, domain = "Drug", negate = TRUE)
+
+acetaminophen_no_drug
+```
+#### Subset on Dose Unit
+We will now filter to only include concepts with specified dose units. Remember that you can use `getDoseUnit(cdm)` to explore the dose units available in your cdm.
+```{r, warning=FALSE, messages=FALSE}
+acetaminophen_mg_unit <- subsetOnDoseUnit(acetaminophen_drug, cdm, c("milligram", "unit"))
+acetaminophen_mg_unit
+```
+As before, we can use argument `negate = TRUE` to exclude instead.
+
+#### Subset on route category
+We will now subset to those concepts that do not have an "unclassified_route" or "transmucosal_rectal":
+```{r, warning=FALSE, messages=FALSE}
+acetaminophen_route <- subsetOnRouteCategory(acetaminophen_mg_unit, 
+                                             cdm, c("transmucosal_rectal","unclassified_route"), 
+                                             negate = TRUE)
+acetaminophen_route
+```
+### Stratify codelist
+Instead of filtering, stratification allows us to split a codelist into subgroups based on defined vocabulary properties.
+
+#### Stratify by Dose Unit
+```{r, warning=FALSE, messages=FALSE}
+acetaminophen_doses <- stratifyByDoseUnit(acetaminophen, cdm, keepOriginal = TRUE)
+
+acetaminophen_doses
+```
+#### Stratify by Route Category
+```{r, warning=FALSE, messages=FALSE}
+acetaminophen_routes <- stratifyByRouteCategory(acetaminophen, cdm)
+
+acetaminophen_routes
+```
+
+### Compare codelists
+Now we will compare two codelists to identify overlapping and unique codes. 
+```{r, warning=FALSE, messages=FALSE}
+acetaminophen <- getDrugIngredientCodes(cdm, 
+                                           name = "acetaminophen", 
+                                           nameStyle = "{concept_name}",
+                                           type = "codelist_with_details")
+hydrocodone <- getDrugIngredientCodes(cdm, 
+                                      name = "hydrocodone", 
+                                      doseUnit = "milligram", 
+                                      nameStyle = "{concept_name}",
+                                      type = "codelist_with_details")
+```
+Compare the two sets:
+```{r}
+comparison <- compareCodelists(acetaminophen$acetaminophen, hydrocodone$hydrocodone)
+
+comparison |> glimpse()
+
+comparison |> filter(codelist == "Both")
+```

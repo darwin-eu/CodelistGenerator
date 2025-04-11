@@ -2,12 +2,13 @@
 % Please edit documentation in R/drugCodes.R
 \name{getATCCodes}
 \alias{getATCCodes}
-\title{Get descendant codes for ATC levels}
+\title{Get the descendant codes of Anatomical Therapeutic Chemical (ATC) classification codes}
 \usage{
 getATCCodes(
   cdm,
   level = c("ATC 1st"),
   name = NULL,
+  nameStyle = "{concept_code}_{concept_name}",
   doseForm = NULL,
   doseUnit = NULL,
   routeCategory = NULL,
@@ -15,38 +16,42 @@ getATCCodes(
 )
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{level}{ATC level. Can be one or more of "ATC 1st", "ATC 2nd",
-"ATC 3rd", "ATC 4th", and "ATC 5th"}
+"ATC 3rd", "ATC 4th", and "ATC 5th".}
 
 \item{name}{ATC name of interest. For example, c("Dermatologicals",
 "Nervous System"), would result in a list of length two with the descendant
 concepts for these two particular ATC groups.}
 
-\item{doseForm}{Only descendants codes with the specified dose form
-will be returned. If NULL, descendant codes will be returned regardless
-of dose form.}
+\item{nameStyle}{Name style to apply to returned list. Can be one of
+\code{"{concept_code}"},\code{"{concept_id}"}, \code{"{concept_name}"}, or a combination (i.e.,
+\code{"{concept_code}_{concept_name}"}).}
 
-\item{doseUnit}{Only descendants codes with the specified dose unit
+\item{doseForm}{Only codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
-of dose unit}
+of dose form. Use 'getDoseForm()' to see the available dose forms.}
 
-\item{routeCategory}{Only descendants codes with the specified route
+\item{doseUnit}{Only codes with the specified dose unit
 will be returned. If NULL, descendant codes will be returned regardless
-of dose form.}
+of dose unit Use 'getDoseUnit()' to see the available dose units.}
 
-\item{type}{Can be "codelist", "codelist_with_details", or
-"concept_set_expression"}
+\item{routeCategory}{Only codes with the specified route will be
+returned. If NULL, descendant codes will be returned regardless of route
+category. Use getRoutes() to find the available route categories.}
+
+\item{type}{Can be "codelist" or "codelist_with_details".}
 }
 \value{
-Concepts with their format based on the type argument.
+Concepts with their format based on the type argument
 }
 \description{
-Get descendant codes for ATC levels
+Get the descendant codes of Anatomical Therapeutic Chemical (ATC) classification codes
 }
 \examples{
 \donttest{
+library(CodelistGenerator)
 cdm <- mockVocabRef()
 getATCCodes(cdm = cdm, level = "ATC 1st")
 }

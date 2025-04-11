@@ -2,22 +2,22 @@
 % Please edit documentation in R/helperFunctions.R
 \name{availableATC}
 \alias{availableATC}
-\title{Get all ATC codes from the cdm}
+\title{Get the names of all available Anatomical Therapeutic Chemical (ATC) classification codes}
 \usage{
 availableATC(cdm, level = c("ATC 1st"))
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{level}{ATC level. Can be one or more of "ATC 1st", "ATC 2nd",
-"ATC 3rd", "ATC 4th", and "ATC 5th"}
+"ATC 3rd", "ATC 4th", and "ATC 5th".}
 }
 \value{
-A vector list of all ATC codes for the chosen level(s) found in the
-concept table of cdm.
+A vector containing the names of ATC codes for the chosen level(s)
+found in the concept table of cdm.
 }
 \description{
-Get all ATC codes from the cdm
+Get the names of all available Anatomical Therapeutic Chemical (ATC) classification codes
 }
 \examples{
 \donttest{

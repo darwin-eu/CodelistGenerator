@@ -1,28 +1,11 @@
 #' Format the result of summariseCodeUse into a table.
 #'
-#' @param result A summarised result with results of the type "code_use".
-#' @param type Type of desired formatted table. To see supported formats
-#' use visOmopResults::tableType()
-#' @param header A vector specifying the elements to include in the header. The
-#' order of elements matters, with the first being the topmost header.
-#' The header vector can contain one of the following variables: "cdm_name",
-#' "codelist_name", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
-#' results are stratified, "year", "sex", "age_group" can also be used.
-#' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumn Variables to use as group labels. Allowed columns are:
-#' "cdm_name", "codelist_name", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
-#' results are stratified, "year", "sex", "age_group" can also be used.
-#' These cannot be used in header.
-#' @param hide Table columns to exclude, options are: "cdm_name",
-#' "codelist_name", "year", "sex", "age_group", "standard_concept_name",
-#' "standard_concept_id", "estimate_name", "source_concept_name",
-#' "source_concept_id", "domain_id". If results are stratified, "year", "sex",
-#' "age_group" can also be used. These cannot be used in header or groupColumn.
-#' @param .options Named list with additional formatting options.
-#' visOmopResults::tableOptions() shows allowed arguments and
-#' their default values.
+#' @param result A `<summarised_result>` with results of the type "code_use".
+#' @inheritParams typeTableDoc
+#' @inheritParams headerStrataDoc
+#' @inheritParams groupColumnStrataDoc
+#' @inheritParams hideStrataDoc
+#' @inheritParams .optionsDoc
 #'
 #' @return A table with a formatted version of the summariseCodeUse result.
 #'
@@ -75,7 +58,6 @@ tableCodeUse <- function(result,
     type = type,
     header = header,
     groupColumn = groupColumn,
-    timing = FALSE,
     hide = hide,
     .options = .options
   )
@@ -85,30 +67,13 @@ tableCodeUse <- function(result,
 
 #' Format the result of summariseCohortCodeUse into a table.
 #'
-#' @param result A summarised result with results of the type "cohort_code_use".
-#' @param type Type of desired formatted table. To see supported formats
-#' use visOmopResults::tableType()
-#' @param header A vector specifying the elements to include in the header. The
-#' order of elements matters, with the first being the topmost header.
-#' The header vector can contain one of the following variables: "cdm_name",
-#' "codelist_name", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
-#' results are stratified, "year", "sex", "age_group" can also be used.
-#' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumn Variables to use as group labels. Allowed columns are:
-#' "cdm_name", "codelist_name", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "source_concept_name", "source_concept_id", "domain_id". If
-#' results are stratified, "year", "sex", "age_group" can also be used.
-#' These cannot be used in header.
-#' @param timing If TRUE the timing setting will be displayed.
-#' @param hide Table columns to exclude, options are: "cdm_name",
-#' "codelist_name", "year", "sex", "age_group", "standard_concept_name",
-#' "standard_concept_id", "estimate_name", "source_concept_name",
-#' "source_concept_id", "domain_id". If results are stratified, "year", "sex",
-#' "age_group" can also be used. These cannot be used in header or groupColumn.
-#' @param .options Named list with additional formatting options.
-#' visOmopResults::tableOptions() shows allowed arguments and
-#' their default values.
+#' @param result A `<summarised_result>` with results of the type "cohort_code_use".
+#' @inheritParams typeTableDoc
+#' @inheritParams headerStrataDoc
+#' @inheritParams groupColumnStrataDoc
+#' @inheritParams hideStrataDoc
+#' @inheritParams .optionsDoc
+#' @param timing deprecated.
 #'
 #' @return A table with a formatted version of the summariseCohortCodeUse
 #' result.
@@ -142,27 +107,32 @@ tableCodeUse <- function(result,
 tableCohortCodeUse <- function(result,
                                type = "gt",
                                header = c("cdm_name", "estimate_name"),
-                               groupColumn = NULL,
-                               timing = FALSE,
-                               hide = character(),
-                               .options = list()) {
+                               groupColumn = character(),
+                               hide = c("timing"),
+                               .options = list(),
+                               timing = lifecycle::deprecated()) {
 
   rlang::check_installed("visOmopResults", version = "1.0.0")
+  if (lifecycle::is_present(timing)) {
+    lifecycle::deprecate_warn(when = "4.0.0", what = "tableCohortCodeUse(timing= )")
+  }
 
   # checks
+  result <- omopgenerics::validateResultArgument(result)
+
+  # empty result object
   if(nrow(result) == 0){
     cli::cli_warn("`result` object is empty")
     return(emptyResultTable(type = type))
   }
 
+  # no cohort_code_use
   result <- result |>
     visOmopResults::filterSettings(.data$result_type == "cohort_code_use")
-
   if(nrow(result) == 0){
     cli::cli_warn("No code use results found in result object")
     return(emptyResultTable(type = type))
   }
-  omopgenerics::assertLogical(timing, length = 1)
 
   x <- internalTableCodeUse(
     result = result,
@@ -170,7 +140,6 @@ tableCohortCodeUse <- function(result,
     type = type,
     header = header,
     groupColumn = groupColumn,
-    timing = timing,
     hide = hide,
     .options = .options
   )
@@ -183,7 +152,6 @@ internalTableCodeUse <- function(result,
                                  type,
                                  header,
                                  groupColumn,
-                                 timing,
                                  hide,
                                  .options) {
   omopgenerics::assertCharacter(header, null = TRUE)
@@ -193,12 +161,6 @@ internalTableCodeUse <- function(result,
 
    # .options
   .options <- optionsCodeUse(.options)
-
-  if (timing) {
-    settingsColumn <- "timing"
-  } else {
-    settingsColumn <- character()
-  }
 
   x <- result |>
     visOmopResults::filterSettings(.data$result_type == .env$resultType) |>
@@ -215,7 +177,7 @@ internalTableCodeUse <- function(result,
     header = header,
     groupColumn = groupColumn,
     type = type,
-    settingsColumn = settingsColumn,
+    settingsColumn = omopgenerics::settingsColumns(x),
     rename = c(
       "Domain ID" = "domain_id", "Database name" = "cdm_name",
       "Standard concept ID" = "standard_concept_id",

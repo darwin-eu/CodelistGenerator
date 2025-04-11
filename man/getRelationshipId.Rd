@@ -2,7 +2,7 @@
 % Please edit documentation in R/vocabUtilities.R
 \name{getRelationshipId}
 \alias{getRelationshipId}
-\title{Get relationship ID values from the concept relationship table}
+\title{Get available relationships between concepts}
 \usage{
 getRelationshipId(
   cdm,
@@ -13,7 +13,7 @@ getRelationshipId(
 )
 }
 \arguments{
-\item{cdm}{A cdm reference}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{standardConcept1}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
@@ -28,10 +28,10 @@ for the standard_concept field in the concept table of the cdm.}
 \item{domains2}{Character vector with one or more of the OMOP CDM domain.}
 }
 \value{
-A character vector with unique values
+A character vector with unique concept relationship values.
 }
 \description{
-Get relationship ID values from the concept relationship table
+Get available relationships between concepts
 }
 \examples{
 \donttest{

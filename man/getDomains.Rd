@@ -2,22 +2,22 @@
 % Please edit documentation in R/vocabUtilities.R
 \name{getDomains}
 \alias{getDomains}
-\title{getDomains}
+\title{Get the domains available in the cdm}
 \usage{
 getDomains(cdm, standardConcept = "Standard")
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.}
 }
 \value{
-The domains of the cdm
+A vector with the domains of the cdm.
 }
 \description{
-getDomains
+Get the domains available in the cdm
 }
 \examples{
 \donttest{

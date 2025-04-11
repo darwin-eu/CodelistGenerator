@@ -1,0 +1,225 @@
+---
+title: "Generating vocabulary based codelists for conditions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a04b_icd_codes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+CDMConnector::requireEunomia("synpuf-1k", "5.3")
+```
+
+## Introduction: Creating a vocabulary-based codelist for conditions
+In this vignette, we will explore how to generate codelists for conditions using the OMOP CDM vocabulary tables. We should note at the start that there are many more caveats with creating conditions codelists based on vocabularies compared to medications. In particular hierarchies to group medications are a lot more black and white than with conditions. 
+With that being said we can generate some vocabulary based codelists for conditions. For this we will use ICD10 as the foundation for grouping condition-related codes. 
+
+To begin, let's load the necessary packages and create a cdm reference using Eunomia mock data.
+```{r,  message=FALSE, warning=FALSE}
+library(DBI)
+library(duckdb)
+library(dplyr)
+library(CDMConnector)
+library(CodelistGenerator)
+
+# Connect to the database and create the cdm object
+con <- dbConnect(duckdb(), 
+                 eunomiaDir("synpuf-1k", "5.3"))
+cdm <- cdmFromCon(con = con, 
+                  cdmName = "Eunomia Synpuf",
+                  cdmSchema = "main",
+                  writeSchema = "main",
+                  achillesSchema = "main")
+```
+
+We can see that our ICD10 codes come at four different levels of granularity, with chapters the broadest and codes the narrowest.
+
+```{r}
+availableICD10(cdm, level = "ICD10 Chapter") |> 
+  glimpse()
+availableICD10(cdm, level = "ICD10 SubChapter") |> 
+  glimpse()
+availableICD10(cdm, level = "ICD10 Hierarchy") |> 
+  glimpse()
+availableICD10(cdm, level = "ICD10 Code") |> 
+  glimpse()
+```
+
+## ICD10 chapter codelists
+
+We can use `getICD10StandardCodes()` to generate condition codelists based on ICD10 chapters. As ICD10 is a non-standard vocabulary in the OMOP CDM, this function returns standard concepts associated with these ICD10 chapters and subchapters directly via a mapping from them or indirectly from being a descendant concept of a code that is mapped from them. It is important to note that `getICD10StandardCodes()` will only return results if the ICD codes are included in the vocabulary tables.
+
+We can start by getting a codelist for each of the chapters. For each of these our result will be the standard OMOP CDM concepts. So, as ICD10 is non-standard, we'll first identify ICD10 codes of interest and then map across to their standard equivalents (using the concept relationship table).
+```{r}
+icd_chapters <- getICD10StandardCodes(cdm = cdm,
+                                      level = "ICD10 Chapter")
+icd_chapters |> length()
+icd_chapters
+```
+
+Instead of getting all of the chapters, we could instead specify one of interest. Here, for example, we will try to generate a codelist for mental and behavioural disorders (ICD chapter V).
+
+```{r}
+mental_and_behavioural_disorders <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "Mental and behavioural disorders",
+  level = "ICD10 Chapter"
+)
+mental_and_behavioural_disorders
+```
+
+## ICD10 subchapter codelists
+
+Instead of the chapter level, we could instead use ICD10 sub-chapters. Again we can get codelists for all sub-chapters, and we'll have many more than at the chapter level.
+
+```{r}
+icd_subchapters <- getICD10StandardCodes(
+  cdm = cdm,
+  level = "ICD10 SubChapter"
+)
+icd_subchapters |> length()
+icd_subchapters
+```
+
+Or again we could specify particular sub-chapters of interest. Here we'll get codes for Mood [affective] disorders (ICD10 F30-F39).
+
+```{r}
+mood_affective_disorders <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "Mood [affective] disorders", 
+  level = "ICD10 SubChapter"
+)
+mood_affective_disorders
+```
+
+## ICD10 hierarchy codelists
+
+We can move one level below and get codelists for all the hierarchy codes. Again we'll have more granularity and many more codes.
+
+```{r}
+icd_hierarchy <- getICD10StandardCodes(
+  cdm = cdm,
+  level = "ICD10 Hierarchy"
+)
+icd_hierarchy |> length()
+icd_hierarchy
+```
+
+And we can get codes for Persistent mood [affective] disorders (ICD10 F34).
+
+```{r}
+persistent_mood_affective_disorders   <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "Persistent mood [affective] disorders", 
+  level = "ICD10 Hierarchy"
+)
+persistent_mood_affective_disorders
+```
+
+## ICD10 code codelists
+
+Our last option for level is the most granular, the ICD10 code. Now we'll get even more codelists.
+
+```{r}
+icd_code <- getICD10StandardCodes(
+  cdm = cdm,
+  level = "ICD10 Code"
+)
+icd_code |> length()
+icd_hierarchy
+```
+
+And now we could create a codelist just for dysthymia.
+
+```{r}
+dysthymia   <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "dysthymia", 
+  level = "ICD10 Code"
+)
+dysthymia
+```
+
+## Additional options
+
+As well as different ICD10 levels we have some more options when creating these codelists.
+
+### Include descendants
+By default when we map from ICD10 to standard codes we will also include the descendants of the standard code. We can instead just return the direct mappings themselves without descendants.
+
+```{r}
+dysthymia_descendants <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "dysthymia", 
+  level = "ICD10 Code",
+  includeDescendants = TRUE
+)
+dysthymia_descendants
+
+dysthymia_no_descendants <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "dysthymia", 
+  level = "ICD10 Code",
+  includeDescendants = FALSE
+)
+dysthymia_no_descendants
+```
+
+Unsurprisingly when we include descendants we'll include additional codes.
+
+```{r}
+compareCodelists(dysthymia_no_descendants, 
+                 dysthymia_descendants) |> 
+  filter(codelist == "Both") |> 
+  pull("concept_id")
+
+compareCodelists(dysthymia_no_descendants, 
+                 dysthymia_descendants) |> 
+  filter(codelist == "Only codelist 2") |> 
+  pull("concept_id")
+```
+
+### Name style
+
+By default we'll get back a list with name styled as `"{concept_code}_{concept_name}"`. We could though instead use only the concept name for naming our codelists.
+
+```{r}
+dysthymia <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "dysthymia", 
+  level = "ICD10 Code",
+  nameStyle = "{concept_name}"
+)
+dysthymia
+```
+
+### Codelist or codelist with details
+
+Lastly, we have flexibility about the type of object returned. By default we'll have a codelist with just concept IDs of interest. But we could instead get these with additional information such as their name, vocabulary, and so on.
+
+```{r}
+dysthymia <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "dysthymia", 
+  level = "ICD10 Code",
+  type = "codelist"
+)
+dysthymia[[1]] |> glimpse()
+```
+
+```{r}
+dysthymia <- getICD10StandardCodes(
+  cdm = cdm,
+  name = "dysthymia", 
+  level = "ICD10 Code",
+  type = "codelist_with_details"
+)
+dysthymia[[1]] |> glimpse()
+```

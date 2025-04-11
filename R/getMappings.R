@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -15,13 +15,14 @@
 # limitations under the License.
 
 
-#' Show mappings from non-standard vocabularies to standard
+#' Show mappings from non-standard vocabularies to standard.
 #'
-#' @param candidateCodelist Dataframe
-#' @param cdm cdm_reference via CDMConnector::cdmFromCon()
-#' @param nonStandardVocabularies Character vector
+#' @param candidateCodelist Dataframe.
+#' @inheritParams cdmDoc
+#' @param nonStandardVocabularies Character vector.
 #'
-#' @return tibble
+#' @return Tibble with the information of potential standard to non-standard
+#' mappings for the codelist of interest.
 #' @export
 #'
 #' @examples
@@ -47,20 +48,14 @@ getMappings <- function(candidateCodelist,
                            "SNOMED"
                          )) {
 
-  errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  checkmate::assertVector(nonStandardVocabularies, add = errorMessage)
-  checkmate::assertDataFrame(candidateCodelist, add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
-
-  errorMessage <- checkmate::makeAssertCollection()
-  assertTablesExist(cdm, tableName = c("concept",
-                                       "concept_relationship",
-                                       "concept_ancestor",
-                                       "concept_synonym",
-                                       "vocabulary"),
-                    messageStore = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertCharacter(nonStandardVocabularies)
+  omopgenerics::assertTable(candidateCodelist)
+  omopgenerics::assertTrue("concept" %in% names(cdm))
+  omopgenerics::assertTrue("concept_relationship" %in% names(cdm))
+  omopgenerics::assertTrue("concept_ancestor" %in% names(cdm))
+  omopgenerics::assertTrue("concept_synonym" %in% names(cdm))
+  omopgenerics::assertTrue("vocabulary" %in% names(cdm))
 
   conceptDb <- cdm$concept
   conceptRelationshipDb <- cdm$concept_relationship
@@ -78,7 +73,6 @@ getMappings <- function(candidateCodelist,
     dplyr::mutate(vocabulary_id = toupper(.data$vocabulary_id))
 
   # check nonStandardVocabularies exist
-  errorMessage <- checkmate::makeAssertCollection()
   nonStandardVocabulariesInDb <- conceptDb |>
     dplyr::select("vocabulary_id") |>
     dplyr::distinct() |>
@@ -87,15 +81,11 @@ getMappings <- function(candidateCodelist,
   for (i in seq_along(nonStandardVocabularies)) {
     nonStandardVocabulariesCheck <- nonStandardVocabularies[i] %in%
       nonStandardVocabulariesInDb
-    checkmate::assertTRUE(nonStandardVocabulariesCheck, add = errorMessage)
+    omopgenerics::assertTrue(nonStandardVocabulariesCheck)
     if (!isTRUE(nonStandardVocabulariesCheck)) {
-      errorMessage$push(
-        glue::glue("- Vocabulary {nonStandardVocabularies[i]} not found")
-      )
+        cli::cli_abort("- Vocabulary {nonStandardVocabularies[i]} not found")
     }
   }
-  checkmate::reportAssertions(collection = errorMessage)
-
 
   mappedCodes <- conceptDb |>
     dplyr::inner_join(conceptRelationshipDb |>

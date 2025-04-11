@@ -2,7 +2,7 @@
   "ConceptSets": [
     {
       "id": 0,
-      "name": "OA",
+      "name": "arthritis",
       "expression": {
         "items": [
           {
@@ -10,7 +10,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "396275006",
               "CONCEPT_ID": 3,
-              "CONCEPT_NAME": "Osteoarthritis",
+              "CONCEPT_NAME": "Arthritis",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",
@@ -33,7 +33,7 @@
               "CONCEPT_CLASS_ID": "Clinical Finding",
               "CONCEPT_CODE": "422504002",
               "CONCEPT_ID": 5,
-              "CONCEPT_NAME": "Ischemic stroke",
+              "CONCEPT_NAME": "Osteoarthritis of hip",
               "DOMAIN_ID": "Condition",
               "INVALID_REASON": "V",
               "INVALID_REASON_CAPTION": "Valid",

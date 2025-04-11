@@ -2,24 +2,27 @@
 % Please edit documentation in R/vocabUtilities.R
 \name{getConceptClassId}
 \alias{getConceptClassId}
-\title{getConceptClassId}
+\title{Get the concept classes used in a given set of domains}
 \usage{
 getConceptClassId(cdm, standardConcept = "Standard", domain = NULL)
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
 for the standard_concept field in the concept table of the cdm.}
 
-\item{domain}{Vocabulary domain}
+\item{domain}{Character vector with one or more of the OMOP CDM domains.
+The results will be restricted to the given domains. Check the available
+ones by running getDomains(). If NULL, all supported domains are included:
+Condition, Drug, Procedure, Device, Observation, and Measurement.}
 }
 \value{
-The concept class used for a given set of domains
+The concept classes used for the requested domains.
 }
 \description{
-getConceptClassId
+Get the concept classes used in a given set of domains
 }
 \examples{
 \donttest{

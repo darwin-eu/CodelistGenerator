@@ -17,3 +17,7 @@ GiBleed_5.3.zip
 .httr-oauth
 .DS_Store
 .quarto
+extras/Extra.R
+extras/log_2025-03-12.txt
+extras/log_2025-03-18.txt
+/shiny

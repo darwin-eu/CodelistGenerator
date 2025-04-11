@@ -1,11 +1,10 @@
-#' Summarise code use from achilles counts
+#' Summarise code use from achilles counts.
 #'
-#' @param x Codelist
-#' @param cdm cdm_reference via CDMConnector::cdmFromCon()
-#' @param countBy Either "record" for record-level counts or "person" for
-#' person-level counts
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams countByDoc
 #'
-#' @return A tibble with results
+#' @return A tibble with summarised counts.
 #' @export
 #'
 #' @examples
@@ -21,20 +20,13 @@ summariseAchillesCodeUse <- function(x,
                             cdm,
                             countBy = c("record", "person")) {
 
-  errorMessage <- checkmate::makeAssertCollection()
-  checkDbType(cdm = cdm, type = "cdm_reference", messageStore = errorMessage)
-  checkmate::assertTRUE(all(countBy %in% c("record", "person")),
-                        add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
-
-  checkmate::assertList(x)
-  if(length(names(x)) != length(x)){
-    cli::cli_abort("Must be a named list")
-  }
-
-  if(is.null(cdm[["achilles_results"]])){
-    cli::cli_abort("No achilles tables found in cdm reference")
-  }
+  # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm,
+                                           requiredTables = c("achilles_analysis",
+                                                              "achilles_results",
+                                                              "achilles_results_dist"))
+  omopgenerics::assertList(x, named = TRUE)
+  omopgenerics::assertChoice(countBy, choices = c("record", "person"))
 
   if(length(x) == 0){
     cli::cli_inform(
@@ -134,9 +126,11 @@ summariseAchillesCodeUse <- function(x,
 }
 
 achillesVersionDate <- function(cdm){
-  if(is.null(cdm[["achilles_results"]])){
-    cli::cli_abort("No achilles tables found in cdm reference")
-  }
+
+  omopgenerics::validateCdmArgument(cdm,
+                                    requiredTables = c("achilles_analysis",
+                                                       "achilles_results",
+                                                       "achilles_results_dist"))
 
   cdm[["achilles_results"]] |>
     dplyr::filter(.data$analysis_id == 0) |>

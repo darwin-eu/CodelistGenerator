@@ -18,9 +18,9 @@ summariseCohortCodeUse(
 )
 }
 \arguments{
-\item{x}{Vector of concept IDs}
+\item{x}{A codelist.}
 
-\item{cdm}{cdm_reference via CDMConnector::cdmFromCon()}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{cohortTable}{A cohort table from the cdm reference.}
 
@@ -31,9 +31,10 @@ be "any"(code use any time by individuals in the cohort) or  "entry" (code
 use on individuals' cohort start date).}
 
 \item{countBy}{Either "record" for record-level counts or "person" for
-person-level counts}
+person-level counts.}
 
-\item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by}
+\item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by
+concept.}
 
 \item{byYear}{TRUE or FALSE. If TRUE code use will be summarised by year.}
 
@@ -49,14 +50,18 @@ Summarise code use among a cohort in the cdm reference
 }
 \examples{
 \dontrun{
-con <- DBI::dbConnect(duckdb::duckdb(),
-                      dbdir = CDMConnector::eunomiaDir())
-cdm <- CDMConnector::cdmFromCon(con,
-                                  cdmSchema = "main",
-                                  writeSchema = "main")
-cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
-conceptSet = list(a = 260139,
-                  b = 1127433),
+library(CodelistGenerator)
+library(duckdb)
+library(DBI)
+library(CDMConnector)
+con <- dbConnect(duckdb(),
+                 dbdir = eunomiaDir())
+cdm <- cdmFromCon(con,
+                 cdmSchema = "main",
+                 writeSchema = "main")
+cdm <- generateConceptCohortSet(cdm = cdm,
+                  conceptSet = list(a = 260139,
+                                    b = 1127433),
                   name = "cohorts",
                   end = "observation_period_end_date",
                   overwrite = TRUE)

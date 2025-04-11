@@ -1,0 +1,145 @@
+---
+title: "Codelist diagnostics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a07_RunCodelistDiagnostics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = NOT_CRAN)
+```
+
+```{r, include = FALSE}
+CDMConnector::requireEunomia("synpuf-1k", "5.3")
+```
+
+This vignette presents a set of functions to explore the use of codes in a codelist. We will cover the following key functions:
+
+-   `summariseAchillesCodeUse()`: Summarises the code use using ACHILLES tables.
+-   `summariseCodeUse()`: Summarises the code use in patient-level data.
+-   `summariseOrphanCodes()`: Identifies orphan codes related to a codelist using ACHILLES tables.
+-   `summariseUnmappedCodes()`: Identifies unmapped concepts related to the codelist.
+-   `summariseCohortCodeUse()`: Evaluates codelist usage within a cohort.
+
+Let's start by loading the required packages, connecting to a mock database, and generating a codelist for example purposes. We'll use `getCandidateCodes()` to find our codes.
+
+```{r, message=FALSE, warning=FALSE}
+library(DBI)
+library(duckdb)
+library(dplyr)
+library(CDMConnector)
+library(CodelistGenerator)
+library(CohortConstructor)
+
+# Connect to the database and create the cdm object
+con <- dbConnect(duckdb(), 
+                      eunomiaDir("synpuf-1k", "5.3"))
+cdm <- cdmFromCon(con = con, 
+                  cdmName = "Eunomia Synpuf",
+                  cdmSchema   = "main",
+                  writeSchema = "main", 
+                  achillesSchema = "main")
+
+# Create a codelist for depression
+depression <- getCandidateCodes(cdm,
+                                keywords = "depression")
+depression <- list("depression" = depression$concept_id)
+```
+
+## Running Diagnostics in a Codelist
+### Summarise Code Use Using ACHILLES Tables
+This function uses ACHILLES summary tables to count the number of records and persons associated with each concept in a codelist. Notice that it requires that ACHILLES tables are available in the CDM.
+
+```{r, message=FALSE, warning=FALSE}
+achilles_code_use <- summariseAchillesCodeUse(depression, 
+                                              cdm, 
+                                              countBy = c("record", "person"))
+```
+From this, we will obtain a [summarised result](https://darwin-eu.github.io/omopgenerics/articles/summarised_result.html) object. We can easily visualise the results using `tableAchillesCodeUse()`:
+```{r, message=FALSE, warning=FALSE}
+tableAchillesCodeUse(achilles_code_use,
+                     type = "gt")
+```
+Notice that concepts with zero counts will not appear in the result table.
+
+## Summarise Code Use Using Patient-Level Data
+This function performs a similar task as above but directly queries patient-level data, making it usable even if ACHILLES tables are not available. It can be configured to stratify results by concept (`byConcept`), by year (`byYear`), by sex (`bySex`), or by age group (`byAgeGroup`). We can further specify a specific time period (`dateRange`).
+
+```{r, message=FALSE, warning=FALSE}
+code_use <- summariseCodeUse(depression,
+                             cdm,
+                             countBy = c("record", "person"),
+                             byYear  = FALSE,
+                             bySex   = FALSE,
+                             ageGroup =  list("<=50" = c(0,50), ">50" = c(51,Inf)),
+                             dateRange = as.Date(c("2010-01-01", "2020-01-01")))
+
+tableCodeUse(code_use, type = "gt")
+```
+
+## Identify Orphan Codes
+Orphan codes are concepts that might be related to our codelist but that have not been included. It can be used to ensure that we have not missed any important concepts. Notice that this function uses ACHILLES tables.
+
+`summariseOrphanCodes()` will look for descendants (via *concept_descendants* table), ancestors (via *concept_ancestor* table), and concepts related to the codes included in the codelist (via *concept_relationship* table). Additionally, if the cdm contains PHOEBE tables (*concept_recommended* table), they will also be used. 
+```{r, message=FALSE, warning=FALSE}
+orphan <- summariseOrphanCodes(depression, cdm)
+tableOrphanCodes(orphan, type = "gt")
+```
+
+
+## Identify Unmapped Codes
+This function identifies codes that are conceptually linked to the codelist but that are not mapped.
+```{r, message=FALSE, warning=FALSE}
+unmapped <- summariseUnmappedCodes(depression, cdm)
+tableUnmappedCodes(unmapped, type = "gt")
+```
+
+
+## Run Diagnostics within a Cohort
+You can also evaluate how the codelist is used within a specific cohort. First, we will define a cohort using the `conceptCohort()` function from CohortConstructor package.
+
+```{r, message=FALSE, warning=FALSE}
+cdm[["depression"]] <- conceptCohort(cdm, 
+                                     conceptSet = depression, 
+                                     name = "depression")
+```
+
+Then, we can summarise the code use within this cohort:
+```{r, message=FALSE, warning=FALSE}
+cohort_code_use <- summariseCohortCodeUse(depression, 
+                                          cdm,
+                                          cohortTable = "depression",
+                                          countBy = c("record", "person"))
+tableCohortCodeUse(cohort_code_use)
+```
+
+### Summarise Code Use at Cohort Entry
+Use the `timing` argument to restrict diagnostics to codes used at the entry date of the cohort.
+```{r, message=FALSE, warning=FALSE}
+cohort_code_use <- summariseCohortCodeUse(depression, 
+                                          cdm,
+                                          cohortTable = "depression",
+                                          countBy = c("record", "person"),
+                                          timing = "entry")
+tableCohortCodeUse(cohort_code_use)
+```
+### Stratify Cohort-Level Diagnostics
+
+You can also stratify cohort code use results by year (`byYear`), by sex (`bySex`), or by age group (`byAgeGroup`):
+```{r, message=FALSE, warning=FALSE}
+cohort_code_use <- summariseCohortCodeUse(depression, 
+                                          cdm,
+                                          cohortTable = "depression",
+                                          countBy = c("record", "person"),
+                                          byYear = FALSE,
+                                          bySex = TRUE,
+                                          ageGroup = NULL)
+tableCohortCodeUse(cohort_code_use)
+```

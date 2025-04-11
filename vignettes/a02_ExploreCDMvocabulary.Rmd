@@ -1,0 +1,113 @@
+---
+title: "Exploring the OMOP CDM vocabulary tables"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a02_ExploreCDMvocabulary}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = NOT_CRAN
+)
+```
+  
+```{r, include = FALSE}
+CDMConnector::requireEunomia("synpuf-1k", "5.3")
+```
+
+In this vignette, we will explore the functions that help us delve into the vocabularies used in our database. These functions allow us to explore the different vocabularies and concepts characteristics.
+
+First of all, we will load the required packages and a eunomia database.
+```{r, warning=FALSE, message=FALSE}
+library(DBI)
+library(dplyr)
+library(CDMConnector)
+library(CodelistGenerator)
+
+# Connect to the database and create the cdm object
+con <- dbConnect(duckdb::duckdb(), 
+                      eunomiaDir("synpuf-1k", "5.3"))
+cdm <- cdmFromCon(con = con, 
+                  cdmName = "Eunomia Synpuf",
+                  cdmSchema   = "main",
+                  writeSchema = "main", 
+                  achillesSchema = "main")
+```
+
+Note that we have included [achilles tables](https://github.com/OHDSI/Achilles) in our cdm reference, which are used for some of the analyses.
+
+## Vocabulary characteristics
+
+We can first start by getting the vocabulary version of our CDM object:
+```{r}
+getVocabVersion(cdm)
+```
+
+And the available vocabularies, which correspond to the column *vocabulary_id* from the concept table:
+```{r}
+getVocabularies(cdm)
+```
+
+## Domains
+
+We can also explore the domains that our CDM object has, which is the column *domain_id* from the concept table:
+```{r}
+getDomains(cdm)
+```
+
+or restrict the search among *standard* concepts:
+```{r}
+getDomains(cdm, 
+           standardConcept = "Standard")
+```
+
+## Concept class
+
+We can further explore the different classes that we have (reported in *concept_class_id* column from the concept table):
+```{r}
+getConceptClassId(cdm)
+```
+
+Or restrict the search among *non-standard* concepts with *condition* domain:
+```{r}
+getConceptClassId(cdm, 
+                  standardConcept = "Non-standard", 
+                  domain = "Condition")
+```
+
+## Relationships
+
+We can also explore the different relationships that are present in our CDM:
+```{r}
+getRelationshipId(cdm)
+```
+
+Or narrow the search among *standard* concepts with domain *observation*:
+```{r}
+getRelationshipId(cdm,
+                  standardConcept1 = "standard",
+                  standardConcept2 = "standard",
+                  domains1 = "observation",
+                  domains2 = "observation")
+```
+
+## Codes in use
+Finally, we can easily get those codes that are in use (that means, that are recorded at least one time in the database):
+```{r}
+result <- sourceCodesInUse(cdm)
+head(result, n = 5) # Only the first 5 will be shown
+```
+Notice that [achilles tables](https://github.com/OHDSI/Achilles) are used in this function. If you CDM does not have them loaded, an empty result will be returned.
+
+And we can restrict the search within specific CDM tables (for example, *condition_occurrence*  and *device_exposure* table):
+```{r}
+result <- sourceCodesInUse(cdm, table = c("device_exposure", "condition_occurrence"))
+head(result, n = 5) # Only the first 5 will be shown
+```

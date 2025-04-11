@@ -39,8 +39,10 @@ test_that("achilles code use", {
  # expect_true("summarised_result" %in%  class(result_achilles))
 
  # expected errors
- expect_error(summariseAchillesCodeUse(123, #not a named list
+ expect_error(summariseAchillesCodeUse(123, #not list
                  cdm = cdm))
+ expect_error(summariseAchillesCodeUse(list(123), #not named list
+                                       cdm = cdm))
  expect_error(summariseAchillesCodeUse(asthma,
                  cdm = "cdm")) # not a cdm
  expect_error(summariseAchillesCodeUse(asthma,
@@ -48,6 +50,9 @@ test_that("achilles code use", {
                  countBy = "not an option"))
 
  CDMConnector::cdmDisconnect(cdm)
+
+ cdm <- omock::mockCdmReference()
+ expect_error(summariseAchillesCodeUse(x = list("a" = 1), cdm))
 })
 
 test_that("achilles code use: multipe codelists", {

@@ -1,26 +1,12 @@
-#' Format the result of summariseAchillesCodeUse into a table.
+#' Format the result of summariseAchillesCodeUse into a table
 #'
 #' @param result A `<summarised_result>` with results of the type
 #' "achilles_code_use".
-#' @param type Type of desired formatted table. To see supported formats
-#' use visOmopResults::tableType()
-#' @param header A vector specifying the elements to include in the header. The
-#' order of elements matters, with the first being the topmost header.
-#' The header vector can contain one of the following variables: "cdm_name",
-#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "standard_concept", "vocabulary_id".
-#' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumn Variables to use as group labels. Allowed columns are:
-#' "cdm_name", "codelist_name", "domain_id", "standard_concept_name",
-#' "standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
-#' These cannot be used in header.
-#' @param hide Table columns to exclude, options are:  "cdm_name",
-#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
-#' header or groupColumn.
-#' @param .options Named list with additional formatting options.
-#' visOmopResults::tableOptions() shows allowed arguments and
-#' their default values.
+#' @inheritParams typeTableDoc
+#' @inheritParams headerDoc
+#' @inheritParams groupColumnDoc
+#' @inheritParams hideDoc
+#' @inheritParams .optionsDoc
 #'
 #' @return A table with a formatted version of the summariseCohortCodeUse
 #' result.
@@ -72,29 +58,15 @@ tableAchillesCodeUse <- function(result,
   return(x)
 }
 
-#' Format the result of summariseOrphanCodes into a table.
+#' Format the result of summariseOrphanCodes into a table
 #'
-#' @param result A summarised result with results of the type
+#' @param result A `<summarised_result>` with results of the type
 #' "orphan_codes".
-#' @param type Type of desired formatted table. To see supported formats
-#' use visOmopResults::tableType()
-#' @param header A vector specifying the elements to include in the header. The
-#' order of elements matters, with the first being the topmost header.
-#' The header vector can contain one of the following variables: "cdm_name",
-#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "standard_concept", "vocabulary_id".
-#' Alternatively, it can include other names to use as overall header labels.
-#' @param groupColumn Variables to use as group labels. Allowed columns are:
-#' "cdm_name", "codelist_name", "domain_id", "standard_concept_name",
-#' "standard_concept_id", "estimate_name", "standard_concept", "vocabulary_id".
-#' These cannot be used in header.
-#' @param hide Table columns to exclude, options are:  "cdm_name",
-#' "codelist_name", "domain_id", "standard_concept_name", "standard_concept_id",
-#' "estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
-#' header or groupColumn.
-#' @param .options Named list with additional formatting options.
-#' visOmopResults::tableOptions() shows allowed arguments and
-#' their default values.
+#' @inheritParams typeTableDoc
+#' @inheritParams headerDoc
+#' @inheritParams groupColumnDoc
+#' @inheritParams hideDoc
+#' @inheritParams .optionsDoc
 #'
 #' @return A table with a formatted version of the summariseOrphanCodes
 #' result.
@@ -198,17 +170,8 @@ emptyResultTable <- function(type){
 }
 
 reformulateTableAchilles <- function(vect) {
-  if (length(vect) > 0) {
-    purrr::map(vect, function(x) {
-      if (x == "standard_concept_id") {
-        "variable_level"
-      } else if (x == "standard_concept_name") {
-        "variable_name"
-      } else {
-        x
-      }
-    }) |> unlist()
-  } else {
-    vect
-  }
+  vect <- as.character(vect)
+  vect[vect == "standard_concept_id"] <- "variable_level"
+  vect[vect == "standard_concept_name"] <- "variable_name"
+  vect
 }

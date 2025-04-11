@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Get available routes in a cdm reference.
+#' Get available drug routes
 #'
 #' @description
 #' Get the dose form categories available in the database (see
@@ -22,16 +22,25 @@
 #' were classified).
 #'
 #'
-#' @param cdm A cdm reference.
+#' @inheritParams cdmDoc
 #'
-#' @return A character vector with available routes
+#' @return A character vector with all available routes.
 #' @export
 #'
+#' @examples
+#' \donttest{
+#' library(CodelistGenerator)
+#'
+#' cdm <- mockVocabRef()
+#'
+#' getRouteCategories(cdm)
+#'
+#' }
 getRouteCategories <- function(cdm) {
 
     # relate does form concept id with the classification established by
     # doseFormToRoute
-    doseRouteData <- CodelistGenerator::doseFormToRoute
+    doseRouteData <- doseFormToRoute
 
     routeCategory <- cdm$concept_relationship |>
       # get dose form available in the cdm

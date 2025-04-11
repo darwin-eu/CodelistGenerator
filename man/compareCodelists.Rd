@@ -2,20 +2,20 @@
 % Please edit documentation in R/compareCodelists.R
 \name{compareCodelists}
 \alias{compareCodelists}
-\title{Compare two codelists}
+\title{Compare overlap between two sets of codes}
 \usage{
 compareCodelists(codelist1, codelist2)
 }
 \arguments{
-\item{codelist1}{Output of getCandidateCodes}
+\item{codelist1}{Output of getCandidateCodes or a codelist}
 
-\item{codelist2}{Output of getCandidateCodes}
+\item{codelist2}{Output of getCandidateCodes.}
 }
 \value{
-tibble
+Tibble with information on the overlap of codes in both codelists.
 }
 \description{
-Compare two codelists
+Compare overlap between two sets of codes
 }
 \examples{
 \donttest{

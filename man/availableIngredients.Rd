@@ -2,19 +2,19 @@
 % Please edit documentation in R/helperFunctions.R
 \name{availableIngredients}
 \alias{availableIngredients}
-\title{Get all ingredients codes from the cdm}
+\title{Get the names of all available drug ingredients}
 \usage{
 availableIngredients(cdm)
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 }
 \value{
-A vector list of all ingredient level codes found in the concept
-table of cdm.
+A vector containing the concept names for all ingredient level codes
+found in the concept table of cdm.
 }
 \description{
-Get all ingredients codes from the cdm
+Get the names of all available drug ingredients
 }
 \examples{
 \donttest{

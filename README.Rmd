@@ -44,6 +44,7 @@ library(CodelistGenerator)
 
 For this example we'll use the Eunomia dataset (which only contains a subset of the OMOP CDM vocabularies)
 ```{r}
+requireEunomia()
 db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomiaDir())
 cdm <- cdmFromCon(db, 
                   cdmSchema = "main", 
@@ -57,25 +58,15 @@ OMOP CDM vocabularies are frequently updated, and we can identify the version of
 getVocabVersion(cdm = cdm)
 ```
 
-CodelistGenerator provides various other functions to explore the vocabulary tables. For example, we can see the the different concept classes of standard concepts used for drugs
-```{r}
-getConceptClassId(cdm,
-                  standardConcept = "Standard",
-                  domain = "Drug")
-```
-
 ## Vocabulary based codelists using CodelistGenerator
-CodelistGenerator provides functions to extract code lists based on vocabulary hierarchies. One example is `getDrugIngredientCodes, which we can use, for example, to get all the concept IDs used to represent aspirin. 
+CodelistGenerator provides functions to extract code lists based on vocabulary hierarchies. One example is `getDrugIngredientCodes, which we can use, for example, to get the concept IDs used to represent aspirin and diclofenac. 
 ```{r}
-getDrugIngredientCodes(cdm = cdm, name = "aspirin", nameStyle = "{concept_name}")
-```
-
-And if we want codelists for all drug ingredients we can simply omit the name argument and all ingredients will be returned.
-```{r}
-ing <- getDrugIngredientCodes(cdm = cdm, nameStyle = "{concept_name}")
+ing <- getDrugIngredientCodes(cdm = cdm, 
+                       name = c("aspirin", "diclofenac"),
+                       nameStyle = "{concept_name}")
+ing
 ing$aspirin
 ing$diclofenac
-ing$celecoxib
 ```
 
 ## Systematic search using CodelistGenerator
@@ -104,29 +95,17 @@ asthma_codes2 |>
   glimpse()
 ```
 
-We can compare these two code lists like so
-```{r}
-compareCodelists(asthma_codes1, asthma_codes2)
-```
-
-We can then also see non-standard codes these are mapped from, for example here we can see the non-standard ICD10 code that maps to a standard snowmed code for gastrointestinal hemorrhage returned by our search
-```{r}
-Gastrointestinal_hemorrhage <- getCandidateCodes(
-  cdm = cdm,
-  keywords = "Gastrointestinal hemorrhage",
-  domains = "Condition"
-)
-Gastrointestinal_hemorrhage |> 
-  glimpse()
-```
 
 ## Summarising code use
 
-```{r}
-summariseCodeUse(list("asthma" = asthma_codes1$concept_id),  
-                 cdm = cdm) |> 
-  glimpse()
+As well as functions for finding codes, we also have functions to summarise their use. Here for
 
+```{r}
+library(flextable)
+asthma_code_use <- summariseCodeUse(list("asthma" = asthma_codes1$concept_id),
+  cdm = cdm
+)
+tableCodeUse(asthma_code_use, type = "flextable")
 ```
 
 

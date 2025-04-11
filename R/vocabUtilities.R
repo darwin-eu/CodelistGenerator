@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' getVocabVersion
+#' Get the version of the vocabulary used in the cdm
 #'
-#' @param cdm cdm_reference via CDMConnector
+#' @inheritParams cdmDoc
 #'
-#' @return the vocabulary version being used
+#' @return The vocabulary version being used in the cdm.
 #' @export
 #'
 #' @examples
@@ -27,17 +27,7 @@
 #' getVocabVersion(cdm = cdm)
 #' }
 getVocabVersion <- function(cdm) {
-  errorMessage <- checkmate::makeAssertCollection()
-  cdmInheritsCheck <- inherits(cdm, "cdm_reference")
-  checkmate::assertTRUE(cdmInheritsCheck,
-    add = errorMessage
-  )
-  if (!isTRUE(cdmInheritsCheck)) {
-    errorMessage$push(
-      "- cdm must be a CDMConnector CDM reference object"
-    )
-  }
-  checkmate::reportAssertions(collection = errorMessage)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
 
   version <- as.character(cdm$vocabulary |>
     dplyr::rename_with(tolower) |>
@@ -47,14 +37,12 @@ getVocabVersion <- function(cdm) {
   return(version)
 }
 
-#' getDomains
+#' Get the domains available in the cdm
 #'
-#' @param cdm cdm_reference via CDMConnector
-#' @param standardConcept  Character vector with one or more of "Standard",
-#' "Classification", and "Non-standard". These correspond to the flags used
-#' for the standard_concept field in the concept table of the cdm.
+#' @inheritParams cdmDoc
+#' @inheritParams standardConceptDoc
 #'
-#' @return The domains of the cdm
+#' @return A vector with the domains of the cdm.
 #' @export
 #'
 #' @examples
@@ -64,32 +52,15 @@ getVocabVersion <- function(cdm) {
 #' }
 getDomains <- function(cdm,
                        standardConcept = "Standard") {
-  errorMessage <- checkmate::makeAssertCollection()
-  cdmInheritsCheck <- inherits(cdm, "cdm_reference")
-  checkmate::assertTRUE(cdmInheritsCheck,
-    add = errorMessage
-  )
-  if (!isTRUE(cdmInheritsCheck)) {
-    errorMessage$push(
-      "- cdm must be a CDMConnector CDM reference object"
+
+  #initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertChoice(standardConcept, c(
+    "Standard",
+    "Non-standard",
+    "Classification"
     )
-  }
-  checkmate::assertVector(standardConcept, add = errorMessage)
-  standardConceptCheck <- all(tolower(standardConcept) %in%
-    c(
-      "standard",
-      "classification",
-      "non-standard"
-    ))
-  checkmate::assertTRUE(standardConceptCheck,
-    add = errorMessage
-  )
-  if (!isTRUE(standardConceptCheck)) {
-    errorMessage$push(
-      "- standardConcept should be one or more of Standard, Non-stanadard, or Classification"
     )
-  }
-  checkmate::reportAssertions(collection = errorMessage)
 
   conceptDb <- cdm$concept
 
@@ -121,11 +92,11 @@ getDomains <- function(cdm,
   return(domains)
 }
 
-#' getVocabularies
+#' Get the vocabularies available in the cdm
 #'
-#' @param cdm cdm_reference via CDMConnector
+#' @inheritParams cdmDoc
 #'
-#' @return Names of available vocabularies
+#' @return Names of available vocabularies.
 #' @export
 #'
 #' @examples
@@ -135,17 +106,7 @@ getDomains <- function(cdm,
 #' }
 
 getVocabularies <- function(cdm) {
-  errorMessage <- checkmate::makeAssertCollection()
-  cdmInheritsCheck <- inherits(cdm, "cdm_reference")
-  checkmate::assertTRUE(cdmInheritsCheck,
-    add = errorMessage
-  )
-  if (!isTRUE(cdmInheritsCheck)) {
-    errorMessage$push(
-      "- cdm must be a CDMConnector CDM reference object"
-    )
-  }
-  checkmate::reportAssertions(collection = errorMessage)
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
 
   vocabs <- sort(cdm$concept |>
     dplyr::select("vocabulary_id") |>
@@ -156,15 +117,13 @@ getVocabularies <- function(cdm) {
   return(vocabs)
 }
 
-#' getConceptClassId
+#' Get the concept classes used in a given set of domains
 #'
-#' @param cdm cdm_reference via CDMConnector
-#' @param standardConcept  Character vector with one or more of "Standard",
-#' "Classification", and "Non-standard". These correspond to the flags used
-#' for the standard_concept field in the concept table of the cdm.
-#' @param domain Vocabulary domain
+#' @inheritParams cdmDoc
+#' @inheritParams standardConceptDoc
+#' @inheritParams domainDoc
 #'
-#' @return The concept class used for a given set of domains
+#' @return The concept classes used for the requested domains.
 #' @export
 #'
 #' @examples
@@ -175,33 +134,15 @@ getVocabularies <- function(cdm) {
 getConceptClassId <- function(cdm,
                               standardConcept = "Standard",
                               domain = NULL) {
-  errorMessage <- checkmate::makeAssertCollection()
-  cdmInheritsCheck <- inherits(cdm, "cdm_reference")
-  checkmate::assertTRUE(cdmInheritsCheck,
-    add = errorMessage
+  #initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertChoice(standardConcept, c(
+    "Standard",
+    "Non-standard",
+    "Classification"
   )
-  if (!isTRUE(cdmInheritsCheck)) {
-    errorMessage$push(
-      "- cdm must be a CDMConnector CDM reference object"
-    )
-  }
-  checkmate::assertVector(standardConcept, add = errorMessage)
-  standardConceptCheck <- all(tolower(standardConcept) %in%
-    c(
-      "standard",
-      "classification",
-      "non-standard"
-    ))
-  if (!isTRUE(standardConceptCheck)) {
-    errorMessage$push(
-      "- standardConcept should be one or more of Standard, Non-stanadard, or Classification"
-    )
-  }
-  checkmate::assert_character(domain,
-    add = errorMessage,
-    null.ok = TRUE
   )
-  checkmate::reportAssertions(collection = errorMessage)
+  omopgenerics::assertCharacter(domain, null = T)
 
   # link to vocab table
   conceptDb <- cdm$concept
@@ -242,11 +183,11 @@ getConceptClassId <- function(cdm,
   return(conceptClassId)
 }
 
-#' getDoseForm
+#' Get the dose forms available for drug concepts
 #'
-#' @param cdm cdm_reference via CDMConnector
+#' @inheritParams cdmDoc
 #'
-#' @return The dose forms available for drug concepts
+#' @return The dose forms available for drug concepts.
 #' @export
 #'
 #' @examples
@@ -256,18 +197,7 @@ getConceptClassId <- function(cdm,
 #' }
 
 getDoseForm <- function(cdm) {
-  errorMessage <- checkmate::makeAssertCollection()
-  cdmInheritsCheck <- inherits(cdm, "cdm_reference")
-  checkmate::assertTRUE(cdmInheritsCheck,
-    add = errorMessage
-  )
-  if (!isTRUE(cdmInheritsCheck)) {
-    errorMessage$push(
-      "- cdm must be a CDMConnector CDM reference object"
-    )
-  }
-  checkmate::reportAssertions(collection = errorMessage)
-
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
   rxDoseForm <- cdm$concept_relationship |>
     dplyr::filter(.data$relationship_id == "RxNorm has dose form") |>
     dplyr::select("concept_id_2") |>
@@ -289,22 +219,16 @@ getDoseForm <- function(cdm) {
   return(rxDoseForm)
 }
 
-#' getDescendants
+#' Get descendant codes for a given concept
 #'
-#' @param cdm cdm_reference via CDMConnector
-#' @param conceptId concpet_id to search
+#' @inheritParams cdmDoc
+#' @param conceptId concept_id to search
 #' @param withAncestor If TRUE, return column with ancestor. In case of multiple
-#' ancestors, concepts will be separated by ";"
-#' @param ingredientRange Used to restrict descendant codes to those
-#' associated with a specific number of drug ingredients. Must be a vector of
-#' length two with the first element the minimum number of ingredients allowed
-#' and the second the maximum. A value of c(2, 2) would restrict to only
-#' concepts associated with two ingredients.
-#' @param doseForm Only descendants codes with the specified drug dose form
-#' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose form.
+#' ancestors, concepts will be separated by ";".
+#' @inheritParams ingredientRangeDoc
+#' @inheritParams doseFormDoc
 #'
-#' @return The descendants of a given concept id
+#' @return The descendants of a given concept id.
 #' @export
 #'
 #' @examples
@@ -319,30 +243,16 @@ getDescendants <- function(cdm,
                            ingredientRange = c(0, Inf),
                            doseForm = NULL) {
 
-  errorMessage <- checkmate::makeAssertCollection()
-  cdmInheritsCheck <- inherits(cdm, "cdm_reference")
-  checkmate::assertTRUE(cdmInheritsCheck,
-                        add = errorMessage
-  )
-  if (!isTRUE(cdmInheritsCheck)) {
-    errorMessage$push(
-      "- cdm must be a CDMConnector CDM reference object"
-    )
-  }
-  checkmate::assert_numeric(conceptId,
-                            add = errorMessage
-  )
-  checkmate::assert_vector(ingredientRange, len = 2,
-                            add = errorMessage
-  )
-  checkmate::reportAssertions(collection = errorMessage)
+  # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
+  omopgenerics::assertNumeric(conceptId, integerish = T)
+  omopgenerics::assertLogical(withAncestor)
+  omopgenerics::assertNumeric(ingredientRange, length = 2, min = 0)
+  omopgenerics::assertTrue(ingredientRange[1] <= ingredientRange[2])
 
   if(ingredientRange[2] == Inf){
     ingredientRange[2] <- 9999999
   }
-
-  checkmate::assert_integerish(ingredientRange, lower = 0)
-  checkmate::assert_true(ingredientRange[2] >= ingredientRange[1])
 
 if(isFALSE(withAncestor)){
   descendants <- getDescendantsOnly(cdm, conceptId, ingredientRange, doseForm)}
@@ -540,9 +450,9 @@ addIngredientCount <- function(cdm, concepts) {
 }
 
 
-#' Get relationship ID values from the concept relationship table
+#' Get available relationships between concepts
 #'
-#' @param cdm A cdm reference
+#' @inheritParams cdmDoc
 #' @param standardConcept1  Character vector with one or more of "Standard",
 #' "Classification", and "Non-standard". These correspond to the flags used
 #' for the standard_concept field in the concept table of the cdm.
@@ -552,7 +462,7 @@ addIngredientCount <- function(cdm, concepts) {
 #' @param domains1 Character vector with one or more of the OMOP CDM domain.
 #' @param domains2 Character vector with one or more of the OMOP CDM domain.
 #'
-#' @return A character vector with unique values
+#' @return A character vector with unique concept relationship values.
 #' @export
 #'
 #' @examples

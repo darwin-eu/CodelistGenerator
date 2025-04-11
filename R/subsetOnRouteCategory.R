@@ -16,16 +16,36 @@
 
 #' Subset a codelist to only those with a particular route category
 #'
-#' @param x Codelist
-#' @param cdm A cdm reference
-#' @param routeCategory Route category. Use getRoutes() to find the available
-#' route categories for a cdm
+#' @inheritParams xDoc
+#' @inheritParams cdmDoc
+#' @inheritParams routeCategoryDoc
+#' @param negate If FALSE, only concepts with the routeCategory specified will
+#' be returned. If TRUE, concepts with the routeCategory specified will be excluded.
 #'
 #' @return The codelist with only those concepts associated with the
-#' specified route categories
+#' specified route categories (if negate is FALSE) or the codelist without those
+#' concepts associated with the specified route categories (if negate is TRUE).
 #' @export
 #'
-subsetOnRouteCategory <- function(x, cdm, routeCategory){
+#' @examples
+#' \donttest{
+#' library(CodelistGenerator)
+#' cdm <- mockVocabRef()
+#' codes <- subsetOnRouteCategory(
+#'               x = list("codes" = c(20,21)),
+#'               cdm = cdm,
+#'               routeCategory = "topical")
+#' codes
+#' }
+subsetOnRouteCategory <- function(x,
+                                  cdm,
+                                  routeCategory,
+                                  negate = FALSE){
+
+  omopgenerics::assertList(x, named = TRUE)
+  omopgenerics::validateCdmArgument(cdm)
+  omopgenerics::assertCharacter(routeCategory)
+  omopgenerics::assertLogical(negate)
 
   if(inherits(x, "codelist_with_details")){
     x_original <- x
@@ -37,14 +57,7 @@ subsetOnRouteCategory <- function(x, cdm, routeCategory){
 
   x <- omopgenerics::newCodelist(x)
 
-  if(isFALSE(inherits(cdm, "cdm_reference"))){
-    cli::cli_abort("cdm must be a cdm reference")
-  }
-  if(isFALSE(is.character(routeCategory))){
-    cli::cli_abort("routeCategory must be a character vector")
-  }
-
-  doseRouteData <- CodelistGenerator::doseFormToRoute
+  doseRouteData <- doseFormToRoute
 
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
@@ -58,8 +71,8 @@ subsetOnRouteCategory <- function(x, cdm, routeCategory){
 
     x[[i]] <- cdm[[tableCodelist]] |>
       dplyr::inner_join(cdm$concept_relationship |>
-      dplyr::filter(.data$relationship_id == "RxNorm has dose form"),
-      by = c("concept_id" = "concept_id_1")
+                          dplyr::filter(.data$relationship_id == "RxNorm has dose form"),
+                        by = c("concept_id" = "concept_id_1")
       ) |>
       dplyr::select("concept_id",
                     "concept_id_2") |>
@@ -71,8 +84,17 @@ subsetOnRouteCategory <- function(x, cdm, routeCategory){
         is.na(.data$route_category),
         "unclassified_route",
         .data$route_category
-      )) |>
-      dplyr::filter(.data$route_category %in% .env$routeCategory) |>
+      ))
+
+    if(isTRUE(negate)){
+      x[[i]] <- x[[i]] |>
+        dplyr::filter(!.data$route_category %in% .env$routeCategory)
+    }else{
+      x[[i]] <- x[[i]] |>
+        dplyr::filter(.data$route_category %in% .env$routeCategory)
+    }
+
+    x[[i]] <- x[[i]] |>
       dplyr::select("concept_id") |>
       dplyr::distinct() |>
       dplyr::pull("concept_id")
@@ -90,6 +112,5 @@ subsetOnRouteCategory <- function(x, cdm, routeCategory){
 
    CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
 
-   x
-
+   return(x)
 }

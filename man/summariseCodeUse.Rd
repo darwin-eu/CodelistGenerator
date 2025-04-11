@@ -2,7 +2,7 @@
 % Please edit documentation in R/summariseCodeUse.R
 \name{summariseCodeUse}
 \alias{summariseCodeUse}
-\title{Summarise code use in patient-level data}
+\title{Summarise code use in patient-level data.}
 \usage{
 summariseCodeUse(
   x,
@@ -16,15 +16,15 @@ summariseCodeUse(
 )
 }
 \arguments{
-\item{x}{List of concept IDs}
+\item{x}{A codelist.}
 
-\item{cdm}{cdm_reference via CDMConnector::cdmFromCon()}
+\item{cdm}{A cdm reference via CDMConnector.}
 
 \item{countBy}{Either "record" for record-level counts or "person" for
-person-level counts}
+person-level counts.}
 
 \item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by
-concept}
+concept.}
 
 \item{byYear}{TRUE or FALSE. If TRUE code use will be summarised by year.}
 
@@ -32,13 +32,18 @@ concept}
 
 \item{ageGroup}{If not NULL, a list of ageGroup vectors of length two.}
 
-\item{dateRange}{Two dates. The first indicating the earliest cohort start date and the second indicating the latest possible cohort end date. If NULL or the first date is set as missing, the earliest observation_start_date in the observation_period table will be used for the former. If NULL or the second date is set as missing, the latest observation_end_date in the observation_period table will be used for the latter.}
+\item{dateRange}{Two dates. The first indicating the earliest cohort start
+date and the second indicating the latest possible cohort end date. If NULL
+or the first date is set as missing, the earliest observation_start_date in
+the observation_period table will be used for the former. If NULL or the
+second date is set as missing, the latest observation_end_date in the
+observation_period table will be used for the latter.}
 }
 \value{
-A tibble with results overall and, if specified, by strata
+A tibble with count results overall and, if specified, by strata.
 }
 \description{
-Summarise code use in patient-level data
+Summarise code use in patient-level data.
 }
 \examples{
 \dontrun{

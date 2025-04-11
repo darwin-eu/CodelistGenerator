@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -383,9 +383,7 @@ runSearch <- function(keywords,
 
 # helper functions for runSearch
 tidyWords <- function(words) {
-  errorMessage <- checkmate::makeAssertCollection()
-  checkmate::assertVector(words, add = errorMessage)
-  checkmate::reportAssertions(collection = errorMessage)
+  omopgenerics::assertCharacter(words)
 
   # to avoid invalid UTF-8 error
   Encoding(words) <- "latin1"

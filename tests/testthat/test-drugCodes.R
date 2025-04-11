@@ -2,30 +2,36 @@ test_that("getATCCodes working", {
 
   backends <- c("database", "data_frame")
   for (i in seq_along(backends)) {
-  cdm <- mockVocabRef(backend = backends[i])
-  atcCodes <- getATCCodes(cdm, level = "ATC 1st")
-  expect_true("codelist" %in% class(atcCodes))
-  expect_true(all(atcCodes[[1]] == c(12,13)))
-  expect_true(c("1234_alimentary_tract_and_metabolism") %in%
-                names(atcCodes))
-  expect_true(inherits(atcCodes, "codelist"))
+    cdm <- mockVocabRef(backend = backends[i])
 
-  atcCodes2 <- getATCCodes(cdm, level = "ATC 1st",
-                           name = "ALIMENTARY TRACT AND METABOLISM")
-  expect_true(all(atcCodes2[[1]] == c(12,13)))
+    atcCodes <- getATCCodes(cdm, level = "ATC 1st")
+    expect_true("codelist" %in% class(atcCodes))
+    expect_true(all(atcCodes[[1]] == c(12,13)))
+    expect_true(c("1234_alimentary_tract_and_metabolism") %in%
+                  names(atcCodes))
+    expect_true(inherits(atcCodes, "codelist"))
 
-  atcCodes3 <- getATCCodes(cdm, level = "ATC 1st",
-                           name = "ALIMENTARY TRACT AND METABOLISM",
-                           type = "codelist_with_details")
-  expect_true(!is.null(atcCodes3[[1]]$concept_name))
-  expect_true(inherits(atcCodes3, "codelist_with_details"))
+    atcCodes2 <- getATCCodes(cdm, level = "ATC 1st",
+                             name = "ALIMENTARY TRACT AND METABOLISM")
+    expect_true(all(atcCodes2[[1]] == c(12,13)))
 
-  if (backends[[i]] == "database") {
-    CDMConnector::cdmDisconnect(cdm)
+    atcCodes3 <- getATCCodes(cdm, level = "ATC 1st",
+                             name = "ALIMENTARY TRACT AND METABOLISM",
+                             type = "codelist_with_details")
+    expect_true(!is.null(atcCodes3[[1]]$concept_name))
+    expect_true(inherits(atcCodes3, "codelist_with_details"))
+    expect_identical(names(atcCodes3), "1234_alimentary_tract_and_metabolism")
+
+    atcCodes3 <- getATCCodes(cdm, level = "ATC 1st",
+                             name = "ALIMENTARY TRACT AND METABOLISM",
+                             nameStyle = "{concept_id}_{concept_name}")
+    expect_identical(names(atcCodes3), "12_alimentary_tract_and_metabolism")
+    expect_true(all(atcCodes3[[1]] == c(12,13)))
+
+    if (backends[[i]] == "database") {
+      CDMConnector::cdmDisconnect(cdm)
+    }
   }
-
-  }
-
 })
 
 test_that("getATCCodes expected errors", {
@@ -36,6 +42,7 @@ test_that("getATCCodes expected errors", {
     expect_error(getATCCodes(cdm, level = "Not an ATC level"))
     expect_error(getATCCodes(cdm, level = "ATC 1st",
                              name = "Not an ATC name"))
+    expect_error(getATCCodes(cdm, nameStyle = "hello"))
 
     if (backends[[i]] == "database") {
       CDMConnector::cdmDisconnect(cdm)
@@ -49,9 +56,15 @@ test_that("getDrugIngredientCodes working", {
   backends <- c("database", "data_frame")
   for (i in seq_along(backends)) {
     cdm <- mockVocabRef(backend = backends[i])
-    ing_codes <- getDrugIngredientCodes(cdm)
-    expect_true(all(ing_codes[[1]] == c(10,13)))
-    expect_true(inherits(ing_codes, "codelist"))
+
+    ing_codes0 <- getDrugIngredientCodes(cdm, nameStyle = "{concept_code}_{concept_name}")
+    expect_true(all(ing_codes0[[1]] == c(10,13)))
+    expect_true(inherits(ing_codes0, "codelist"))
+    expect_identical(names(ing_codes0),  c("1234_adalimumab", "1234_other_ingredient"))
+
+    ing_codes1 <- getDrugIngredientCodes(cdm, nameStyle = "{concept_id}_{concept_name}")
+    expect_true(all(ing_codes1[[1]] == c(10,13)))
+    expect_identical(names(ing_codes1),  c("10_adalimumab", "19_other_ingredient"))
 
     ing_codes2 <- getDrugIngredientCodes(cdm, name = "Adalimumab")
     expect_true(all(ing_codes2[[1]] == c(10,13)))
@@ -80,13 +93,13 @@ test_that("getDrugIngredientCodes working", {
 
     # limiting on ingredients
     ing_codes_all <- getDrugIngredientCodes(cdm,
-                                        ingredientRange = c(1,Inf))
+                                            ingredientRange = c(1,Inf))
     ing_codes_mono <- getDrugIngredientCodes(cdm,
                                              ingredientRange = c(1,1))
     ing_codes_comb <- getDrugIngredientCodes(cdm,
                                              ingredientRange = c(2,Inf))
 
-    expect_equal(ing_codes_all, ing_codes)
+    expect_equal(ing_codes_all, ing_codes0)
     expect_true(all(c(10) %in% ing_codes_mono$`1234_adalimumab`))
     expect_null(ing_codes_mono$`1234_other_ingredient`)
     expect_true(all(c(13) %in% ing_codes_comb$`1234_adalimumab`))
@@ -400,7 +413,7 @@ test_that("no duplicate names example 1",{
                                  overwrite = TRUE)
   attr(cdm, "write_schema") <- "main"
 
-  expect_error(getDrugIngredientCodes(
+  expect_no_error(getDrugIngredientCodes(
     cdm = cdm, name = "Adalimumab", nameStyle = "{concept_name}"
   ))
 
@@ -416,7 +429,7 @@ test_that("no duplicate names example 1",{
                  length() |>
                  as.numeric(),
                2
-              )
+  )
 
   expect_equal(names(ingredient_list) |>
                  unique()|>

@@ -14,20 +14,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#' Get available routes in a cdm reference.
+#' Get available dose units
 #'
 #' @description
 #' Get the dose form categories available in the database (see
-#' https://doi.org/10.1002/pds.5809) for more details on how routes
+#' https://doi.org/10.1002/pds.5809 for more details on how routes
 #' were classified).
 #'
 #'
-#' @param cdm A cdm reference.
+#' @inheritParams cdmDoc
 #'
-#' @return A character vector with available routes
+#' @return A character vector with available routes.
 #' @export
 #'
+#'
+#' @examples
+#' \donttest{
+#' library(CodelistGenerator)
+#'
+#' cdm <- mockVocabRef()
+#'
+#' getDoseUnit(cdm)
+#'
+#' }
 getDoseUnit <- function(cdm){
+
+  # initial checks
+  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
 
   if(isFALSE(inherits(cdm, "cdm_reference"))){
     cli::cli_abort("{.arg cdm} is not a cdm reference")

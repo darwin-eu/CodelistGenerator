@@ -2,18 +2,18 @@
 % Please edit documentation in R/vocabUtilities.R
 \name{getDoseForm}
 \alias{getDoseForm}
-\title{getDoseForm}
+\title{Get the dose forms available for drug concepts}
 \usage{
 getDoseForm(cdm)
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 }
 \value{
-The dose forms available for drug concepts
+The dose forms available for drug concepts.
 }
 \description{
-getDoseForm
+Get the dose forms available for drug concepts
 }
 \examples{
 \donttest{

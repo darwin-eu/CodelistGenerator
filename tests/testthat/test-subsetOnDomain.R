@@ -30,6 +30,24 @@ test_that("subset on domain", {
     expect_true(all(sort(mixed_codelist3[[1]]) == c(1L, 9L, 10L)))
     expect_true(length(mixed_codelist3[[1]]) == 3)
 
+    # Check negate argument
+    all_concepts <- list("a" = cdm$concept |> dplyr::pull("concept_id"))
+    codes1 <- subsetOnDomain(all_concepts, cdm, domain = c("Drug","Observation", "Unit"))
+    codes2 <- subsetOnDomain(all_concepts, cdm, domain = "Condition", negate = TRUE)
+
+    expect_identical(codes1, codes2)
+    expect_identical(cdm$concept |>
+      dplyr::filter(concept_id %in% codes2$a) |>
+      dplyr::pull("domain_id") |>
+      unique() |>
+      sort(na.last = TRUE), c("Drug", "Observation", "Unit"))
+
+    # Check if domain = NA
+    cdm$concept <- cdm$concept |>
+      dplyr::mutate(domain_id = dplyr::if_else(concept_id == 1, NA, domain_id)) |>
+      dplyr::compute(name = "concept")
+    codes1 <- subsetOnDomain(list("a" = 1), cdm, domain = c("Condition"))
+    expect_true(length(codes1) == 0)
 
     # expected errors
     expect_error(subsetOnDomain("a",  cdm, "condition"))

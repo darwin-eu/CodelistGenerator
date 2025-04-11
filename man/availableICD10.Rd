@@ -2,21 +2,22 @@
 % Please edit documentation in R/helperFunctions.R
 \name{availableICD10}
 \alias{availableICD10}
-\title{Get all ICD codes from the cdm}
+\title{Get the names of all International Classification of Diseases (ICD) 10 codes}
 \usage{
 availableICD10(cdm, level = c("ICD10 Chapter", "ICD10 SubChapter"))
 }
 \arguments{
-\item{cdm}{cdm_reference via CDMConnector}
+\item{cdm}{A cdm reference via CDMConnector.}
 
-\item{level}{Can be either "ICD10 Chapter" or "ICD10 SubChapter"}
+\item{level}{Can be either "ICD10 Chapter", "ICD10 SubChapter",
+"ICD10 Hierarchy", or "ICD10 Code".}
 }
 \value{
-A vector list of all ICD10 codes for the chosen level(s) found in the
-concept table of cdm.
+A vector containing the names of all ICD-10 codes for the chosen
+level(s) found in the concept table of cdm.
 }
 \description{
-Get all ICD codes from the cdm
+Get the names of all International Classification of Diseases (ICD) 10 codes
 }
 \examples{
 \donttest{

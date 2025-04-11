@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -17,18 +17,19 @@
 
 #' Generate example vocabulary database
 #'
-#' @param backend 'database' (duckdb) or 'data_frame'
-#' @return cdm reference with mock vocabulary
+#' @param backend 'database' (duckdb) or 'data_frame'.
+#' @return cdm reference with mock vocabulary.
 #' @export
 #'
 #' @examples
 #' \donttest{
+#' library(CodelistGenerator)
 #' cdm <- mockVocabRef()
 #' cdm
 #' }
 mockVocabRef <- function(backend = "data_frame") {
-  errorMessage <- checkmate::makeAssertCollection()
 
+  # initial checks
   omopgenerics::assertChoice(backend,
                              choices = c("database", "data_frame"),
                              length = 1)
@@ -51,7 +52,7 @@ mockVocabRef <- function(backend = "data_frame") {
 
   # vocab tables
   concept <- data.frame(
-    concept_id = 1:19,
+    concept_id = c(1:21, 35604877L, 35604394L, 22:24),
     concept_name = c(
       "Musculoskeletal disorder",
       "Osteoarthrosis",
@@ -71,23 +72,39 @@ mockVocabRef <- function(backend = "data_frame") {
       "Arthropathies",
       "Arthritis",
       "OA",
-      "Other ingredient"
+      "Other ingredient",
+      "glucagon Nasal Powder",
+      "nitrogen Topical Liquefied Gas",
+      "Nasal Powder",
+      "Topical Liquefied Gas",
+      "percent",
+      "milligram",
+      "Other musculoskeletal disorder"
     ),
     domain_id = c(rep("Condition", 8), "Observation", rep("Drug", 5),
-                  rep("Condition", 4), "Drug"),
+                  rep("Condition", 4), rep("Drug",5), rep("Unit",2),
+                  "Condition"),
     vocabulary_id = c(
       rep("SNOMED", 6),
       rep("Read", 2),
       "LOINC", "RxNorm", "OMOP",
       "ATC",
       "RxNorm", "OMOP",
-      "ICD10", "ICD10", "ICD10", "ICD10", "RxNorm"
+      rep("ICD10",4),
+      rep("RxNorm",5),
+      rep("UCUM",2),
+      "SNOMED"
     ),
     standard_concept = c(
       rep("S", 6),
       rep(NA, 2),
       "S", "S", NA,
-      NA, "S", NA, NA, NA, NA, NA, "S"
+      NA, "S",
+      rep(NA,5),
+      rep("S",3),
+      rep(NA,2),
+      rep("S",2),
+      NA
     ),
     concept_class_id = c(
       rep("Clinical Finding", 6),
@@ -95,13 +112,18 @@ mockVocabRef <- function(backend = "data_frame") {
       "Observation", "Ingredient", "Dose Form",
       "ATC 1st", "Drug", "Dose Form",
       "ICD10 Chapter", "ICD10 SubChapter",
-      "ICD Code","ICD Code", "Ingredient"
+      "ICD Code","ICD Code", "Ingredient",
+      rep("Clinical Drug Form",2),
+      rep("Dose Form",2),
+      rep("Unit",2),
+      "Clinical Finding"
     ),
     concept_code = "1234",
     valid_start_date = as.Date(NA),
     valid_end_date = as.Date(NA),
     invalid_reason = NA_character_
   )
+
   conceptAncestor <- dplyr::bind_rows(
     data.frame(
       ancestor_concept_id = 1L,
@@ -182,6 +204,7 @@ mockVocabRef <- function(backend = "data_frame") {
       max_levels_of_separation = 1
     )
   )
+
   conceptSynonym <- dplyr::bind_rows(
     data.frame(
       concept_id = 2L,
@@ -193,6 +216,7 @@ mockVocabRef <- function(backend = "data_frame") {
     )
   )|>
     dplyr::mutate(language_concept_id  = NA_integer_)
+
   conceptRelationship <- dplyr::bind_rows(
     data.frame(
       concept_id_1 = 2L,
@@ -238,11 +262,27 @@ mockVocabRef <- function(backend = "data_frame") {
       concept_id_1 = 18L,
       concept_id_2 = 3L,
       relationship_id = "Maps to"
+    ),
+    data.frame(
+      concept_id_1 = 20L,
+      concept_id_2 = 35604877L,
+      relationship_id = "RxNorm has dose form"
+    ),
+    data.frame(
+      concept_id_1 = 21L,
+      concept_id_2 = 35604394L,
+      relationship_id = "RxNorm has dose form"
+    ),
+    data.frame(
+      concept_id_1 = 1L,
+      concept_id_2 = 24L,
+      relationship_id = "Mapped from"
     )
   ) |>
     dplyr::mutate(valid_start_date = as.Date(NA),
                   valid_end_date = as.Date(NA),
                   invalid_reason = NA_character_)
+
   vocabulary <- dplyr::bind_rows(
     data.frame(
       vocabulary_id = "SNOMED",
@@ -270,6 +310,32 @@ mockVocabRef <- function(backend = "data_frame") {
       numerator_unit_concept_id = 8576,
       denominator_value = 0.5,
       denominator_unit_concept_id = 8587,
+      box_size = NA_integer_,
+      valid_start_date = as.Date(NA),
+      valid_end_date = as.Date(NA)
+    ),
+    data.frame(
+      drug_concept_id = 20L,
+      ingredient_concept_id = NA_real_,
+      amount_value = NA_real_,
+      amount_unit_concept_id = 22L,
+      numerator_value = NA_real_,
+      numerator_unit_concept_id = NA_real_,
+      denominator_value = 0.5,
+      denominator_unit_concept_id = NA_real_,
+      box_size = NA_integer_,
+      valid_start_date = as.Date(NA),
+      valid_end_date = as.Date(NA)
+    ),
+    data.frame(
+      drug_concept_id = 21L,
+      ingredient_concept_id = NA_real_,
+      amount_value = NA_real_,
+      amount_unit_concept_id = 23L,
+      numerator_value = NA_real_,
+      numerator_unit_concept_id = NA_real_,
+      denominator_value = 0.5,
+      denominator_unit_concept_id = NA_real_,
       box_size = NA_integer_,
       valid_start_date = as.Date(NA),
       valid_end_date = as.Date(NA)
@@ -304,12 +370,12 @@ mockVocabRef <- function(backend = "data_frame") {
                                     is_default = NA,
                                     category = NA_character_)
   achillesResults <- dplyr::tibble(analysis_id = c(401, 401, 401),
-                             stratum_1 = c("4", "5", "9"),
-                             stratum_2 = NA_character_,
-                             stratum_3 = NA_character_,
-                             stratum_4 = NA_character_,
-                             stratum_5 = NA_character_,
-                             count_value = c(400, 200, 100))
+                                   stratum_1 = c("4", "5", "9"),
+                                   stratum_2 = NA_character_,
+                                   stratum_3 = NA_character_,
+                                   stratum_4 = NA_character_,
+                                   stratum_5 = NA_character_,
+                                   count_value = c(400, 200, 100))
   achillesResultsDist <- dplyr::tibble(analysis_id = 1,
                                        stratum_1 = NA_character_,
                                        stratum_2 = NA_character_,
@@ -325,7 +391,7 @@ mockVocabRef <- function(backend = "data_frame") {
                                        p25_value = NA_real_,
                                        p75_value = NA_real_,
                                        p90_value = NA_real_,
-                                  count_value = 5)
+                                       count_value = 5)
 
   cdm_df <- omopgenerics::cdmFromTables(tables = list(person = person,
                                                       concept = concept,
@@ -337,9 +403,9 @@ mockVocabRef <- function(backend = "data_frame") {
                                                       observation_period = observationPeriod,
                                                       cdm_source = cdmSource,
                                                       achilles_analysis = achillesAnalysis,
-                                            achilles_results = achillesResults,
-                                            achilles_results_dist = achillesResultsDist),
-                              cdmName = "mock")
+                                                      achilles_results = achillesResults,
+                                                      achilles_results_dist = achillesResultsDist),
+                                        cdmName = "mock")
 
   if (backend == "data_frame") {
     return(cdm_df)
@@ -349,9 +415,9 @@ mockVocabRef <- function(backend = "data_frame") {
   db <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
 
   cdm <- CDMConnector::copyCdmTo(con = db,
-                          cdm = cdm_df,
-                          schema = "main",
-                          overwrite = TRUE)
+                                 cdm = cdm_df,
+                                 schema = "main",
+                                 overwrite = TRUE)
   attr(cdm, "write_schema") <- "main"
   cdm
 }

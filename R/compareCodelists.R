@@ -1,4 +1,4 @@
-# Copyright 2024 DARWIN EU®
+# Copyright 2025 DARWIN EU®
 #
 # This file is part of CodelistGenerator
 #
@@ -15,12 +15,12 @@
 # limitations under the License.
 
 
-#' Compare two codelists
+#' Compare overlap between two sets of codes
 #'
-#' @param codelist1 Output of getCandidateCodes
-#' @param codelist2 Output of getCandidateCodes
+#' @param codelist1 Output of getCandidateCodes or a codelist
+#' @param codelist2 Output of getCandidateCodes.
 #'
-#' @return tibble
+#' @return Tibble with information on the overlap of codes in both codelists.
 #' @export
 #'
 #' @examples
@@ -44,53 +44,48 @@
 #' )
 #' }
 compareCodelists <- function(codelist1,
-                              codelist2) {
+                             codelist2) {
 
-  ## checks for standard types of user error
-  errorMessage <- checkmate::makeAssertCollection()
-  checkmate::assert_tibble(codelist1,
-    add = errorMessage
-  )
-  checkmate::assert_tibble(codelist2,
-    add = errorMessage
-  )
-  checkmate::assertTRUE(
-    all(c("concept_id", "concept_name")  %in%
-      names(codelist1)),
-    add = errorMessage
-  )
-  checkmate::assertTRUE(
-    all(c("concept_id", "concept_name")  %in%
-      names(codelist2)),
-    add = errorMessage
-  )
-  # report initial assertions
-  checkmate::reportAssertions(collection = errorMessage)
+  if(is.list(codelist1) && !is.data.frame(codelist1)){
+    if(length(codelist1)>1){
+    cli::cli_abort("Codelist must be singular")
+    }
+    codelist1 <- omopgenerics::newCodelist(codelist1)
+    codelist1 <- dplyr::tibble(concept_id = codelist1[[1]],
+                               concept_name = NA_character_)
+  }
 
+  if(is.list(codelist2) && !is.data.frame(codelist2)){
+    if(length(codelist2)>1){
+      cli::cli_abort("Codelist must be singular")
+    }
+    codelist2 <- omopgenerics::newCodelist(codelist2)
+    codelist2 <- dplyr::tibble(concept_id = codelist2[[1]],
+                               concept_name = NA_character_)
+  }
 
-  all <- dplyr::bind_rows(codelist1, codelist2) |>
-    dplyr::select("concept_id", "concept_name")
-  duplicates <- all[duplicated(all), ]
-  unique <- unique(all)
+  # initial checks
+  omopgenerics::assertTable(codelist1, columns = c("concept_id", "concept_name"))
+  omopgenerics::assertTable(codelist2, columns = c("concept_id", "concept_name"))
 
-  # function to return new column which
-  # indicate which codelist the concept came from
-  # If returns "Both" it means the concept contain
-  # in both codelists
-  unique$codelist <- dplyr::if_else(is.na(
-    match(
-      glue::glue("{unique$concept_id};{unique$concept_name}"),
-      glue::glue("{duplicates$concept_id};{duplicates$concept_name}")
-    )
-  ), dplyr::if_else(is.na(
-    match(
-      glue::glue("{unique$concept_id};{unique$concept_name}"),
-      glue::glue("{codelist1$concept_id};{codelist1$concept_name}")
-    )
-  ),
-  "Only codelist 2",
-  "Only codelist 1"),
-  "Both")
+  codes <- dplyr::full_join(codelist1 |>
+                            dplyr::select("concept_id", "concept_name") |>
+                            dplyr::mutate(codelist_1 = 1) |>
+                            dplyr::distinct(),
+                          codelist2 |>
+                            dplyr::select("concept_id", "concept_name") |>
+                            dplyr::mutate(codelist_2 = 1) |>
+                            dplyr::distinct(),
+                          by = c("concept_id", "concept_name"))
 
-  return(unique)
+  codes <- codes |>
+    dplyr::mutate(
+      codelist =
+        dplyr::case_when(
+          !is.na(codelist_1) & is.na(codelist_2) ~ "Only codelist 1",
+          is.na(codelist_1) & !is.na(codelist_2) ~ "Only codelist 2",
+          !is.na(codelist_1) & !is.na(codelist_2) ~ "Both"
+        ))
+
+  return(codes)
 }

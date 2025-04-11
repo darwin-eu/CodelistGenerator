@@ -7,16 +7,17 @@
 mockVocabRef(backend = "data_frame")
 }
 \arguments{
-\item{backend}{'database' (duckdb) or 'data_frame'}
+\item{backend}{'database' (duckdb) or 'data_frame'.}
 }
 \value{
-cdm reference with mock vocabulary
+cdm reference with mock vocabulary.
 }
 \description{
 Generate example vocabulary database
 }
 \examples{
 \donttest{
+library(CodelistGenerator)
 cdm <- mockVocabRef()
 cdm
 }
