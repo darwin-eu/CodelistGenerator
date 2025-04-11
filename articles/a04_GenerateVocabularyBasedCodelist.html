@@ -145,11 +145,11 @@ concept names.</p>
 <span><span class="va">acetaminophen_two_or_more_ingredients</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="st">"concept_name"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="co"># Only the first five will be shown</span></span>
-<span><span class="co">#&gt; [1] "Acetaminophen 80 MG / Pseudoephedrine 7.5 MG Oral Tablet [Tylenol] by Mcneil care"               </span></span>
-<span><span class="co">#&gt; [2] "Acetaminophen 500 MG / Pseudoephedrine 30 MG Oral Tablet [Sinutab] by Mcneil care"               </span></span>
-<span><span class="co">#&gt; [3] "Acetaminophen 500 MG / Pseudoephedrine 30 MG Oral Tablet by Laboratoire Riva"                    </span></span>
-<span><span class="co">#&gt; [4] "Acetaminophen 500 MG / Pseudoephedrine 30 MG Oral Tablet [Contac] by Glaxosmithkline"            </span></span>
-<span><span class="co">#&gt; [5] "Acetaminophen 500 MG / Pseudoephedrine 30 MG Oral Tablet [Cold And Sinus Daytime Relief] by Viva"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "acetaminophen 325 MG / methocarbamol 400 MG Oral Tablet [AMETO]"            </span></span>
+<span><span class="co">#&gt; [2] "acetaminophen 325 MG / methocarbamol 400 MG Oral Tablet [METOPEN]"          </span></span>
+<span><span class="co">#&gt; [3] "acetaminophen 325 MG / methocarbamol 400 MG Oral Tablet [METOPEN] by Mirae" </span></span>
+<span><span class="co">#&gt; [4] "acetaminophen 325 MG / methocarbamol 400 MG Oral Tablet [METVA]"            </span></span>
+<span><span class="co">#&gt; [5] "acetaminophen 325 MG / methocarbamol 400 MG Oral Tablet [METVA] by Kyungnam"</span></span></code></pre></div>
 <p>Or we could instead only return concepts associated with
 acetaminophen and no other drug ingredient.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -169,11 +169,11 @@ acetaminophen and no other drug ingredient.</p>
 <span><span class="va">acetaminophen_one_ingredient</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="st">"concept_name"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="co"># Only the first five will be shown</span></span>
-<span><span class="co">#&gt; [1] "Acetaminophen Oral Suspension [Junior Parapaed]"                                 </span></span>
-<span><span class="co">#&gt; [2] "Acetaminophen Prefilled Syringe [Perfalgan]"                                     </span></span>
-<span><span class="co">#&gt; [3] "Acetaminophen 24 MG/ML Oral Suspension [Lloydspharmacy Paracetamol] by Lloyds cy"</span></span>
-<span><span class="co">#&gt; [4] "Acetaminophen 24 MG/ML Oral Suspension [Galpamol for Children] Box of 10"        </span></span>
-<span><span class="co">#&gt; [5] "Acetaminophen 30 MG Rectal Suppository Box of 10"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "acetaminophen"                          </span></span>
+<span><span class="co">#&gt; [2] "acetaminophen 120 MG Rectal Suppository"</span></span>
+<span><span class="co">#&gt; [3] "acetaminophen 325 MG Oral Capsule"      </span></span>
+<span><span class="co">#&gt; [4] "acetaminophen 325 MG Rectal Suppository"</span></span>
+<span><span class="co">#&gt; [5] "acetaminophen 500 MG Oral Capsule"</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="restrict-to-a-specific-dose-form">Restrict to a specific dose form<a class="anchor" aria-label="anchor" href="#restrict-to-a-specific-dose-form"></a>
 </h3>
@@ -196,11 +196,11 @@ codes with a dose form of injection.</p>
 <span><span class="va">acetaminophen_injections</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="st">"concept_name"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; [1] "100 ML Acetaminophen 10 MG/ML Injection Box of 10 by Kent"                           </span></span>
-<span><span class="co">#&gt; [2] "100 ML Acetaminophen 10 MG/ML Injection Box of 10 by Accord"                         </span></span>
-<span><span class="co">#&gt; [3] "100 ML Acetaminophen 10 MG/ML Injection by Kent"                                     </span></span>
-<span><span class="co">#&gt; [4] "100 ML Acetaminophen 10 MG/ML Injection by Accord"                                   </span></span>
-<span><span class="co">#&gt; [5] "50 ML Acetaminophen 10 MG/ML Injection [Perfalgan] Box of 12 by Bristol Myers Squibb"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "100 ML Acetaminophen 10 MG/ML Injection [Perfalgan] by Bristol Myers Squibb"</span></span>
+<span><span class="co">#&gt; [2] "100 ML Acetaminophen 10 MG/ML Injection by Actavis"                         </span></span>
+<span><span class="co">#&gt; [3] "Acetaminophen 10 MG/ML Injection [PARACETAMOL MACOPHARMA] Box of 50"        </span></span>
+<span><span class="co">#&gt; [4] "Acetaminophen 10 MG/ML Injection [PARACETAMOL B BRAUN]"                     </span></span>
+<span><span class="co">#&gt; [5] "Acetaminophen Injection [PARACETAMOL ACTAVIS]"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="restrict-to-a-specific-dose-unit">Restrict to a specific dose unit<a class="anchor" aria-label="anchor" href="#restrict-to-a-specific-dose-unit"></a>
@@ -223,11 +223,11 @@ vocabularies.</p>
 <span><span class="va">acetaminophen_miligram</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="st">"concept_name"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; [1] "Acetaminophen 80 MG / Pseudoephedrine 7.5 MG Oral Tablet [Tylenol] by Mcneil care"               </span></span>
-<span><span class="co">#&gt; [2] "Acetaminophen 500 MG / Pseudoephedrine 30 MG Oral Tablet [Sinutab] by Mcneil care"               </span></span>
-<span><span class="co">#&gt; [3] "Acetaminophen 500 MG / Pseudoephedrine 30 MG Oral Tablet by Laboratoire Riva"                    </span></span>
-<span><span class="co">#&gt; [4] "Acetaminophen 500 MG / Pseudoephedrine 30 MG Oral Tablet [Contac] by Glaxosmithkline"            </span></span>
-<span><span class="co">#&gt; [5] "Acetaminophen 500 MG / Pseudoephedrine 30 MG Oral Tablet [Cold And Sinus Daytime Relief] by Viva"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "Acetaminophen / Tramadol Oral Tablet [TRAMADOL/PARACETAMOL TEVA]"                                        </span></span>
+<span><span class="co">#&gt; [2] "Acetaminophen / Tramadol Oral Tablet [Ran-Tramadol/Acet]"                                                </span></span>
+<span><span class="co">#&gt; [3] "Acetaminophen / Pseudoephedrine Oral Capsule [VICKS]"                                                    </span></span>
+<span><span class="co">#&gt; [4] "Acetaminophen / Phenylephrine Oral Powder [Theraflu]"                                                    </span></span>
+<span><span class="co">#&gt; [5] "Acetaminophen / Ascorbic Acid / Pheniramine / Phenylephrine Oral Capsule [Hot Relief-Extra Strength Pck]"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="restrict-to-a-specific-route">Restrict to a specific route<a class="anchor" aria-label="anchor" href="#restrict-to-a-specific-route"></a>

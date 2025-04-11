@@ -126,26 +126,26 @@ object:</p>
 column <em>domain_id</em> from the concept table:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getDomains.html">getDomains</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "Drug"                "Provider"            "Device"             </span></span>
-<span><span class="co">#&gt;  [4] "Procedure"           "Meas Value"          "Metadata"           </span></span>
+<span><span class="co">#&gt;  [1] "Drug"                "Device"              "Meas Value"         </span></span>
+<span><span class="co">#&gt;  [4] "Procedure"           "Provider"            "Metadata"           </span></span>
 <span><span class="co">#&gt;  [7] "Ethnicity"           "Race"                "Gender"             </span></span>
-<span><span class="co">#&gt; [10] "Measurement"         "Spec Anatomic Site"  "Meas Value Operator"</span></span>
-<span><span class="co">#&gt; [13] "Revenue Code"        "Unit"                "Visit"              </span></span>
-<span><span class="co">#&gt; [16] "Observation"         "Condition"           "Relationship"       </span></span>
-<span><span class="co">#&gt; [19] "Specimen"            "Route"               "Currency"           </span></span>
-<span><span class="co">#&gt; [22] "Spec Disease Status"</span></span></code></pre></div>
+<span><span class="co">#&gt; [10] "Relationship"        "Specimen"            "Route"              </span></span>
+<span><span class="co">#&gt; [13] "Spec Disease Status" "Currency"            "Observation"        </span></span>
+<span><span class="co">#&gt; [16] "Unit"                "Condition"           "Visit"              </span></span>
+<span><span class="co">#&gt; [19] "Measurement"         "Spec Anatomic Site"  "Meas Value Operator"</span></span>
+<span><span class="co">#&gt; [22] "Revenue Code"</span></span></code></pre></div>
 <p>or restrict the search among <em>standard</em> concepts:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getDomains.html">getDomains</a></span><span class="op">(</span><span class="va">cdm</span>, </span>
 <span>           standardConcept <span class="op">=</span> <span class="st">"Standard"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "Observation"         "Condition"           "Unit"               </span></span>
-<span><span class="co">#&gt;  [4] "Visit"               "Measurement"         "Spec Anatomic Site" </span></span>
-<span><span class="co">#&gt;  [7] "Meas Value Operator" "Revenue Code"        "Drug"               </span></span>
-<span><span class="co">#&gt; [10] "Device"              "Meas Value"          "Procedure"          </span></span>
-<span><span class="co">#&gt; [13] "Provider"            "Gender"              "Race"               </span></span>
-<span><span class="co">#&gt; [16] "Ethnicity"           "Metadata"            "Relationship"       </span></span>
-<span><span class="co">#&gt; [19] "Specimen"            "Route"               "Spec Disease Status"</span></span>
-<span><span class="co">#&gt; [22] "Currency"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "Observation"         "Condition"           "Visit"              </span></span>
+<span><span class="co">#&gt;  [4] "Unit"                "Measurement"         "Spec Anatomic Site" </span></span>
+<span><span class="co">#&gt;  [7] "Revenue Code"        "Meas Value Operator" "Specimen"           </span></span>
+<span><span class="co">#&gt; [10] "Route"               "Relationship"        "Currency"           </span></span>
+<span><span class="co">#&gt; [13] "Spec Disease Status" "Drug"                "Device"             </span></span>
+<span><span class="co">#&gt; [16] "Procedure"           "Meas Value"          "Gender"             </span></span>
+<span><span class="co">#&gt; [19] "Race"                "Provider"            "Metadata"           </span></span>
+<span><span class="co">#&gt; [22] "Ethnicity"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="concept-class">Concept class<a class="anchor" aria-label="anchor" href="#concept-class"></a>
@@ -270,7 +270,7 @@ that are recorded at least one time in the database):</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sourceCodesInUse.html">sourceCodesInUse</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="co"># Only the first 5 will be shown</span></span>
-<span><span class="co">#&gt; [1] 2615112 2615874 2720866 2614744 2615154</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2615322 2615756 2615740 2614783 2615349</span></span></code></pre></div>
 <p>Notice that <a href="https://github.com/OHDSI/Achilles" class="external-link">achilles
 tables</a> are used in this function. If you CDM does not have them
 loaded, an empty result will be returned.</p>
@@ -280,7 +280,7 @@ table):</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sourceCodesInUse.html">sourceCodesInUse</a></span><span class="op">(</span><span class="va">cdm</span>, table <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"device_exposure"</span>, <span class="st">"condition_occurrence"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span>, n <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="co"># Only the first 5 will be shown</span></span>
-<span><span class="co">#&gt; [1]  2617384 44834363 44836641  2617225 44832475</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 44837444 44823465 44835527 44831602 44823910</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
