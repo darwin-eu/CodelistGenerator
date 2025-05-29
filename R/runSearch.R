@@ -386,7 +386,7 @@ tidyWords <- function(words) {
   omopgenerics::assertCharacter(words)
 
   # to avoid invalid UTF-8 error
-  Encoding(words) <- "latin1"
+  words <- iconv(words, from = "", to = "UTF-8",sub="")
 
   # some generic formatting
   workingWords <- stringr::str_remove_all(words, "[^\\x20-\\x7E]")
