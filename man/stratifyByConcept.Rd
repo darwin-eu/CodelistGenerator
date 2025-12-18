@@ -4,15 +4,25 @@
 \alias{stratifyByConcept}
 \title{Stratify a codelist by the concepts included within it.}
 \usage{
-stratifyByConcept(x, cdm, keepOriginal = FALSE)
+stratifyByConcept(
+  x,
+  cdm,
+  nameStyle = "{codelist_name}_{concept}",
+  keepOriginal = FALSE
+)
 }
 \arguments{
 \item{x}{A codelist.}
 
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
-\item{keepOriginal}{Whether to keep the original codelist and append the
-stratify (if TRUE) or just return the stratified codelist (if FALSE).}
+\item{nameStyle}{Naming of the new codelists, use \code{{codelist_name}} to
+include the codelist name and \code{{concept}} to include the concept name.}
+
+\item{keepOriginal}{Whether to keep the original codelist (TRUE) or just return
+the stratified ones (FALSE).}
 }
 \value{
 The codelist or a codelist with details with the required
@@ -24,11 +34,15 @@ Stratify a codelist by the concepts included within it.
 \examples{
 \donttest{
 library(CodelistGenerator)
+
 cdm <- mockVocabRef()
-codes <- list("concepts" = c(20,21))
+
+codes <- newCodelist(list("concepts" = c(20L, 21L)))
+
 new_codes <- stratifyByConcept(x = codes,
                                cdm = cdm,
                                keepOriginal = TRUE)
+
 new_codes
 }
 }

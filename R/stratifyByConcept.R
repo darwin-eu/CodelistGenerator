@@ -19,83 +19,49 @@
 #'
 #' @inheritParams xDoc
 #' @inheritParams cdmDoc
+#' @param nameStyle Naming of the new codelists, use `{codelist_name}` to
+#' include the codelist name and `{concept}` to include the concept name.
 #' @inheritParams keepOriginalDoc
 #'
-#' @return The codelist or a codelist with details with the required 
+#' @return The codelist or a codelist with details with the required
 #' stratifications, as different elements of the list.
 #' @export
 #' @examples
 #' \donttest{
 #' library(CodelistGenerator)
+#'
 #' cdm <- mockVocabRef()
-#' codes <- list("concepts" = c(20,21))
+#'
+#' codes <- newCodelist(list("concepts" = c(20L, 21L)))
+#'
 #' new_codes <- stratifyByConcept(x = codes,
 #'                                cdm = cdm,
 #'                                keepOriginal = TRUE)
+#'
 #' new_codes
 #' }
 stratifyByConcept <- function(x,
                               cdm,
-                              keepOriginal = FALSE){
+                              nameStyle = "{codelist_name}_{concept}",
+                              keepOriginal = FALSE) {
+  stratifyCodelistBy(
+    x = x,
+    cdm = cdm,
+    by = "concept",
+    nameStyle = nameStyle,
+    keepOriginal = keepOriginal
+  )
+}
 
-
-  if(inherits(x, "list") & !inherits(x, "codelist_with_details")){
-    x <- omopgenerics::newCodelist(x)
-  }
-
-  x_start <- x
-
-  if(inherits(x_start, "codelist")){
-  x <- addDetails(x, cdm = cdm)
-  }
-
-  for(i in seq_along(x)){
-    x[[i]] <- x[[i]] |>
-      dplyr::mutate(c_name = names(x[i])) |>
-      dplyr::mutate(new_c_name = paste0(.data$c_name, "_",
-                                      omopgenerics::toSnakeCase(.data$concept_name)))
-  }
-
-  x <- purrr::list_rbind(x)
-
-  if(any(is.na(x$concept_name))){
-    nMissingConceptName <- sum(is.na(x$concept_name))
-    cli::cli_warn("Dropping {nMissingConceptName} concepts that do not have a concept name")
-    x <- x |>
-      dplyr::filter(!is.na(.data$concept_name))
-  }
-
-  x <- split(x,
-             x[, c("new_c_name")]
-        )
-
-  if(inherits(x_start, "codelist")){
-    for(i in seq_along(x)){
-      x[[i]] <- x[[i]] |>
-        dplyr::pull("concept_id")
-    }
-  }
-
-  if(inherits(x_start, "codelist_with_details")){
-    for(i in seq_along(x)){
-      x[[i]] <- x[[i]] |>
-        dplyr::select(!"c_name") |>
-        dplyr::select(!"new_c_name")
-    }
-  }
-
-  if(isTRUE(keepOriginal)){
-    x <- purrr::list_flatten(list(x_start, x))
-  }
-
-  x <- x[order(names(x))]
-
-  if(inherits(x_start, "codelist")){
-    x  <- omopgenerics::newCodelist(x)
-  } else{
-    x  <- omopgenerics::newCodelistWithDetails(x)
-  }
-
-  x
-
+addConcept <- function(x) {
+  cdm <- omopgenerics::cdmReference(table = x)
+  x |>
+    # add concept
+    dplyr::left_join(
+      cdm$concept |>
+        dplyr::select("concept_id", "concept" = "concept_name"),
+      by = "concept_id"
+    ) |>
+    dplyr::collect() |>
+    dplyr::distinct()
 }

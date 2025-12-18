@@ -2,7 +2,8 @@
 % Please edit documentation in R/getCandidateCodes.R
 \name{getCandidateCodes}
 \alias{getCandidateCodes}
-\title{Generate a candidate codelist}
+\title{Perform a systematic search to identify a candidate codelist using the OMOP
+CDM vocabulary tables.}
 \usage{
 getCandidateCodes(
   cdm,
@@ -17,17 +18,45 @@ getCandidateCodes(
 )
 }
 \arguments{
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
-\item{keywords}{Character vector of words to search for.
-Where more than one word is given (e.g. "knee osteoarthritis"),
-all combinations of those words should be identified
-positions (e.g. "osteoarthritis of knee") should be identified.}
+\item{keywords}{Character vector of terms to search for.
+\itemize{
+\item The search performed is broad, matching the provided keywords as substrings
+anywhere within concept names. For example, \code{keywords = c("sep")} will
+find "sepsis", "aseptic necrosis", and "acquired cardiac septal defect"
+(along with many more).
+\item Where more than one word is given, all combinations of those words will be
+identified. For example, \code{keywords = c("knee osteoarthritis")} will identify
+a concept with the name "osteoarthritis of knee".
+\item Multiple keywords can be provided. For example,
+\code{keywords = c("knee osteoarthritis", "hip osteoarthritis")} would identify
+both "osteoarthritis of knee" and "osteoarthritis of hip"
+}}
 
-\item{exclude}{Character vector of words
-to identify concepts to exclude.}
+\item{exclude}{Character vector of words to identify concepts to exclude.
+For example, \code{getCandidateCodes(cdm,  keywords = "septic", exclude = "aseptic",  domains = "condition")}
+would remove concepts "aseptic" when seaching for concepts with "septic" in
+their name.
+\itemize{
+\item When one term contains multiple words (e.g., "knee osteoarthritis"),
+each word will be search individually, so that "osteoarthritis of knee" would also be excluded.
+If you only want to exclude partial matching terms, please add "/" at the beginning and the end of each term
+(e.g., \verb{"/knee osteoarthritis/}"). Notice that, with this options,
+concepts like "rightknee osteoarthritis" will also be excluded (as this is a partial match), but
+"osteoarthritis of knee" won't be excluded. Different terms can have different rules (e.g.,
+c("hip osteoarthritis", "/knee osteoarthritis/")).
+\item With multiple words, if we want exact matches accounting for word boundaries, we need to use
+\verb{/\\b} at the beginning and at the end of each expression. In the previous example, using
+\code{"/bknee osteoarthritis/\\b"}, "rightknee osteoarthritis" won't be excluded, but
+"History of knee osteoarthritis" will be excluded.
+}}
 
-\item{domains}{Character vector with one or more of the OMOP CDM domain. If NULL, all supported domains are included: Condition, Drug, Procedure, Device, Observation, and Measurement.}
+\item{domains}{Character vector with one or more of the OMOP CDM domain for
+which to search within. If NULL, all domains are included in the search. Use
+\code{availableDomains(cdm = cdm)} to identify available domains to search within.}
 
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used
@@ -49,17 +78,19 @@ If TRUE the direct ancestor concepts of identified concepts
 will be included in the candidate codelist.}
 }
 \value{
-A tibble with the information on the potential codes of interest.
+A "candidate_codes" object. This includes a tibble with the potential
+codes of interest, along with an attribute containing the search strategy.
 }
 \description{
-This function generates a set of codes that
-can be considered for creating a phenotype
-using the OMOP CDM.
+Based on the given search strategy, this function identifies a set of codes
+that may represent a clinical event of interest in data mapped to the OMOP
+CDM. These codes can then be considered for creating a study phenotype.
 }
 \examples{
 \donttest{
-cdm <- CodelistGenerator::mockVocabRef()
-CodelistGenerator::getCandidateCodes(
+library(CodelistGenerator)
+cdm <- mockVocabRef()
+getCandidateCodes(
   cdm = cdm,
   keywords = "osteoarthritis"
  )

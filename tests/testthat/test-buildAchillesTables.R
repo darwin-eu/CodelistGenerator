@@ -45,3 +45,22 @@ test_that("test buildAchillesTables", {
 
   omopgenerics::cdmDisconnect(cdm = cdm)
 })
+
+test_that("test buildAchillesTables when not all tables required are present", {
+  cdm_local <- omock::mockCdmReference() |>
+    omock::mockPerson(nPerson = 100) |>
+    omock::mockObservationPeriod() |>
+    omock::mockConditionOccurrence()
+
+  con = DBI::dbConnect(duckdb::duckdb())
+
+  cdm <- CDMConnector::copyCdmTo(con = con,
+                                 cdm = cdm_local,
+                                 schema = "main",
+                                 overwrite = TRUE)
+  attr(cdm, "write_schema") <- "main"
+
+  expect_no_error(buildAchillesTables(cdm))
+
+  omopgenerics::cdmDisconnect(cdm = cdm)
+})

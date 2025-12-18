@@ -11,14 +11,16 @@
 #'
 #' @examples
 #' \donttest{
+#' library(CodelistGenerator)
+#'
 #' cdm <- mockVocabRef("database")
 #' codes <- getCandidateCodes(cdm = cdm,
-#' keywords = "Musculoskeletal disorder",
-#' domains = "Condition",
-#' includeDescendants = FALSE)
-#'
-#' orphan_codes <- summariseOrphanCodes(x = list("msk" = codes$concept_id),
-#' cdm = cdm)
+#'                           keywords = "Musculoskeletal disorder",
+#'                           domains = "Condition",
+#'                           includeDescendants = FALSE)
+#' codelist <- omopgenerics::newCodelist(list("msk" = codes$concept_id))
+#' orphan_codes <- summariseOrphanCodes(x = codelist,
+#'                                       cdm = cdm)
 #'
 #' orphan_codes
 #' CDMConnector::cdmDisconnect(cdm)
@@ -36,8 +38,12 @@ summariseOrphanCodes <- function(x,
                                     requiredTables = c("achilles_analysis",
                                                        "achilles_results",
                                                        "achilles_results_dist"))
-  x <- omopgenerics::newCodelist(x)
-  omopgenerics::assertCharacter(domain)
+  checkCodelist(x, allowConceptSetExpression = FALSE)
+  domain <- assertDomain(domains = domain, cdm = cdm)
+
+  if(inherits(x, "codelist_with_details")){
+    x <- asCodelist(x)
+  }
 
   # will only return codes that are used in the database
   # which we get from achilles tables
@@ -57,17 +63,6 @@ summariseOrphanCodes <- function(x,
     dplyr::inner_join(codesUsed,
                       by = c("concept_id_2"="concept_id"))
 
-  if("concept_recommended" %in% names(cdm)){
-    phoebe <- TRUE
-    phoebeUsed <- cdm$concept_recommended |>
-      dplyr::inner_join(codesUsed,
-                        by = c("concept_id_2"="concept_id"))
-  } else {
-    phoebe <- FALSE
-    cli::cli_inform(c("PHOEBE results not available",
-                      "i" = "The concept_recommended table is not present in the cdm."))
-  }
-
   orphanCodes <- list()
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
@@ -76,18 +71,19 @@ summariseOrphanCodes <- function(x,
     cli::cli_inform("Getting orphan codes for {names(x)[i]}")
     cdm <- omopgenerics::insertTable(cdm = cdm,
                                      name = tableCodelist,
-                                     table = dplyr::tibble(concept_id = x[[i]]),
+                                     table = dplyr::tibble("concept_id" = x[[i]]),
                                      overwrite = TRUE,
                                      temporary = FALSE)
 
     # get descendants used in db
     orphanDescendants <- cdm[[tableCodelist]] |>
       dplyr::inner_join(descendantsUsed,
-                       by = c("concept_id" = "ancestor_concept_id")) |>
+                        by = c("concept_id" = "ancestor_concept_id")) |>
       dplyr::select("concept_id" = "descendant_concept_id") |>
       dplyr::filter(!is.na(.data$concept_id)) |>
       dplyr::distinct() |>
-      dplyr::pull("concept_id")
+      dplyr::mutate("relationship" = "Descendant") |>
+      dplyr::collect()
 
     # get direct ancestors used in db
     orphanAncestors <- cdm[[tableCodelist]] |>
@@ -97,55 +93,51 @@ summariseOrphanCodes <- function(x,
       dplyr::select("concept_id" = "ancestor_concept_id")  |>
       dplyr::filter(!is.na(.data$concept_id)) |>
       dplyr::distinct() |>
-      dplyr::pull("concept_id")
+      dplyr::mutate("relationship" = "Ancestor") |>
+      dplyr::collect()
 
     # get relationship 1
     orphanRelationship1 <- cdm[[tableCodelist]] |>
       dplyr::left_join(relationshipUsed1,
                        by = c("concept_id" = "concept_id_2")) |>
-      dplyr::select("concept_id" = "concept_id_1")  |>
+      dplyr::select("concept_id" = "concept_id_1",
+                    "relationship" = "relationship_id")  |>
       dplyr::filter(!is.na(.data$concept_id)) |>
       dplyr::distinct() |>
-      dplyr::pull("concept_id")
+      dplyr::collect()
 
     # get relationship 2
     orphanRelationship2 <- cdm[[tableCodelist]] |>
       dplyr::left_join(relationshipUsed1,
                        by = c("concept_id" = "concept_id_1")) |>
-      dplyr::select("concept_id" = "concept_id_2")  |>
+      dplyr::select("concept_id" = "concept_id_2",
+                    "relationship" = "relationship_id")  |>
       dplyr::filter(!is.na(.data$concept_id)) |>
       dplyr::distinct() |>
-      dplyr::pull("concept_id")
+      dplyr::collect()
 
-    orphanCodes[[names(x)[i]]] <- c(orphanDescendants,
-                                    orphanAncestors,
-                                    orphanRelationship1,
-                                    orphanRelationship2)
-
-
-    if(isTRUE(phoebe)){
-      phoebeCodes <-  cdm[[tableCodelist]] |>
-        dplyr::left_join(phoebeUsed,
-                         by = c("concept_id" = "concept_id_1")) |>
-        dplyr::select("concept_id" = "concept_id_2")  |>
-        dplyr::filter(!is.na(.data$concept_id)) |>
-        dplyr::distinct() |>
-        dplyr::pull("concept_id")
-
-      orphanCodes[[names(x)[i]]] <- c(orphanCodes[[names(x)[i]]],
-                                      phoebeCodes)
-    }
+    orphanCodes[[names(x)[i]]] <- orphanDescendants |>
+      dplyr::bind_rows(orphanAncestors) |>
+      dplyr::bind_rows(orphanRelationship1) |>
+      dplyr::bind_rows(orphanRelationship2)
 
     # make sure we don't have any of the original codes
-    orphanCodes[[names(x)[i]]] <- setdiff(orphanCodes[[names(x)[i]]], x[[i]])
+    orphanCodes[[names(x)[i]]] <- orphanCodes[[names(x)[i]]] |>
+      dplyr::filter(! .data$concept_id %in% x[[i]])
+
+    # Merge rows of same concept_id but multiple relationships
+    orphanCodes[[names(x)[i]]] <- orphanCodes[[names(x)[i]]] |>
+      dplyr::group_by(.data$concept_id) |>
+      dplyr::summarise("relationship" = paste(.data$relationship, collapse = ", "), .groups = "drop")
   }
 
   orphanCodes <- orphanCodes |> vctrs::list_drop_empty()
+
   if(length(orphanCodes) == 0){
-  orphanCodes <- omopgenerics::emptySummarisedResult() |>
+    orphanCodesSummarisedResult <- omopgenerics::emptySummarisedResult() |>
       omopgenerics::newSummarisedResult(
         settings = dplyr::tibble(
-          result_id = as.integer(1),
+          result_id = 1L,
           result_type = "orphan_code_use",
           package_name = "CodelistGenerator",
           package_version = as.character(utils::packageVersion(
@@ -153,15 +145,84 @@ summariseOrphanCodes <- function(x,
         )
       )
   } else {
-    orphanCodes <- subsetOnDomain(orphanCodes,
-                                  cdm = cdm,
-                                  domain = domain)
-    orphanCodes <- summariseAchillesCodeUse(orphanCodes, cdm = cdm)
-    attr(orphanCodes, "settings")$result_type <- "orphan_code_use"
+    # Convert to a list
+    orphanCodesList <- purrr::map(orphanCodes, ~. |> dplyr::pull("concept_id"))
+
+    # Subset on domain
+    orphanCodesList <- orphanCodesList |>
+      omopgenerics::newCodelist() |>
+      subsetOnDomain(cdm = cdm, domain = domain)
+
+    orphanCodesSummarisedResult <- summariseAchillesCodeUse(orphanCodesList, cdm = cdm)
+
+    # Add relationship
+    if(nrow(orphanCodesSummarisedResult) > 0){
+    orphanCodesSummarisedResult <- orphanCodesSummarisedResult |>
+      omopgenerics::splitAdditional() |>
+      dplyr::left_join(
+        dplyr::bind_rows(orphanCodes) |>
+          dplyr::rename("variable_level" = "concept_id") |>
+          dplyr::mutate("variable_level" = as.character(.data$variable_level)),
+        by = "variable_level"
+      ) |>
+      omopgenerics::uniteAdditional(cols = c(omopgenerics::additionalColumns(orphanCodesSummarisedResult),
+                                    "relationship"))
+    }
+
+    attr(orphanCodesSummarisedResult, "settings")$result_type <- "orphan_code_use"
   }
 
-  orphanCodes
+  return(orphanCodesSummarisedResult)
 
 }
 
+fetchAchillesCodesInUse <- function(cdm, minimumCount = 0L, collect = TRUE){
+
+  minimumCount <- as.integer(minimumCount)
+  codes <- cdm[["achilles_results"]] |>
+    dplyr::filter(.data$analysis_id %in%
+                    c(
+                      401L, # condition occurrence
+                      701L, # drug_exposure
+                      801L, # observation
+                      1801L, # measurement
+                      201L, # visit_occurrence
+                      601L, # procedure_occurrence
+                      2101L # device_exposure
+                    ),
+                  .data$count_value >= .env$minimumCount) |>
+    dplyr::select("concept_id" = "stratum_1") |>
+    dplyr::mutate(concept_id = as.integer(.data$concept_id)) |>
+    dplyr::distinct()
+
+  if(isTRUE(collect)){
+    codes <- codes |>
+      dplyr::pull("concept_id")
+  }
+
+  codes
+
+}
+
+fetchAchillesSourceCodesInUse <- function(cdm, minimumCount = 0L){
+
+  minimumCount <- as.integer(minimumCount)
+
+  cdm[["achilles_results"]] |>
+    dplyr::filter(.data$analysis_id %in%
+                    c(
+                      425L, # condition occurrence
+                      725L, # drug_exposure
+                      825L, # observation
+                      1825L, # measurement
+                      225L, # visit_occurrence
+                      625L, # procedure_occurrence
+                      2125L # device_exposure
+                    )) |>
+    dplyr::filter(.data$count_value >= .env$minimumCount) |>
+    dplyr::select("stratum_1") |>
+    dplyr::distinct() |>
+    dplyr::mutate(stratum_1 = as.integer(.data$stratum_1)) |>
+    dplyr::pull("stratum_1")
+}
 

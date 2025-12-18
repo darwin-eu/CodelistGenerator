@@ -19,13 +19,6 @@ codelist
 codelists
 concpet
 duckdb
-getCandidateCodes
-getConceptClassId
-getDescendants
-getDomains
-getDoseForm
-getVocabVersion
-getVocabularies
 includeAncestor
 includeDescendants
 io

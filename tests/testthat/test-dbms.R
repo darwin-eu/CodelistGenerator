@@ -1,6 +1,7 @@
 # Testing against different database platforms
 
 test_that("redshift", {
+  skip_on_cran()
 
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
   skip_if_offline()
@@ -18,12 +19,12 @@ test_that("redshift", {
                                   cdmVersion = "5.3")
 
 
-  expect_no_error(routeCat <- getRouteCategories(cdm))
+  expect_no_error(routeCat <- availableRouteCategories(cdm))
   expect_true(all(routeCat %in%
                   c(doseFormToRoute$route_category, "unclassified_route")))
   # alphabetical order
   expect_identical(routeCat,
-                   sort(getRouteCategories(cdm)))
+                   sort(availableRouteCategories(cdm)))
 
   cdm$concept <- cdm$concept |>
     dplyr::mutate(concept_id = as.integer64(concept_id)) |>
@@ -166,7 +167,7 @@ test_that("redshift", {
 })
 
 test_that("snowflake", {
-
+  skip_on_cran()
   testthat::skip_if(Sys.getenv("SNOWFLAKE_SERVER") == "")
   skip_if_offline()
 
@@ -304,7 +305,7 @@ test_that("snowflake", {
 })
 
 test_that("postgres", {
-
+  skip_on_cran()
   testthat::skip_if(Sys.getenv("CDM5_POSTGRESQL_DBNAME") == "")
   skip_if_offline()
 
@@ -406,7 +407,7 @@ test_that("postgres", {
 
 
  # can subset and stratify by dose unit
-  expect_no_error(getDoseUnit(cdm))
+  expect_no_error(availableDoseUnits(cdm))
   drugs <- getDrugIngredientCodes(cdm,
                                       name = c("metformin","diclofenac"))
   expect_no_error(subsetOnDoseUnit(drugs, cdm, c("milligram")))
@@ -456,7 +457,7 @@ test_that("postgres", {
 })
 
 test_that("sql server", {
-
+  skip_on_cran()
   testthat::skip_if(Sys.getenv("CDM5_SQL_SERVER_SERVER") == "")
   testthat::skip_if(Sys.getenv("SQL_SERVER_DRIVER") == "")
   skip_if_offline()
@@ -559,7 +560,7 @@ test_that("sql server", {
 
 
   # can subset and stratify by dose unit
-  expect_no_error(getDoseUnit(cdm))
+  expect_no_error(availableDoseUnits(cdm))
   drugs <- getDrugIngredientCodes(cdm,
                                   name = c("metformin","diclofenac"))
   expect_no_error(subsetOnDoseUnit(drugs, cdm, c("milligram")))

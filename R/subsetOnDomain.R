@@ -30,9 +30,10 @@
 #' @examples
 #' \donttest{
 #' library(CodelistGenerator)
+#' library(omopgenerics)
 #' cdm <- mockVocabRef()
 #' codes <- subsetOnDomain(
-#'               x = list("codes" = c(10,13,15)),
+#'               x = newCodelist(list("codes" = c(10,13,15))),
 #'               cdm = cdm,
 #'               domain = "Drug")
 #' codes
@@ -42,51 +43,13 @@ subsetOnDomain <- function(x,
                            domain,
                            negate = FALSE){
 
-  omopgenerics::validateCdmArgument(cdm)
-  omopgenerics::assertCharacter(domain)
-  omopgenerics::assertLogical(negate)
-  x <- omopgenerics::newCodelist(x)
+  omopgenerics::assertCharacter(domain, null = FALSE, na = FALSE)
 
-  tableCodelist <- paste0(omopgenerics::uniqueTableName(),
-                          omopgenerics::uniqueId())
-
-  for(i in seq_along(x)){
-    cdm <- omopgenerics::insertTable(cdm = cdm,
-                                     name = tableCodelist,
-                                     table = dplyr::tibble(concept_id = x[[i]]),
-                                     overwrite = TRUE,
-                                     temporary = FALSE)
-    x[[i]] <- cdm[[tableCodelist]] |>
-      dplyr::inner_join(cdm[["concept"]] ,
-                        by = "concept_id") |>
-      dplyr::select("concept_id",
-                    "domain_id") |>
-      dplyr::distinct() |>
-      dplyr::collect()
-
-    if(isTRUE(negate)){
-      x[[i]] <- x[[i]] |>
-        dplyr::filter(!tolower(.data$domain_id) %in% tolower(.env$domain))
-    }else{
-      x[[i]] <- x[[i]] |>
-        dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domain))
-    }
-
-    x[[i]] <- x[[i]] |>
-      dplyr::pull("concept_id")
-
-    x[[i]] <- sort(unique(x[[i]]))
-  }
-
-  x <- x |>
-    vctrs::list_drop_empty()
-
-  if(length(x) == 0){
-    x <- omopgenerics::emptyCodelist()
-  }
-
-  CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
-
+  x <- subsetCodelistBy(x,
+                        cdm,
+                        by = "domain",
+                        group = domain,
+                        keepOriginal = FALSE,
+                        negate = negate)
   return(x)
-
 }

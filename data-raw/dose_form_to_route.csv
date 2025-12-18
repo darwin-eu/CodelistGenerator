@@ -1,195 +1,195 @@
-route_category,dose_form_concept_id
-oral,19103220
-oral,19082048
-transdermal,19082049
-oral,19082256
-oral,19082050
-transdermal,19082071
-transdermal,19082072
-topical,19135438
-topical,19135446
-topical,19135439
-topical,19135440
-injectable,46234466
-topical,19057400
-topical,43563497
-transdermal,19082073
-transmucosal_buccal_or_sublingual,40164192
-transmucosal_buccal_or_sublingual,40175589
-oral,19135868
-oral,19021887
-injectable,46234468
-oral,19082075
-oral,37498346
-oral,19135866
-transmucosal_buccal_or_sublingual,19102296
-topical,21014180
-topical,19110977
-oral,19082255
-oral,37499224
-oral,19001949
-oral,19082076
-inhalable,19082630
-topical,19112648
-topical,2008659
-implant,19124968
-topical,779945
-inhalable,19127579
-oral,44817840
-oral,19018708
-transmucosal_rectal,19082627
-oral,19082077
-oral,19082079
-oral,19082080
-inhalable,19082258
-topical,19112544
-oral,45775489
-oral,45775490
-transmucosal,21014172
-inhalable,19018195
-inhalable,19082259
-inhalable,19095898
-inhalable,37499223
-inhalable,1356078
-injectable,44784844
-injectable,19082103
-injectable,19082104
-injectable,46234469
-injectable,19095913
-injectable,19095914
-injectable,19082105
-injectable,19082260
-transmucosal,35606051
-implant,43126086
-implant,1718367
-injectable,19082106
-injectable,19095915
-topical,43563502
-topical,19016586
-injectable,46275062
-topical,19082107
-topical,19011932
-topical,19082108
-topical,2008660
-topical,2008661
-topical,2008662
-topical,19082109
-topical,43126087
-topical,19130307
-topical,42629089
-topical,19008697
-topical,2008663
-topical,19130329
-inhalable,19126918
-inhalable,36250064
-transmucosal_buccal_or_sublingual,19095900
-topical,19082110
-topical,19082161
-topical,19082163
-inhalable,19082162
-inhalable,19126919
-topical,19082164
-topical,43563498
-transmucosal_nasal,35604877
-transmucosal_nasal,19082165
-transmucosal_nasal,19011167
-topical,19095977
-topical,40228565
-topical,19129401
-topical,19082576
-topical,1974358
-topical,19082166
-topical,19059413
-topical,19135925
-topical,19129634
-topical,19082167
-oral,19082168
-topical,19082169
-oral,19111148
-transmucosal_buccal_or_sublingual,37498347
-transmucosal_buccal_or_sublingual,19082101
-transmucosal_buccal_or_sublingual,19095916
-oral,19082651
-transmucosal_buccal_or_sublingual,19082253
-topical,19095975
-topical,19095918
-oral,19082652
-oral,19095976
-oral,19082170
-transmucosal_buccal_or_sublingual,19095911
-oral,19082191
-oral,19082573
-oral,963781
-oral,19082251
-topical,19082193
-topical,19082194
-topical,19082195
-topical,19082196
-topical,21014169
-topical,19102295
-topical,19082701
-injectable,46234467
-inhalable,2900820
-inhalable,42615241
-topical,21014176
-topical,19135790
-topical,45775488
-oral,45775491
-oral,45775492
-topical,19082281
-topical,19129139
-injectable,19126920
-oral,19082675
-topical,19082197
-topical,19082574
-topical,19095917
-topical,19082282
-topical,19082198
-topical,19082283
-topical,19082199
-transmucosal_rectal,19082200
-topical,19082221
-topical,43563499
-topical,21014170
-transmucosal_buccal_or_sublingual,37498348
-transmucosal_buccal_or_sublingual,40220762
-transmucosal_buccal_or_sublingual,19082285
-transmucosal_rectal,19000942
-oral,19001144
-transmucosal_buccal_or_sublingual,19082222
-oral,19082223
-oral,19001943
-topical,2008664
-oral,1592486
-topical,19082628
-topical,19082224
-topical,19095972
-topical,19095973
-topical,35604394
-topical,19082225
-topical,19082226
-topical,19082227
-topical,19082286
-topical,19082228
-topical,19095912
-topical,46234410
-transdermal,19082229
-topical,19095974
-topical,19082575
-topical,19010878
-topical,21014179
-topical,35604393
-topical,19010879
-topical,19010880
-topical,1356079
-topical,702776
-topical,19082287
-transmucosal_vaginal,19082230
-topical,1396583
-topical,19112649
-topical,19093368
-topical,37496609
-topical,19010962
-transdermal,19082252
-topical,36960947
-injectable,36949165
+dose_form_concept_id,dose_form_concept_name,route_category
+19103220,12 hour Extended Release Capsule,oral
+19082048,12 hour Extended Release Tablet,oral
+19082049,16 Hour Transdermal Patch,transdermal
+19082256,24 Hour Extended Release Capsule,oral
+19082050,24 Hour Extended Release Tablet,oral
+19082071,24 Hour Transdermal Patch,transdermal
+19082072,72 Hour Transdermal Patch,transdermal
+19135438,Augmented Topical Cream,topical
+19135446,Augmented Topical Gel,topical
+19135439,Augmented Topical Lotion,topical
+19135440,Augmented Topical Ointment,topical
+46234466,Auto-Injector,injectable
+19057400,Bar Soap,topical
+43563497,Bath Salts,topical
+19082073,Biweekly Transdermal Patch,transdermal
+40164192,Buccal Film,transmucosal_buccal_or_sublingual
+40175589,Buccal Tablet,transmucosal_buccal_or_sublingual
+19135868,Caplet,oral
+19021887,Capsule,oral
+46234468,Cartridge,injectable
+19082075,Chewable Bar,oral
+37498346,Chewable Extended Release Oral Tablet,oral
+19135866,Chewable Tablet,oral
+19102296,Chewing Gum,transmucosal_buccal_or_sublingual
+21014180,Collodion,topical
+19110977,Cream,topical
+19082255,Delayed Release Oral Capsule,oral
+37499224,Delayed Release Oral Granules,oral
+19001949,Delayed Release Oral Tablet,oral
+19082076,Disintegrating Oral Tablet,oral
+19082630,Disk,inhalable
+19112648,Douche,topical
+2008659,Dressing Gauze,topical
+19124968,Drug Implant,implant
+779945,Drug-Eluting Contact Lens,topical
+19127579,Dry Powder Inhaler,inhalable
+44817840,Effervescent Oral Tablet,oral
+19018708,Elixir,oral
+19082627,Enema,transmucosal_rectal
+19082077,Extended Release Oral Capsule,oral
+19082079,Extended Release Oral Tablet,oral
+19082080,Extended Release Suspension,oral
+19082258,Gas for Inhalation,inhalable
+19112544,Gel,topical
+45775489,Granules for Oral Solution,oral
+45775490,Granules for Oral Suspension,oral
+21014172,Impregnated cigarette,transmucosal
+19018195,Inhalant,inhalable
+19082259,Inhalation Powder,inhalable
+19095898,Inhalation Solution,inhalable
+37499223,Inhalation Spray,inhalable
+1356078,Inhalation Suspension,inhalable
+44784844,Injectable Foam,injectable
+19082103,Injectable Solution,injectable
+19082104,Injectable Suspension,injectable
+46234469,Injection,injectable
+19095913,Intramuscular Solution,injectable
+19095914,Intramuscular Suspension,injectable
+19082105,Intraperitoneal Solution,injectable
+19082260,Intrathecal Suspension,injectable
+35606051,Intratracheal Suspension,transmucosal
+43126086,Intrauterine Drug Delivery System,implant
+1718367,Intrauterine System,implant
+19082106,Intravenous Solution,injectable
+19095915,Intravenous Suspension,injectable
+43563502,Intravitreal Applicator,topical
+19016586,Irrigation Solution,topical
+46275062,Jet Injector,injectable
+19082107,Liquid Cleanser,topical
+19011932,Lotion,topical
+19082108,Medicated Bar Soap,topical
+2008660,Medicated Cottonball,topical
+2008661,Medicated Gauzeball,topical
+2008662,Medicated Guaze,topical
+19082109,Medicated Liquid Soap,topical
+43126087,Medicated Nail Polish,topical
+19130307,Medicated Pad,topical
+42629089,Medicated Patch,topical
+19008697,Medicated Shampoo,topical
+2008663,Medicated Swab,topical
+19130329,Medicated Tape,topical
+19126918,Metered Dose Inhaler,inhalable
+36250064,Metered Dose Nasal Spray,inhalable
+19095900,Mucosal Spray,transmucosal_buccal_or_sublingual
+19082110,Mucous Membrane Topical Solution,topical
+19082161,Nasal Cream,topical
+19082163,Nasal Gel,topical
+19082162,Nasal Inhalant,inhalable
+19126919,Nasal Inhaler,inhalable
+19082164,Nasal Ointment,topical
+43563498,Nasal Pin,topical
+35604877,Nasal Powder,transmucosal_nasal
+19082165,Nasal Solution,transmucosal_nasal
+19011167,Nasal Spray,transmucosal_nasal
+19095977,Nasal Suspension,topical
+40228565,Oil,topical
+19129401,Ointment,topical
+19082576,Ophthalmic Cream,topical
+1974358,Ophthalmic Gauze or Fleece with Substance,topical
+19082166,Ophthalmic Gel,topical
+19059413,Ophthalmic Irrigation Solution,topical
+19135925,Ophthalmic Ointment,topical
+19129634,Ophthalmic Solution,topical
+19082167,Ophthalmic Suspension,topical
+19082168,Oral Capsule,oral
+19082169,Oral Cream,topical
+19111148,Oral Crystals,oral
+37498347,Oral Film,transmucosal_buccal_or_sublingual
+19082101,Oral Flakes,transmucosal_buccal_or_sublingual
+19095916,Oral Gel,transmucosal_buccal_or_sublingual
+19082651,Oral Granules,oral
+19082253,Oral Lozenge,transmucosal_buccal_or_sublingual
+19095975,Oral Ointment,topical
+19095918,Oral Paste,topical
+19082652,Oral Pellet,oral
+19095976,Oral Powder,oral
+19082170,Oral Solution,oral
+19095911,Oral Spray,transmucosal_buccal_or_sublingual
+19082191,Oral Suspension,oral
+19082573,Oral Tablet,oral
+963781,Oral Tablet with Sensor,oral
+19082251,Oral Wafer,oral
+19082193,Otic Cream,topical
+19082194,Otic Ointment,topical
+19082195,Otic Solution,topical
+19082196,Otic Suspension,topical
+21014169,Paint,topical
+19102295,Paste,topical
+19082701,Patch,topical
+46234467,Pen Injector,injectable
+2900820,Plant Bud For Smoking,inhalable
+42615241,Plant Bud For Smoking,inhalable
+21014176,Poultice,topical
+19135790,Powder,topical
+45775488,Powder for Nasal Solution,topical
+45775491,Powder for Oral Solution,oral
+45775492,Powder for Oral Suspension,oral
+19082281,Powder Spray,topical
+19129139,Prefilled Applicator,topical
+19126920,Prefilled Syringe,injectable
+19082675,Pudding,oral
+19082197,Rectal Cream,topical
+19082574,Rectal Foam,topical
+19095917,Rectal Gel,topical
+19082282,Rectal Ointment,topical
+19082198,Rectal Powder,topical
+19082283,Rectal Solution,topical
+19082199,Rectal Spray,topical
+19082200,Rectal Suppository,transmucosal_rectal
+19082221,Rectal Suspension,topical
+43563499,Shower Powder,topical
+21014170,Stick,topical
+37498348,Sublingual Film,transmucosal_buccal_or_sublingual
+40220762,Sublingual Powder,transmucosal_buccal_or_sublingual
+19082285,Sublingual Tablet,transmucosal_buccal_or_sublingual
+19000942,Suppository,transmucosal_rectal
+19001144,Suspension,oral
+19082222,Sustained Release Buccal Tablet,transmucosal_buccal_or_sublingual
+19082223,Syrup,oral
+19001943,Tablet,oral
+2008664,Tablet for Opthalmic Solution,topical
+1592486,Tablet for Oral Suspension,oral
+19082628,Topical Cake,topical
+19082224,Topical Cream,topical
+19095972,Topical Foam,topical
+19095973,Topical Gel,topical
+35604394,Topical Liquefied Gas,topical
+19082225,Topical Lotion,topical
+19082226,Topical Oil,topical
+19082227,Topical Ointment,topical
+19082286,Topical Powder,topical
+19082228,Topical Solution,topical
+19095912,Topical Spray,topical
+46234410,Topical Suspension,topical
+19082229,Transdermal System,transdermal
+19095974,Urethral Gel,topical
+19082575,Urethral Suppository,topical
+19010878,Vaginal Cream,topical
+21014179,Vaginal delivery system,topical
+35604393,Vaginal Film,topical
+19010879,Vaginal Foam,topical
+19010880,Vaginal Gel,topical
+1356079,Vaginal Insert,topical
+702776,Vaginal Mechanical Pessaries with Substance,topical
+19082287,Vaginal Ointment,topical
+19082230,Vaginal Powder,transmucosal_vaginal
+1396583,Vaginal Sponge,topical
+19112649,Vaginal Spray,topical
+19093368,Vaginal Suppository,topical
+37496609,Vaginal System,topical
+19010962,Vaginal Tablet,topical
+19082252,Weekly Transdermal Patch,transdermal
+36960947,Cutaneous patch,topical
+36949165,Gel for injection,injectable

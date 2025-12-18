@@ -16,7 +16,7 @@ test_that("test with synthea on sql server", {
     cdmSchema = strsplit(Sys.getenv("CDM5_SQL_SERVER_CDM_SCHEMA"), "\\.")[[1]],
     writeSchema =  strsplit(Sys.getenv("CDM5_SQL_SERVER_SCRATCH_SCHEMA"), "\\.")[[1]])
 
-  vocabVersion <- getVocabVersion(cdm = cdm)
+  vocabVersion <- vocabularyVersion(cdm = cdm)
   expect_true(length(vocabVersion) == 1)
   expect_true(is.character(vocabVersion))
 

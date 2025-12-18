@@ -7,62 +7,116 @@ navbar:
   structure:
     right: [github]
 
+articles:
+- title: OMOP CDM vocabularies
+  navbar: OMOP CDM vocabularies
+  contents:
+  - a01_GettingOmopCdmVocabularies
+  - a02_ExploreCDMvocabulary
+  - a03_TypesOfCodelist
+  - a06_ImportExport
+- title: Finding codes
+  navbar: Finding codes
+  contents:
+  - a04_GenerateCandidateCodelist
+  - a05_GenerateVocabularyBasedCodelist
+  - a08_ManipulateCodelists
+- title: Codelist diagnostics
+  navbar: Codelist diagnostics
+  contents:
+  - a09_RunCodelistDiagnostics
+- title: Package benchmark
+  navbar: Package benchmark
+  contents:
+  - a10_CodelistGeneratorBenchmark
+
 reference:
 - subtitle: Search for codes following a systematic search strategy
 - contents:
   - getCandidateCodes
+  - searchStrategy
 - subtitle: Create vocabulary-based codelists
 - contents:
   - getDrugIngredientCodes
   - getATCCodes
-  - getICD10StandardCodes
 - subtitle: Run codelist diagnostics
 - contents:
   - summariseAchillesCodeUse
   - summariseCodeUse
   - summariseCohortCodeUse
   - summariseOrphanCodes
-  - summariseUnmappedCodes
 - subtitle: Present codelist diagnostics results in a table
 - contents:
   - tableAchillesCodeUse
   - tableCodeUse
   - tableCohortCodeUse
   - tableOrphanCodes
-  - tableUnmappedCodes
 - subtitle: Extract codelists from JSON files
 - contents:
   - codesFromCohort
   - codesFromConceptSet
-- subtitle: Codelist utility functions
+- subtitle: Combine codelists
 - contents:
-  - compareCodelists
+  - unionCodelists
+  - intersectCodelists
+- subtitle: Subset codelists
+- contents:
   - subsetToCodesInUse
   - subsetOnRouteCategory
   - subsetOnDoseUnit
   - subsetOnDomain
+  - subsetOnVocabulary
+  - subsetOnIngredientRange
+  - subsetOnDoseForm
+- subtitle: Stratify codelists
+- contents:
   - stratifyByRouteCategory
   - stratifyByDoseUnit
+  - stratifyByDomain
+  - stratifyByVocabulary
+  - stratifyByDoseForm
   - stratifyByConcept
+  - stratifyByBrand
+- subtitle: Codelist utility functions
+- contents:
+  - addConcepts
+  - excludeConcepts
+  - compareCodelists
   - getMappings
+  - asCodelist
+  - asCodelistWithDetails
+  - asConceptSetExpression
 - subtitle: Vocabulary utility functions
 - contents:
-  - getVocabVersion
-  - getVocabularies
-  - getConceptClassId
-  - getDomains
+  - vocabularyVersion
   - getDescendants
-  - getDoseForm
-  - getRouteCategories
-  - getDoseUnit
-  - getRelationshipId
-  - codesInUse
-  - sourceCodesInUse
+- subtitle: Identify concepts available in the OMOP CDM
+- contents:
   - availableATC
-  - availableICD10
-  - availableIngredients
+  - availableConceptClassIds
+  - availableDomains
+  - availableDoseForms
+  - availableDoseUnits
+  - availableDrugIngredients
+  - availableRouteCategories
+  - availableRelationshipIds
+  - availableVocabularies
+- subtitle: Identify concepts associated with a codelist
+- contents:
+  - associatedConceptClassIds
+  - associatedDomains
+  - associatedDoseForms
+  - associatedDoseUnits
+  - associatedDrugIngredients
+  - associatedRouteCategories
+  - associatedRelationshipIds
+  - associatedVocabularies
+- subtitle: Datasets
+- contents:
+  - doseFormToRoute
+- subtitle: Benchmark
+- contents:
+  - benchmarkCodelistGenerator
 - subtitle: Create a mock dataset that contains vocabulary tables
 - contents:
   - mockVocabRef
-  - buildAchillesTables
-

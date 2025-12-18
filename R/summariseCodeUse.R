@@ -29,25 +29,28 @@
 #' the observation_period table will be used for the former. If NULL or the
 #' second date is set as missing, the latest observation_end_date in the
 #' observation_period table will be used for the latter.
+#' @param useSourceCodes Whether the codelist provided contains source codes (TRUE) or standard codes (FALSE).
 #'
 #' @return A tibble with count results overall and, if specified, by strata.
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#' library(omopgenerics)
+#' library(CodelistGenerator)
 #' con <- DBI::dbConnect(duckdb::duckdb(),
 #'                       dbdir = CDMConnector::eunomiaDir())
 #' cdm <- CDMConnector::cdmFromCon(con,
 #'                                 cdmSchema = "main",
 #'                                 writeSchema = "main")
-#'acetiminophen <- c(1125315,  1127433, 40229134,
-#'40231925, 40162522, 19133768,  1127078)
-#'poliovirus_vaccine <- c(40213160)
-#'cs <- list(acetiminophen = acetiminophen,
-#'           poliovirus_vaccine = poliovirus_vaccine)
-#'results <- summariseCodeUse(cs,cdm = cdm)
-#'results
-#'CDMConnector::cdmDisconnect(cdm)
+#' acetiminophen <- c(1125315,  1127433, 40229134,
+#'                   40231925, 40162522, 19133768,  1127078)
+#' poliovirus_vaccine <- c(40213160)
+#' cs <- newCodelist(list(acetiminophen = acetiminophen,
+#'                        poliovirus_vaccine = poliovirus_vaccine))
+#' results <- summariseCodeUse(cs,cdm = cdm)
+#' results
+#' CDMConnector::cdmDisconnect(cdm)
 #'}
 #'
 summariseCodeUse <- function(x,
@@ -57,9 +60,19 @@ summariseCodeUse <- function(x,
                              byYear = FALSE,
                              bySex = FALSE,
                              ageGroup = NULL,
-                             dateRange = as.Date(c(NA, NA))){
+                             dateRange = as.Date(c(NA, NA)),
+                             useSourceCodes = FALSE){
 
-  omopgenerics::assertList(x, named = TRUE)
+  checkCodelist(x, allowConceptSetExpression = FALSE)
+
+
+  if(inherits(x, "codelist_with_details")){
+    x <- asCodelist(x)
+  }
+
+  if(length(x) == 0){
+    return(omopgenerics::emptySummarisedResult())
+  }
 
   codeUse <- list()
   for(i in seq_along(x)){
@@ -74,24 +87,37 @@ summariseCodeUse <- function(x,
                                byYear = byYear,
                                bySex = bySex,
                                ageGroup = ageGroup,
-                               dateRange = dateRange)
+                               dateRange = dateRange,
+                               useSourceCodes = useSourceCodes)
   }
   codeUse <- dplyr::bind_rows(codeUse)
 
   if(nrow(codeUse) > 0) {
+
+    if(is.na(dateRange[1])){
+      dateRangeStart <- "none"
+    } else {
+      dateRangeStart <- as.character(dateRange[1])
+    }
+    if(is.na(dateRange[2])){
+      dateRangeEnd <- "none"
+    } else {
+      dateRangeEnd <- as.character(dateRange[2])
+    }
+
     codeUse <- codeUse |>
       dplyr::mutate(
-        result_id = as.integer(1),
+        result_id = 1L,
         cdm_name = omopgenerics::cdmName(cdm)
       ) |>
       omopgenerics::newSummarisedResult(
         settings = dplyr::tibble(
-          result_id = as.integer(1),
+          result_id = 1L,
           result_type = "code_use",
           package_name = "CodelistGenerator",
           package_version = as.character(utils::packageVersion("CodelistGenerator")),
-          date_range_start = as.character(dateRange[1]),
-          date_range_end   = as.character(dateRange[2])
+          date_range_start = .env$dateRangeStart,
+          date_range_end   = .env$dateRangeEnd
         )
       )
   } else {
@@ -104,9 +130,9 @@ summariseCodeUse <- function(x,
 
 #' Summarise code use among a cohort in the cdm reference
 #'
-#' @inheritParams xDoc
 #' @inheritParams cdmDoc
 #' @param cohortTable A cohort table from the cdm reference.
+#' @inheritParams xDocCohort
 #' @param cohortId A vector of cohort IDs to include
 #' @param timing When to assess the code use relative cohort dates. This can
 #' be "any"(code use any time by individuals in the cohort) or  "entry" (code
@@ -116,6 +142,8 @@ summariseCodeUse <- function(x,
 #' @inheritParams bySexDoc
 #' @inheritParams byYearDoc
 #' @inheritParams ageGroupDoc
+#' @param useSourceCodes Whether the codelist provided contains source codes
+#' (TRUE) or standard codes (FALSE).
 #'
 #' @return A tibble with results overall and, if specified, by strata
 #' @export
@@ -139,7 +167,7 @@ summariseCodeUse <- function(x,
 #'                   overwrite = TRUE)
 #'
 #'results_cohort_mult <-
-#'summariseCohortCodeUse(list(cs = c(260139,19133873)),
+#'summariseCohortCodeUse(omopgenerics::newCodelist(list(cs = c(260139,19133873))),
 #'                       cdm = cdm,
 #'                       cohortTable = "cohorts",
 #'                       timing = "entry")
@@ -147,61 +175,113 @@ summariseCodeUse <- function(x,
 #'results_cohort_mult
 #'CDMConnector::cdmDisconnect(cdm)
 #'}
-summariseCohortCodeUse <- function(x,
-                                   cdm,
+summariseCohortCodeUse <- function(cdm,
                                    cohortTable,
+                                   x = NULL,
                                    cohortId = NULL,
                                    timing = "any",
                                    countBy = c("record", "person"),
                                    byConcept = TRUE,
                                    byYear = FALSE,
                                    bySex = FALSE,
-                                   ageGroup = NULL) {
+                                   ageGroup = NULL,
+                                   useSourceCodes = FALSE
+                                   ) {
 
-  omopgenerics::assertList(x, named = TRUE)
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
-  omopgenerics::assertTrue("GeneratedCohortSet" %in% class(cdm[[cohortTable]]))
+  omopgenerics::assertTrue(inherits(cdm[[cohortTable]], "GeneratedCohortSet"))
   omopgenerics::assertTrue(all(c("cohort_definition_id", "subject_id", "cohort_start_date",
                                "cohort_end_date") %in% colnames(cdm[[cohortTable]])))
 
   if(is.null(cohortId)){
     cohortId <- sort(CDMConnector::settings(cdm[[cohortTable]]) |>
                        dplyr::pull("cohort_definition_id"))
+  } else {
+    cohortId <- omopgenerics::validateCohortIdArgument(cohortId = cohortId,
+                                                       cohort = cdm[[cohortTable]])
+    }
+
+  checkCodelist(x, allowConceptSetExpression = FALSE)
+
+  if(!is.null(x)){
+    if(inherits(x, "codelist_with_details")){
+      x <- asCodelist(x)
+    }
+    if(length(x) == 0){
+      return(omopgenerics::emptySummarisedResult())
+    }
+    # if x is null we'll use cohort codelist attribute
+    # otherwise will use codelist specified
+    settings <- expand.grid(codelist_name = names(x),
+                         cohort_definition_id = omopgenerics::settings(cdm[[cohortTable]]) |>
+                           dplyr::pull("cohort_definition_id")) |>
+      dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
+      dplyr::left_join(omopgenerics::settings(cdm[[cohortTable]]) |>
+                         dplyr::select("cohort_definition_id", "cohort_name"),
+                       by = "cohort_definition_id") |>
+      dplyr::arrange(.data$cohort_name) |>
+      dplyr::mutate(codelist_name = as.character(.data$codelist_name))
+  } else {
+    x <- attr(cdm[[cohortTable]], "cohort_codelist") |>
+      dplyr::select("codelist_name", "concept_id") |>
+      dplyr::distinct()
+
+    settings <- attr(cdm[[cohortTable]], "cohort_codelist") |>
+      dplyr::select("cohort_definition_id", "codelist_name") |>
+      dplyr::distinct() |>
+      dplyr::collect() |>
+      dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
+      dplyr::left_join(omopgenerics::settings(cdm[[cohortTable]]) |>
+                         dplyr::select("cohort_definition_id", "cohort_name"),
+                       by = "cohort_definition_id") |>
+      dplyr::arrange(.data$cohort_name) |>
+      dplyr::mutate(codelist_name = as.character(.data$codelist_name))
   }
 
-  settings <- omopgenerics::settings(cdm[[cohortTable]]) |>
-    dplyr::filter(.data$cohort_definition_id %in% .env$cohortId)
 
   cohortCodeUse <- list()
-  for(i in seq_along(cohortId)){
-    workingCohortName <- settings$cohort_name[settings$cohort_definition_id == i]
-    for(j in seq_along(x)){
-      cli::cli_inform(" Getting counts of {names(x)[j]} codes for cohort {workingCohortName}")
-      cohortCodeUse[[paste0(i, "_", j)]] <- getCodeUse(x[j],
-                                                       cdm = cdm,
-                                                       cohortTable = cohortTable,
-                                                       cohortId = cohortId[[i]],
-                                                       timing = timing,
-                                                       countBy = countBy,
-                                                       byConcept = byConcept,
-                                                       byYear = byYear,
-                                                       bySex = bySex,
-                                                       ageGroup = ageGroup,
-                                                       dateRange = as.Date(c(NA,NA)))
-    }}
+  for(i in seq_along(settings$codelist_name)){
+    workingCohortName <- settings$cohort_name[[i]]
+    workingCohortId <- settings$cohort_definition_id[[i]]
+    workingCodelistName <- settings$codelist_name[[i]]
+
+    if(inherits(x, "cdm_table")){
+      workingCodelist <- x |>
+        dplyr::filter(.data$codelist_name == !!workingCodelistName) |>
+        dplyr::select("concept_id")
+      workingCodelist <- list(workingCodelist) |>
+        stats::setNames(workingCodelistName)
+    } else {
+    workingCodelist <- x[workingCodelistName]
+    }
+
+    cli::cli_inform(" Getting counts of {names(workingCodelist)} codes for cohort {workingCohortName}")
+     cohortCodeUse[[i]] <- getCodeUse(workingCodelist,
+                                     cdm = cdm,
+                                     cohortTable = cohortTable,
+                                     cohortId = workingCohortId,
+                                     timing = timing,
+                                     countBy = countBy,
+                                     byConcept = byConcept,
+                                     byYear = byYear,
+                                     bySex = bySex,
+                                     ageGroup = ageGroup,
+                                     dateRange = as.Date(c(NA,NA)),
+                                     useSourceCodes = useSourceCodes)
+    }
   cohortCodeUse <- dplyr::bind_rows(cohortCodeUse) |>
     dplyr::arrange(dplyr::across(!c("variable_level", "estimate_value")))
 
   if (nrow(cohortCodeUse) > 0) {
     cohortCodeUse <- cohortCodeUse |>
       dplyr::mutate(
-        result_id = as.integer(1),
+        result_id = 1L,
         cdm_name = omopgenerics::cdmName(cdm)
       ) |>
       omopgenerics::newSummarisedResult(
         settings = dplyr::tibble(
 
-          result_id = as.integer(1),
+          result_id = 1L,
           result_type = "cohort_code_use",
           package_name = "CodelistGenerator",
           package_version = as.character(utils::packageVersion("CodelistGenerator")),
@@ -226,6 +306,7 @@ getCodeUse <- function(x,
                        bySex,
                        ageGroup,
                        dateRange,
+                       useSourceCodes,
                        call = parent.frame()) {
 
   # initial checks
@@ -233,8 +314,10 @@ getCodeUse <- function(x,
   omopgenerics::assertCharacter(timing, length = 1)
   omopgenerics::assertChoice(timing, choices = c("any","entry"))
   omopgenerics::assertChoice(countBy, choices = c("record", "person"))
-  omopgenerics::assertNumeric(x[[1]], integerish = T)
-  omopgenerics::assertList(x)
+  if(!inherits(x[[1]], "cdm_table")){
+    omopgenerics::assertList(x)
+    omopgenerics::assertNumeric(x[[1]], integerish = TRUE)
+  }
   omopgenerics::assertLogical(byConcept)
   omopgenerics::assertLogical(byYear)
   omopgenerics::assertLogical(bySex)
@@ -248,17 +331,26 @@ getCodeUse <- function(x,
 
   tableCodelist <- paste0(omopgenerics::uniqueTableName(),
                           omopgenerics::uniqueId())
-  cdm <- omopgenerics::insertTable(cdm = cdm,
-                            name = tableCodelist,
-                            table = dplyr::tibble(concept_id = x[[1]]),
-                            overwrite = TRUE,
-                            temporary = FALSE)
-  cdm[[tableCodelist]] <- cdm[[tableCodelist]] |>
-    dplyr::left_join(
-      cdm[["concept"]] |> dplyr::select("concept_id", "domain_id"),
-      by = "concept_id")
-
-
+  if(inherits(x[[1]], "cdm_table")){
+    cdm[[tableCodelist]] <- x[[1]] |>
+      dplyr::left_join(
+        cdm[["concept"]] |> dplyr::select("concept_id", "domain_id"),
+        by = "concept_id") |>
+      dplyr::compute(name = tableCodelist,
+                     overwrite = TRUE,
+                     temporary = FALSE,
+                     logPrefix = "CodelistGenerator.getCodeUse_joinConcept")
+  } else {
+    cdm <- omopgenerics::insertTable(cdm = cdm,
+                                     name = tableCodelist,
+                                     table = dplyr::tibble(concept_id = x[[1]]),
+                                     overwrite = TRUE,
+                                     temporary = FALSE)
+    cdm[[tableCodelist]] <- cdm[[tableCodelist]] |>
+      dplyr::left_join(
+        cdm[["concept"]] |> dplyr::select("concept_id", "domain_id"),
+        by = "concept_id")
+  }
   tableDomainsData <- paste0(omopgenerics::uniqueTableName(),
                              omopgenerics::uniqueId())
   cdm <- omopgenerics::insertTable(cdm = cdm,
@@ -273,8 +365,9 @@ getCodeUse <- function(x,
                      by = "domain_id") |>
     dplyr::compute(name = tableCodelist,
                    temporary = FALSE,
-                   overwrite = TRUE)
-  CDMConnector::dropTable(cdm = cdm, name = tableDomainsData)
+                   overwrite = TRUE,
+                   logPrefix = "CodelistGenerator.getCodeUse_conceptsDomains")
+  omopgenerics::dropSourceTable(cdm = cdm, name = tableDomainsData)
   cdm[[tableDomainsData]] <- NULL
 
   intermediateTable <- paste0(omopgenerics::uniqueTableName(),
@@ -284,7 +377,8 @@ getCodeUse <- function(x,
                                 cohortTable = cohortTable,
                                 cohortId = cohortId,
                                 timing = timing,
-                                intermediateTable = intermediateTable)
+                                intermediateTable = intermediateTable,
+                                useSourceCodes = useSourceCodes)
 
   if(!is.null(records) &&
      (records |> utils::head(1) |> dplyr::tally() |> dplyr::pull("n") > 0)) {
@@ -295,15 +389,13 @@ getCodeUse <- function(x,
 
     if(bySex == TRUE | !is.null(ageGroup)){
       records <- records |>
-        PatientProfiles::addDemographicsQuery(age = !is.null(ageGroup),
+        PatientProfiles::addDemographics(age = !is.null(ageGroup),
                                          ageGroup = ageGroup,
                                          sex = bySex,
                                          priorObservation = FALSE,
                                          futureObservation =  FALSE,
-                                         indexDate = "date") |>
-        dplyr::compute(overwrite = TRUE,
-                       name = omopgenerics::tableName(records),
-                       temporary = FALSE)
+                                         indexDate = "start_date",
+                                         name =  omopgenerics::tableName(records))
     }
 
     byAgeGroup <- !is.null(ageGroup)
@@ -333,7 +425,8 @@ getCodeUse <- function(x,
       omopgenerics::uniteGroup(cols = c("cohort_name", "codelist_name")) |>
       omopgenerics::uniteAdditional(
         cols = c("source_concept_name", "source_concept_id",
-                 "source_concept_value", "domain_id"),
+                 "source_concept_value", "type_concept_id", "type_concept_name",
+                 "domain_id", "table"),
         ignore = "overall"
       ) |>
       dplyr::select(
@@ -349,87 +442,25 @@ getCodeUse <- function(x,
     ))
   }
 
-  CDMConnector::dropTable(cdm = cdm,
+  omopgenerics::dropSourceTable(cdm = cdm,
                           name = tableCodelist)
   cdm[[tableCodelist]] <- NULL
-  CDMConnector::dropTable(
+  omopgenerics::dropSourceTable(
     cdm = cdm,
     name = dplyr::starts_with(intermediateTable)
   )
 
   return(codeCounts)
 }
-#
-# addDomainInfo <- function(codes,
-#                           cdm) {
-#
-#   codes <- codes |>
-#     dplyr::mutate(domain_id = tolower(.data$domain_id)) |>
-#     dplyr::mutate(table_name =
-#                     dplyr::case_when(
-#                       stringr::str_detect(domain_id,"condition") ~ "condition_occurrence",
-#                       stringr::str_detect(domain_id,"drug") ~ "drug_exposure",
-#                       stringr::str_detect(domain_id,"observation") ~ "observation",
-#                       stringr::str_detect(domain_id,"measurement") ~ "measurement",
-#                       stringr::str_detect(domain_id,"visit") ~ "visit_occurrence",
-#                       stringr::str_detect(domain_id,"procedure") ~ "procedure_occurrence",
-#                       stringr::str_detect(domain_id,"device") ~ "device_exposure"
-#                     )
-#     ) |>
-#     dplyr::mutate(standard_concept_id_name =
-#                     dplyr::case_when(
-#                       stringr::str_detect(domain_id,"condition") ~ "condition_concept_id",
-#                       stringr::str_detect(domain_id,"drug") ~ "drug_concept_id",
-#                       stringr::str_detect(domain_id,"observation") ~ "observation_concept_id",
-#                       stringr::str_detect(domain_id,"measurement") ~ "measurement_concept_id",
-#                       stringr::str_detect(domain_id,"visit") ~ "visit_concept_id",
-#                       stringr::str_detect(domain_id,"procedure") ~ "procedure_concept_id",
-#                       stringr::str_detect(domain_id,"device") ~ "device_concept_id"
-#                     )
-#     ) |>
-#     dplyr::mutate(source_concept_id_name =
-#                     dplyr::case_when(
-#                       stringr::str_detect(domain_id,"condition") ~ "condition_source_concept_id",
-#                       stringr::str_detect(domain_id,"drug") ~ "drug_source_concept_id",
-#                       stringr::str_detect(domain_id,"observation") ~ "observation_source_concept_id",
-#                       stringr::str_detect(domain_id,"measurement") ~ "measurement_source_concept_id",
-#                       stringr::str_detect(domain_id,"visit") ~ "visit_source_concept_id",
-#                       stringr::str_detect(domain_id,"procedure") ~ "procedure_source_concept_id",
-#                       stringr::str_detect(domain_id,"device") ~ "device_source_concept_id"
-#                     )
-#     ) |>
-#     dplyr::mutate(date_name =
-#                     dplyr::case_when(
-#                       stringr::str_detect(domain_id,"condition") ~ "condition_start_date",
-#                       stringr::str_detect(domain_id,"drug") ~ "drug_exposure_start_date",
-#                       stringr::str_detect(domain_id,"observation") ~ "observation_date",
-#                       stringr::str_detect(domain_id,"measurement") ~ "measurement_date",
-#                       stringr::str_detect(domain_id,"visit") ~ "visit_start_date",
-#                       stringr::str_detect(domain_id,"procedure") ~ "procedure_date",
-#                       stringr::str_detect(domain_id,"device") ~ "device_exposure_start_date"
-#                     )
-#     )
-#
-#   unsupported_domains <- codes |>
-#     dplyr::filter(!is.na(.data$domain_id)) |>
-#     dplyr::filter(is.na(.data$table_name)) |>
-#     dplyr::pull("domain_id")
-#
-#   if(length(unsupported_domains)>0){
-#     cli::cli_warn("Concepts included from non-supported domains
-#                    ({unsupported_domains})")
-#   }
-#
-#   return(codes)
-#
-# }
+
 
 getRelevantRecords <- function(cdm,
                                tableCodelist,
                                cohortTable,
                                cohortId,
                                timing,
-                               intermediateTable){
+                               intermediateTable,
+                               useSourceCodes){
 
   codes <- cdm[[tableCodelist]] |> dplyr::collect()
 
@@ -437,40 +468,75 @@ getRelevantRecords <- function(cdm,
   standardConceptIdName <- purrr::discard(unique(codes$standard_concept), is.na)
   sourceConceptIdName <- purrr::discard(unique(codes$source_concept), is.na)
   sourceConceptValueName <- purrr::discard(unique(codes$source_concept_value), is.na)
-  dateName <- purrr::discard(unique(codes$date_name), is.na)
+  typeConceptIdName <- purrr::discard(unique(codes$type_concept), is.na)
+  startDateName <- purrr::discard(unique(codes$start_date_name), is.na)
+  endDateName <- purrr::discard(unique(codes$end_date_name), is.na)
+
+  tmpTblName1 <- omopgenerics::uniqueTableName()
+  tmpTblName2 <- omopgenerics::uniqueTableName()
+
+  on.exit({
+    omopgenerics::dropSourceTable(cdm = cdm,
+                                        name = tmpTblName1);
+    omopgenerics::dropSourceTable(cdm = cdm,
+                                        name = tmpTblName2)
+    })
 
   if(!is.null(cohortTable)){
-    if(is.null(cohortId)){
+    if(!is.null(cohortId) &
+       needsIdFilter(cdm[[cohortTable]], cohortId)){
       cohortSubjects <- cdm[[cohortTable]] |>
+        dplyr::filter(.data$cohort_definition_id %in% cohortId)
+    } else {
+      cohortSubjects <- cdm[[cohortTable]]
+    }
+
+    if(timing == "entry"){
+      # will need person id and cohort start dates
+      cohortSubjects <- cohortSubjects |>
         dplyr::select("subject_id", "cohort_start_date") |>
         dplyr::rename("person_id" = "subject_id") |>
         dplyr::distinct()
     } else {
-      cohortSubjects <- cdm[[cohortTable]] |>
-        dplyr::filter(.data$cohort_definition_id %in% cohortId) |>
-        dplyr::select("subject_id", "cohort_start_date") |>
+      # otherwise any and we only need person ids
+      cohortSubjects <- cohortSubjects |>
+        dplyr::select("subject_id") |>
         dplyr::rename("person_id" = "subject_id") |>
         dplyr::distinct()
     }
   }
 
   if(length(tableName)>0){
-    codeRecords <- cdm[[tableName[[1]]]]
+    codeRecords <- cdm[[tableName[[1]]]] |>
+      dplyr::select("person_id",
+                    startDateName[[1]],
+                    endDateName[[1]],
+                    .env$standardConceptIdName[[1]],
+                    .env$sourceConceptIdName[[1]],
+                    .env$sourceConceptValueName[[1]],
+                    .env$typeConceptIdName[[1]]) |>
+      dplyr::mutate(table = !!omopgenerics::tableName(cdm[[tableName[[1]]]]))
     if(!is.null(cohortTable)){
       # keep only records of those in the cohorts of interest
-      codeRecords <- codeRecords |>
-        dplyr::inner_join(cohortSubjects,
-                          by = "person_id")
       if(timing == "entry"){
+        workingDateName <- startDateName[[1]]
         codeRecords <- codeRecords |>
-          dplyr::filter(.data$cohort_start_date == !!dplyr::sym(dateName[[1]]))
+          dplyr::inner_join(cohortSubjects,
+                            dplyr::join_by("person_id",
+                               !!dplyr::sym(workingDateName) == "cohort_start_date"))
+      } else {
+        codeRecords <- codeRecords |>
+          dplyr::inner_join(cohortSubjects,
+                            by = "person_id")
       }
     }
+
+    codeRecords <- codeRecords |>
+      dplyr::compute(name = tmpTblName1)
 
     if(is.null(codeRecords)){
       return(NULL)
     }
-
 
     tableCodes <- paste0(omopgenerics::uniqueTableName(),
                             omopgenerics::uniqueId())
@@ -482,26 +548,52 @@ getRelevantRecords <- function(cdm,
                                      overwrite = TRUE,
                                      temporary = FALSE)
     codeRecords <- codeRecords |>
-      dplyr::mutate(date = !!dplyr::sym(dateName[[1]])) |>
-      dplyr::mutate(year = clock::get_year(date)) |>
+      dplyr::mutate(start_date = !!dplyr::sym(startDateName[[1]]),
+                    end_date = !!dplyr::sym(endDateName[[1]])) |>
+      dplyr::mutate(year = clock::get_year(.data$start_date)) |>
       dplyr::select(dplyr::all_of(c("person_id",
                                     standardConceptIdName[[1]],
                                     sourceConceptIdName[[1]],
                                     sourceConceptValueName[[1]],
-                                    "date", "year"))) |>
+                                    typeConceptIdName[[1]],
+                                    "table",
+                                    "start_date","end_date", "year"))) |>
       dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[1]],
                     "source_concept_id" = .env$sourceConceptIdName[[1]],
-                    "source_concept_value" = .env$sourceConceptValueName[[1]]) |>
-      dplyr::inner_join(cdm[[tableCodes]],
-                        by = c("standard_concept_id"="concept_id")) |>
+                    "source_concept_value" = .env$sourceConceptValueName[[1]],
+                    "type_concept_id" = .env$typeConceptIdName[[1]]) |>
       dplyr::compute(
         name = paste0(intermediateTable,"_grr"),
         temporary = FALSE,
         schema = attr(cdm, "write_schema"),
-        overwrite = TRUE
+        overwrite = TRUE,
+        logPrefix = "CodelistGenerator.getRelevantRecords_join"
       )
 
-    CDMConnector::dropTable(cdm = cdm, name = tableCodes)
+    if(isTRUE(useSourceCodes)){
+      codeRecords <- codeRecords |>
+        dplyr::inner_join(cdm[[tableCodes]],
+                          by = c("source_concept_id"="concept_id")) |>
+        dplyr::compute(
+          name = paste0(intermediateTable,"_grr"),
+          temporary = FALSE,
+          schema = attr(cdm, "write_schema"),
+          overwrite = TRUE,
+          logPrefix = "CodelistGenerator.getRelevantRecords_filter"
+        )
+    }else{
+      codeRecords <- codeRecords |>
+        dplyr::inner_join(cdm[[tableCodes]],
+                          by = c("standard_concept_id"="concept_id")) |>
+        dplyr::compute(
+          name = paste0(intermediateTable,"_grr"),
+          temporary = FALSE,
+          schema = attr(cdm, "write_schema"),
+          overwrite = TRUE,
+          logPrefix = "CodelistGenerator.getRelevantRecords_filter"
+        )
+    }
+    omopgenerics::dropSourceTable(cdm = cdm, name = tableCodes)
     cdm[[tableCodes]] <- NULL
 
   } else {
@@ -514,34 +606,69 @@ getRelevantRecords <- function(cdm,
       workingRecords <-  cdm[[tableName[[i+1]]]]
       if(!is.null(cohortTable)){
         # keep only records of those in the cohorts of interest
-        workingRecords <- workingRecords |>
-          dplyr::inner_join(cohortSubjects,
-                            by = "person_id")
         if(timing == "entry"){
+          workingDateName <- startDateName[[i+1]]
           workingRecords <- workingRecords |>
-            dplyr::filter(.data$cohort_start_date == !!dplyr::sym(dateName[[i+1]]))
+            dplyr::inner_join(cohortSubjects,
+                              dplyr::join_by("person_id",
+                                             !!dplyr::sym(workingDateName) == "cohort_start_date"))
+        } else {
+          workingRecords <- workingRecords |>
+            dplyr::inner_join(cohortSubjects,
+                              by = "person_id")
         }
       }
 
-      tmpTblName <- omopgenerics::uniqueTableName()
       cdm <- omopgenerics::insertTable(cdm = cdm,
-                                       name = tmpTblName,
+                                       name = tmpTblName2,
                                        table = codes |>
                                          dplyr::filter(.data$table == tableName[[i+1]]) |>
                                          dplyr::select("concept_id", "domain_id"),
                                        overwrite = TRUE,
                                        temporary = FALSE)
       workingRecords <-  workingRecords |>
-        dplyr::mutate(date = !!dplyr::sym(dateName[[i+1]])) |>
-        dplyr::mutate(year = clock::get_year(date)) |>
+        dplyr::mutate(start_date = !!dplyr::sym(startDateName[[i+1]])) |>
+        dplyr::mutate(year = clock::get_year(.data$start_date),
+                      table = !!omopgenerics::tableName(cdm[[tableName[[1]]]])) |>
         dplyr::select(dplyr::all_of(c("person_id",
                                       standardConceptIdName[[i+1]],
                                       sourceConceptIdName[[i+1]],
-                                      "date", "year"))) |>
+                                      typeConceptIdName[[i+1]],
+                                      "start_date", "year"))) |>
         dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[i+1]],
-                      "source_concept_id" = .env$sourceConceptIdName[[i+1]]) |>
-        dplyr::inner_join(cdm[[tmpTblName]],
-                          by = c("standard_concept_id"="concept_id"))
+                      "source_concept_id" = .env$sourceConceptIdName[[i+1]],
+                      "type_concept_id" = .env$typeConceptIdName[[i+1]]) |>
+        dplyr::compute(
+          name = paste0(intermediateTable,"_grr1"),
+          temporary = FALSE,
+          schema = attr(cdm, "write_schema"),
+          overwrite = TRUE,
+          logPrefix = "CodelistGenerator.getRelevantRecords_join1"
+        )
+
+      if(isTRUE(useSourceCodes)){
+        workingRecords <- workingRecords |>
+          dplyr::inner_join(cdm[[tmpTblName2]],
+                            by = c("source_concept_id"="concept_id")) |>
+          dplyr::compute(
+            name = paste0(intermediateTable,"_grr1"),
+            temporary = FALSE,
+            schema = attr(cdm, "write_schema"),
+            overwrite = TRUE,
+            logPrefix = "CodelistGenerator.getRelevantRecords_filter1"
+          )
+      }else{
+        workingRecords <- workingRecords |>
+          dplyr::inner_join(cdm[[tmpTblName2]],
+                            by = c("standard_concept_id"="concept_id")) |>
+          dplyr::compute(
+            name = paste0(intermediateTable,"_grr1"),
+            temporary = FALSE,
+            schema = attr(cdm, "write_schema"),
+            overwrite = TRUE,
+            logPrefix = "CodelistGenerator.getRelevantRecords_filter1"
+          )
+      }
 
       if(workingRecords |> utils::head(1) |> dplyr::tally() |> dplyr::pull("n") >0){
         codeRecords <- codeRecords |>
@@ -550,31 +677,33 @@ getRelevantRecords <- function(cdm,
             name = paste0(intermediateTable,"_grr_i"),
             temporary = FALSE,
             schema = attr(cdm, "write_schema"),
-            overwrite = TRUE
+            overwrite = TRUE,
+            logPrefix = "CodelistGenerator.getRelevantRecords_unionAll"
           )
       }
-
-   omopgenerics::dropSourceTable(cdm = cdm, name = tmpTblName)
    }
   }
 
   if(codeRecords |> utils::head(1) |> dplyr::tally() |> dplyr::pull("n") >0){
     codeRecords <- codeRecords |>
-      dplyr::left_join(cdm[["concept"]] |>
-                         dplyr::select("concept_id", "concept_name"),
-                       by = c("standard_concept_id"="concept_id")) |>
-      dplyr::rename("standard_concept_name"="concept_name") |>
-      dplyr::left_join(cdm[["concept"]] |>
-                         dplyr::select("concept_id", "concept_name"),
-                       by = c("source_concept_id"="concept_id")) |>
-      dplyr::rename("source_concept_name"="concept_name")  |>
-      dplyr::mutate(source_concept_name = dplyr::if_else(is.na(.data$source_concept_name),
-                                                         "NA", .data$source_concept_name)) |>
+      PatientProfiles::addConceptName(column = "standard_concept_id",
+                                      nameStyle = "standard_concept_name") |>
+      PatientProfiles::addConceptName(column = "source_concept_id",
+                                      nameStyle = "source_concept_name")|>
+      PatientProfiles::addConceptName(column = "type_concept_id",
+                                      nameStyle = "type_concept_name") |>
+      dplyr::mutate(standard_concept_name = dplyr::if_else(is.na(.data$standard_concept_name),
+                                                         "NA", .data$standard_concept_name),
+                    source_concept_name = dplyr::if_else(is.na(.data$source_concept_name),
+                                                         "NA", .data$source_concept_name),
+                    type_concept_name = dplyr::if_else(is.na(.data$type_concept_name),
+                                                         "NA", .data$type_concept_name)) |>
       dplyr::compute(
         name = paste0(intermediateTable,"_grr_cr"),
         temporary = FALSE,
         schema = attr(cdm, "write_schema"),
-        overwrite = TRUE
+        overwrite = TRUE,
+        logPrefix = "CodelistGenerator.getRelevantRecords_codeRecords"
       )
   }
 
@@ -585,8 +714,8 @@ getRelevantRecords <- function(cdm,
 filterDateRange <- function(records, cdm, dateRange){
   dateRange <- getDateRange(cdm, dateRange)
   records |>
-    dplyr::filter(.data$date >= !!dateRange[1],
-                  .data$date <= !!dateRange[2])
+    dplyr::filter(.data$start_date >= !!dateRange[1],
+                  .data$start_date <= !!dateRange[2])
 }
 
 getSummaryCounts <- function(records,
@@ -599,8 +728,10 @@ getSummaryCounts <- function(records,
   if ("record" %in% countBy) {
     recordSummary <- records |>
       dplyr::tally(name = "estimate_value") |>
-      dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
-      dplyr::collect()
+      dplyr::collect() |>
+      dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
+      dplyr::mutate(estimate_value = as.character(.data$estimate_value))
+
     if(isTRUE(byConcept)) {
       recordSummary <- dplyr::bind_rows(
         recordSummary,
@@ -608,11 +739,14 @@ getSummaryCounts <- function(records,
           dplyr::group_by(
             .data$standard_concept_id, .data$standard_concept_name,
             .data$source_concept_id, .data$source_concept_name,
-            .data$source_concept_value, .data$domain_id
+            .data$source_concept_value,
+            .data$type_concept_id,  .data$type_concept_name,
+            .data$domain_id, .data$table
           ) |>
           dplyr::tally(name = "estimate_value") |>
-          dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
-          dplyr::collect()
+          dplyr::collect() |>
+          dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
+          dplyr::mutate(estimate_value = as.character(.data$estimate_value))
       )
     }else{
       recordSummary <- recordSummary |>
@@ -621,7 +755,10 @@ getSummaryCounts <- function(records,
                       "source_concept_id" = NA_integer_,
                       "source_concept_name" = NA_character_,
                       "source_concept_value" = NA_character_,
-                      "domain_id" = NA_character_)
+                      "type_concept_id" = NA_integer_,
+                      "type_concept_name" =  NA_character_,
+                      "domain_id" = NA_character_,
+                      "table" = NA_character_)
     }
     recordSummary <- recordSummary |>
       dplyr::mutate(
@@ -638,8 +775,9 @@ getSummaryCounts <- function(records,
       dplyr::select("person_id") |>
       dplyr::distinct() |>
       dplyr::tally(name = "estimate_value") |>
-      dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
-      dplyr::collect()
+      dplyr::collect() |>
+      dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
+      dplyr::mutate(estimate_value = as.character(.data$estimate_value))
 
     if (isTRUE(byConcept)) {
       personSummary <- dplyr::bind_rows(
@@ -648,17 +786,21 @@ getSummaryCounts <- function(records,
           dplyr::select(
             "person_id", "standard_concept_id", "standard_concept_name",
             "source_concept_id", "source_concept_name",
-            "source_concept_value", "domain_id"
+            "source_concept_value", "type_concept_id", "type_concept_name",
+            "domain_id", "table"
           ) |>
           dplyr::distinct() |>
           dplyr::group_by(
             .data$standard_concept_id, .data$standard_concept_name,
             .data$source_concept_id, .data$source_concept_name,
-            .data$source_concept_value, .data$domain_id
+            .data$type_concept_name,
+            .data$source_concept_value, .data$type_concept_id,
+            .data$domain_id, .data$table
           ) |>
           dplyr::tally(name = "estimate_value") |>
-          dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
-          dplyr::collect()
+          dplyr::collect() |>
+          dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
+          dplyr::mutate(estimate_value = as.character(.data$estimate_value))
       )
     }
     personSummary <- personSummary |>
@@ -669,7 +811,6 @@ getSummaryCounts <- function(records,
   } else {
     personSummary <- dplyr::tibble()
   }
-
 
   if ("record" %in% countBy & byYear == TRUE) {
     recordSummary <- dplyr::bind_rows(
@@ -719,7 +860,6 @@ getSummaryCounts <- function(records,
       getGroupedPersonCount(records = records, cdm = cdm, groupBy = c("age_group", "sex"))
     )
   }
-
   summary <- dplyr::bind_rows(recordSummary, personSummary)
   return(summary)
 }
@@ -732,16 +872,20 @@ getGroupedRecordCount <- function(records,
     records |>
       dplyr::group_by(dplyr::pick(.env$groupBy)) |>
       dplyr::tally(name = "estimate_value") |>
-      dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
-      dplyr::collect(),
+      dplyr::collect() |>
+      dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
+      dplyr::mutate(estimate_value = as.character(.data$estimate_value)),
     records |>
       dplyr::group_by(dplyr::pick(.env$groupBy,
                                   "standard_concept_id", "standard_concept_name",
                                   "source_concept_id", "source_concept_name",
-                                  "source_concept_value", "domain_id")) |>
+                                  "source_concept_value", "type_concept_id",
+                                  "type_concept_name",
+                                  "domain_id", "table")) |>
       dplyr::tally(name = "estimate_value") |>
-      dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
-      dplyr::collect()
+      dplyr::collect() |>
+      dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
+      dplyr::mutate(estimate_value = as.character(.data$estimate_value))
     )  |>
     omopgenerics::uniteStrata(cols = groupBy) |>
     dplyr::mutate(estimate_name = "record_count")
@@ -760,23 +904,27 @@ getGroupedPersonCount <- function(records,
       dplyr::distinct() |>
       dplyr::group_by(dplyr::pick(.env$groupBy)) |>
       dplyr::tally(name = "estimate_value") |>
-      dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
-      dplyr::collect(),
+      dplyr::collect() |>
+      dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
+      dplyr::mutate(estimate_value = as.character(.data$estimate_value)),
     records |>
       dplyr::select(dplyr::all_of(c(
         "person_id", "standard_concept_id", "standard_concept_name",
         "source_concept_id", "source_concept_name",
-        "source_concept_value", "domain_id", .env$groupBy
+        "source_concept_value", "type_concept_id", "type_concept_name",
+        "domain_id", "table", .env$groupBy
       ))) |>
       dplyr::distinct() |>
       dplyr::group_by(dplyr::pick(
         .env$groupBy, "standard_concept_id", "standard_concept_name",
         "source_concept_id", "source_concept_name",
-        "source_concept_value", "domain_id"
+        "source_concept_value", "type_concept_id", "type_concept_name",
+        "domain_id", "table"
       )) |>
-      dplyr::tally(name = "estimate_value") |>
-      dplyr::mutate(estimate_value = as.character(.data$estimate_value)) |>
-      dplyr::collect()) |>
+      dplyr::tally(name = "estimate_value")  |>
+      dplyr::collect() |>
+      dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
+      dplyr::mutate(estimate_value = as.character(.data$estimate_value))) |>
     omopgenerics::uniteStrata(cols = groupBy) |>
     dplyr::mutate(estimate_name = "person_count")
 
@@ -785,7 +933,7 @@ getGroupedPersonCount <- function(records,
 }
 
 checkCategory <- function(category, overlap = FALSE) {
-  omopgenerics::assertList(category, unique = T)
+  omopgenerics::assertList(category, unique = TRUE)
 
   if (is.null(names(category))) {
     names(category) <- rep("", length(category))
@@ -852,7 +1000,7 @@ checkAgeGroup <- function(ageGroup, overlap = FALSE) {
       invisible(checkCategory(ageGroup[[k]], overlap))
     }
     if (is.null(names(ageGroup))) {
-      names(ageGroup) <- paste0("age_group_", 1:length(ageGroup))
+      names(ageGroup) <- paste0("age_group_", seq_along(ageGroup))
     }
     if ("" %in% names(ageGroup)) {
       id <- which(names(ageGroup) == "")

@@ -9,7 +9,9 @@ codesFromCohort(path, cdm, type = c("codelist"))
 \arguments{
 \item{path}{Path to a file or folder containing JSONs of cohort definitions.}
 
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
 \item{type}{Can be "codelist", "codelist_with_details" or
 "concept_set_expression".}
@@ -22,6 +24,7 @@ Get concept ids from JSON files containing cohort definitions
 }
 \examples{
 \donttest{
+library(CodelistGenerator)
 cdm <- mockVocabRef("database")
 x <- codesFromCohort(cdm = cdm,
                      path =  system.file(package = "CodelistGenerator",

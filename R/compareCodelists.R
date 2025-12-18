@@ -25,67 +25,141 @@
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockVocabRef()
+#' library(CodelistGenerator)
+#' library(omock)
+#'
+#' # Create a CDM object
+#' downloadMockDataset(datasetName = "GiBleed",
+#'                     path = NULL,
+#'                     overwrite = NULL)
+#' cdm <- mockCdmFromDataset(datasetName = "GiBleed")
+#'
+#' # Compare two candidate_codes object
 #' codes1 <- getCandidateCodes(
-#'  cdm = cdm,
-#'  keywords = "Arthritis",
-#'  domains = "Condition",
-#'  includeDescendants = TRUE
-#' )
+#'   cdm = cdm,
+#'   keywords = "Arthritis",
+#'   domains = "Condition",
+#'   includeDescendants = TRUE)
+#'
 #' codes2 <- getCandidateCodes(
-#'  cdm = cdm,
-#'  keywords = c("knee osteoarthritis", "arthrosis"),
-#'  domains = "Condition",
-#'  includeDescendants = TRUE
-#')
+#'   cdm = cdm,
+#'   keywords = c("osteo"),
+#'   domains = "Condition",
+#'   includeDescendants = TRUE)
+#'
 #' compareCodelists(
-#'  codelist1 = codes1,
-#'  codelist2 = codes2
-#' )
+#'   codelist1 = codes1,
+#'   codelist2 = codes2)
+#'
+#' # Compare two codelists
+#' acetaminophen <- getDrugIngredientCodes(cdm,
+#'                                         name = "acetaminophen",
+#'                                         nameStyle = "{concept_name}",
+#'                                         type = "codelist")
+#'
+#' hydrocodone <- getDrugIngredientCodes(cdm,
+#'                                       name = "hydrocodone",
+#'                                       nameStyle = "{concept_name}",
+#'                                       type = "codelist")
+#' compareCodelists(
+#'   codelist1 = acetaminophen,
+#'   codelist2 = hydrocodone)
+#' # Notice that concept_name = NA as `codelist` class does not store this information
+#' # for each concept.
+#'
+#' # Compare two codelists_with_details
+#' acetaminophen <- getDrugIngredientCodes(cdm,
+#'                                         name = "acetaminophen",
+#'                                         nameStyle = "{concept_name}",
+#'                                         type = "codelist_with_details")
+#'
+#' hydrocodone <- getDrugIngredientCodes(cdm,
+#'                                       name = "hydrocodone",
+#'                                       nameStyle = "{concept_name}",
+#'                                       type = "codelist_with_details")
+#' compareCodelists(
+#'   codelist1 = acetaminophen,
+#'   codelist2 = hydrocodone)
+#'
 #' }
 compareCodelists <- function(codelist1,
                              codelist2) {
 
-  if(is.list(codelist1) && !is.data.frame(codelist1)){
-    if(length(codelist1)>1){
-    cli::cli_abort("Codelist must be singular")
-    }
-    codelist1 <- omopgenerics::newCodelist(codelist1)
-    codelist1 <- dplyr::tibble(concept_id = codelist1[[1]],
-                               concept_name = NA_character_)
+  if(!inherits(codelist1, "candidate_codes")){
+    checkCodelist(codelist1, allowConceptSetExpression = FALSE)
+  }
+  if(!inherits(codelist2, "candidate_codes")){
+    checkCodelist(codelist2, allowConceptSetExpression = FALSE)
   }
 
-  if(is.list(codelist2) && !is.data.frame(codelist2)){
-    if(length(codelist2)>1){
-      cli::cli_abort("Codelist must be singular")
+  codelist1 <- convertCodelist(codelist1, name = "codelist1")
+  codelist2 <- convertCodelist(codelist2, name = "codelist2")
+
+  codes <- list()
+  for(i in seq_along(codelist1)){
+    for(j in seq_along(codelist2)){
+      workingName <- paste0(names(codelist1)[[i]],"_", names(codelist2)[[j]])
+
+      codes[[workingName]] <- dplyr::full_join(codelist1[[i]] |>
+                                                 dplyr::select("concept_id", "concept_name") |>
+                                                 dplyr::mutate(codelist_1 = 1) |>
+                                                 dplyr::distinct(),
+                                               codelist2[[j]] |>
+                                                 dplyr::select("concept_id", "concept_name") |>
+                                                 dplyr::mutate(codelist_2 = 1) |>
+                                                 dplyr::distinct(),
+                                               by = c("concept_id", "concept_name"))
+
+      codes[[workingName]] <- codes[[workingName]] |>
+        dplyr::mutate(
+          "codelist" = dplyr::case_when(
+            !is.na(codelist_1) & is.na(codelist_2) ~ paste0("Only in codelist ", names(codelist1)[[i]]),
+            is.na(codelist_1) & !is.na(codelist_2) ~  paste0("Only in codelist ", names(codelist2)[[j]]),
+            !is.na(codelist_1) & !is.na(codelist_2) ~ "Both")) |>
+        dplyr::select(-c("codelist_1", "codelist_2"))
     }
-    codelist2 <- omopgenerics::newCodelist(codelist2)
-    codelist2 <- dplyr::tibble(concept_id = codelist2[[1]],
-                               concept_name = NA_character_)
   }
 
-  # initial checks
-  omopgenerics::assertTable(codelist1, columns = c("concept_id", "concept_name"))
-  omopgenerics::assertTable(codelist2, columns = c("concept_id", "concept_name"))
-
-  codes <- dplyr::full_join(codelist1 |>
-                            dplyr::select("concept_id", "concept_name") |>
-                            dplyr::mutate(codelist_1 = 1) |>
-                            dplyr::distinct(),
-                          codelist2 |>
-                            dplyr::select("concept_id", "concept_name") |>
-                            dplyr::mutate(codelist_2 = 1) |>
-                            dplyr::distinct(),
-                          by = c("concept_id", "concept_name"))
-
-  codes <- codes |>
-    dplyr::mutate(
-      codelist =
-        dplyr::case_when(
-          !is.na(codelist_1) & is.na(codelist_2) ~ "Only codelist 1",
-          is.na(codelist_1) & !is.na(codelist_2) ~ "Only codelist 2",
-          !is.na(codelist_1) & !is.na(codelist_2) ~ "Both"
-        ))
-
+  if(length(codes) == 1){
+    codes <- codes[[1]] |>
+      dplyr::arrange(.data$concept_id)
+  }
   return(codes)
+}
+
+
+convertCodelist <- function(codelist, name){
+  if(inherits(codelist, "codelist")){
+    codelist <- purrr::map(
+      codelist,
+      ~dplyr::tibble("concept_id" = .x,
+                     "concept_name" = NA_character_)
+    )
+  }
+
+  if(inherits(codelist, "codelist_with_details")){
+    if("concept_name" %in% colnames(codelist[[1]])){
+      codelist <- purrr::map(
+        codelist,
+        ~dplyr::tibble("concept_id" = dplyr::pull(.x, "concept_id"),
+                       "concept_name" = dplyr::pull(.x, "concept_name"))
+      )
+    }else{
+      codelist <- purrr::map(
+        codelist,
+        ~dplyr::tibble("concept_id" = dplyr::pull(.x, "concept_id"),
+                       "concept_name" = NA_character_)
+
+      )
+    }
+  }
+
+  if(inherits(codelist, "candidate_codes")){
+    codelist <- removeClass(codelist, "candidate_codes")
+    codelist <- list("codelist" = codelist |>
+                       dplyr::select("concept_id", "concept_name"))
+    names(codelist) <- name
+  }
+
+  return(codelist)
 }

@@ -2,14 +2,17 @@
 % Please edit documentation in R/codesFromConceptSet.R
 \name{codesFromConceptSet}
 \alias{codesFromConceptSet}
-\title{Get concept ids from JSON files containing concept sets}
+\title{Get concept ids from JSON files containing concept sets
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}
 \usage{
 codesFromConceptSet(path, cdm, type = c("codelist"))
 }
 \arguments{
 \item{path}{Path to a file or folder containing JSONs of concept sets.}
 
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
 \item{type}{Can be "codelist", "codelist_with_details" or
 "concept_set_expression".}
@@ -19,14 +22,35 @@ Named list with concept_ids for each concept set.
 }
 \description{
 Get concept ids from JSON files containing concept sets
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 }
 \examples{
 \donttest{
-cdm <- mockVocabRef("database")
+library(CodelistGenerator)
+library(omock)
+
+# Create a CDM object
+cdm <- mockCdmReference()
+
+# Load JSON files
 x <- codesFromConceptSet(cdm = cdm,
                          path =  system.file(package = "CodelistGenerator",
-                         "concepts_for_mock"))
+                                             "concepts_for_mock"))
 x
-CDMConnector::cdmDisconnect(cdm)
+
+# Load JSON files as codelist_with_details
+x <- codesFromConceptSet(cdm = cdm,
+                         path =  system.file(package = "CodelistGenerator",
+                                             "concepts_for_mock"),
+                         type = "codelist_with_details")
+x
+
+# Load JSON files as concept_set_expression
+x <- codesFromConceptSet(cdm = cdm,
+                         path =  system.file(package = "CodelistGenerator",
+                                             "concepts_for_mock"),
+                         type = "concept_set_expression")
+x
+
 }
 }

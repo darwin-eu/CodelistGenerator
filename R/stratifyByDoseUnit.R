@@ -19,6 +19,8 @@
 #'
 #' @inheritParams xDoc
 #' @inheritParams cdmDoc
+#' @param nameStyle Naming of the new codelists, use `{codelist_name}` to
+#' include the codelist name and `{dose_unit}` to include the dose unit name.
 #' @inheritParams keepOriginalDoc
 #'
 #' @return The codelist with the required stratifications, as different elements
@@ -27,122 +29,55 @@
 #' @examples
 #' \donttest{
 #' library(CodelistGenerator)
+#'
 #' cdm <- mockVocabRef()
-#' codes <- list("concepts" = c(20,21))
+#'
+#' codes <- newCodelist(list("concepts" = c(20L, 21L)))
 #' new_codes <- stratifyByDoseUnit(x = codes,
 #'                                 cdm = cdm,
 #'                                 keepOriginal = TRUE)
 #' new_codes
 #' }
-stratifyByDoseUnit <- function(x, cdm, keepOriginal = FALSE){
+stratifyByDoseUnit <- function(x,
+                               cdm,
+                               nameStyle = "{codelist_name}_{dose_unit}",
+                               keepOriginal = FALSE){
+  stratifyCodelistBy(
+    x = x,
+    cdm = cdm,
+    by = "dose_unit",
+    nameStyle = nameStyle,
+    keepOriginal = keepOriginal
+  )
+}
 
-  # initial checks
-  omopgenerics::assertList(x)
-  cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
-  omopgenerics::assertLogical(keepOriginal, length = 1)
-
-  if(inherits(x, "codelist_with_details")){
-    x_original <- x
-    withDetails <- TRUE
-    x <- codelistFromCodelistWithDetails(x)
-  } else {
-    withDetails <- FALSE
-  }
-
-  x <- omopgenerics::newCodelist(x)
-
-  tableCodelist <- paste0(omopgenerics::uniqueTableName(),
-                          omopgenerics::uniqueId())
-
-  result <- list()
-
-  drugStrengthNamed <- cdm$drug_strength |>
-    dplyr::left_join(cdm$concept |>
-                       dplyr::select("concept_id",
-                                     "concept_name"),
-                     by= c("amount_unit_concept_id"= "concept_id")) |>
-    dplyr::rename("amount_concept_name" = "concept_name") |>
-    dplyr::left_join(cdm$concept |>
-                       dplyr::select("concept_id",
-                                     "concept_name"),
-                     by= c("numerator_unit_concept_id"= "concept_id")) |>
-    dplyr::rename("numerator_concept_name" = "concept_name")
-
-  for(i in seq_along(x)){
-    cdm <- omopgenerics::insertTable(cdm = cdm,
-                                     name = tableCodelist,
-                                     table = dplyr::tibble(concept_id = x[[i]]),
-                                     overwrite = TRUE,
-                                     temporary = FALSE)
-
-    workingName <- names(x)[i]
-
-    workingCodesWithDoseUnit <- cdm[[tableCodelist]] |>
-      dplyr::left_join(cdm$concept,
-                       by = "concept_id")|>
-      dplyr::left_join(drugStrengthNamed,
-                        by = c("concept_id" = "drug_concept_id")
-      ) |>
-      dplyr::select("concept_id", "domain_id",
-                    "amount_concept_name",
-                    "numerator_concept_name") |>
-      dplyr::distinct() |>
-      dplyr::collect()
-
-    workingCodesWithDoseUnit <- workingCodesWithDoseUnit |>
-      dplyr::mutate(
-        unit_group = dplyr::case_when(
-          !is.na(.data$amount_concept_name) ~ omopgenerics::toSnakeCase(.data$amount_concept_name),
-          !is.na(.data$numerator_concept_name) ~ omopgenerics::toSnakeCase(.data$numerator_concept_name),
-          tolower(.data$domain_id) == "drug" ~ "unkown_dose_unit"
-        )
-      ) |>
-      dplyr::filter(!is.na(.data$unit_group))
-
-    if(isTRUE(withDetails)){
-      workingCodesWithDoseUnit <-  x_original[[i]] |>
-        dplyr::inner_join(workingCodesWithDoseUnit,
-                          by = "concept_id")
-    }
-
-    workingCodesWithDoseUnit <- split(
-      workingCodesWithDoseUnit,
-      workingCodesWithDoseUnit[, c("unit_group")]
-    )
-
-    if(length(workingCodesWithDoseUnit)>0){
-    names(workingCodesWithDoseUnit) <- paste0(workingName, "_",
-                                           names(workingCodesWithDoseUnit))
-    }
-
-    if(isFALSE(withDetails)){
-      for(j in seq_along(workingCodesWithDoseUnit)){
-        workingCodesWithDoseUnit[[j]] <- sort(workingCodesWithDoseUnit[[j]] |>
-                                             dplyr::pull("concept_id"))
-
-      }}
-
-    result[[i]] <- workingCodesWithDoseUnit
-
-  }
-
-  result <- purrr::list_flatten(result) |>
-    vctrs::list_drop_empty()
-
-  if(isTRUE(keepOriginal)){
-    result <- purrr::list_flatten(list(x, result))
-  }
-
-  CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
-
-  result <- result[order(names(result))]
-
-  if(isFALSE(withDetails)){
-    result <- omopgenerics::newCodelist(result)
-  } else{
-    result <- omopgenerics::newCodelistWithDetails(result)
-  }
-
-  result
-
+addDoseUnit <- function(x) {
+  cdm <- omopgenerics::cdmReference(table = x)
+  x |>
+    # add amount unit and numerator unit
+    dplyr::left_join(
+      cdm$drug_strength |>
+        dplyr::left_join(
+          cdm$concept |>
+            dplyr::select(
+              "amount_unit_concept_id" = "concept_id",
+              "amount_unit" = "concept_name"
+            ),
+          by = "amount_unit_concept_id"
+        ) |>
+        dplyr::left_join(
+          cdm$concept |>
+            dplyr::select(
+              "numerator_unit_concept_id" = "concept_id",
+              "numerator_unit" = "concept_name"
+            ),
+          by = "numerator_unit_concept_id"
+        ) |>
+        dplyr::select("concept_id" = "drug_concept_id", "amount_unit", "numerator_unit"),
+      by = "concept_id"
+    ) |>
+    dplyr::collect() |>
+    dplyr::mutate(dose_unit = dplyr::coalesce(.data$amount_unit, .data$numerator_unit)) |>
+    dplyr::select(!c("amount_unit", "numerator_unit")) |>
+    dplyr::distinct()
 }

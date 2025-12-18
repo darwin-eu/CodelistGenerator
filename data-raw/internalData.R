@@ -1,4 +1,3 @@
-
 conceptDomainsData <- dplyr::tibble(domain_id = c("drug","condition",
                                                   "procedure",  "observation",
                                                   "measurement", "visit",
@@ -47,7 +46,18 @@ conceptDomainsData <- dplyr::tibble(domain_id = c("drug","condition",
                     stringr::str_detect(domain_id,"device") ~ "device_source_value"
                   )
   ) |>
-  dplyr::mutate(date_name =
+  dplyr::mutate(type_concept =
+                  dplyr::case_when(
+                    stringr::str_detect(domain_id,"condition") ~ "condition_type_concept_id",
+                    stringr::str_detect(domain_id,"drug") ~ "drug_type_concept_id",
+                    stringr::str_detect(domain_id,"observation") ~ "observation_type_concept_id",
+                    stringr::str_detect(domain_id,"measurement") ~ "measurement_type_concept_id",
+                    stringr::str_detect(domain_id,"visit") ~ "visit_type_concept_id",
+                    stringr::str_detect(domain_id,"procedure") ~ "procedure_type_concept_id",
+                    stringr::str_detect(domain_id,"device") ~ "device_type_concept_id"
+                  )
+  ) |>
+  dplyr::mutate(start_date_name =
                   dplyr::case_when(
                     stringr::str_detect(domain_id,"condition") ~ "condition_start_date",
                     stringr::str_detect(domain_id,"drug") ~ "drug_exposure_start_date",
@@ -56,6 +66,17 @@ conceptDomainsData <- dplyr::tibble(domain_id = c("drug","condition",
                     stringr::str_detect(domain_id,"visit") ~ "visit_start_date",
                     stringr::str_detect(domain_id,"procedure") ~ "procedure_date",
                     stringr::str_detect(domain_id,"device") ~ "device_exposure_start_date"
+                  )
+  ) |>
+  dplyr::mutate(end_date_name =
+                  dplyr::case_when(
+                    stringr::str_detect(domain_id,"condition") ~ "condition_end_date",
+                    stringr::str_detect(domain_id,"drug") ~ "drug_exposure_end_date",
+                    stringr::str_detect(domain_id,"observation") ~ "observation_date",
+                    stringr::str_detect(domain_id,"measurement") ~ "measurement_date",
+                    stringr::str_detect(domain_id,"visit") ~ "visit_end_date",
+                    stringr::str_detect(domain_id,"procedure") ~ "procedure_date",
+                    stringr::str_detect(domain_id,"device") ~ "device_exposure_end_date"
                   )
   )
 
@@ -121,18 +142,7 @@ achillesAnalisisDetails <- dplyr::tibble(
   type = rep(c("person_count", "record_count", "record_count"), 7)
 )
 
-
-doseFormToRoute <- readr::read_csv(
-  here::here("data-raw", "dose_form_to_route.csv"),
-  comment = "",
-  col_types = list(
-    route_category = "character",
-    dose_form_concept_id = "numeric"
-  )
-) |>
-  dplyr::select("dose_form_concept_id", "route_category")
-
 usethis::use_data(
-  doseFormToRoute, conceptDomainsData, achillesAnalisisDetails,
+  conceptDomainsData, achillesAnalisisDetails,
   overwrite = TRUE, internal = TRUE
 )

@@ -62,7 +62,7 @@ runSearch <- function(keywords,
     dplyr::compute()
 
   # will only collect conceptSynonym later if needed
-  if (searchInSynonyms == TRUE) {
+  if (searchInSynonyms) {
     conceptSynonymDb <- conceptSynonymDb |>
       dplyr::left_join(
         conceptDb |>
@@ -122,16 +122,19 @@ runSearch <- function(keywords,
     # Get standard, condition concepts which include one of the exclusion words
     # always use exact matching
     excludeCodes <- getMatches(
-      words = tidyWords(exclude),
+      words = exclude,
       conceptDf = workingConcept
     )
+    if(length(excludeCodes) == 0){
+      exclude <- NULL
+    }
   }
 
   # 2) Get standard, condition concepts which
   # include one of the keywords
   cli::cli_inform("Getting concepts to include")
   candidateCodes <- getMatches(
-    words = tidyWords(keywords),
+    words = keywords,
     conceptDf = workingConcept
   )
 
@@ -157,7 +160,7 @@ runSearch <- function(keywords,
 
   # 3) also search in synonyms if option set to true
   # left join back to concept from workingConcept table
-  if (searchInSynonyms == TRUE) {
+  if (searchInSynonyms) {
     cli::cli_inform("Adding concepts using synonymns")
     candidateCodesInSynonyms <- getMatches(
       words = tidyWords(keywords),
@@ -199,7 +202,7 @@ runSearch <- function(keywords,
 
 
   # 5) add any codes lower in the hierarchy
-  if (includeDescendants == TRUE) {
+  if (includeDescendants) {
     if (candidateCodes |>
         utils::head(10) |>
         dplyr::tally() |>
@@ -239,7 +242,7 @@ runSearch <- function(keywords,
   }
 
   # 6) add any codes one level above in the hierarchy
-  if (includeAncestor == TRUE) {
+  if (includeAncestor) {
     if (candidateCodes |>
         utils::head(10) |>
         dplyr::tally() |>
@@ -281,7 +284,7 @@ runSearch <- function(keywords,
   # nb we do this last so as to not include descendants
   # which can blow up candiate codelist when there
   # are multiple mappings
-  if (searchNonStandard == TRUE) {
+  if (searchNonStandard) {
     cli::cli_inform("Adding codes from non-standard")
     conceptNs <- conceptDb |>
       dplyr::filter(.data$standard_concept == "non-standard") |>
@@ -343,10 +346,10 @@ runSearch <- function(keywords,
   candidateCodes <- candidateCodes |>
     dplyr::select(c("concept_id", "found_from", "found_id")) |>
     dplyr::inner_join(cdm[["concept"]] |>
-                       dplyr::select("concept_id", "concept_name",
-                                     "domain_id", "vocabulary_id",
-                                     "standard_concept"),
-                     by = "concept_id") |>
+                        dplyr::select("concept_id", "concept_name",
+                                      "domain_id", "vocabulary_id",
+                                      "standard_concept"),
+                      by = "concept_id") |>
     dplyr::distinct() |>
     dplyr::collect()
 
@@ -367,12 +370,22 @@ runSearch <- function(keywords,
 
     # make sure we only have codes from the domain of interest
     candidateCodes <- candidateCodes |>
-      dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domains))
-      }
+      dplyr::mutate(
+        standard_concept1 = dplyr::case_when(
+          is.na(.data$standard_concept) ~ "non-standard",
+          .data$standard_concept == "C" ~ "classification",
+          .data$standard_concept == "S" ~ "standard",
+          .default = as.character(.data$standard_concept)
+        )
+      ) |>
+      dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domains),
+                    tolower(.data$standard_concept1) %in% .env$standardConceptFlags) |>
+      dplyr::select(-"standard_concept1")
+  }
 
 
   if(!is.null(attr(cdm, "dbcon"))){
-    CDMConnector::dropTable(cdm = cdm,
+    omopgenerics::dropSourceTable(cdm = cdm,
                             name = dplyr::starts_with(paste0("cg_",prefix)))
   }
 
@@ -382,23 +395,52 @@ runSearch <- function(keywords,
 
 
 # helper functions for runSearch
-tidyWords <- function(words) {
+tidyWords <- function(words, message = TRUE) {
   omopgenerics::assertCharacter(words)
 
   # to avoid invalid UTF-8 error
-  Encoding(words) <- "latin1"
+  words <- iconv(words, from = "", to = "UTF-8",sub="")
+
+  # Remove / at the beginning and at the end for exact matching
+  words <- stringr::str_replace(words, "^/(.*)/$", "\\1")
+  words <- stringr::str_replace(words, "^/\b(.*)/\b$", "\\1")
+
+  # throw a warning if there is one of these symbols
+  if(isTRUE(message)){
+  locs <- stringr::str_locate_all(words, "[^\\x20-\\x7E]|[[:punct:]]|[^\\da-zA-Z ]|[^\x01-\x7F]+")
+  symbols <- purrr::map2(words, locs, ~{
+    if (nrow(.y) == 0) return(character(0))
+    stringr::str_sub(.x, .y[,1], .y[,2])
+  })
+
+  symbols <- unlist(symbols)
+  dash <- stringr::str_detect(words, "-")
+
+  msg <- as.character()
+  if(length(symbols) > 0){
+    symbols <- unique(symbols)
+    msg <- "Symbols {.val {symbols}} will be ignored. "
+  }
+  if(any(dash)){
+    msg <- append(msg, "`-` will be replaced by an empty space.")
+  }
+  if(length(msg) > 0){
+    cli::cli_inform(msg, call = parent.frame())
+  }
+  }
 
   # some generic formatting
   workingWords <- stringr::str_remove_all(words, "[^\\x20-\\x7E]")
   workingWords <- stringi::stri_trans_nfkc(workingWords)
   workingWords <- trimws(workingWords)
-  workingWords <- trimws(words)
   workingWords <- stringr::str_replace_all(workingWords, "-", " ")
   workingWords <- stringr::str_replace_all(workingWords, "[[:punct:]]", "")
   workingWords <- stringr::str_remove_all(workingWords, "[^[\\da-zA-Z ]]")
   workingWords <- stringr::str_remove_all(workingWords, "[^\x01-\x7F]+")
   workingWords <- stringr::str_to_lower(workingWords)
   workingWords <- trimws(workingWords)
+
+  workingWords <- workingWords[workingWords != ""]
 
   return(workingWords)
 }
@@ -415,9 +457,50 @@ getMatches <- function(words,
   # note, where one term is multiple words (e.g "knee osteoarthritis"),
   # split up and search
   # so that they don´t need to be next to each other
-  # (e.g. to find "osteoarthritis of knee"))
+  # (e.g. to find "osteoarthritis of knee")).
+  # This only will be applied if the word is not between / (e.g., (1) "/knee osteoarthritis/
+  # will only exclude those concepts that contain "knee osteoarthritis", so
+  # "osteoarthritis of knee" would not be excluded, but "history of knee osteoarthritis"
+  # would be, (2) /ee osteoarthritis/ will also include those concepts with "knee osteoarthritis".
+  # If we want to apply exact matches accounting for words boundaries, we need to use "/\bknee osteoarthritis/\b".
 
+  # Notice that this will only be applied for exclude argument, as it is the only one
+  # that does not apply tidyWords before using getMatches() function.
   conceptsFound <- list()
+
+  # Exact matches only (including word boundaries)
+  exactMatchesBoundaries <- tidyWords(words[stringr::str_detect(words,"^/\b.*/\b$")])
+  for(i in seq_along(exactMatchesBoundaries)){
+    workingExclude <- exactMatchesBoundaries[i]
+    workingConcepts <- conceptDf # start with all
+
+    if (nchar(workingExclude) >= 1) {
+      cToSearch <-  workingExclude
+      workingConcepts <- workingConcepts |>
+        dplyr::filter(stringr::str_like(.data$concept_name, .env$cToSearch))
+    }
+
+    conceptsFound[[i]] <- workingConcepts |>
+      dplyr::compute()
+  }
+
+  exactMatches <- tidyWords(words[stringr::str_detect(words,"^/.*/$")])
+  for (i in seq_along(exactMatches)) {
+    workingExclude <- exactMatches[i]
+    workingConcepts <- conceptDf # start with all
+
+    if (nchar(workingExclude) >= 1) {
+      cToSearch <-  paste0("%", workingExclude, "%")
+      workingConcepts <- workingConcepts |>
+        dplyr::filter(stringr::str_like(.data$concept_name, .env$cToSearch))
+    }
+
+    conceptsFound[[i+length(exactMatchesBoundaries)]] <- workingConcepts |>
+      dplyr::compute()
+  }
+
+  # Flexible search only
+  words <- tidyWords(words[!c(stringr::str_detect(words, "^/.*/$")|stringr::str_detect(words,"^/\b.*/\b$")) ])
   for (i in seq_along(words)) {
     workingExclude <- unlist(strsplit(words[i], " "))
     workingConcepts <- conceptDf # start with all
@@ -425,14 +508,18 @@ getMatches <- function(words,
     for (j in seq_along(workingExclude)) {
       if (nchar(workingExclude[j]) >= 1) {
 
-      cToSearch <-  paste0("%", workingExclude[j], "%")
-      workingConcepts <- workingConcepts |>
-        dplyr::filter(stringr::str_like(.data$concept_name, .env$cToSearch))
+        cToSearch <-  paste0("%", workingExclude[j], "%")
+        workingConcepts <- workingConcepts |>
+          dplyr::filter(stringr::str_like(.data$concept_name, .env$cToSearch))
 
       }
     }
-    conceptsFound[[i]] <- workingConcepts |>
+    conceptsFound[[i+length(exactMatchesBoundaries)+length(exactMatches)]] <- workingConcepts |>
       dplyr::compute()
+  }
+
+  if(length(conceptsFound) == 0){
+    return()
   }
 
   if(length(conceptsFound)==1){

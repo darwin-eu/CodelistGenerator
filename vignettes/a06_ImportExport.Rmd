@@ -1,0 +1,82 @@
+---
+title: "Importing and exporting codelists"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{a06_ImportExport}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%",
+  eval = NOT_CRAN
+)
+```
+
+## Importing and exporting codelists
+
+We will typically want to save the codelists we create for re-use. To show how we can do this, let's first create an empty folder to store our codelists in.
+
+```{r}
+library(CodelistGenerator)
+```
+
+```{r}
+dir_codes <- file.path(tempdir(), "codelists")
+dir.create(dir_codes)
+list.files(dir_codes)
+```
+
+Now let's create a couple of codelists that we will save.
+```{r}
+codelist <- list("codes1" = c(1L, 2L, 3L),
+                 "codes2" = c(4L, 5L, 10L))
+codelist <- newCodelist(codelist)
+
+codelist 
+```
+
+We can use `exportCodelist()` to save these as two CSVs, one for each codelist.
+```{r}
+exportCodelist(codelist, dir_codes, type = "csv")
+list.files(dir_codes)
+```
+
+To import codelists, we have `importCodelist()`. Here we can see that we can easily import our codelists back into R.
+
+```{r}
+importCodelist(dir_codes, type = "csv")
+```
+
+## Importing concept sets
+
+As we've seen in the previous vignettes, codelists can also be represented as concept set which is resolved against the OMOP CDM vocabulary. To import these we can use `importConceptSetExpression()`.
+
+Take this example concept set expression.
+
+
+```{r, message=FALSE, warning=FALSE}
+library(jsonlite)
+concept_set_path <- system.file("concepts_for_mock/arthritis_with_excluded.json", 
+                                package = "CodelistGenerator")
+fromJSON(concept_set_path) |> toJSON(pretty = TRUE, auto_unbox = TRUE)
+```
+
+We can bring this into R as a concept set expression.
+```{r, message=FALSE, warning=FALSE}
+cse <- importConceptSetExpression(concept_set_path)
+cse
+```
+
+And we can then resolve it to a concept set. Note, for this we will need to specify a cdm reference as the result will be tied to a given OMOP CDM vocabulary version which will specify the relevant descendants.
+
+```{r, message=FALSE, warning=FALSE}
+cdm <- mockVocabRef()
+importConceptSetExpression(concept_set_path) |> 
+  asCodelist(cdm)
+```

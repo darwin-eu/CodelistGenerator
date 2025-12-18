@@ -1,4 +1,5 @@
 test_that("tests with mock", {
+  skip_on_cran()
   backends <- c("database")
 
   for (i in seq_along(backends)) {

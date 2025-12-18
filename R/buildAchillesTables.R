@@ -1,29 +1,4 @@
 
-#' Add the achilles tables with specified analyses
-#'
-#' @description
-#' If the cdm reference does not contain the achilles tables, this function
-#' will create them for the analyses used by other functions in the package.
-#'
-#' @inheritParams cdmDoc
-#' @param achillesId A vector of achilles ids. If NULL default analysis will be
-#' used.
-#'
-#' @return The cdm_reference object with the achilles tables populated.
-#' @export
-#'
-#' @examples
-#' \donttest{
-#' dbName <- "GiBleed"
-#' CDMConnector::requireEunomia(dbName)
-#' con <- duckdb::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir(dbName))
-#' cdm <- CDMConnector::cdmFromCon(
-#'   con = con, cdmSchema = "main", writeSchema = "main"
-#' )
-#'
-#' cdm <- buildAchillesTables(cdm = cdm)
-#'
-#' }
 buildAchillesTables <- function(cdm,
                                 achillesId = NULL) {
   # initial check
@@ -45,8 +20,13 @@ buildAchillesTables <- function(cdm,
       dplyr::pull("analysis_name")
     kk <- sprintf("%i", k) |>
       stringr::str_pad(width = nchar(len), pad = " ")
-    cli::cli_inform(c("i" = "{kk} of {len}: Get achilles result for {.pkg {nm}}."))
-    cdm <- appendAchillesId(cdm, id)
+    tab <- achillesAnalisisDetails$table[k]
+    if(tab %in% names(cdm)){
+      cli::cli_inform(c("i" = "{kk} of {len}: Get achilles result for {.pkg {nm}}."))
+      cdm <- appendAchillesId(cdm, id)
+    }else{
+      cli::cli_inform(c("i" = "{kk} of {len}: Skipping achilles results for {.pkg {nm}} because the cdm doesn't contain table {tab}."))
+    }
   }
 
   # append to achilles_analysis
@@ -56,7 +36,7 @@ buildAchillesTables <- function(cdm,
     name = name,
     table = achillesAnalisisDetails |>
       dplyr::filter(.data$analysis_id %in% .env$achillesId) |>
-      dplyr::select(!c("table", "type"))
+      dplyr::select(!c("table", "type", "distribution", "distributed_field"))
   )
   cdm[["achilles_analysis"]] <- cdm[["achilles_analysis"]] |>
     dplyr::union_all(cdm[[name]]) |>

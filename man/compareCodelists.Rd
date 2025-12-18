@@ -19,22 +19,61 @@ Compare overlap between two sets of codes
 }
 \examples{
 \donttest{
-cdm <- mockVocabRef()
+library(CodelistGenerator)
+library(omock)
+
+# Create a CDM object
+downloadMockDataset(datasetName = "GiBleed",
+                    path = NULL,
+                    overwrite = NULL)
+cdm <- mockCdmFromDataset(datasetName = "GiBleed")
+
+# Compare two candidate_codes object
 codes1 <- getCandidateCodes(
- cdm = cdm,
- keywords = "Arthritis",
- domains = "Condition",
- includeDescendants = TRUE
-)
+  cdm = cdm,
+  keywords = "Arthritis",
+  domains = "Condition",
+  includeDescendants = TRUE)
+
 codes2 <- getCandidateCodes(
- cdm = cdm,
- keywords = c("knee osteoarthritis", "arthrosis"),
- domains = "Condition",
- includeDescendants = TRUE
-)
+  cdm = cdm,
+  keywords = c("osteo"),
+  domains = "Condition",
+  includeDescendants = TRUE)
+
 compareCodelists(
- codelist1 = codes1,
- codelist2 = codes2
-)
+  codelist1 = codes1,
+  codelist2 = codes2)
+
+# Compare two codelists
+acetaminophen <- getDrugIngredientCodes(cdm,
+                                        name = "acetaminophen",
+                                        nameStyle = "{concept_name}",
+                                        type = "codelist")
+
+hydrocodone <- getDrugIngredientCodes(cdm,
+                                      name = "hydrocodone",
+                                      nameStyle = "{concept_name}",
+                                      type = "codelist")
+compareCodelists(
+  codelist1 = acetaminophen,
+  codelist2 = hydrocodone)
+# Notice that concept_name = NA as `codelist` class does not store this information
+# for each concept.
+
+# Compare two codelists_with_details
+acetaminophen <- getDrugIngredientCodes(cdm,
+                                        name = "acetaminophen",
+                                        nameStyle = "{concept_name}",
+                                        type = "codelist_with_details")
+
+hydrocodone <- getDrugIngredientCodes(cdm,
+                                      name = "hydrocodone",
+                                      nameStyle = "{concept_name}",
+                                      type = "codelist_with_details")
+compareCodelists(
+  codelist1 = acetaminophen,
+  codelist2 = hydrocodone)
+
 }
 }

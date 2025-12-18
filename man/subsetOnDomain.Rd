@@ -9,11 +9,13 @@ subsetOnDomain(x, cdm, domain, negate = FALSE)
 \arguments{
 \item{x}{A codelist.}
 
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
 \item{domain}{Character vector with one or more of the OMOP CDM domains.
 The results will be restricted to the given domains. Check the available
-ones by running getDomains(). If NULL, all supported domains are included:
+ones by running availableDomains(). If NULL, all supported domains are included:
 Condition, Drug, Procedure, Device, Observation, and Measurement.}
 
 \item{negate}{If FALSE, only concepts with the domain specified will be
@@ -30,9 +32,10 @@ Subset a codelist to only those codes from a particular domain.
 \examples{
 \donttest{
 library(CodelistGenerator)
+library(omopgenerics)
 cdm <- mockVocabRef()
 codes <- subsetOnDomain(
-              x = list("codes" = c(10,13,15)),
+              x = newCodelist(list("codes" = c(10,13,15))),
               cdm = cdm,
               domain = "Drug")
 codes

@@ -2,6 +2,7 @@
 #'
 #' @param result A `<summarised_result>` with results of the type "code_use".
 #' @inheritParams typeTableDoc
+#' @inheritParams tableStyleDoc
 #' @inheritParams headerStrataDoc
 #' @inheritParams groupColumnStrataDoc
 #' @inheritParams hideStrataDoc
@@ -13,6 +14,8 @@
 #'
 #' @examples
 #' \dontrun{
+#' library(omopgenerics)
+#' library(CodelistGenerator)
 #' con <- DBI::dbConnect(duckdb::duckdb(),
 #'                       dbdir = CDMConnector::eunomiaDir())
 #' cdm <- CDMConnector::cdmFromCon(con,
@@ -23,7 +26,7 @@
 #'poliovirus_vaccine <- c(40213160)
 #'cs <- list(acetiminophen = acetiminophen,
 #'           poliovirus_vaccine = poliovirus_vaccine)
-#'results <- summariseCodeUse(cs,cdm = cdm)
+#'results <- summariseCodeUse(newCodelist(cs),cdm = cdm)
 #'tableCodeUse(results)
 #'CDMConnector::cdmDisconnect(cdm)
 #'}
@@ -33,15 +36,16 @@ tableCodeUse <- function(result,
                          type = "gt",
                          header = c("cdm_name", "estimate_name"),
                          groupColumn = character(),
-                         hide = character(),
+                         hide = c("date_range_start", "date_range_end"),
+                         style = NULL,
                          .options = list()) {
 
-  rlang::check_installed("visOmopResults", version = "1.0.0")
+  rlang::check_installed("visOmopResults", version = "1.4.0")
 
   # checks
   if(nrow(result) == 0){
     cli::cli_warn("`result` object is empty")
-    return(emptyResultTable(type = type))
+    return(visOmopResults::emptyTable(type = type))
   }
 
   result <- result |>
@@ -49,7 +53,7 @@ tableCodeUse <- function(result,
 
   if(nrow(result) == 0){
     cli::cli_warn("No code use results found in result object")
-    return(emptyResultTable(type = type))
+    return(visOmopResults::emptyTable(type = type))
   }
 
   x <- internalTableCodeUse(
@@ -59,6 +63,7 @@ tableCodeUse <- function(result,
     header = header,
     groupColumn = groupColumn,
     hide = hide,
+    style = style,
     .options = .options
   )
 
@@ -69,11 +74,11 @@ tableCodeUse <- function(result,
 #'
 #' @param result A `<summarised_result>` with results of the type "cohort_code_use".
 #' @inheritParams typeTableDoc
+#' @inheritParams tableStyleDoc
 #' @inheritParams headerStrataDoc
 #' @inheritParams groupColumnStrataDoc
 #' @inheritParams hideStrataDoc
 #' @inheritParams .optionsDoc
-#' @param timing deprecated.
 #'
 #' @return A table with a formatted version of the summariseCohortCodeUse
 #' result.
@@ -110,12 +115,9 @@ tableCohortCodeUse <- function(result,
                                groupColumn = character(),
                                hide = c("timing"),
                                .options = list(),
-                               timing = lifecycle::deprecated()) {
+                               style = NULL) {
 
-  rlang::check_installed("visOmopResults", version = "1.0.0")
-  if (lifecycle::is_present(timing)) {
-    lifecycle::deprecate_warn(when = "4.0.0", what = "tableCohortCodeUse(timing= )")
-  }
+  rlang::check_installed("visOmopResults", version = "1.4.0")
 
   # checks
   result <- omopgenerics::validateResultArgument(result)
@@ -123,7 +125,7 @@ tableCohortCodeUse <- function(result,
   # empty result object
   if(nrow(result) == 0){
     cli::cli_warn("`result` object is empty")
-    return(emptyResultTable(type = type))
+    return(visOmopResults::emptyTable(type = type))
   }
 
   # no cohort_code_use
@@ -131,7 +133,7 @@ tableCohortCodeUse <- function(result,
     visOmopResults::filterSettings(.data$result_type == "cohort_code_use")
   if(nrow(result) == 0){
     cli::cli_warn("No code use results found in result object")
-    return(emptyResultTable(type = type))
+    return(visOmopResults::emptyTable(type = type))
   }
 
   x <- internalTableCodeUse(
@@ -141,6 +143,7 @@ tableCohortCodeUse <- function(result,
     header = header,
     groupColumn = groupColumn,
     hide = hide,
+    style = style,
     .options = .options
   )
 
@@ -153,6 +156,7 @@ internalTableCodeUse <- function(result,
                                  header,
                                  groupColumn,
                                  hide,
+                                 style,
                                  .options) {
   omopgenerics::assertCharacter(header, null = TRUE)
   omopgenerics::assertCharacter(hide, null = TRUE)
@@ -186,6 +190,7 @@ internalTableCodeUse <- function(result,
       "Standard concept name" = "variable_name"
     ),
     hide = hide,
+    style = style,
     .options = .options
   ) |>
     suppressWarnings() # to remove in next visOmopResults release

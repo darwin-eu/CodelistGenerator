@@ -12,13 +12,16 @@ summariseCodeUse(
   byYear = FALSE,
   bySex = FALSE,
   ageGroup = NULL,
-  dateRange = as.Date(c(NA, NA))
+  dateRange = as.Date(c(NA, NA)),
+  useSourceCodes = FALSE
 )
 }
 \arguments{
 \item{x}{A codelist.}
 
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
 \item{countBy}{Either "record" for record-level counts or "person" for
 person-level counts.}
@@ -38,6 +41,8 @@ or the first date is set as missing, the earliest observation_start_date in
 the observation_period table will be used for the former. If NULL or the
 second date is set as missing, the latest observation_end_date in the
 observation_period table will be used for the latter.}
+
+\item{useSourceCodes}{Whether the codelist provided contains source codes (TRUE) or standard codes (FALSE).}
 }
 \value{
 A tibble with count results overall and, if specified, by strata.
@@ -47,16 +52,18 @@ Summarise code use in patient-level data.
 }
 \examples{
 \dontrun{
+library(omopgenerics)
+library(CodelistGenerator)
 con <- DBI::dbConnect(duckdb::duckdb(),
                       dbdir = CDMConnector::eunomiaDir())
 cdm <- CDMConnector::cdmFromCon(con,
                                 cdmSchema = "main",
                                 writeSchema = "main")
 acetiminophen <- c(1125315,  1127433, 40229134,
-40231925, 40162522, 19133768,  1127078)
+                  40231925, 40162522, 19133768,  1127078)
 poliovirus_vaccine <- c(40213160)
-cs <- list(acetiminophen = acetiminophen,
-          poliovirus_vaccine = poliovirus_vaccine)
+cs <- newCodelist(list(acetiminophen = acetiminophen,
+                       poliovirus_vaccine = poliovirus_vaccine))
 results <- summariseCodeUse(cs,cdm = cdm)
 results
 CDMConnector::cdmDisconnect(cdm)

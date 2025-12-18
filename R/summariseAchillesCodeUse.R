@@ -9,23 +9,25 @@
 #'
 #' @examples
 #' \donttest{
+#' library(CodelistGenerator)
 #' cdm <- mockVocabRef("database")
 #' oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
-#' result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id), cdm = cdm)
+#' codelist <- omopgenerics::newCodelist(list(oa = oa$concept_id))
+#' result_achilles <- summariseAchillesCodeUse(codelist, cdm = cdm)
 #' result_achilles
 #' CDMConnector::cdmDisconnect(cdm)
 #' }
 
 summariseAchillesCodeUse <- function(x,
-                            cdm,
-                            countBy = c("record", "person")) {
+                                     cdm,
+                                     countBy = c("record", "person")) {
 
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm,
                                            requiredTables = c("achilles_analysis",
                                                               "achilles_results",
                                                               "achilles_results_dist"))
-  omopgenerics::assertList(x, named = TRUE)
+  checkCodelist(x, allowConceptSetExpression = FALSE)
   omopgenerics::assertChoice(countBy, choices = c("record", "person"))
 
   if(length(x) == 0){
@@ -34,6 +36,10 @@ summariseAchillesCodeUse <- function(x,
         "i" = "Empty codelist - no achilles counts to return"
       ))
     return(omopgenerics::emptySummarisedResult())
+  }
+
+  if(inherits(x, "codelist_with_details")){
+    x <- asCodelist(x)
   }
 
   version <- achillesVersionDate(cdm)
@@ -96,23 +102,34 @@ summariseAchillesCodeUse <- function(x,
       ))
     return(omopgenerics::emptySummarisedResult())
   } else {
-    codeUse <- dplyr::bind_rows(codeUse) |>
+    codeUse <- dplyr::bind_rows(codeUse)
+    records <- getSourceCodes(cdm = cdm,
+                              codes = codeUse |> dplyr::rename("concept_id" = "variable_level"))
+    codeUse <- codeUse |>
+      dplyr::left_join(
+        records |>
+          dplyr::mutate("variable_level" = as.character(.data$standard_concept_id)) |>
+          dplyr::select(-"standard_concept_id"),
+        by = "variable_level"
+      )
+
+    codeUse <- codeUse |>
       dplyr::mutate(
-        result_id = as.integer(1),
+        result_id = 1L,
         cdm_name = CDMConnector::cdmName(cdm),
         group_name = "codelist_name",
         domain_id = tolower(.data$domain_id),
         estimate_type = "integer",
         estimate_value = as.character(.data$n)
       ) |>
-      omopgenerics::uniteAdditional(cols = c("standard_concept", "vocabulary_id")) |>
+      omopgenerics::uniteAdditional(cols = c("vocabulary_id", "source_concept_name", "source_concept_id", "source_concept_value")) |>
       omopgenerics::uniteStrata(cols = c("domain_id")) |>
       dplyr::select(dplyr::any_of(omopgenerics::resultColumns("summarised_result")))
 
     codeUse <- codeUse |>
       omopgenerics::newSummarisedResult(
         settings = dplyr::tibble(
-          result_id = as.integer(1),
+          result_id = 1L,
           result_type = "achilles_code_use",
           package_name = "CodelistGenerator",
           package_version = as.character(utils::packageVersion(
@@ -123,6 +140,60 @@ summariseAchillesCodeUse <- function(x,
 
   return(codeUse)
 
+}
+
+getSourceCodes <- function(cdm, codes){
+  # Add table domains data in the cdm
+  tableDomainsData <- paste0(omopgenerics::uniqueTableName(),
+                             omopgenerics::uniqueId())
+  cdm <- omopgenerics::insertTable(cdm = cdm,
+                                   name = tableDomainsData,
+                                   table = conceptDomainsData,
+                                   overwrite = TRUE,
+                                   temporary = FALSE)
+
+  # Add codelist in the cdm
+  codes <- codes |>
+    dplyr::select("concept_id", "domain_id") |>
+    dplyr::mutate("domain_id" = tolower(.data$domain_id)) |>
+    dplyr::distinct() |>
+    dplyr::mutate("concept_id" = as.integer(.data$concept_id))
+
+  tableCodelist <- paste0(omopgenerics::uniqueTableName(),
+                          omopgenerics::uniqueId())
+  cdm <- omopgenerics::insertTable(cdm = cdm,
+                                   name = tableCodelist,
+                                   table = codes,
+                                   overwrite = TRUE,
+                                   temporary = FALSE)
+
+  # Intersect
+  cdm[[tableCodelist]] <- cdm[[tableCodelist]] |>
+    dplyr::left_join(
+      cdm[[tableDomainsData]],
+      by = "domain_id"
+    ) |>
+    dplyr::compute(name = tableCodelist, temporary = FALSE)
+
+  # Get source codes
+  intermediateTable <- paste0(omopgenerics::uniqueTableName(),
+                              omopgenerics::uniqueId())
+  records <- getRelevantRecords(cdm = cdm,
+                                tableCodelist = tableCodelist,
+                                cohortTable = NULL,
+                                cohortId = NULL,
+                                timing = "any",
+                                intermediateTable = intermediateTable,
+                                useSourceCodes = FALSE)
+
+  cdm <- omopgenerics::dropSourceTable(cdm = cdm, name = c(tableDomainsData, intermediateTable, tableCodelist))
+
+  records <- records |>
+    dplyr::select("standard_concept_id", "source_concept_id", "source_concept_value", "standard_concept_name", "source_concept_name") |>
+    dplyr::distinct() |>
+    dplyr::collect()
+
+  return(records)
 }
 
 achillesVersionDate <- function(cdm){

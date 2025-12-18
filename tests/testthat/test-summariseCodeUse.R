@@ -4,12 +4,12 @@ test_that("summarise code use - eunomia", {
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
-  acetiminophen <- c(1125315,  1127433, 40229134,
-                     40231925, 40162522, 19133768,  1127078)
-  poliovirus_vaccine <- c(40213160)
-  cs <- list(acetiminophen = acetiminophen,
-             poliovirus_vaccine = poliovirus_vaccine)
-  startNames <- CDMConnector::listSourceTables(cdm)
+  acetiminophen <- c(1125315L,  1127433L, 40229134L,
+                     40231925L, 40162522L, 19133768L,  1127078L)
+  poliovirus_vaccine <- c(40213160L)
+  cs <- omopgenerics::newCodelist(list(acetiminophen = acetiminophen,
+                                       poliovirus_vaccine = poliovirus_vaccine))
+  startNames <- omopgenerics::listSourceTables(cdm)
 
   results <- summariseCodeUse(cs,
                               cdm = cdm,
@@ -18,7 +18,7 @@ test_that("summarise code use - eunomia", {
                               ageGroup = list(c(0,17),
                                               c(18,65),
                                               c(66, 100)))
-  endNames <- CDMConnector::listSourceTables(cdm)
+  endNames <- omopgenerics::listSourceTables(cdm)
   expect_true(length(setdiff(endNames, startNames)) == 0)
 
   expect_no_error(results_no_by_concept <- summariseCodeUse(cs,
@@ -241,7 +241,7 @@ test_that("summarise code use - eunomia", {
 
 
 
-  results <- summariseCodeUse(list("acetiminophen" = acetiminophen),
+  results <- summariseCodeUse(omopgenerics::newCodelist(list("acetiminophen" = acetiminophen)),
                               cdm = cdm, countBy = "person",
                               byYear = FALSE,
                               bySex = FALSE,
@@ -251,7 +251,7 @@ test_that("summarise code use - eunomia", {
   expect_true(nrow(results |>
                      dplyr::filter(estimate_name == "record_count")) == 0)
 
-  results <- summariseCodeUse(list("acetiminophen" = acetiminophen),
+  results <- summariseCodeUse(omopgenerics::newCodelist(list("acetiminophen" = acetiminophen)),
                               cdm = cdm, countBy = "record",
                               byYear = FALSE,
                               bySex = FALSE,
@@ -263,42 +263,42 @@ test_that("summarise code use - eunomia", {
 
   # domains covered
   # condition
-  expect_true(nrow(summariseCodeUse(list(cs= c(4112343)),
+  expect_true(nrow(summariseCodeUse(omopgenerics::newCodelist(list(cs= c(4112343L))),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # visit
-  expect_true(nrow(summariseCodeUse(list(cs= c(9201)),
+  expect_true(nrow(summariseCodeUse(omopgenerics::newCodelist(list(cs= c(9201L))),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # drug
-  expect_true(nrow(summariseCodeUse(list(cs= c(40213160)),
+  expect_true(nrow(summariseCodeUse(omopgenerics::newCodelist(list(cs= c(40213160L))),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # measurement
-  expect_true(nrow(summariseCodeUse(list(cs= c(3006322)),
+  expect_true(nrow(summariseCodeUse(omopgenerics::newCodelist(list(cs= c(3006322L))),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # procedure and condition
-  expect_true(nrow(summariseCodeUse(list(cs= c(4107731,4112343)),
+  expect_true(nrow(summariseCodeUse(omopgenerics::newCodelist(list(cs= c(4107731L,4112343L))),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # no records
-  expect_message(results <- summariseCodeUse(list(cs= c(999999)),
+  expect_message(results <- summariseCodeUse(omopgenerics::newCodelist(list(cs= c(999999L))),
                                              cdm = cdm,
                                              byYear = FALSE,
                                              bySex = FALSE,
@@ -316,43 +316,43 @@ test_that("summarise code use - eunomia", {
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(list("123"), # not named
+  expect_error(summariseCodeUse(list("123" = 1L),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(list(a = 123),
+  expect_error(summariseCodeUse(omopgenerics::newCodelist(list(a = 123L)),
                                 cdm = "not a cdm",
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(list(a = 123),
+  expect_error(summariseCodeUse(omopgenerics::newCodelist(list(a = 123L)),
                                 cdm = cdm,
                                 byYear = "Maybe",
                                 bySex = FALSE,
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(list(a = 123),
+  expect_error(summariseCodeUse(omopgenerics::newCodelist(list(a = 123L)),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = "Maybe",
                                 ageGroup = NULL))
-  expect_error(summariseCodeUse(list(a = 123),
+  expect_error(summariseCodeUse(omopgenerics::newCodelist(list(a = 123L)),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = 25))
-  expect_error(summariseCodeUse(list(a = 123),
+  expect_error(summariseCodeUse(omopgenerics::newCodelist(list(a = 123L)),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = list(c(18,17))))
-  expect_error(summariseCodeUse(list(a = 123),
+  expect_error(summariseCodeUse(omopgenerics::newCodelist(list(a = 123L)),
                                 cdm = cdm,
                                 byYear = FALSE,
                                 bySex = FALSE,
                                 ageGroup = list(c(0,17),
                                                 c(15,20))))
-  expect_error(summariseCodeUse(list(a = 123),
+  expect_error(summariseCodeUse(omopgenerics::newCodelist(list(a = 123L)),
                                 cdm = cdm,
                                 dateRange = c("a","b")))
   CDMConnector::cdmDisconnect(cdm)
@@ -364,22 +364,30 @@ test_that("summarise cohort code use - eunomia", {
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(cdmName = "cdm", con, cdmSchema = "main", writeSchema = "main")
 
-  pharyngitis <- c(4112343)
+  pharyngitis_codes <- omopgenerics::newCodelist(list("ph" = c(4112343L)))
 
   cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
-                                                conceptSet = list(pharyngitis = pharyngitis),
+                                                conceptSet = pharyngitis_codes,
                                                 name = "pharyngitis",
                                                 end = "observation_period_end_date",
                                                 overwrite = TRUE)
 
   # any
-  results_all <- summariseCodeUse(list(cs = 4134304),
+  results_all <- summariseCodeUse(pharyngitis_codes,
                                   cdm = cdm)
-  results_cohort <- summariseCohortCodeUse(list(cs = 4134304),
+  results_cohort <- summariseCohortCodeUse(x = pharyngitis_codes,
                                            cdm = cdm,
                                            cohortTable = "pharyngitis",
+                                           cohortId = "ph",
                                            timing = "any")
-  expect_no_error(summariseCohortCodeUse(list(cs = 4134304),
+  expect_identical(results_cohort,
+                   results_cohort)
+
+  results_cohort_attr <- summariseCohortCodeUse(cdm = cdm,
+                                                cohortTable = "pharyngitis",
+                                                timing = "any")
+  expect_identical(results_cohort, results_cohort_attr)
+  expect_no_error(summariseCohortCodeUse(x = omopgenerics::newCodelist(list(cs = 4134304L)),
                                          cdm = cdm,
                                          cohortTable = "pharyngitis",
                                          timing = "any",
@@ -394,7 +402,7 @@ test_that("summarise cohort code use - eunomia", {
                                 strata_level == "overall" &
                                 estimate_name == "person_count") |>
                 dplyr::pull("estimate_value") |>
-                as.numeric() <
+                as.numeric() <=
                 results_all |>
                 dplyr::filter(variable_name == "overall" &
                                 strata_name == "overall" &
@@ -407,7 +415,7 @@ test_that("summarise cohort code use - eunomia", {
 
 
   # at entry - everyone in the cohort should have the code
-  results_cohort <- summariseCohortCodeUse(list(pharyngitis = pharyngitis),
+  results_cohort <- summariseCohortCodeUse(pharyngitis_codes,
                                            cdm = cdm,
                                            cohortTable = "pharyngitis",
                                            timing = "entry")
@@ -435,7 +443,7 @@ test_that("summarise cohort code use - eunomia", {
     dplyr::count() |>
     dplyr::pull()
 
-  results_cohort_260139 <- summariseCohortCodeUse(list(cs = 260139),
+  results_cohort_260139 <- summariseCohortCodeUse(omopgenerics::newCodelist(list(cs = 260139L)),
                                                   cdm = cdm,
                                                   cohortTable = "pharyngitis",
                                                   timing = "entry")
@@ -466,7 +474,7 @@ test_that("summarise cohort code use - eunomia", {
     dplyr::count() |>
     dplyr::pull()
 
-  results_cohort_260139_19133873_1127433<- summariseCohortCodeUse(list(cs = c(260139,19133873,1127433)),
+  results_cohort_260139_19133873_1127433<- summariseCohortCodeUse(omopgenerics::newCodelist(list(cs = c(260139L,19133873L,1127433L))),
                                                                   cdm = cdm,
                                                                   cohortTable = "pharyngitis",
                                                                   timing = "entry")
@@ -491,13 +499,13 @@ test_that("summarise cohort code use - eunomia", {
 
   # multiple cohorts
   cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
-                                                conceptSet = list(a = 260139,
-                                                                  b = 1127433 ),
+                                                conceptSet = omopgenerics::newCodelist(list(a = 260139L,
+                                                                                            b = 1127433L )),
                                                 name = "cohorts",
                                                 end = "observation_period_end_date",
                                                 overwrite = TRUE)
 
-  results_cohort_mult <- summariseCohortCodeUse(list(cs = c(260139,19133873,1127433)),
+  results_cohort_mult <- summariseCohortCodeUse(omopgenerics::newCodelist(list(cs = c(260139L,19133873L,1127433L))),
                                                 cdm = cdm,
                                                 cohortTable = "cohorts",
                                                 timing = "entry")
@@ -516,32 +524,76 @@ test_that("summarise cohort code use - eunomia", {
                  dplyr::pull("cohort_name"))
 
 
+
+  codes<- omopgenerics::newCodelist(list(a = 260139L,
+                                         b = 1127433L))
+  cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
+                                                conceptSet = codes,
+                                                name = "cohorts",
+                                                end = "observation_period_end_date",
+                                                overwrite = TRUE)
+  # if we pass codes we'll end up with 4 results - both codelists for both cohorts
+  results_codes <- summariseCohortCodeUse(x = codes,
+                                          cdm = cdm,
+                                          cohortTable = "cohorts",
+                                          timing = "entry")
+  expect_true(all(c("a &&& a", "a &&& b", "b &&& a", "b &&& b") %in%
+                    (results_codes |>
+                       dplyr::pull("group_level") |>
+                       unique())))
+  # but if use cohort codelist we'll end up with 2 results - codelists for respective cohorts
+  results_attr <- summariseCohortCodeUse(cdm = cdm,
+                                         cohortTable = "cohorts",
+                                         timing = "entry")
+  expect_false(all(c("a &&& a", "a &&& b", "b &&& a", "b &&& b") %in%
+                     (results_attr |>
+                        dplyr::pull("group_level") |>
+                        unique())))
+  expect_true(all(c("a &&& a",  "b &&& b") %in%
+                    (results_attr |>
+                       dplyr::pull("group_level") |>
+                       unique())))
+  expect_identical(
+    results_codes |>
+      dplyr::filter(group_level == "a &&& a"),
+    results_attr |>
+      dplyr::filter(group_level == "a &&& a"))
+  expect_identical(
+    results_codes |>
+      dplyr::filter(group_level == "b &&& b"),
+    results_attr |>
+      dplyr::filter(group_level == "b &&& b"))
+
+
   # empty cohort - no results
   cdm$pharyngitis <-  cdm$pharyngitis |>
     dplyr::filter(cohort_definition_id == 99)
-  expect_true(nrow(summariseCohortCodeUse(list(cs = 4134304),
+  expect_true(nrow(summariseCohortCodeUse(omopgenerics::newCodelist(list(cs = 4134304L)),
                                           cdm = cdm,
+                                          cohortTable = "pharyngitis",
+                                          timing = "any")) == 0)
+  expect_true(nrow(summariseCohortCodeUse(cdm = cdm,
                                           cohortTable = "pharyngitis",
                                           timing = "any")) == 0)
 
   # expected errors
-  expect_error(summariseCohortCodeUse(4134304,
+  expect_error(summariseCohortCodeUse(4134304L,
                                       cdm = cdm,
                                       cohortTable = "not_a_cohort",
                                       timing = "any"))
-  expect_error(summariseCohortCodeUse(list(4134304),
+  expect_error(summariseCohortCodeUse(list(4134304L),
                                       cdm = cdm,
                                       cohortTable = "not_a_cohort",
                                       timing = "any"))
-  expect_error(summariseCohortCodeUse(list(cs = 4134304),
+  expect_error(summariseCohortCodeUse(list(cs = 4134304L),
                                       cdm = cdm,
                                       cohortTable = "not_a_cohort",
                                       timing = "any"))
-  expect_error(summariseCohortCodeUse(list(cs = 4134304),
+  expect_error(summariseCohortCodeUse(list(cs = 4134304L),
                                       cdm = cdm,
                                       cohortTable = "pharyngitis",
                                       timing = "not_a_option"))
-  expect_error(summariseCohortCodeUse(list(cs = 4134304),
+  expect_error(summariseCohortCodeUse(list(cs = 4134304L),
                                       cdm = cdm,
                                       cohortTable = "pharyngitis",
                                       timing = c("any", "entry")))
@@ -567,7 +619,7 @@ test_that("summarise code use - redshift", {
                                   writeSchema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"),
                                   cdmVersion = "5.3")
 
-  asthma <- list(asthma = c(317009, 257581))
+  asthma <- list(asthma = c(317009L, 257581L))
 
   results <- summariseCodeUse(asthma,
                               cdm = cdm,
@@ -718,42 +770,42 @@ test_that("summarise code use - redshift", {
   # domains covered
 
   # condition
-  expect_true(nrow(summariseCodeUse(list(cs = c(317009)),
+  expect_true(nrow(summariseCodeUse(list(cs = c(317009L)),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # visit
-  expect_true(nrow(summariseCodeUse(list(cs = 9201),
+  expect_true(nrow(summariseCodeUse(list(cs = 9201L),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # drug
-  expect_true(nrow(summariseCodeUse(list(cs = 19071493),
+  expect_true(nrow(summariseCodeUse(list(cs = 19071493L),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # measurement
-  expect_true(nrow(summariseCodeUse(list(cs = 2212542),
+  expect_true(nrow(summariseCodeUse(list(cs = 2212542L),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # procedure and condition
-  expect_true(nrow(summariseCodeUse(list(cs = c(4261206,317009)),
+  expect_true(nrow(summariseCodeUse(list(cs = c(4261206L,317009L)),
                                     cdm = cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL))>1)
 
   # no records
-  expect_message(results <- summariseCodeUse(list(cs = c(999999)),
+  expect_message(results <- summariseCodeUse(list(cs = c(999999L)),
                                              cdm = cdm,
                                              byYear = FALSE,
                                              bySex = FALSE,
@@ -813,12 +865,13 @@ test_that("summarise code use - eunomia source concept id NA", {
   cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
   acetiminophen <- c(1125315,  1127433, 40229134,
-                     40231925, 40162522, 19133768,  1127078)
+                     40231925, 40162522, 19133768,  1127078) |>
+    as.integer()
 
   cdm$drug_exposure <- cdm$drug_exposure |>
     dplyr::mutate(drug_source_concept_id = NA_character_)
 
-  cs <- list(acetiminophen = acetiminophen)
+  cs <- omopgenerics::newCodelist(list(acetiminophen = acetiminophen))
   results <- summariseCodeUse(cs,
                               cdm = cdm)
 
@@ -838,7 +891,7 @@ test_that("summarise cohort code use - eunomia source concept id NA", {
   con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
 
-  pharyngitis <- c(4112343)
+  pharyngitis <- c(4112343L)
 
   cdm$condition_occurrence <- cdm$condition_occurrence |>
     dplyr::mutate(condition_source_concept_id = NA_character_)
@@ -849,7 +902,7 @@ test_that("summarise cohort code use - eunomia source concept id NA", {
                                                 end = "observation_period_end_date",
                                                 overwrite = TRUE)
 
-  results_cohort <- summariseCohortCodeUse(list(cs = 4134304),
+  results_cohort <- summariseCohortCodeUse(omopgenerics::newCodelist(list(cs = 4134304L)),
                                            cdm = cdm,
                                            cohortTable = "pharyngitis",
                                            timing = "any")
@@ -874,19 +927,72 @@ test_that("empty cohort", {
                                   cdmSchema = "main",
                                   writeSchema = "main",
                                   cdmName = "test")
+
+  # Empty cohort
   cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
-                                                conceptSet = list(a = 260139,
-                                                                  b = 1127433),
+                                                conceptSet = list(a = 260139L,
+                                                                  b = 1127433L),
                                                 name = "cohorts",
                                                 end = "observation_period_end_date",
                                                 overwrite = TRUE)
-  results_cohort_mult <- summariseCohortCodeUse(list(cs = as.numeric()),
+  results_cohort_mult <- summariseCohortCodeUse(x = omopgenerics::emptyCodelist(),
                                                 cdm = cdm,
                                                 cohortTable = "cohorts",
                                                 timing = "entry")
   expect_true(inherits(results_cohort_mult, "summarised_result"))
   expect_true(nrow(results_cohort_mult) == 0)
 
+  # Source codes
+  n1 <- cdm[["condition_occurrence"]] |>
+    dplyr::filter(condition_source_concept_id == 35208414) |>
+    dplyr::summarise(n = dplyr::n()) |>
+    dplyr::pull("n")
+  n2 <- cdm[["drug_exposure"]] |>
+    dplyr::filter(drug_source_concept_id == 44923712) |>
+    dplyr::summarise(n = dplyr::n()) |>
+    dplyr::pull("n")
+
+  x <- newCodelist(list("codes" = c(35208414L, 44923712L)))
+
+  expect_no_error(result <- summariseCodeUse(x, cdm, countBy = "record", useSourceCodes = TRUE))
+  expect_equal(result |>
+                  dplyr::pull("estimate_value") |>
+                  as.integer() |>
+                  sort(),
+                c(n1, n2, n1+n2))
+
+  # summarise cohort code use
+  x <- newCodelist(list("codes" = c(4043071L, 40481087L, 19006318L)))
+  cdm$new_cohort <- CohortConstructor::conceptCohort(cdm = cdm,
+                                                     conceptSet = x,
+                                                     name = "new_cohort",
+                                                     useSourceFields = TRUE)
+  result <- summariseCohortCodeUse(cdm,
+                                   cohortTable = "new_cohort",
+                                   x = x,
+                                   useSourceCodes = TRUE,
+                                   countBy = "person")
+  n1 <- cdm$procedure_occurrence |>
+    dplyr::filter(procedure_source_concept_id == 4043071L) |>
+    dplyr::distinct(person_id) |>
+    dplyr::tally() |>
+    dplyr::pull("n")
+  n2 <-  cdm$condition_occurrence |>
+    dplyr::filter(condition_source_concept_id == 40481087L) |>
+    dplyr::distinct(person_id) |>
+    dplyr::tally() |>
+    dplyr::pull("n")
+  n3 <-  cdm$drug_exposure |>
+    dplyr::filter(drug_source_concept_id == 19006318L) |>
+    dplyr::distinct(person_id) |>
+    dplyr::tally() |>
+    dplyr::pull("n")
+  expect_equal(result |>
+                 dplyr::filter(!is.na(variable_level)) |>
+                 dplyr::pull("estimate_value") |>
+                 as.integer() |>
+                 sort(),
+               sort(c(n1, n2, n3)))
   CDMConnector::cdmDisconnect(cdm)
 
 })

@@ -9,7 +9,9 @@ summariseAchillesCodeUse(x, cdm, countBy = c("record", "person"))
 \arguments{
 \item{x}{A codelist.}
 
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
 \item{countBy}{Either "record" for record-level counts or "person" for
 person-level counts.}
@@ -22,9 +24,11 @@ Summarise code use from achilles counts.
 }
 \examples{
 \donttest{
+library(CodelistGenerator)
 cdm <- mockVocabRef("database")
 oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
-result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id), cdm = cdm)
+codelist <- omopgenerics::newCodelist(list(oa = oa$concept_id))
+result_achilles <- summariseAchillesCodeUse(codelist, cdm = cdm)
 result_achilles
 CDMConnector::cdmDisconnect(cdm)
 }

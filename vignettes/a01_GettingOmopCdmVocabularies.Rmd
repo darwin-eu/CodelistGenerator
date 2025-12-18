@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-When working with the CodelistGenerator we normally have two options of how to interact with the OMOP CDM vocabulary tables. 
+When working with the CodelistGenerator we normally have two options of how to interact with the OMOP CDM vocabulary tables.
 
 The first is to connect to a "live" database with patient data in the OMOP CDM format. As part of this OMOP CDM dataset we will have a version of vocabularies that corresponds to the concepts being used in the patient records we have in the various clinical tables. This is useful in that we will be working with the same vocabularies that are being used for clinical records in this dataset. However, if working on a study with multiple data partners we should take note that other data partners may be using different vocabulary versions.
 
@@ -57,11 +57,11 @@ cdm$drug_strength |> glimpse()
 It is important to remember that our results will be tied to the vocabulary version used when this OMOP CDM database was created. Moreover, we should also take note of which vocabularies were included. A couple of CodelistGenerator utility functions can help us find this information.
 
 ```{r}
-getVocabVersion(cdm)
+vocabularyVersion(cdm)
 ```
 
 ```{r}
-getVocabularies(cdm)
+availableVocabularies(cdm)
 ```
 
 ## Create a local vocabulary database
@@ -70,17 +70,18 @@ If you don't have access to an OMOP CDM database or if you want to work with a s
 
 ### Download vocabularies from athena
 
-Your first step will be to get the vocabulary tables for the OMOP CDM. For this go to https://athena.ohdsi.org/. From here you can, after creating a free account, download the vocabularies. By default you will be getting the latest version and a default set of vocabularies. You can though choose to download an older version and expand your selection of vocabularies. In general we would suggest to select all available vocabularies.
+Your first step will be to get the vocabulary tables for the OMOP CDM. For this go to the OHDSI ATHENA website (athena.ohdsi.org). From here you can, after creating a free account, download the vocabularies. By default you will be getting the latest version and a default set of vocabularies. You can though choose to download an older version and expand your selection of vocabularies. In general we would suggest to select all available vocabularies.
 
 ### Create a duckdb database
 
-After downloading the vocabularies you will have a set of csvs (along with a tool to add the CPT-4 codes if you wish). To quickly create a duckdb vocab database you could use the following code. Here, after pointing to the unzipped folder containg the csvs, we'll read each table into memory and write them to a duckdb database which we'll save in the same folder. We'll also add an empty person and observation period table so that you can create a cdm reference at the end. 
+After downloading the vocabularies you will have a set of csvs (along with a tool to add the CPT-4 codes if you wish). To quickly create a duckdb vocab database you could use the following code. Here, after pointing to the unzipped folder containg the csvs, we'll read each table into memory and write them to a duckdb database which we'll save in the same folder. We'll also add an empty person and observation period table so that you can create a cdm reference at the end.
 
 ```{r, eval = FALSE}
 library(readr)
 library(DBI)
 library(duckdb)
 library(omopgenerics)
+library(here)
 
 vocab_folder <- here() # add path to directory
 
@@ -124,11 +125,11 @@ dbWriteTable(db, "observation_period", observation_period, overwrite = TRUE)
 dbDisconnect(db)
 ```
 
-Now we could create a cdm reference to our OMOP CDM vocabulary database. 
+Now we could create a cdm reference to our OMOP CDM vocabulary database.
+
 ```{r, eval = FALSE}
 db <- dbConnect(duckdb(), here(vocab_folder,"vocab.duckdb"))
 cdm <- cdmFromCon(db, "main", "main", cdmName = "vocabularise", .softValidation = TRUE)
 ```
 
 This vocabulary only database can be then used for the various functions for identifying codes of interest. However, as it doesn't contain patient-level records it won't be relevant for functions summarising the use of codes, etc. Here we have shown how to make a local duckdb database, but a similar approach could also be used for other database management systems.
-

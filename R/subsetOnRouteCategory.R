@@ -30,9 +30,10 @@
 #' @examples
 #' \donttest{
 #' library(CodelistGenerator)
+#' library(omopgenerics)
 #' cdm <- mockVocabRef()
 #' codes <- subsetOnRouteCategory(
-#'               x = list("codes" = c(20,21)),
+#'               x = newCodelist(list("codes" = c(20,21))),
 #'               cdm = cdm,
 #'               routeCategory = "topical")
 #' codes
@@ -42,75 +43,13 @@ subsetOnRouteCategory <- function(x,
                                   routeCategory,
                                   negate = FALSE){
 
-  omopgenerics::assertList(x, named = TRUE)
-  omopgenerics::validateCdmArgument(cdm)
-  omopgenerics::assertCharacter(routeCategory)
-  omopgenerics::assertLogical(negate)
+  omopgenerics::assertCharacter(routeCategory, null = FALSE, na = FALSE)
 
-  if(inherits(x, "codelist_with_details")){
-    x_original <- x
-    withDetails <- TRUE
-    x <- codelistFromCodelistWithDetails(x)
-  } else {
-    withDetails <- FALSE
-  }
-
-  x <- omopgenerics::newCodelist(x)
-
-  doseRouteData <- doseFormToRoute
-
-  tableCodelist <- paste0(omopgenerics::uniqueTableName(),
-                          omopgenerics::uniqueId())
-
-  for(i in seq_along(x)){
-    cdm <- omopgenerics::insertTable(cdm = cdm,
-                                     name = tableCodelist,
-                                     table = dplyr::tibble(concept_id = x[[i]]),
-                                     overwrite = TRUE,
-                                     temporary = FALSE)
-
-    x[[i]] <- cdm[[tableCodelist]] |>
-      dplyr::inner_join(cdm$concept_relationship |>
-                          dplyr::filter(.data$relationship_id == "RxNorm has dose form"),
-                        by = c("concept_id" = "concept_id_1")
-      ) |>
-      dplyr::select("concept_id",
-                    "concept_id_2") |>
-      dplyr::collect() |>
-      dplyr::left_join(
-        doseRouteData, by = c("concept_id_2" = "dose_form_concept_id")
-      ) |>
-      dplyr::mutate(route_category = dplyr::if_else(
-        is.na(.data$route_category),
-        "unclassified_route",
-        .data$route_category
-      ))
-
-    if(isTRUE(negate)){
-      x[[i]] <- x[[i]] |>
-        dplyr::filter(!.data$route_category %in% .env$routeCategory)
-    }else{
-      x[[i]] <- x[[i]] |>
-        dplyr::filter(.data$route_category %in% .env$routeCategory)
-    }
-
-    x[[i]] <- x[[i]] |>
-      dplyr::select("concept_id") |>
-      dplyr::distinct() |>
-      dplyr::pull("concept_id")
-
-    x[[i]] <- sort(x[[i]])
-
-    if(isTRUE(withDetails)){
-      x[[i]] <- x_original[[i]] |>
-        dplyr::filter(.data$concept_id %in% x[[i]])
-    }
-  }
-
-   x <- x |>
-    vctrs::list_drop_empty()
-
-   CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
-
-   return(x)
+  x <- subsetCodelistBy(x,
+                        cdm,
+                        by = "route_category",
+                        group = routeCategory,
+                        keepOriginal = FALSE,
+                        negate = negate)
+  return(x)
 }

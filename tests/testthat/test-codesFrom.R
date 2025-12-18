@@ -1,17 +1,12 @@
 test_that("test inputs - mock", {
+  skip_on_cran()
   backends <- c("database", "data_frame")
 
   for (i in seq_along(backends)) {
     # mock db
     cdm <- mockVocabRef(backends[[i]])
 
-
     # expected errors
-    expect_error(codesFromConceptSet())
-    expect_error(codesFromConceptSet(cdm = cdm))
-    expect_error(codesFromConceptSet(cdm = cdm, path = 1))
-    expect_error(codesFromConceptSet(cdm = cdm, path = "not/a/path"))
-
     expect_error(codesFromCohort())
     expect_error(codesFromCohort(cdm = cdm))
     expect_error(codesFromCohort(cdm = cdm, path = 1))
@@ -23,63 +18,56 @@ test_that("test inputs - mock", {
       cdm = cdm, path =  system.file(package = "CodelistGenerator",
                                      "concepts_for_mock")
     ))
-    # codesFromConceptSet won´t work with cohorts
-    expect_error(codesFromConceptSet(
-      cdm = cdm, path =  system.file(package = "CodelistGenerator",
-                                     "cohorts_for_mock")
-    ))
-
-
 
     # we currently don´t support the use of mapped in a concept set
-    expect_error(codesFromConceptSet(
-      cdm = cdm, path =  system.file(package = "CodelistGenerator",
-                                     "concepts_for_mock_with_mapped")
-    ))
-    expect_error(codesFromCohort(
-      cdm = cdm, path =  system.file(package = "CodelistGenerator",
-                                     "cohorts_for_mock_with_mapped")
-    ))
+    expect_error(
+    omopgenerics::importConceptSetExpression(
+      system.file(package = "CodelistGenerator",
+                  "concepts_for_mock_with_mapped")
+    ) |>
+      asCodelist(cdm)
+    )
 
     # working concept set example with mock
-    x <- codesFromConceptSet(
-      cdm = cdm, path =  system.file(package = "CodelistGenerator",
+    x <- omopgenerics::importConceptSetExpression(
+     path =  system.file(package = "CodelistGenerator",
                                      "concepts_for_mock")
-    )
+    ) |>
+      asCodelist(cdm)
     expect_true(x$arthritis_no_desc == "3")
     expect_true(all(c("3", "4", "5") %in% x$arthritis_desc))
 
-    x <- codesFromConceptSet(
-      cdm = cdm, path =  system.file(package = "CodelistGenerator",
-                                     "concepts_for_mock"),
-      type = "codelist_with_details"
+    expect_no_error(
+    omopgenerics::importConceptSetExpression(
+      system.file(package = "CodelistGenerator",
+                  "concepts_for_mock")) |>
+      asCodelist(cdm) |>
+      asCodelistWithDetails(cdm)
     )
-    expect_true(inherits(x, "codelist_with_details"))
 
-    x <- codesFromConceptSet(
-      cdm = cdm, path =  system.file(package = "CodelistGenerator",
-                                     "concepts_for_mock"),
-      type = "concept_set_expression"
-    )
-    expect_true(inherits(x, "concept_set_expression") |
-                  inherits(x, "conceptSetExpression"))
 
-    x <- codesFromConceptSet(
-      cdm = cdm, path =  system.file(package = "CodelistGenerator",
+    x <- omopgenerics::importConceptSetExpression(
+       path =  system.file(package = "CodelistGenerator",
                                      "concepts_for_mock_with_exclude")
-    )
+    ) |>
+      asCodelist(cdm)
     expect_true(all(c("3", "5") %in% x$oa_with_excluded))
     expect_true(!c("4") %in% x$oa_with_excluded)
 
     # withDetails
-    x <- codesFromConceptSet(
-      cdm = cdm,
+    x <- omopgenerics::importConceptSetExpression(
       path =  system.file(package = "CodelistGenerator",
-                          "concepts_for_mock"),
-      type = "codelist_with_details"
-    )
+                          "concepts_for_mock")
+    ) |>
+      asCodelist(cdm) |>
+      asCodelistWithDetails(cdm)
     expect_true("Arthritis" %in% x$arthritis_desc$concept_name)
     expect_true(3 %in% x$arthritis_no_desc$concept_id)
+
+    # distinction between non-standard and a concept that is not in the cdm
+    expect_equal(x$codelist_with_details |>
+                   dplyr::pull("standard_concept"),
+                 c("standard","non-standard",NA))
 
 
     # working cohort set example with mock
@@ -127,6 +115,7 @@ test_that("test inputs - mock", {
 })
 
 test_that("test inputs - redshift", {
+  skip_on_cran()
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
   testthat::skip_if_offline()
 

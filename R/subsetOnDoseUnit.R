@@ -30,8 +30,9 @@
 #' @examples
 #' \donttest{
 #' library(CodelistGenerator)
+#' library(omopgenerics)
 #' cdm <- mockVocabRef()
-#' codes <- subsetOnDoseUnit(x = list("codes" = c(20,21)),
+#' codes <- subsetOnDoseUnit(x = newCodelist(list("codes" = c(20,21))),
 #'                           cdm = cdm,
 #'                           doseUnit = c("milligram"))
 #'
@@ -42,84 +43,13 @@ subsetOnDoseUnit <- function(x,
                              doseUnit,
                              negate = FALSE){
 
-  if(inherits(x, "codelist_with_details")){
-    x_original <- x
-    withDetails <- TRUE
-    x <- codelistFromCodelistWithDetails(x)
-  } else {
-    withDetails <- FALSE
-  }
+  omopgenerics::assertCharacter(doseUnit, null = FALSE, na = FALSE)
 
-  omopgenerics::validateCdmArgument(cdm)
-  omopgenerics::assertCharacter(doseUnit)
-  omopgenerics::assertLogical(negate)
-  x <- omopgenerics::newCodelist(x)
-
-  if(isFALSE(inherits(cdm, "cdm_reference"))){
-    cli::cli_abort("cdm must be a cdm reference")
-  }
-  if(isFALSE(is.character(doseUnit))){
-    cli::cli_abort("doseUnit must be a character vector")
-  }
-
-  tableCodelist <- paste0(omopgenerics::uniqueTableName(),
-                          omopgenerics::uniqueId())
-
-  drugStrengthNamed <- cdm$drug_strength |>
-    dplyr::left_join(cdm$concept |>
-                       dplyr::select("concept_id",
-                                     "concept_name"),
-                     by= c("amount_unit_concept_id"= "concept_id")) |>
-    dplyr::rename("amount_concept_name" = "concept_name") |>
-    dplyr::left_join(cdm$concept |>
-                        dplyr::select("concept_id",
-                                      "concept_name"),
-                      by= c("numerator_unit_concept_id"= "concept_id")) |>
-    dplyr::rename("numerator_concept_name" = "concept_name")
-
-  for(i in seq_along(x)){
-    cdm <- omopgenerics::insertTable(cdm = cdm,
-                                     name = tableCodelist,
-                                     table = dplyr::tibble(concept_id = x[[i]]),
-                                     overwrite = TRUE,
-                                     temporary = FALSE)
-
-    x[[i]] <- cdm[[tableCodelist]] |>
-      dplyr::inner_join(drugStrengthNamed,
-                        by = c("concept_id" = "drug_concept_id")
-      ) |>
-      dplyr::select("concept_id",
-                    "amount_concept_name",
-                    "numerator_concept_name") |>
-      dplyr::distinct() |>
-      dplyr::collect()
-
-    if(isTRUE(negate)){
-      x[[i]] <- x[[i]] |>
-        dplyr::filter(!(tolower(.data$amount_concept_name) %in% tolower(.env$doseUnit) |
-                        tolower(.data$numerator_concept_name) %in% tolower(.env$doseUnit)))
-    }else{
-      x[[i]] <- x[[i]] |>
-        dplyr::filter(tolower(.data$amount_concept_name) %in% tolower(.env$doseUnit) |
-                        tolower(.data$numerator_concept_name) %in% tolower(.env$doseUnit))
-    }
-
-    x[[i]] <- x[[i]] |>
-      dplyr::pull("concept_id")
-
-    x[[i]] <- sort(unique(x[[i]]))
-
-    if(isTRUE(withDetails)){
-      x[[i]] <- x_original[[i]] |>
-        dplyr::filter(.data$concept_id %in% x[[i]])
-    }
-  }
-
-  x <- x |>
-    vctrs::list_drop_empty()
-
-  CDMConnector::dropTable(cdm = cdm, name = tableCodelist)
-
-  x
-
+  x <- subsetCodelistBy(x,
+                        cdm,
+                        by = "dose_unit",
+                        group = doseUnit,
+                        keepOriginal = FALSE,
+                        negate = negate)
+  return(x)
 }

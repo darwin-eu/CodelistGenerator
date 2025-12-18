@@ -5,24 +5,27 @@
 \title{Summarise code use among a cohort in the cdm reference}
 \usage{
 summariseCohortCodeUse(
-  x,
   cdm,
   cohortTable,
+  x = NULL,
   cohortId = NULL,
   timing = "any",
   countBy = c("record", "person"),
   byConcept = TRUE,
   byYear = FALSE,
   bySex = FALSE,
-  ageGroup = NULL
+  ageGroup = NULL,
+  useSourceCodes = FALSE
 )
 }
 \arguments{
-\item{x}{A codelist.}
-
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
 \item{cohortTable}{A cohort table from the cdm reference.}
+
+\item{x}{A codelist or cohort table name.}
 
 \item{cohortId}{A vector of cohort IDs to include}
 
@@ -41,6 +44,9 @@ concept.}
 \item{bySex}{TRUE or FALSE. If TRUE code use will be summarised by sex.}
 
 \item{ageGroup}{If not NULL, a list of ageGroup vectors of length two.}
+
+\item{useSourceCodes}{Whether the codelist provided contains source codes
+(TRUE) or standard codes (FALSE).}
 }
 \value{
 A tibble with results overall and, if specified, by strata
@@ -67,7 +73,7 @@ cdm <- generateConceptCohortSet(cdm = cdm,
                   overwrite = TRUE)
 
 results_cohort_mult <-
-summariseCohortCodeUse(list(cs = c(260139,19133873)),
+summariseCohortCodeUse(omopgenerics::newCodelist(list(cs = c(260139,19133873))),
                       cdm = cdm,
                       cohortTable = "cohorts",
                       timing = "entry")

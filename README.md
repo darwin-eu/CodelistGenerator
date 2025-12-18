@@ -53,7 +53,7 @@ OMOP CDM vocabularies are frequently updated, and we can identify the
 version of the vocabulary of our Eunomia data
 
 ``` r
-getVocabVersion(cdm = cdm)
+vocabularyVersion(cdm = cdm)
 #> [1] "v5.0 18-JAN-19"
 ```
 
@@ -73,7 +73,7 @@ ing
 #> - aspirin (2 codes)
 #> - diclofenac (1 codes)
 ing$aspirin
-#> [1] 19059056  1112807
+#> [1]  1112807 19059056
 ing$diclofenac
 #> [1] 1124300
 ```
@@ -99,9 +99,9 @@ asthma_codes1 |>
   glimpse()
 #> Rows: 2
 #> Columns: 6
-#> $ concept_id       <int> 4051466, 317009
+#> $ concept_id       <int> 317009, 4051466
 #> $ found_from       <chr> "From initial search", "From initial search"
-#> $ concept_name     <chr> "Childhood asthma", "Asthma"
+#> $ concept_name     <chr> "Asthma", "Childhood asthma"
 #> $ domain_id        <chr> "Condition", "Condition"
 #> $ vocabulary_id    <chr> "SNOMED", "SNOMED"
 #> $ standard_concept <chr> "S", "S"
@@ -136,10 +136,11 @@ summarise their use. Here for
 
 ``` r
 library(flextable)
-asthma_code_use <- summariseCodeUse(list("asthma" = asthma_codes1$concept_id),
+asthma_code_use <- summariseCodeUse(list("asthma" = asthma_codes1$concept_id) |> 
+                                           newCodelist(),
   cdm = cdm
 )
-tableCodeUse(asthma_code_use, type = "flextable")
+tableCodeUse(asthma_code_use, type = "flextable", style = "darwin")
 ```
 
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />

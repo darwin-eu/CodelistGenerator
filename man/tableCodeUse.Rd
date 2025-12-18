@@ -9,7 +9,8 @@ tableCodeUse(
   type = "gt",
   header = c("cdm_name", "estimate_name"),
   groupColumn = character(),
-  hide = character(),
+  hide = c("date_range_start", "date_range_end"),
+  style = NULL,
   .options = list()
 )
 }
@@ -39,6 +40,13 @@ These cannot be used in header.}
 "source_concept_id", "domain_id". If results are stratified, "year", "sex",
 "age_group" can also be used. These cannot be used in header or groupColumn.}
 
+\item{style}{A character string or custom R code to define the visual formatting
+of the table. This argument can be provided in two ways: (1) Pre-defined Styles
+(Character String): Use a name for a built-in style (e.g., "darwin"). See
+visOmopResults::tableStyle() for available options. (2) Custome Code (Advanced):
+Supply a block of custom R code. This code must be specific to the table type.
+See visOmopResults::tableStyleCode() for structural examples.}
+
 \item{.options}{Named list with additional formatting options.
 visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
@@ -51,6 +59,8 @@ Format the result of summariseCodeUse into a table.
 }
 \examples{
 \dontrun{
+library(omopgenerics)
+library(CodelistGenerator)
 con <- DBI::dbConnect(duckdb::duckdb(),
                       dbdir = CDMConnector::eunomiaDir())
 cdm <- CDMConnector::cdmFromCon(con,
@@ -61,7 +71,7 @@ acetiminophen <- c(1125315,  1127433, 40229134,
 poliovirus_vaccine <- c(40213160)
 cs <- list(acetiminophen = acetiminophen,
           poliovirus_vaccine = poliovirus_vaccine)
-results <- summariseCodeUse(cs,cdm = cdm)
+results <- summariseCodeUse(newCodelist(cs),cdm = cdm)
 tableCodeUse(results)
 CDMConnector::cdmDisconnect(cdm)
 }

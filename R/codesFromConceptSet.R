@@ -16,6 +16,7 @@
 
 
 #' Get concept ids from JSON files containing concept sets
+#' `r lifecycle::badge("deprecated")`
 #'
 #' @param path Path to a file or folder containing JSONs of concept sets.
 #' @inheritParams cdmDoc
@@ -26,16 +27,41 @@
 #'
 #' @examples
 #' \donttest{
-#' cdm <- mockVocabRef("database")
+#' library(CodelistGenerator)
+#' library(omock)
+#'
+#' # Create a CDM object
+#' cdm <- mockCdmReference()
+#'
+#' # Load JSON files
 #' x <- codesFromConceptSet(cdm = cdm,
 #'                          path =  system.file(package = "CodelistGenerator",
-#'                          "concepts_for_mock"))
+#'                                              "concepts_for_mock"))
 #' x
-#' CDMConnector::cdmDisconnect(cdm)
+#'
+#' # Load JSON files as codelist_with_details
+#' x <- codesFromConceptSet(cdm = cdm,
+#'                          path =  system.file(package = "CodelistGenerator",
+#'                                              "concepts_for_mock"),
+#'                          type = "codelist_with_details")
+#' x
+#'
+#' # Load JSON files as concept_set_expression
+#' x <- codesFromConceptSet(cdm = cdm,
+#'                          path =  system.file(package = "CodelistGenerator",
+#'                                              "concepts_for_mock"),
+#'                          type = "concept_set_expression")
+#' x
+#'
 #' }
 codesFromConceptSet <- function(path,
                                 cdm,
                                 type = c("codelist")) {
+
+  lifecycle::deprecate_warn(what = "codesFromConceptSet()",
+                            when = "4.0.0",
+                            with = I("omopgenerics::importConceptSetExpression() |> asCodelist()"))
+
 
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
@@ -74,11 +100,11 @@ codesFromConceptSet <- function(path,
 
   if(type == "concept_set_expression"){
     conceptList <- conceptList |>
-    dplyr::select("concept_id",
-                  "excluded" = "is_excluded",
-                  "descendants" = "include_descendants",
-                  "mapped" = "include_mapped",
-                  "cohort_name")
+      dplyr::select("concept_id",
+                    "excluded" = "is_excluded",
+                    "descendants" = "include_descendants",
+                    "mapped" = "include_mapped",
+                    "cohort_name")
 
     conceptList <- split(
       conceptList,
@@ -91,7 +117,7 @@ codesFromConceptSet <- function(path,
     }
     conceptList <- omopgenerics::newConceptSetExpression(conceptList)
     return(conceptList)
-    }
+  }
 
 
   if(any(conceptList$include_mapped == TRUE)){
@@ -123,11 +149,16 @@ codesFromConceptSet <- function(path,
 
   if(type == "codelist_with_details"){
     conceptFinalList <- addDetails(conceptList = conceptFinalList,
-               cdm = cdm)
+                                   cdm = cdm)
+
+    x <- purrr::list_rbind(conceptFinalList) |>
+      dplyr::filter(is.na(.data$standard_concept)) |>
+      dplyr::pull("concept_id")
+    if(length(x) > 0){
+      cli::cli_warn("Concept_id{?s} {.val {as.character(x)}} {?is/are} not present in the CDM.")
+    }
     conceptFinalList <- omopgenerics::newCodelistWithDetails(conceptFinalList)
   }
-
-
 
   # return list
   return(conceptFinalList)
@@ -143,6 +174,7 @@ codesFromConceptSet <- function(path,
 #' @export
 #' @examples
 #' \donttest{
+#' library(CodelistGenerator)
 #' cdm <- mockVocabRef("database")
 #' x <- codesFromCohort(cdm = cdm,
 #'                      path =  system.file(package = "CodelistGenerator",
@@ -154,6 +186,7 @@ codesFromConceptSet <- function(path,
 codesFromCohort <- function(path,
                             cdm,
                             type = c("codelist")) {
+
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
   omopgenerics::assertCharacter(type, length = 1)
@@ -211,7 +244,7 @@ codesFromCohort <- function(path,
                    overwrite = TRUE,
                    temporary = FALSE)
 
-  CDMConnector::dropTable(cdm = cdm, name = codelistTable)
+  omopgenerics::dropSourceTable(cdm = cdm, name = codelistTable)
   cdm[[codelistTable]] <- NULL
 
   # exclude
@@ -226,7 +259,7 @@ codesFromCohort <- function(path,
 
   if(type == "codelist_with_details"){
     codelist <- addDetails(conceptList = codelist,
-                                   cdm = cdm)
+                           cdm = cdm)
     codelist <- omopgenerics::newCodelistWithDetails(codelist)
   }
 
@@ -268,8 +301,8 @@ extractCodes <- function(file, unknown) {
     isExcluded <- NULL
 
     for (j in seq_along(concepts)) {
-       if(!is.null(concepts[[j]][["includeMapped"]]) &&
-          concepts[[j]][["includeMapped"]] == TRUE ){
+      if(!is.null(concepts[[j]][["includeMapped"]]) &&
+         concepts[[j]][["includeMapped"]] == TRUE ){
         cli::cli_abort(
           glue::glue("Mapped as TRUE not supported (found in {name})"))
       }
@@ -350,36 +383,41 @@ tibbleToList <- function(codelistTibble) {
   codelist_dedup <- list()
 
   for(i in seq_along(cs_names_unique)){
-   same_name_cs <- codelist[which(cs_names_unique[i] == cs_names)]
-   check_consistent <- all(sapply(same_name_cs, identical, same_name_cs[[1]]))
+    same_name_cs <- codelist[which(cs_names_unique[i] == cs_names)]
+    check_consistent <- all(sapply(same_name_cs, identical, same_name_cs[[1]]))
 
-   if(isFALSE(check_consistent)){
-     cli::cli_abort(message = "Different definitions for concept set {cs_names_unique[i]} found")
-   }
-   # keep first
-   codelist_dedup[[cs_names_unique[i]]] <- same_name_cs[[1]]
+    if(isFALSE(check_consistent)){
+      cli::cli_abort(message = "Different definitions for concept set {cs_names_unique[i]} found")
+    }
+    # keep first
+    codelist_dedup[[cs_names_unique[i]]] <- same_name_cs[[1]]
   }
 
   return(codelist_dedup)
 }
 
-addDetails <- function(conceptList, cdm){
+addDetails <- function(conceptList,
+                       cdm,
+                       cols = c("concept_name", "domain_id", "vocabulary_id", "standard_concept")){
 
-  if(length(conceptList)==0){
+  if(length(conceptList) == 0){
     return(conceptList)
   }
 
-  # will accept either a list or tibble
-  # will return the same type as the input
-  inputIsTbl <- inherits(conceptList, "tbl_df")
+  if(isFALSE(inherits(conceptList[[1]], "tbl_df"))){
+    for(i in seq_along(conceptList)){
+      conceptList[[i]] <- dplyr::tibble(concept_id = conceptList[[i]],
+                                        concept_set = names(conceptList)[i])
+    }
+    extraCols <- as.character()
+  }else{
+    cols <- setdiff(cols,
+                    colnames(conceptList[[1]]))
+    conceptList <- purrr::imap(conceptList, ~ dplyr::mutate(.x, "concept_set" = .y))
+    extraCols <- names(conceptList[[1]])[!names(conceptList[[1]]) %in% c("concept_id", "concept_name", "domain_id", "standard_concept", "vocabulary_id", "concept_set")]
+  }
 
-  if(isFALSE(inputIsTbl)){
-  for(i in seq_along(conceptList)){
-    conceptList[[i]] <- dplyr::tibble(concept_id = conceptList[[i]],
-                                      concept_set = names(conceptList)[i])
-  }
-    conceptList <- dplyr::bind_rows(unclass(conceptList))
-  }
+  conceptList <- dplyr::bind_rows(unclass(conceptList))
 
   tableConceptList <- omopgenerics::uniqueTableName()
   cdm <- omopgenerics::insertTable(cdm = cdm,
@@ -388,46 +426,56 @@ addDetails <- function(conceptList, cdm){
                                    overwrite = TRUE,
                                    temporary = FALSE)
 
-  conceptList <- cdm[[tableConceptList]] |>
-     dplyr::left_join(cdm[["concept"]] |>
-      dplyr::select("concept_id", "concept_name",
-                "domain_id", "vocabulary_id",
-                "standard_concept"),
-                     by = "concept_id") |>
-    dplyr::mutate(
-      standard_concept = ifelse(is.na(.data$standard_concept),
-                                "non-standard", .data$standard_concept
-      )
-    ) |>
-    dplyr::mutate(
-      standard_concept = ifelse(.data$standard_concept == "C",
-                                "classification", .data$standard_concept
-      )
-    ) |>
-    dplyr::mutate(
-      standard_concept = ifelse(.data$standard_concept == "S",
-                                "standard", .data$standard_concept
-      )
-    )  |>
-    dplyr::collect()
+  if("standard_concept" %in% cols){
+    conceptList <- cdm[[tableConceptList]] |>
+      dplyr::left_join(cdm[["concept"]] |>
+                         dplyr::select("concept_id", dplyr::all_of(cols)) |>
+                         dplyr::mutate("standard_concept" = dplyr::if_else(
+                           is.na(.data$standard_concept),
+                           "non-standard",
+                           .data$standard_concept)
+                         ),
+                       by = "concept_id")
 
-  CDMConnector::dropTable(cdm = cdm, name = tableConceptList)
-  cdm[[tableConceptList]] <- NULL
+    conceptList <- conceptList |>
+      dplyr::mutate(
+        standard_concept = ifelse(.data$standard_concept == "C",
+                                  "classification",
+                                  .data$standard_concept)) |>
+      dplyr::mutate(
+        standard_concept = ifelse(.data$standard_concept == "S",
+                                  "standard",
+                                  .data$standard_concept))  |>
+      dplyr::collect()
+  }else{
+    conceptList <- cdm[[tableConceptList]] |>
+      dplyr::left_join(cdm[["concept"]] |>
+                         dplyr::select("concept_id", dplyr::all_of(cols)),
+                       by = "concept_id")
 
-  if(isFALSE(inputIsTbl)){
-   conceptList <- split(
+    conceptList <- conceptList |>
+      dplyr::collect()
+  }
+
+  omopgenerics::dropSourceTable(cdm = cdm, name = tableConceptList)
+
+  # Arrange tables
+  conceptList <- conceptList |>
+    dplyr::select("concept_id", "concept_set",
+                  dplyr::any_of(c("concept_name", "domain_id", "vocabulary_id", "standard_concept",
+                           extraCols)))
+
+  conceptList <- split(
     x = conceptList |> dplyr::select(!"concept_set"),
     f = as.factor(conceptList$concept_set)
-   )
-   }
+  )
 
   for(i in seq_along(conceptList)){
     conceptList[[i]] <- conceptList[[i]] |>
-      dplyr::arrange(.data$concept_name)
+      dplyr::arrange(.data$concept_id)
   }
 
-   return(conceptList)
-
+  return(conceptList)
 }
 
 #' Put concept ids from all cohorts of interest in the required list format
@@ -505,7 +553,7 @@ readConceptSet <- function(conceptSets) {
              "includeMapped",
              "includeDescendants")
 
-  for (k in 1:nrow(conceptSets)) {
+  for (k in seq_len(nrow(conceptSets))) {
     conceptSetName <- conceptSets$concept_set_name[k]
     conceptSet <- jsonlite::read_json(conceptSets$concept_set_path[k])
     conceptSet <- lapply(conceptSet$items, function(x) {
@@ -518,7 +566,7 @@ readConceptSet <- function(conceptSets) {
         cohort_name = conceptSetName
       )
     # Add columns missing from the read file with default values
-    conceptSet[setdiff(names, names(conceptSet))] <- as.character(NA)
+    conceptSet[setdiff(names, names(conceptSet))] <- NA_character_
     conceptSet <- conceptSet |>
       dplyr::mutate(
         isExcluded = ifelse(is.na(.data$isExcluded), FALSE, .data$isExcluded),

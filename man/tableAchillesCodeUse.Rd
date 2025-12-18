@@ -10,6 +10,7 @@ tableAchillesCodeUse(
   header = c("cdm_name", "estimate_name"),
   groupColumn = character(),
   hide = character(),
+  style = "default",
   .options = list()
 )
 }
@@ -37,6 +38,13 @@ These cannot be used in header.}
 "estimate_name", "standard_concept", "vocabulary_id". These cannot be used in
 header or groupColumn.}
 
+\item{style}{A character string or custom R code to define the visual formatting
+of the table. This argument can be provided in two ways: (1) Pre-defined Styles
+(Character String): Use a name for a built-in style (e.g., "darwin"). See
+visOmopResults::tableStyle() for available options. (2) Custome Code (Advanced):
+Supply a block of custom R code. This code must be specific to the table type.
+See visOmopResults::tableStyleCode() for structural examples.}
+
 \item{.options}{Named list with additional formatting options.
 visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
@@ -50,9 +58,13 @@ Format the result of summariseAchillesCodeUse into a table
 }
 \examples{
 \donttest{
+library(CodelistGenerator)
+library(omopgenerics)
+
 cdm <- mockVocabRef("database")
 oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
-result_achilles <- summariseAchillesCodeUse(list(oa = oa$concept_id), cdm = cdm)
+result_achilles <- summariseAchillesCodeUse(newCodelist(list(oa = oa$concept_id)),
+                                            cdm = cdm)
 tableAchillesCodeUse(result_achilles)
 CDMConnector::cdmDisconnect(cdm)
 }

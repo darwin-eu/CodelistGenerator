@@ -4,8 +4,8 @@
 \alias{keepOriginalDoc}
 \title{Helper for consistent documentation of \code{keepOriginal}.}
 \arguments{
-\item{keepOriginal}{Whether to keep the original codelist and append the
-stratify (if TRUE) or just return the stratified codelist (if FALSE).}
+\item{keepOriginal}{Whether to keep the original codelist (TRUE) or just return
+the stratified ones (FALSE).}
 }
 \description{
 Helper for consistent documentation of \code{keepOriginal}.

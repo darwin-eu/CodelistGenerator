@@ -1,0 +1,61 @@
+{
+"items": [
+{
+"concept": {
+"CONCEPT_CLASS_ID": "Clinical Finding",
+"CONCEPT_CODE": "1234",
+"CONCEPT_ID": 1,
+"CONCEPT_NAME": "Musculoskeletal disorder",
+"DOMAIN_ID": "Condition",
+"INVALID_REASON": "V",
+"INVALID_REASON_CAPTION": "Valid",
+"STANDARD_CONCEPT": "S",
+"STANDARD_CONCEPT_CAPTION": "Standard",
+"VOCABULARY_ID": "SNOMED",
+"VALID_START_DATE": "",
+"VALID_END_DATE": ""
+},
+"isExcluded": false,
+"includeDescendants": false,
+"includeMapped": false
+},
+{
+"concept": {
+"CONCEPT_CLASS_ID": "Clinical Finding",
+"CONCEPT_CODE": "1234",
+"CONCEPT_ID": 7,
+"CONCEPT_NAME": "Degenerative arthropathy",
+"DOMAIN_ID": "Condition",
+"INVALID_REASON": "V",
+"INVALID_REASON_CAPTION": "Valid",
+"STANDARD_CONCEPT": "N",
+"STANDARD_CONCEPT_CAPTION": "Non-Standard",
+"VOCABULARY_ID": "Read",
+"VALID_START_DATE": "",
+"VALID_END_DATE": ""
+},
+"isExcluded": false,
+"includeDescendants": false,
+"includeMapped": false
+},
+{
+"concept": {
+"CONCEPT_CLASS_ID": "Clinical Observation",
+"CONCEPT_CODE": "72166-2",
+"CONCEPT_ID": 43054909,
+"CONCEPT_NAME": "Tobacco smoking status",
+"DOMAIN_ID": "Observation",
+"INVALID_REASON": "V",
+"INVALID_REASON_CAPTION": "Valid",
+"STANDARD_CONCEPT": "S",
+"STANDARD_CONCEPT_CAPTION": "Standard",
+"VOCABULARY_ID": "LOINC",
+"VALID_START_DATE": "",
+"VALID_END_DATE": ""
+},
+"isExcluded": false,
+"includeDescendants": false,
+"includeMapped": false
+}
+]
+}

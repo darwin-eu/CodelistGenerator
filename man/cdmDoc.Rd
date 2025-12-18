@@ -4,7 +4,9 @@
 \alias{cdmDoc}
 \title{Helper for consistent documentation of \code{cdm}.}
 \arguments{
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 }
 \description{
 Helper for consistent documentation of \code{cdm}.

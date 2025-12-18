@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
   eval = NOT_CRAN
 )
 ```
-  
+
 ```{r, include = FALSE}
 CDMConnector::requireEunomia("synpuf-1k", "5.3")
 ```
@@ -33,7 +33,7 @@ library(CodelistGenerator)
 
 # Connect to the database and create the cdm object
 con <- dbConnect(duckdb::duckdb(), 
-                      eunomiaDir("synpuf-1k", "5.3"))
+                 eunomiaDir("synpuf-1k", "5.3"))
 cdm <- cdmFromCon(con = con, 
                   cdmName = "Eunomia Synpuf",
                   cdmSchema   = "main",
@@ -47,67 +47,53 @@ Note that we have included [achilles tables](https://github.com/OHDSI/Achilles) 
 
 We can first start by getting the vocabulary version of our CDM object:
 ```{r}
-getVocabVersion(cdm)
+vocabularyVersion(cdm)
 ```
 
 And the available vocabularies, which correspond to the column *vocabulary_id* from the concept table:
 ```{r}
-getVocabularies(cdm)
+availableVocabularies(cdm)
 ```
 
 ## Domains
 
 We can also explore the domains that our CDM object has, which is the column *domain_id* from the concept table:
 ```{r}
-getDomains(cdm)
+availableDomains(cdm)
 ```
 
 or restrict the search among *standard* concepts:
 ```{r}
-getDomains(cdm, 
-           standardConcept = "Standard")
+availableDomains(cdm,
+                 standardConcept = "Standard")
 ```
 
 ## Concept class
 
 We can further explore the different classes that we have (reported in *concept_class_id* column from the concept table):
 ```{r}
-getConceptClassId(cdm)
+availableConceptClassIds(cdm)
 ```
 
 Or restrict the search among *non-standard* concepts with *condition* domain:
 ```{r}
-getConceptClassId(cdm, 
-                  standardConcept = "Non-standard", 
-                  domain = "Condition")
+availableConceptClassIds(cdm, 
+                         standardConcept = "Non-standard", 
+                         domain = "Condition")
 ```
 
 ## Relationships
 
 We can also explore the different relationships that are present in our CDM:
 ```{r}
-getRelationshipId(cdm)
+availableRelationshipIds(cdm)
 ```
 
 Or narrow the search among *standard* concepts with domain *observation*:
 ```{r}
-getRelationshipId(cdm,
-                  standardConcept1 = "standard",
-                  standardConcept2 = "standard",
-                  domains1 = "observation",
-                  domains2 = "observation")
-```
-
-## Codes in use
-Finally, we can easily get those codes that are in use (that means, that are recorded at least one time in the database):
-```{r}
-result <- sourceCodesInUse(cdm)
-head(result, n = 5) # Only the first 5 will be shown
-```
-Notice that [achilles tables](https://github.com/OHDSI/Achilles) are used in this function. If you CDM does not have them loaded, an empty result will be returned.
-
-And we can restrict the search within specific CDM tables (for example, *condition_occurrence*  and *device_exposure* table):
-```{r}
-result <- sourceCodesInUse(cdm, table = c("device_exposure", "condition_occurrence"))
-head(result, n = 5) # Only the first 5 will be shown
+availableRelationshipIds(cdm,
+                         standardConcept1 = "Standard",
+                         standardConcept2 = "Standard",
+                         domains1 = "Observation",
+                         domains2 = "Observation")
 ```

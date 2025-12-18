@@ -4,47 +4,47 @@ test_that("subset on route category", {
 
   for (i in seq_along(backends)) {
     cdm <- mockVocabRef(backends[[i]])
-    ing_codes <- getDrugIngredientCodes(cdm)
 
-    ing_codes_sub <- subsetOnRouteCategory(ing_codes, cdm, "oral")
-    # all will have been empty and dropped
-    expect_true(length(ing_codes_sub) == 0)
+    # codelist
+    codelist <- newCodelist(list("codes1" = c(10L, 14L),
+                                 "codes2" = c(11L, 12L)))
+    expect_warning(x <- subsetOnRouteCategory(codelist, cdm, routeCategory = c("injectable"), negate = FALSE))
+    expect_true(inherits(x, "codelist"))
+    expect_true(x$codes1 == 10L)
+    expect_no_error(x <- subsetOnRouteCategory(codelist, cdm, routeCategory = c("injectable"), negate = TRUE))
+    expect_true(inherits(x, "codelist"))
+    expect_true(x$codes1 == c(14L))
+    expect_identical(x$codes2, c(11L, 12L))
+    expect_no_error(x1 <- subsetOnRouteCategory(codelist, cdm, routeCategory = c("unclassified route category"), negate = FALSE))
+    expect_true(inherits(x1, "codelist"))
+    expect_identical(x1, x)
 
-    ing_codes_sub <- subsetOnRouteCategory(ing_codes,  cdm, "oral")
+    # codelist with details
+    codelist_wd <- codelist |> asCodelistWithDetails(cdm)
+    expect_warning(x <- subsetOnRouteCategory(codelist_wd,  cdm, "injectable"))
+    expect_true(inherits(x, "codelist_with_details"))
+    expect_identical(x$codes1 |> dplyr::pull("concept_id"), 10L)
 
-    ing_codes_sub2 <- subsetOnRouteCategory(ing_codes,  cdm, "unclassified_route")
-    expect_identical(ing_codes, ing_codes_sub2)
+    # check empty codelist
+    expect_warning(x <- subsetOnRouteCategory(codelist, cdm, "oral"))
+    expect_true(length(x) == 0)
+    expect_true(inherits(x, "codelist"))
+
+    # check empty codelist_with_details
+    expect_warning(x <- subsetOnRouteCategory(codelist_wd, cdm, "oral"))
+    expect_true(length(x) == 0)
+    expect_true(inherits(x, "codelist_with_details"))
 
     # expected errors
-    expect_error(subsetOnRouteCategory("a",  cdm, "oral"))
-    expect_error(subsetOnRouteCategory(ing_codes,  "a", "oral"))
-    expect_error(subsetOnRouteCategory(ing_codes,  cdm, 1234))
+    expect_error(subsetOnRouteCategory(list("a" = 1L),  cdm, "oral"))
+    expect_error(subsetOnRouteCategory(codelist,  "a", "oral"))
+    expect_error(subsetOnRouteCategory(codelist,  cdm, 1234L))
 
-    # Check negate option
-    cdm <- mockVocabRef()
-    x <- list("codes" = c(20L,21L))
-
-    topical1 <- subsetOnRouteCategory(x, cdm, routeCategory = "topical")
-    topical2 <- subsetOnRouteCategory(x, cdm, routeCategory = "transmucosal_nasal", negate = TRUE)
-
-    expect_equal(topical1$codes, topical2$codes)
-    expect_true(cdm$concept |>
-                  dplyr::filter(concept_id %in% topical2$codes) |>
-                  dplyr::select("concept_id") |>
-                  dplyr::left_join(
-                    cdm$concept_relationship |>
-                      dplyr::select("concept_id" = "concept_id_1",
-                                    "concept_id_2", "relationship_id") |>
-                      dplyr::filter(relationship_id == "RxNorm has dose form"),
-                    by = "concept_id"
-                  ) |>
-                  dplyr::left_join(
-                    doseFormToRoute |>
-                      dplyr::rename("concept_id_2" = "dose_form_concept_id"),
-                    by = "concept_id_2"
-                  ) |>
-                  dplyr::pull("route_category") |>
-                  unique() == "topical")
+    # Check lower case
+    codelist <- newCodelist(list("a" = c(21L, 22L)))
+    topical1 <- subsetOnRouteCategory(codelist, cdm, routeCategory = "topical")
+    topical3 <- subsetOnRouteCategory(codelist, cdm, routeCategory = "Topical")
+    expect_equal(topical1, topical3)
 
     if (backends[[i]] == "database") {
       CDMConnector::cdmDisconnect(cdm)

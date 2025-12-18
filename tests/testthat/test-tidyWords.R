@@ -7,3 +7,9 @@ test_that("hyphens", {
 test_that("capitalisation", {
   expect_equal(tidyWords("AbC"), tidyWords("abc"))
 })
+
+test_that("non utf", {
+  expect_equal(tidyWords("[ ¹⁸ F]AlF-NOTA-FAPI-04"),
+               "falf nota fapi 04")
+})
+

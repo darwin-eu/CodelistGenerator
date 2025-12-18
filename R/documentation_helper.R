@@ -1,5 +1,13 @@
 # Argument descriptions repeated > 1:
 
+#' Helper for consistent documentation of `codelistNameDoc`
+#' @param codelistName Name or names of codelist in x. If NULL, all codelist present
+#' in x will be considered.
+#'
+#' @name codelistNameDoc
+#' @keywords internal
+NULL
+
 #' Helper for consistent documentation of `.options`.
 #'
 #' @param .options Named list with additional formatting options.
@@ -45,7 +53,9 @@ NULL
 
 #' Helper for consistent documentation of `cdm`.
 #'
-#' @param cdm A cdm reference via CDMConnector.
+#' @param cdm A cdm reference to an OMOP CDM dataset. If data is held within a
+#' database, the vocabulary tables should be in the same schema as the clinical
+#' tables (person, observation period, and so on).
 #'
 #' @name cdmDoc
 #' @keywords internal
@@ -64,7 +74,7 @@ NULL
 #'
 #' @param domain Character vector with one or more of the OMOP CDM domains.
 #' The results will be restricted to the given domains. Check the available
-#' ones by running getDomains(). If NULL, all supported domains are included:
+#' ones by running availableDomains(). If NULL, all supported domains are included:
 #' Condition, Drug, Procedure, Device, Observation, and Measurement.
 #'
 #' @name domainDoc
@@ -75,7 +85,7 @@ NULL
 #'
 #' @param doseForm Only codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose form. Use 'getDoseForm()' to see the available dose forms.
+#' of dose form. Use 'doseForms()' to see the available dose forms.
 #'
 #' @name doseFormDoc
 #' @keywords internal
@@ -85,7 +95,7 @@ NULL
 #'
 #' @param doseUnit Only codes with the specified dose unit
 #' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose unit Use 'getDoseUnit()' to see the available dose units.
+#' of dose unit Use 'availableDoseUnits()' to see the available dose units.
 #'
 #' @name doseUnitDoc
 #' @keywords internal
@@ -152,6 +162,19 @@ NULL
 #' @keywords internal
 NULL
 
+#' Helper for consistent documentation of `style`.
+#'
+#' @param style A character string or custom R code to define the visual formatting
+#' of the table. This argument can be provided in two ways: (1) Pre-defined Styles
+#' (Character String): Use a name for a built-in style (e.g., "darwin"). See
+#' visOmopResults::tableStyle() for available options. (2) Custome Code (Advanced):
+#' Supply a block of custom R code. This code must be specific to the table type.
+#' See visOmopResults::tableStyleCode() for structural examples.
+#'
+#' @name tableStyleDoc
+#' @keywords internal
+NULL
+
 #' Helper for consistent documentation of `hide`.
 #'
 #' @param hide Table columns to exclude, options are: "cdm_name",
@@ -188,10 +211,19 @@ NULL
 
 #' Helper for consistent documentation of `keepOriginal`.
 #'
-#' @param keepOriginal Whether to keep the original codelist and append the
-#' stratify (if TRUE) or just return the stratified codelist (if FALSE).
+#' @param keepOriginal Whether to keep the original codelist (TRUE) or just return
+#' the stratified ones (FALSE).
 #'
 #' @name keepOriginalDoc
+#' @keywords internal
+NULL
+
+#' Helper for consistent documentation of `keepOriginal`.
+#'
+#' @param keepOriginal Whether to keep the original codelist (TRUE) or just return
+#' the subset ones (FALSE).
+#'
+#' @name keepOriginalDocSubset
 #' @keywords internal
 NULL
 
@@ -290,5 +322,13 @@ NULL
 #' @param x A codelist.
 #'
 #' @name xDoc
+#' @keywords internal
+NULL
+
+#' Helper for consistent documentation of `x` where input can be codelist or cohort.
+#'
+#' @param x A codelist or cohort table name.
+#'
+#' @name xDocCohort
 #' @keywords internal
 NULL

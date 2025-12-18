@@ -11,7 +11,7 @@ tableCohortCodeUse(
   groupColumn = character(),
   hide = c("timing"),
   .options = list(),
-  timing = lifecycle::deprecated()
+  style = NULL
 )
 }
 \arguments{
@@ -44,7 +44,12 @@ These cannot be used in header.}
 visOmopResults::tableOptions() shows allowed arguments and
 their default values.}
 
-\item{timing}{deprecated.}
+\item{style}{A character string or custom R code to define the visual formatting
+of the table. This argument can be provided in two ways: (1) Pre-defined Styles
+(Character String): Use a name for a built-in style (e.g., "darwin"). See
+visOmopResults::tableStyle() for available options. (2) Custome Code (Advanced):
+Supply a block of custom R code. This code must be specific to the table type.
+See visOmopResults::tableStyleCode() for structural examples.}
 }
 \value{
 A table with a formatted version of the summariseCohortCodeUse

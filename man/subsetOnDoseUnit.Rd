@@ -9,11 +9,13 @@ subsetOnDoseUnit(x, cdm, doseUnit, negate = FALSE)
 \arguments{
 \item{x}{A codelist.}
 
-\item{cdm}{A cdm reference via CDMConnector.}
+\item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
+database, the vocabulary tables should be in the same schema as the clinical
+tables (person, observation period, and so on).}
 
 \item{doseUnit}{Only codes with the specified dose unit
 will be returned. If NULL, descendant codes will be returned regardless
-of dose unit Use 'getDoseUnit()' to see the available dose units.}
+of dose unit Use 'availableDoseUnits()' to see the available dose units.}
 
 \item{negate}{If FALSE, only concepts with the dose unit specified will be
 returned. If TRUE, concepts with the dose unit specified will be excluded.}
@@ -29,8 +31,9 @@ Subset a codelist to only those with a particular dose unit.
 \examples{
 \donttest{
 library(CodelistGenerator)
+library(omopgenerics)
 cdm <- mockVocabRef()
-codes <- subsetOnDoseUnit(x = list("codes" = c(20,21)),
+codes <- subsetOnDoseUnit(x = newCodelist(list("codes" = c(20,21))),
                           cdm = cdm,
                           doseUnit = c("milligram"))
 
