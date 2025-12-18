@@ -1,0 +1,247 @@
+# Types of Codelist
+
+In this vignette we will introduce the three different types of codelist
+that CodelistGenerator uses: codelist, codelist with details, and
+concept set. First of all, we will upload the packages required for the
+demonstration.
+
+``` r
+library(omopgenerics, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+library(CodelistGenerator)
+```
+
+## Codelist
+
+Codelist format is the simplest of the three formats. To create one, we
+just need a named list where each element contains a vector of concept
+IDs. You can see an example below on how to create one:
+
+``` r
+codelist <- list("codes1" = c(1L, 2L, 3L),
+                 "codes2" = c(4L, 5L, 10L))
+codelist <- newCodelist(codelist)
+
+codelist 
+#> 
+#> ── 2 codelists ─────────────────────────────────────────────────────────────────
+#> 
+#> - codes1 (3 codes)
+#> - codes2 (3 codes)
+```
+
+Notice that the codelist has two specific attributes, the name of the
+codelists that contains and the class:
+
+``` r
+attributes(codelist)
+#> $names
+#> [1] "codes1" "codes2"
+#> 
+#> $class
+#> [1] "codelist" "list"
+```
+
+### Create an empty codelist
+
+We can create an empty codelist using omopGenerics package:
+
+``` r
+empty_codelist  <- emptyCodelist()
+
+empty_codelist
+#> 
+#> ── 0 codelists ─────────────────────────────────────────────────────────────────
+```
+
+## Codelist with details
+
+Codelist with details contains a tibble in each element. To create one,
+we need a named list where each element contains a tibble with at least
+the column *concept_id*.
+
+``` r
+codelist_with_details <- list("codes1" = tibble("concept_id" = c(1L, 2L, 3L)),
+                              "codes2" = tibble("concept_id" = c(4L, 5L, 10L)))
+codelist_with_details <- newCodelistWithDetails(codelist_with_details)
+
+codelist_with_details
+#> 
+#> ── 2 codelists with details ────────────────────────────────────────────────────
+#> 
+#> - codes1 (3 codes)
+#> - codes2 (3 codes)
+```
+
+Notice that this allows us to add more information of each one of the
+codes:
+
+``` r
+codelist_with_details <- list(
+  "codes1" = tibble("concept_id" = c(1L, 2L, 3L),
+                    "concept_name" = c("Musculoskeletal disorder", "Osteoarthrosis", "Arthritis"),
+                    "domain_id" = c("Condition", "Condition", "Condition"),
+                    "vocabulary_id" = c("SNOMED","SNOMED","SNOMED"),
+                    "standard_concept" = c("S","S","S")),
+  "codes2" = tibble("concept_id" = c(4L, 5L, 10L),
+                    "concept_name" = c("Osteoarthritis of knee", "Osteoarthritis of hip", "Adalimumab"),
+                    "domain_id" = c("Condition", "Condition", "Drug"),
+                    "vocabulary_id" = c("SNOMED","SNOMED","RxNorm"),
+                    "standard_concept" = c("S","S","S")))
+codelist_with_details <- newCodelistWithDetails(codelist_with_details)
+
+codelist_with_details
+#> 
+#> ── 2 codelists with details ────────────────────────────────────────────────────
+#> 
+#> - codes1 (3 codes)
+#> - codes2 (3 codes)
+```
+
+The codelist with details also has two specific attributes:
+
+``` r
+attributes(codelist_with_details)
+#> $names
+#> [1] "codes1" "codes2"
+#> 
+#> $class
+#> [1] "codelist_with_details" "list"
+```
+
+### Create an empty codelist with details
+
+omopGenerics package also has a function to create an empty codelist
+with details.
+
+``` r
+empty_codelist_with_details <- emptyCodelistWithDetails()
+
+empty_codelist_with_details
+#> 
+#> ── 0 codelists with details ────────────────────────────────────────────────────
+```
+
+## Concept set expression
+
+A concept set expression contains a tibble with the logic describing how
+this concepts will be included or excluded. It usually follows the JSON
+file structure. To create one, we need a named list with a tibble
+containing the columns: *concept_id*, *excluded*, *descendants*, and
+*mapped*:
+
+``` r
+concept_set_expression <- list(
+  "codes1" = tibble("concept_id" = c(1L, 2L, 3L),
+                    "excluded" = c(FALSE, FALSE, FALSE),
+                    "descendants" = c(TRUE, FALSE, FALSE),
+                    "mapped" = c(TRUE, TRUE, TRUE)),
+  "codes2" = tibble("concept_id" = c(4L, 5L, 10L),
+                    "excluded" = c(FALSE, FALSE, FALSE),
+                    "descendants" = c(FALSE, FALSE, FALSE),
+                    "mapped" = c(TRUE, TRUE, TRUE))
+)
+
+concept_set_expression <- newConceptSetExpression(concept_set_expression)
+
+concept_set_expression
+#> 
+#> ── 2 concept set expressions ───────────────────────────────────────────────────
+#> 
+#> - codes1 (3 concept criteria)
+#> - codes2 (3 concept criteria)
+```
+
+You can also see the attributes:
+
+``` r
+attributes(concept_set_expression)
+#> $names
+#> [1] "codes1" "codes2"
+#> 
+#> $class
+#> [1] "concept_set_expression" "conceptSetExpression"   "list"
+```
+
+### Create an empty concept set expression
+
+We can also use omopGenerics package to create an empty concept set
+expression:
+
+``` r
+empty_concept_set_expression <- emptyConceptSetExpression()
+
+empty_concept_set_expression
+#> 
+#> ── 0 concept set expressions ───────────────────────────────────────────────────
+```
+
+### Concept set expression from a JSON file
+
+CodelistGenerator contains a function that allows us to read a JSON file
+and transform it to a concept set expression (or other types of
+codelists). See the vignette **Extract codelists from JSON files** for
+further information.
+
+## Change to different codelist types
+
+There are several functions in CodelistGenerator that will allow us to
+go from a codelist to a codelist with details.
+
+### Codelist/Concept set expression to codelist with details
+
+Notice that to go from a codelist or concept_set_expression to a
+codelist_with_details, we will need to provide the cdm, as the details
+of the concepts will be extracted from the *concept* table.
+
+``` r
+cdm <- mockVocabRef()
+codelist_to_codelist_with_details <- asCodelistWithDetails(codelist, cdm)
+codelist_to_codelist_with_details
+#> 
+#> ── 2 codelists with details ────────────────────────────────────────────────────
+#> 
+#> - codes1 (3 codes)
+#> - codes2 (3 codes)
+
+codelist_to_concept_set_expression <- asCodelistWithDetails(codelist, cdm)
+codelist_to_concept_set_expression
+#> 
+#> ── 2 codelists with details ────────────────────────────────────────────────────
+#> 
+#> - codes1 (3 codes)
+#> - codes2 (3 codes)
+```
+
+### Codelist/Codelist with details to concept set expression
+
+``` r
+
+codelist_to_concept_set_expression <- asConceptSetExpression(codelist)
+codelist_to_concept_set_expression
+#> 
+#> ── 2 concept set expressions ───────────────────────────────────────────────────
+#> 
+#> - codes1 (3 concept criteria)
+#> - codes2 (3 concept criteria)
+
+codelist_with_details_to_concept_set_expression <- asConceptSetExpression(codelist_with_details)
+codelist_with_details_to_concept_set_expression
+#> 
+#> ── 2 concept set expressions ───────────────────────────────────────────────────
+#> 
+#> - codes1 (3 concept criteria)
+#> - codes2 (3 concept criteria)
+```
+
+### Codelist with details/Concept set expression to codelist
+
+``` r
+codelist_with_details_to_codelist <- asCodelist(codelist_with_details)
+codelist_with_details_to_codelist
+#> 
+#> ── 2 codelists ─────────────────────────────────────────────────────────────────
+#> 
+#> - codes1 (3 codes)
+#> - codes2 (3 codes)
+```

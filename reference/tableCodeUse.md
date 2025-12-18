@@ -1,0 +1,99 @@
+# Format the result of summariseCodeUse into a table.
+
+Format the result of summariseCodeUse into a table.
+
+## Usage
+
+``` r
+tableCodeUse(
+  result,
+  type = "gt",
+  header = c("cdm_name", "estimate_name"),
+  groupColumn = character(),
+  hide = c("date_range_start", "date_range_end"),
+  style = NULL,
+  .options = list()
+)
+```
+
+## Arguments
+
+- result:
+
+  A `<summarised_result>` with results of the type "code_use".
+
+- type:
+
+  Type of desired formatted table. To see supported formats use
+  visOmopResults::tableType().
+
+- header:
+
+  A vector specifying the elements to include in the header. The order
+  of elements matters, with the first being the topmost header. The
+  header vector can contain one of the following variables: "cdm_name",
+  "codelist_name", "standard_concept_name", "standard_concept_id",
+  "estimate_name", "source_concept_name", "source_concept_id",
+  "domain_id". If results are stratified, "year", "sex", "age_group" can
+  also be used. Alternatively, it can include other names to use as
+  overall header labels.
+
+- groupColumn:
+
+  Variables to use as group labels. Allowed columns are: "cdm_name",
+  "codelist_name", "standard_concept_name", "standard_concept_id",
+  "estimate_name", "source_concept_name", "source_concept_id",
+  "domain_id". If results are stratified, "year", "sex", "age_group" can
+  also be used. These cannot be used in header.
+
+- hide:
+
+  Table columns to exclude, options are: "cdm_name", "codelist_name",
+  "year", "sex", "age_group", "standard_concept_name",
+  "standard_concept_id", "estimate_name", "source_concept_name",
+  "source_concept_id", "domain_id". If results are stratified, "year",
+  "sex", "age_group" can also be used. These cannot be used in header or
+  groupColumn.
+
+- style:
+
+  A character string or custom R code to define the visual formatting of
+  the table. This argument can be provided in two ways: (1) Pre-defined
+  Styles (Character String): Use a name for a built-in style (e.g.,
+  "darwin"). See visOmopResults::tableStyle() for available options. (2)
+  Custome Code (Advanced): Supply a block of custom R code. This code
+  must be specific to the table type. See
+  visOmopResults::tableStyleCode() for structural examples.
+
+- .options:
+
+  Named list with additional formatting options.
+  visOmopResults::tableOptions() shows allowed arguments and their
+  default values.
+
+## Value
+
+A table with a formatted version of the summariseCodeUse result.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+library(omopgenerics)
+library(CodelistGenerator)
+con <- DBI::dbConnect(duckdb::duckdb(),
+                      dbdir = CDMConnector::eunomiaDir())
+cdm <- CDMConnector::cdmFromCon(con,
+                                cdmSchema = "main",
+                                writeSchema = "main")
+acetiminophen <- c(1125315,  1127433, 40229134,
+40231925, 40162522, 19133768,  1127078)
+poliovirus_vaccine <- c(40213160)
+cs <- list(acetiminophen = acetiminophen,
+          poliovirus_vaccine = poliovirus_vaccine)
+results <- summariseCodeUse(newCodelist(cs),cdm = cdm)
+tableCodeUse(results)
+CDMConnector::cdmDisconnect(cdm)
+} # }
+
+```

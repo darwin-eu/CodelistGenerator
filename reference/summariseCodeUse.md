@@ -1,0 +1,92 @@
+# Summarise code use in patient-level data.
+
+Summarise code use in patient-level data.
+
+## Usage
+
+``` r
+summariseCodeUse(
+  x,
+  cdm,
+  countBy = c("record", "person"),
+  byConcept = TRUE,
+  byYear = FALSE,
+  bySex = FALSE,
+  ageGroup = NULL,
+  dateRange = as.Date(c(NA, NA)),
+  useSourceCodes = FALSE
+)
+```
+
+## Arguments
+
+- x:
+
+  A codelist.
+
+- cdm:
+
+  A cdm reference to an OMOP CDM dataset. If data is held within a
+  database, the vocabulary tables should be in the same schema as the
+  clinical tables (person, observation period, and so on).
+
+- countBy:
+
+  Either "record" for record-level counts or "person" for person-level
+  counts.
+
+- byConcept:
+
+  TRUE or FALSE. If TRUE code use will be summarised by concept.
+
+- byYear:
+
+  TRUE or FALSE. If TRUE code use will be summarised by year.
+
+- bySex:
+
+  TRUE or FALSE. If TRUE code use will be summarised by sex.
+
+- ageGroup:
+
+  If not NULL, a list of ageGroup vectors of length two.
+
+- dateRange:
+
+  Two dates. The first indicating the earliest cohort start date and the
+  second indicating the latest possible cohort end date. If NULL or the
+  first date is set as missing, the earliest observation_start_date in
+  the observation_period table will be used for the former. If NULL or
+  the second date is set as missing, the latest observation_end_date in
+  the observation_period table will be used for the latter.
+
+- useSourceCodes:
+
+  Whether the codelist provided contains source codes (TRUE) or standard
+  codes (FALSE).
+
+## Value
+
+A tibble with count results overall and, if specified, by strata.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+library(omopgenerics)
+library(CodelistGenerator)
+con <- DBI::dbConnect(duckdb::duckdb(),
+                      dbdir = CDMConnector::eunomiaDir())
+cdm <- CDMConnector::cdmFromCon(con,
+                                cdmSchema = "main",
+                                writeSchema = "main")
+acetiminophen <- c(1125315,  1127433, 40229134,
+                  40231925, 40162522, 19133768,  1127078)
+poliovirus_vaccine <- c(40213160)
+cs <- newCodelist(list(acetiminophen = acetiminophen,
+                       poliovirus_vaccine = poliovirus_vaccine))
+results <- summariseCodeUse(cs,cdm = cdm)
+results
+CDMConnector::cdmDisconnect(cdm)
+} # }
+```
