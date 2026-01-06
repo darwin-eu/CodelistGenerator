@@ -705,6 +705,11 @@ getRelevantRecords <- function(cdm,
         overwrite = TRUE,
         logPrefix = "CodelistGenerator.getRelevantRecords_codeRecords"
       )
+  } else {
+    codeRecords <- codeRecords |>
+      dplyr::mutate(standard_concept_name = NA_character_,
+                    source_concept_name = NA_character_,
+                    type_concept_name = NA_character_)
   }
 
   return(codeRecords)
