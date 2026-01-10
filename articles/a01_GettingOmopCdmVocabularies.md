@@ -34,11 +34,11 @@ library(CodelistGenerator)
 
 ``` r
 requireEunomia()
-#> ℹ `EUNOMIA_DATA_FOLDER` set to: /tmp/RtmpDD9K6R.
+#> ℹ `EUNOMIA_DATA_FOLDER` set to: /tmp/RtmpeVZaOA.
 #> 
 #> Download completed!
 db <- dbConnect(duckdb(), dbdir = eunomiaDir())
-#> Creating CDM database /tmp/RtmpDD9K6R/GiBleed_5.3.zip
+#> Creating CDM database /tmp/RtmpeVZaOA/GiBleed_5.3.zip
 cdm <- cdmFromCon(db, 
                   cdmSchema = "main", 
                   writeSchema = "main", 
@@ -65,7 +65,7 @@ work with.
 cdm$concept |> glimpse()
 #> Rows: ??
 #> Columns: 10
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]
+#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]
 #> $ concept_id       <int> 35208414, 1118088, 40213201, 1557272, 4336464, 429588…
 #> $ concept_name     <chr> "Gastrointestinal hemorrhage, unspecified", "celecoxi…
 #> $ domain_id        <chr> "Condition", "Drug", "Drug", "Drug", "Procedure", "Pr…
@@ -79,7 +79,7 @@ cdm$concept |> glimpse()
 cdm$concept_relationship |> glimpse()
 #> Rows: ??
 #> Columns: 6
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]
+#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]
 #> $ concept_id_1     <int> 192671, 1118088, 1569708, 35208414, 35208414, 4016235…
 #> $ concept_id_2     <int> 35208414, 44923712, 35208414, 192671, 1569708, 450118…
 #> $ relationship_id  <chr> "Mapped from", "Mapped from", "Subsumes", "Maps to", …
@@ -89,7 +89,7 @@ cdm$concept_relationship |> glimpse()
 cdm$concept_ancestor |> glimpse()
 #> Rows: ??
 #> Columns: 4
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]
+#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]
 #> $ ancestor_concept_id      <int> 4180628, 4179141, 21500574, 21505770, 2150396…
 #> $ descendant_concept_id    <int> 313217, 4146173, 1118084, 1119510, 40162522, …
 #> $ min_levels_of_separation <int> 5, 2, 4, 0, 5, 4, 0, 4, 2, 2, 0, 0, 0, 0, 0, …
@@ -97,14 +97,14 @@ cdm$concept_ancestor |> glimpse()
 cdm$concept_synonym |> glimpse()
 #> Rows: ??
 #> Columns: 3
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]
+#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]
 #> $ concept_id           <int> 964261, 1322184, 441267, 1718412, 4336464, 410212…
 #> $ concept_synonym_name <chr> "cyanocobalamin 5000 MCG/ML Injectable Solution",…
 #> $ language_concept_id  <int> 4180186, 4180186, 4180186, 4180186, 4180186, 4180…
 cdm$drug_strength |> glimpse()
 #> Rows: ??
 #> Columns: 12
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]
+#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]
 #> $ drug_concept_id             <int> 
 #> $ ingredient_concept_id       <int> 
 #> $ amount_value                <dbl> 

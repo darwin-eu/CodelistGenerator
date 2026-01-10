@@ -104,11 +104,11 @@ which will include the vocabulary tables.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/requireEunomia.html" class="external-link">requireEunomia</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> `EUNOMIA_DATA_FOLDER` set to: <span style="color: #0000BB;">/tmp/RtmpDD9K6R</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> `EUNOMIA_DATA_FOLDER` set to: <span style="color: #0000BB;">/tmp/RtmpeVZaOA</span>.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Download completed!</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Creating CDM database /tmp/RtmpDD9K6R/GiBleed_5.3.zip</span></span>
+<span><span class="co">#&gt; Creating CDM database /tmp/RtmpeVZaOA/GiBleed_5.3.zip</span></span>
 <span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span><span class="va">db</span>, </span>
 <span>                  cdmSchema <span class="op">=</span> <span class="st">"main"</span>, </span>
 <span>                  writeSchema <span class="op">=</span> <span class="st">"main"</span>, </span>
@@ -132,7 +132,7 @@ can work with.</p>
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">concept</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 10</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]</span></span>
 <span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 35208414<span style="color: #949494;">, </span>1118088<span style="color: #949494;">, </span>40213201<span style="color: #949494;">, </span>1557272<span style="color: #949494;">, </span>4336464<span style="color: #949494;">, </span>429588…</span></span>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Gastrointestinal hemorrhage, unspecified"<span style="color: #949494;">, </span>"celecoxi…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition"<span style="color: #949494;">, </span>"Drug"<span style="color: #949494;">, </span>"Drug"<span style="color: #949494;">, </span>"Drug"<span style="color: #949494;">, </span>"Procedure"<span style="color: #949494;">, </span>"Pr…</span></span>
@@ -146,7 +146,7 @@ can work with.</p>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">concept_relationship</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]</span></span>
 <span><span class="co">#&gt; $ concept_id_1     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 192671<span style="color: #949494;">, </span>1118088<span style="color: #949494;">, </span>1569708<span style="color: #949494;">, </span>35208414<span style="color: #949494;">, </span>35208414<span style="color: #949494;">, </span>4016235…</span></span>
 <span><span class="co">#&gt; $ concept_id_2     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 35208414<span style="color: #949494;">, </span>44923712<span style="color: #949494;">, </span>35208414<span style="color: #949494;">, </span>192671<span style="color: #949494;">, </span>1569708<span style="color: #949494;">, </span>450118…</span></span>
 <span><span class="co">#&gt; $ relationship_id  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Mapped from"<span style="color: #949494;">, </span>"Mapped from"<span style="color: #949494;">, </span>"Subsumes"<span style="color: #949494;">, </span>"Maps to"<span style="color: #949494;">, </span>…</span></span>
@@ -156,7 +156,7 @@ can work with.</p>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">concept_ancestor</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]</span></span>
 <span><span class="co">#&gt; $ ancestor_concept_id      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 4180628<span style="color: #949494;">, </span>4179141<span style="color: #949494;">, </span>21500574<span style="color: #949494;">, </span>21505770<span style="color: #949494;">, </span>2150396…</span></span>
 <span><span class="co">#&gt; $ descendant_concept_id    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 313217<span style="color: #949494;">, </span>4146173<span style="color: #949494;">, </span>1118084<span style="color: #949494;">, </span>1119510<span style="color: #949494;">, </span>40162522<span style="color: #949494;">, </span>…</span></span>
 <span><span class="co">#&gt; $ min_levels_of_separation <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 5<span style="color: #949494;">, </span>2<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>5<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>2<span style="color: #949494;">, </span>2<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>…</span></span>
@@ -164,14 +164,14 @@ can work with.</p>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">concept_synonym</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 3</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]</span></span>
 <span><span class="co">#&gt; $ concept_id           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 964261<span style="color: #949494;">, </span>1322184<span style="color: #949494;">, </span>441267<span style="color: #949494;">, </span>1718412<span style="color: #949494;">, </span>4336464<span style="color: #949494;">, </span>410212…</span></span>
 <span><span class="co">#&gt; $ concept_synonym_name <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "cyanocobalamin 5000 MCG/ML Injectable Solution"<span style="color: #949494;">,</span>…</span></span>
 <span><span class="co">#&gt; $ language_concept_id  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 4180186<span style="color: #949494;">, </span>4180186<span style="color: #949494;">, </span>4180186<span style="color: #949494;">, </span>4180186<span style="color: #949494;">, </span>4180186<span style="color: #949494;">, </span>4180…</span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">drug_strength</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 12</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpDD9K6R/file226f75ec9ced.duckdb]</span></span>
+<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpeVZaOA/file223e47d74097.duckdb]</span></span>
 <span><span class="co">#&gt; $ drug_concept_id             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span></span>
 <span><span class="co">#&gt; $ ingredient_concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span></span>
 <span><span class="co">#&gt; $ amount_value                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> </span></span>
