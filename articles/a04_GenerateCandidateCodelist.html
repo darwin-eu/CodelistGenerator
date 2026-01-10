@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,14 +86,14 @@ cdm reference using mock data.</p>
 <span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mockVocabRef.html">mockVocabRef</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The mock data has the following hypothetical concepts and
 relationships:</p>
-<p><img src="Figures/1.png" class="r-plt" width="100%"></p>
+<p><img src="Figures/1.png" class="r-plt" alt="" width="100%"></p>
 <div class="section level2">
 <h2 id="search-for-keyword-match">Search for keyword match<a class="anchor" aria-label="anchor" href="#search-for-keyword-match"></a>
 </h2>
 <p>We will start by creating a codelist with keywords match. Let’s say
 that we want to find those codes that contain “Musculoskeletal disorder”
 in their concept_name:
-<img src="Figures/2.png" class="r-plt" width="100%"></p>
+<img src="Figures/2.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -175,7 +175,7 @@ search. By setting
 <code>standardConcept = c("Non-standard", "Standard")</code>, we allow
 the function to return, in the final candidate codelist, both the
 non-standard and standard codes that have been found.</p>
-<p><img src="Figures/3.png" class="r-plt" width="100%"></p>
+<p><img src="Figures/3.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -198,7 +198,7 @@ non-standard and standard codes that have been found.</p>
 </h2>
 <p>We can also search for multiple keywords simultaneously, capturing
 all of them with the following search:</p>
-<p><img src="Figures/4.png" class="r-plt" width="100%"></p>
+<p><img src="Figures/4.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -226,7 +226,7 @@ all of them with the following search:</p>
 </h2>
 <p>Now we will include the descendants of an identified code using
 <code>includeDescendants</code> argument
-<img src="Figures/5.png" class="r-plt" width="100%"></p>
+<img src="Figures/5.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -256,7 +256,7 @@ of concept_id 1.</p>
 </h2>
 <p>We can also exclude specific keywords using the argument
 <code>exclude</code></p>
-<p><img src="Figures/6.png" class="r-plt" width="100%"></p>
+<p><img src="Figures/6.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -421,7 +421,7 @@ Hence, there is another option to exclude exact matching terms accounting for wo
 
 ## Add ancestor
 To include the ancestors one level above the identified concepts, we can use the argument `includeAncestor`
-&lt;img src="Figures/7.png" class="r-plt" width="100%" /&gt;
+&lt;img src="Figures/7.png" class="r-plt" alt="" width="100%" /&gt;
 
 
 ``` r
@@ -449,7 +449,7 @@ codes
 <p>We can also pick up codes based on their synonyms. For example,
 <strong>Osteoarthrosis</strong> has a synonym of
 <strong>Arthritis</strong>.
-<img src="Figures/8.png" class="r-plt" width="100%"></p>
+<img src="Figures/8.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -468,7 +468,7 @@ codes
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 In synonyms   Arthritis    Condition SNOMED        S</span></span></code></pre></div>
 <p>Notice that if <code>includeDescendants = TRUE</code>,
 <strong>Arthritis</strong> descendants will also be included:
-<img src="Figures/9.png" class="r-plt" width="100%"></p>
+<img src="Figures/9.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -493,7 +493,7 @@ codes
 </h2>
 <p>We can also pick up concepts associated with our keyword via
 non-standard search.
-<img src="Figures/10.png" class="r-plt" width="100%"></p>
+<img src="Figures/10.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -523,7 +523,7 @@ we did not obtain the non-standard code <strong>degenerative
 arthropathy</strong> from the initial search. If we allow non-standard
 concepts in the final candidate codelist, we would retireve both
 codes:</p>
-<p><img src="Figures/11.png" class="r-plt" width="100%"></p>
+<p><img src="Figures/11.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">codes2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>

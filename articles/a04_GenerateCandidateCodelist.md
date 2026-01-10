@@ -370,7 +370,7 @@ getCandidateCodes(
 
     ## Add ancestor
     To include the ancestors one level above the identified concepts, we can use the argument `includeAncestor`
-    <img src="Figures/7.png" class="r-plt" width="100%" />
+    <img src="Figures/7.png" class="r-plt" alt="" width="100%" />
 
 
     ``` r

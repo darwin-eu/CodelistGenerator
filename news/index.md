@@ -1,5 +1,11 @@
 # Changelog
 
+## CodelistGenerator 4.0.1
+
+CRAN release: 2026-01-08
+
+- Fix edge case for summariseOrphanCodes() when no records found
+
 ## CodelistGenerator 4.0.0
 
 CRAN release: 2025-12-17
