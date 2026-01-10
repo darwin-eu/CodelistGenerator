@@ -42,7 +42,7 @@ benchmarkCodelistGenerator <- function(cdm){
   ## getDrugIngredientCodes ----
   tictoc::tic()
   x <- getDrugIngredientCodes(cdm = cdm,
-                              name = c("acetaminophen", "codein", "adalimumab"),
+                              name = c("acetaminophen", "codeine", "adalimumab"),
                               nameStyle = "{concept_code}_{concept_name}",
                               doseForm  = NULL,
                               doseUnit  = NULL,
@@ -52,7 +52,7 @@ benchmarkCodelistGenerator <- function(cdm){
   t <- tictoc::toc(quiet = TRUE)
 
   timings[["getDrugIngredientCodes"]] <- dplyr::tibble(
-    task = "getting drug ingredient codes (acetaminophen, codein, adalimumab)",
+    task = "getting drug ingredient codes (acetaminophen, codeine, adalimumab)",
     time_taken_secs = as.numeric(t$toc - t$tic)
   )
 

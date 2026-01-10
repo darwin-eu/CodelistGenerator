@@ -1,3 +1,6 @@
+# CodelistGenerator 4.0.1
+* Fix edge case for summariseOrphanCodes() when no records found
+
 # CodelistGenerator 4.0.0
 * Add functions asCodelist(), asCodelistWithDetails(), asConceptSetExpression()
 * Add functions associatedConceptClassIds(), associatedDomains(), associatedDoseForms(), associatedDoseUnits(), associatedDrugIngredients(), associatedRelationshipIds(), associatedRouteCategories(), and associatedVocabularies()

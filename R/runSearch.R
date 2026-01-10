@@ -63,19 +63,14 @@ runSearch <- function(keywords,
 
   # will only collect conceptSynonym later if needed
   if (searchInSynonyms) {
-    conceptSynonymDb <- conceptSynonymDb |>
+    conceptSynonym <- conceptSynonymDb |>
       dplyr::left_join(
         conceptDb |>
           dplyr::select("concept_id", "domain_id", "standard_concept"),
         by = "concept_id"
-      )
-
-    conceptSynonymDb <- conceptSynonymDb |>
+      ) |>
       dplyr::filter(.data$domain_id %in% .env$domains &
                       .data$standard_concept %in% .env$standardConceptFlags) |>
-      dplyr::select(-c("domain_id", "standard_concept"))
-
-    conceptSynonym <- conceptSynonymDb |>
       dplyr::rename_with(tolower)
   } else {
     conceptSynonym <- NULL
@@ -100,17 +95,6 @@ runSearch <- function(keywords,
 
   workingConcept <- concept |>
     dplyr::filter(.data$domain_id %in% .env$domains)
-
-  if (!is.null(conceptSynonym)) {
-    workingconceptSynonym <- conceptSynonym |>
-      dplyr::left_join(
-        concept |>
-          dplyr::select("concept_id", "domain_id"),
-        by = "concept_id"
-      ) |>
-      dplyr::filter(.data$domain_id %in% .env$domains) |>
-      dplyr::select(!"domain_id")
-  }
 
 
   # Start finding candidate codes
@@ -164,7 +148,7 @@ runSearch <- function(keywords,
     cli::cli_inform("Adding concepts using synonymns")
     candidateCodesInSynonyms <- getMatches(
       words = tidyWords(keywords),
-      conceptDf = workingconceptSynonym |>
+      conceptDf = conceptSynonym |>
         dplyr::rename("concept_name" = "concept_synonym_name")
     ) |>
       dplyr::select("concept_id") |>
@@ -447,6 +431,7 @@ tidyWords <- function(words, message = TRUE) {
 
 getMatches <- function(words,
                        conceptDf) {
+
   conceptDf <- conceptDf |> # start with all
     dplyr::mutate(concept_name = tolower(.data$concept_name))
 
