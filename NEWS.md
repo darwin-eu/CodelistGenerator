@@ -1,3 +1,6 @@
+# CodelistGenerator 4.0.2
+* Improve performance of summariseOrphanCodes()
+
 # CodelistGenerator 4.0.1
 * Fix edge case for summariseOrphanCodes() when no records found
 

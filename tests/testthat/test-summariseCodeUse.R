@@ -603,7 +603,7 @@ test_that("summarise cohort code use - eunomia", {
 })
 
 test_that("summarise code use - redshift", {
-
+  testthat::skip() # just run manually
   testthat::skip_if(Sys.getenv("CDM5_REDSHIFT_DBNAME") == "")
 
   db <-  DBI::dbConnect(RPostgres::Redshift(),
@@ -619,7 +619,8 @@ test_that("summarise code use - redshift", {
                                   writeSchema = Sys.getenv("CDM5_REDSHIFT_SCRATCH_SCHEMA"),
                                   cdmVersion = "5.3")
 
-  asthma <- list(asthma = c(317009L, 257581L))
+  asthma <- list(asthma = c(317009L, 257581L)) |>
+    omopgenerics::newCodelist()
 
   results <- summariseCodeUse(asthma,
                               cdm = cdm,

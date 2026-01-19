@@ -514,8 +514,7 @@ getRelevantRecords <- function(cdm,
                     .env$standardConceptIdName[[1]],
                     .env$sourceConceptIdName[[1]],
                     .env$sourceConceptValueName[[1]],
-                    .env$typeConceptIdName[[1]]) |>
-      dplyr::mutate(table = !!omopgenerics::tableName(cdm[[tableName[[1]]]]))
+                    .env$typeConceptIdName[[1]])
     if(!is.null(cohortTable)){
       # keep only records of those in the cohorts of interest
       if(timing == "entry"){
@@ -529,10 +528,9 @@ getRelevantRecords <- function(cdm,
           dplyr::inner_join(cohortSubjects,
                             by = "person_id")
       }
+      codeRecords <- codeRecords |>
+        dplyr::compute(name = tmpTblName1)
     }
-
-    codeRecords <- codeRecords |>
-      dplyr::compute(name = tmpTblName1)
 
     if(is.null(codeRecords)){
       return(NULL)
@@ -549,26 +547,19 @@ getRelevantRecords <- function(cdm,
                                      temporary = FALSE)
     codeRecords <- codeRecords |>
       dplyr::mutate(start_date = !!dplyr::sym(startDateName[[1]]),
-                    end_date = !!dplyr::sym(endDateName[[1]])) |>
-      dplyr::mutate(year = clock::get_year(.data$start_date)) |>
+                    table = !!omopgenerics::tableName(cdm[[tableName[[1]]]])
+                    ) |>
       dplyr::select(dplyr::all_of(c("person_id",
                                     standardConceptIdName[[1]],
                                     sourceConceptIdName[[1]],
                                     sourceConceptValueName[[1]],
                                     typeConceptIdName[[1]],
                                     "table",
-                                    "start_date","end_date", "year"))) |>
+                                    "start_date"))) |>
       dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[1]],
                     "source_concept_id" = .env$sourceConceptIdName[[1]],
                     "source_concept_value" = .env$sourceConceptValueName[[1]],
-                    "type_concept_id" = .env$typeConceptIdName[[1]]) |>
-      dplyr::compute(
-        name = paste0(intermediateTable,"_grr"),
-        temporary = FALSE,
-        schema = attr(cdm, "write_schema"),
-        overwrite = TRUE,
-        logPrefix = "CodelistGenerator.getRelevantRecords_join"
-      )
+                    "type_concept_id" = .env$typeConceptIdName[[1]])
 
     if(isTRUE(useSourceCodes)){
       codeRecords <- codeRecords |>
@@ -626,25 +617,21 @@ getRelevantRecords <- function(cdm,
                                          dplyr::select("concept_id", "domain_id"),
                                        overwrite = TRUE,
                                        temporary = FALSE)
+
       workingRecords <-  workingRecords |>
-        dplyr::mutate(start_date = !!dplyr::sym(startDateName[[i+1]])) |>
-        dplyr::mutate(year = clock::get_year(.data$start_date),
-                      table = !!omopgenerics::tableName(cdm[[tableName[[1]]]])) |>
+        dplyr::mutate(start_date = !!dplyr::sym(startDateName[[i+1]]),
+                      table = !!omopgenerics::tableName(cdm[[tableName[[i+1]]]])
+        ) |>
         dplyr::select(dplyr::all_of(c("person_id",
                                       standardConceptIdName[[i+1]],
                                       sourceConceptIdName[[i+1]],
+                                      sourceConceptValueName[[i+1]],
                                       typeConceptIdName[[i+1]],
-                                      "start_date", "year"))) |>
+                                      "table", "start_date"))) |>
         dplyr::rename("standard_concept_id" = .env$standardConceptIdName[[i+1]],
                       "source_concept_id" = .env$sourceConceptIdName[[i+1]],
-                      "type_concept_id" = .env$typeConceptIdName[[i+1]]) |>
-        dplyr::compute(
-          name = paste0(intermediateTable,"_grr1"),
-          temporary = FALSE,
-          schema = attr(cdm, "write_schema"),
-          overwrite = TRUE,
-          logPrefix = "CodelistGenerator.getRelevantRecords_join1"
-        )
+                      "source_concept_value" = .env$sourceConceptValueName[[i+1]],
+                      "type_concept_id" = .env$typeConceptIdName[[i+1]])
 
       if(isTRUE(useSourceCodes)){
         workingRecords <- workingRecords |>
@@ -816,6 +803,11 @@ getSummaryCounts <- function(records,
   } else {
     personSummary <- dplyr::tibble()
   }
+
+ if(byYear == TRUE) {
+   records <- records |>
+     dplyr::mutate(year = clock::get_year(.data$start_date))
+ }
 
   if ("record" %in% countBy & byYear == TRUE) {
     recordSummary <- dplyr::bind_rows(
