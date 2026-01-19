@@ -1,5 +1,11 @@
 # Changelog
 
+## CodelistGenerator 4.0.2
+
+CRAN release: 2026-01-19
+
+- Improve performance of summariseOrphanCodes()
+
 ## CodelistGenerator 4.0.1
 
 CRAN release: 2026-01-08

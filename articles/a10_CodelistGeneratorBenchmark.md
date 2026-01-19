@@ -37,6 +37,6 @@ visOmopTable(timings,
 | Getting drug ingredient codes (acetaminophen, codeine, adalimumab)                                         |        |          |            |                    |                |
 | Eunomia Synpuf                                                                                             | duckdb | 1,000    | 6,224,227  | time_taken_minutes | 0.02           |
 | Getting atc codes (atc 1st level, 1 name of interest)                                                      |        |          |            |                    |                |
-| Eunomia Synpuf                                                                                             | duckdb | 1,000    | 6,224,227  | time_taken_minutes | 0.09           |
+| Eunomia Synpuf                                                                                             | duckdb | 1,000    | 6,224,227  | time_taken_minutes | 0.07           |
 | Getting candidate codes for dementia, excluding \`child\`, within all domains, and all options set to true |        |          |            |                    |                |
 | Eunomia Synpuf                                                                                             | duckdb | 1,000    | 6,224,227  | time_taken_minutes | 0.11           |
