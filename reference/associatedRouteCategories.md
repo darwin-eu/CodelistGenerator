@@ -14,7 +14,11 @@ associatedRouteCategories(x, cdm)
 
 - x:
 
-  A codelist.
+  A codelist, codelist_with_details, or a concept_set. See
+  [`newCodelist()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelist.html),
+  [`newCodelistWithDetails()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelistWithDetails.html),
+  [`newConceptSetExpression()`](https://darwin-eu.github.io/omopgenerics/reference/newConceptSetExpression.html)
+  functions for more details.
 
 - cdm:
 
@@ -36,8 +40,18 @@ library(omock)
 # Create CDM object
 cdm <- mockCdmReference()
 
-# Get all dose forms available in a codelist
+# Create a codelist
 codelist <- newCodelist(list("codes1" = c(194152L, 1830279L, 40558872L),
                              "codes2" = c(44022939L)))
+
+# Get all route categories available in a codelist
+route_categories <- associatedRouteCategories(codelist, cdm)
+route_categories
+#> $codes1
+#> [1] "transmucosal_nasal"          "unclassified_route_category"
+#> 
+#> $codes2
+#> [1] "unclassified_route_category"
+#> 
 # }
 ```

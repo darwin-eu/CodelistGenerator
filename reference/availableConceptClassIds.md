@@ -25,10 +25,11 @@ availableConceptClassIds(cdm, standardConcept = "Standard", domain = NULL)
 - domain:
 
   Character vector with one or more of the OMOP CDM domains. The results
-  will be restricted to the given domains. Check the available ones by
-  running availableDomains(). If NULL, all supported domains are
-  included: Condition, Drug, Procedure, Device, Observation, and
-  Measurement.
+  will be restricted to the given domains. Check the available domains
+  in the database by running 'availableDomains()', or
+  'associatedDomains()' to explore the domains associated with a
+  codelist. If NULL, all supported domains are included: Condition,
+  Drug, Procedure, Device, Observation, and Measurement.
 
 ## Value
 
@@ -43,7 +44,7 @@ library(omock)
 
 # Create CDM object
 cdm <- mockCdmFromDataset(datasetName = "GiBleed")
-#> ℹ Reading GiBleed tables.
+#> ℹ Loading bundled GiBleed tables from package data.
 #> ℹ Adding drug_strength table.
 #> ℹ Creating local <cdm_reference> object.
 

@@ -16,7 +16,8 @@ summariseCohortCodeUse(
   byYear = FALSE,
   bySex = FALSE,
   ageGroup = NULL,
-  useSourceCodes = FALSE
+  useSourceCodes = FALSE,
+  codelistType = "index event"
 )
 ```
 
@@ -34,7 +35,12 @@ summariseCohortCodeUse(
 
 - x:
 
-  A codelist or cohort table name.
+  A codelist, codelist_with_details, or a concept_set. See
+  [`newCodelist()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelist.html),
+  [`newCodelistWithDetails()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelistWithDetails.html),
+  [`newConceptSetExpression()`](https://darwin-eu.github.io/omopgenerics/reference/newConceptSetExpression.html)
+  functions for more details. If set to NULL, the codelist associated
+  with the cohort will be used.
 
 - cohortId:
 
@@ -71,6 +77,12 @@ summariseCohortCodeUse(
 
   Whether the codelist provided contains source codes (TRUE) or standard
   codes (FALSE).
+
+- codelistType:
+
+  The reason for the codelist. Can be "index event", "inclusion
+  criteria", or "exit criteria". Only apply when x is NULL and using
+  codes associated with a cohort.
 
 ## Value
 

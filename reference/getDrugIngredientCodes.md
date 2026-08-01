@@ -43,19 +43,25 @@ getDrugIngredientCodes(
 
   Only codes with the specified dose form will be returned. If NULL,
   descendant codes will be returned regardless of dose form. Use
-  'doseForms()' to see the available dose forms.
+  'availableDoseForms()' to see the available dose forms in the
+  database, or 'associatedDoseForms()' to see the associated dose forms
+  in a codelist.
 
 - doseUnit:
 
   Only codes with the specified dose unit will be returned. If NULL,
   descendant codes will be returned regardless of dose unit Use
-  'availableDoseUnits()' to see the available dose units.
+  'availableDoseUnits()' to see the available dose units, or
+  'associatedDoseUnits()' to see the associated dose forms in a
+  codelist.
 
 - routeCategory:
 
   Only codes with the specified route will be returned. If NULL,
   descendant codes will be returned regardless of route category. Use
-  getRoutes() to find the available route categories.
+  'availableRouteCategories()' to find the available route categories in
+  the database, and 'associatedRouteCategories()' to get drug routs
+  associated with a codelist.
 
 - ingredientRange:
 

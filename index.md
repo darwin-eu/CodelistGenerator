@@ -5,12 +5,14 @@
 You can install CodelistGenerator from CRAN
 
 ``` r
+
 install.packages("CodelistGenerator")
 ```
 
 Or you can also install the development version of CodelistGenerator
 
 ``` r
+
 install.packages("remotes")
 remotes::install_github("darwin-eu/CodelistGenerator")
 ```
@@ -18,6 +20,7 @@ remotes::install_github("darwin-eu/CodelistGenerator")
 ## Example usage
 
 ``` r
+
 library(dplyr)
 library(CDMConnector)
 library(CodelistGenerator)
@@ -27,6 +30,7 @@ For this example we’ll use the Eunomia dataset (which only contains a
 subset of the OMOP CDM vocabularies)
 
 ``` r
+
 requireEunomia()
 db <- DBI::dbConnect(duckdb::duckdb(), dbdir = eunomiaDir())
 cdm <- cdmFromCon(db, 
@@ -41,6 +45,7 @@ OMOP CDM vocabularies are frequently updated, and we can identify the
 version of the vocabulary of our Eunomia data
 
 ``` r
+
 vocabularyVersion(cdm = cdm)
 #> [1] "v5.0 18-JAN-19"
 ```
@@ -53,6 +58,7 @@ we can use, for example, to get the concept IDs used to represent
 aspirin and diclofenac.
 
 ``` r
+
 ing <- getDrugIngredientCodes(cdm = cdm, 
                        name = c("aspirin", "diclofenac"),
                        nameStyle = "{concept_name}")
@@ -78,6 +84,7 @@ clinical experts.
 We can do a simple search for asthma
 
 ``` r
+
 asthma_codes1 <- getCandidateCodes(
   cdm = cdm,
   keywords = "asthma",
@@ -99,6 +106,7 @@ But perhaps we want to exclude certain concepts as part of the search
 strategy, in this case we can add these like so
 
 ``` r
+
 asthma_codes2 <- getCandidateCodes(
   cdm = cdm,
   keywords = "asthma",
@@ -123,6 +131,7 @@ As well as functions for finding codes, we also have functions to
 summarise their use. Here for
 
 ``` r
+
 library(flextable)
 asthma_code_use <- summariseCodeUse(list("asthma" = asthma_codes1$concept_id) |> 
                                            newCodelist(),

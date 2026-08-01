@@ -9,6 +9,7 @@ We can start for example by benchmarking our mock data, which uses
 duckdb.
 
 ``` r
+
 library(DBI)
 library(duckdb)
 library(dplyr)
@@ -32,11 +33,11 @@ visOmopTable(timings,
              groupColumn = "task")
 ```
 
-| CDM name                                                                                                   | Dbms   | N person | N concepts | Estimate name      | Estimate value |
-|------------------------------------------------------------------------------------------------------------|--------|----------|------------|--------------------|----------------|
-| Getting drug ingredient codes (acetaminophen, codeine, adalimumab)                                         |        |          |            |                    |                |
-| Eunomia Synpuf                                                                                             | duckdb | 1,000    | 6,224,227  | time_taken_minutes | 0.02           |
-| Getting atc codes (atc 1st level, 1 name of interest)                                                      |        |          |            |                    |                |
-| Eunomia Synpuf                                                                                             | duckdb | 1,000    | 6,224,227  | time_taken_minutes | 0.10           |
-| Getting candidate codes for dementia, excluding \`child\`, within all domains, and all options set to true |        |          |            |                    |                |
-| Eunomia Synpuf                                                                                             | duckdb | 1,000    | 6,224,227  | time_taken_minutes | 0.11           |
+| Data source | Dbms | N person | N concepts | Estimate name | Estimate value |
+|----|----|----|----|----|----|
+| Getting drug ingredient codes (acetaminophen, codeine, adalimumab) |  |  |  |  |  |
+| Eunomia Synpuf | duckdb | 1,000 | 6,224,227 | time_taken_minutes | 0.01 |
+| Getting atc codes (atc 1st level, 1 name of interest) |  |  |  |  |  |
+| Eunomia Synpuf | duckdb | 1,000 | 6,224,227 | time_taken_minutes | 0.09 |
+| Getting candidate codes for dementia, excluding \`child\`, within all domains, and all options set to true |  |  |  |  |  |
+| Eunomia Synpuf | duckdb | 1,000 | 6,224,227 | time_taken_minutes | 0.12 |

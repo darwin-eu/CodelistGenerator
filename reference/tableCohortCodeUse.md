@@ -7,7 +7,7 @@ Format the result of summariseCohortCodeUse into a table.
 ``` r
 tableCohortCodeUse(
   result,
-  type = "gt",
+  type = NULL,
   header = c("cdm_name", "estimate_name"),
   groupColumn = character(),
   hide = c("timing"),
@@ -24,7 +24,8 @@ tableCohortCodeUse(
 
 - type:
 
-  Type of desired formatted table. To see supported formats use
+  Type of desired formatted table. By default (type = NULL), it will
+  create a 'gt' table. To see supported formats use
   visOmopResults::tableType().
 
 - header:
@@ -67,7 +68,7 @@ tableCohortCodeUse(
   the table. This argument can be provided in two ways: (1) Pre-defined
   Styles (Character String): Use a name for a built-in style (e.g.,
   "darwin"). See visOmopResults::tableStyle() for available options. (2)
-  Custome Code (Advanced): Supply a block of custom R code. This code
+  Custom Code (Advanced): Supply a block of custom R code. This code
   must be specific to the table type. See
   visOmopResults::tableStyleCode() for structural examples.
 

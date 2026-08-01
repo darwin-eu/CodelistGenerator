@@ -7,11 +7,26 @@
   the OMOP CDM vocabulary tables.
 
 - [`searchStrategy()`](https://darwin-eu.github.io/CodelistGenerator/reference/searchStrategy.md)
-  :
+  **\[experimental\]** : Get the search strategy used to create a
+  certain code_search
 
-  Report the search strategy used to identify codes when using the
-  [`getCandidateCodes()`](https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.md)
-  function
+- [`exportCodeSearch()`](https://darwin-eu.github.io/CodelistGenerator/reference/exportCodeSearch.md)
+  **\[experimental\]** :
+
+  Export a `code_search` object into an Excel spreadsheet
+
+- [`importCodeSearch()`](https://darwin-eu.github.io/CodelistGenerator/reference/importCodeSearch.md)
+  **\[experimental\]** :
+
+  Import a `code_search` object from an Excel spreadsheet
+
+- [`newCodeSearch()`](https://darwin-eu.github.io/CodelistGenerator/reference/newCodeSearch.md)
+  **\[experimental\]** :
+
+  Create a new `code_search` object
+
+- [`emptyCodeSearch()`](https://darwin-eu.github.io/CodelistGenerator/reference/emptyCodeSearch.md)
+  : Empty code search object
 
 ### Create vocabulary-based codelists
 
@@ -150,18 +165,29 @@
 
 - [`associatedConceptClassIds()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedConceptClassIds.md)
   : Get the concept classes associated with a codelist
+
 - [`associatedDomains()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedDomains.md)
   : Get the domains associated with a codelist
+
 - [`associatedDoseForms()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedDoseForms.md)
   : Get the dose forms associated with drug concepts in a codelist
+
 - [`associatedDoseUnits()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedDoseUnits.md)
   : Get available dose units
+
 - [`associatedDrugIngredients()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedDrugIngredients.md)
   : Get the names of drug ingredients associated with codelist
+
 - [`associatedRouteCategories()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedRouteCategories.md)
   : Get drug routes associated with a codelist
+
 - [`associatedRelationshipIds()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedRelationshipIds.md)
-  : Get available relationships with concepts in a codelist
+  :
+
+  Get all relationships types that exist in the OMOP vocabulary
+  `concept_relationship` table for a given set of concepts in a
+  codelist.
+
 - [`associatedVocabularies()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedVocabularies.md)
   : Get the vocabularies associated with a codelist
 

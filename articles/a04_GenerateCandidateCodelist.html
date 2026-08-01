@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Generate a candidate codelist • CodelistGenerator</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Generate a candidate codelist">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,9 @@
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="navbar-nav"></ul>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/darwin-eu/CodelistGenerator/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+      </ul>
 </div>
 
 
@@ -69,7 +71,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Generate a candidate codelist</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CodelistGenerator/blob/main/vignettes/a04_GenerateCandidateCodelist.Rmd" class="external-link"><code>vignettes/a04_GenerateCandidateCodelist.Rmd</code></a></small>
       <div class="d-none name"><code>a04_GenerateCandidateCodelist.Rmd</code></div>
     </div>
 
@@ -105,10 +107,27 @@ in their concept_name:
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initial… Musculoskel… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Musculoskeletal disorder",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = FALSE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initi… Musculoskel… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <p>Note that we could also identify it based on a partial match or based
 on all combinations match.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -122,10 +141,27 @@ on all combinations match.</p>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initial… Musculoskel… Condition SNOMED        S</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Musculoskeletal",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = FALSE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initi… Musculoskel… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -137,15 +173,32 @@ on all combinations match.</p>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initial… Musculoskel… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Disorder musculoskeletal",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = FALSE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initi… Musculoskel… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <p>Notice that currently we are only looking for concepts with
 <code>domain = "Condition"</code>. However, we can expand the search to
 all domains using <code>domain = NULL</code>.</p>
 <p><code><a href="../reference/getCandidateCodes.html">getCandidateCodes()</a></code> function will generate a table with
-class “candidate_codes”, which contains an atribute with the details of
+class “candidate_codes”, which contains an attribute with the details of
 the search strategy:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">candidate_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
@@ -160,12 +213,22 @@ the search strategy:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/searchStrategy.html">searchStrategy</a></span><span class="op">(</span><span class="va">candidate_codes</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 10</span></span></span>
-<span><span class="co">#&gt;   cdm_name vocabulary_version keywords          exclude domains standard_concept</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mock     v5.0 22-JUN-22     <span style="color: #949494;">"</span>\"Musculoskelet… <span style="color: #949494;">"</span>\"\"<span style="color: #949494;">"</span>  <span style="color: #949494;">"</span>\"con… <span style="color: #949494;">"</span>\"Standard\"<span style="color: #949494;">"</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: search_in_synonyms &lt;lgl&gt;, search_non_standard &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   include_descendants &lt;lgl&gt;, include_ancestor &lt;lgl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 3</span></span></span>
+<span><span class="co">#&gt;    strategy_id strategy_name      strategy_value       </span></span>
+<span><span class="co">#&gt;          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>           1 package_name       <span style="color: #949494;">"</span>CodelistGenerator<span style="color: #949494;">"</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>           1 package_version    <span style="color: #949494;">"</span>4.1.0<span style="color: #949494;">"</span>              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>           1 function_name      <span style="color: #949494;">"</span>getCandidateCodes<span style="color: #949494;">"</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>           1 cdm                <span style="color: #949494;">"</span>cdm<span style="color: #949494;">"</span>                </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>           1 keywords           <span style="color: #949494;">"</span>\"Musculoskeletal\"<span style="color: #949494;">"</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>           1 exclude            <span style="color: #949494;">"</span>NULL<span style="color: #949494;">"</span>               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>           1 domains            <span style="color: #949494;">"</span>\"condition\"<span style="color: #949494;">"</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>           1 vocabularyId       <span style="color: #949494;">"</span>\"snomed\"<span style="color: #949494;">"</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>           1 standardConcept    <span style="color: #949494;">"</span>\"Standard\"<span style="color: #949494;">"</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>           1 searchInSynonyms   <span style="color: #949494;">"</span>FALSE<span style="color: #949494;">"</span>              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>           1 searchNonStandard  <span style="color: #949494;">"</span>FALSE<span style="color: #949494;">"</span>              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>           1 includeDescendants <span style="color: #949494;">"</span>FALSE<span style="color: #949494;">"</span>              </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>           1 includeAncestor    <span style="color: #949494;">"</span>FALSE<span style="color: #949494;">"</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="include-non-standard-concepts">Include non-standard concepts<a class="anchor" aria-label="anchor" href="#include-non-standard-concepts"></a>
@@ -187,11 +250,28 @@ non-standard and standard codes that have been found.</p>
 <span>  includeDescendants <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initial… Musculoskel… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>         24 From initial… Other muscu… Condition SNOMED        <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Musculoskeletal disorder",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = c("icd10", "read", "snomed"),</span></span>
+<span><span class="co">#&gt;   standardConcept = c("Non-standard", "Standard"),</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = FALSE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initi… Musculoskel… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>         24 From initi… Other muscu… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="multiple-search-terms">Multiple search terms<a class="anchor" aria-label="anchor" href="#multiple-search-terms"></a>
@@ -213,13 +293,30 @@ all of them with the following search:</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initial… Musculoskel… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 From initial… Arthritis    Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          4 From initial… Osteoarthri… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>          5 From initial… Osteoarthri… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = c("Musculoskeletal disorder", "arthritis"),</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = FALSE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initi… Musculoskel… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 From initi… Arthritis    v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          4 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>          5 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="add-descendants">Add descendants<a class="anchor" aria-label="anchor" href="#add-descendants"></a>
@@ -238,14 +335,31 @@ all of them with the following search:</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initial… Musculoskel… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          2 From descend… Osteoarthro… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          3 From descend… Arthritis    Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>          4 From descend… Osteoarthri… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>          5 From descend… Osteoarthri… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Musculoskeletal disorder",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initi… Musculoskel… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          2 From desce… Osteoarthro… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          3 From desce… Arthritis    v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>          4 From desce… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>          5 From desce… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <p>Notice that now, in the column <code>found_from</code>, we can see
 that we have obtain <code>concept_id=1</code> from an initial search,
 and <code>concept_id_=c(2,3,4,5)</code> when searching for descendants
@@ -269,12 +383,29 @@ of concept_id 1.</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initial… Musculoskel… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 From descend… Arthritis    Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          5 From descend… Osteoarthri… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Musculoskeletal disorder",</span></span>
+<span><span class="co">#&gt;   exclude = c("Osteoarthrosis", "knee"),</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initi… Musculoskel… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 From desce… Arthritis    v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          5 From desce… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <p>When multiple words are added within a term (e.g., “knee
 osteoarthritis”), each word will be searched independently, so that for
 example, “osteoarthritis of knee” is excluded:</p>
@@ -290,17 +421,34 @@ example, “osteoarthritis of knee” is excluded:</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initial… Musculoskel… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          2 From descend… Osteoarthro… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          3 From descend… Arthritis    Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>          5 From descend… Osteoarthri… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Musculoskeletal disorder",</span></span>
+<span><span class="co">#&gt;   exclude = "knee osteoarthritis",</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          1 From initi… Musculoskel… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          2 From desce… Osteoarthro… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          3 From desce… Arthritis    v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>          5 From desce… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <p>If we only want to exclude exact matching terms (without accounting
 for words boundaries) we need to add “/” at the beginning and at the end
 of the term. Hence, using “knee osteoarthritis”, “osteoarthritis of
-knee” <strong>won’t</strong> be excluded. However, if we had “rightknee
+knee” <strong>won’t</strong> be excluded. However, if we had “right knee
 osteoarthritis”, it would be excluded.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># No exclusion:</span></span>
@@ -315,11 +463,28 @@ osteoarthritis”, it would be excluded.</p>
 <span>    searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>    includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initial… Osteoarthri… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          8 From initial… Knee osteoa… Condition Read          <span style="color: #BB0000;">NA</span></span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Knee",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = c("icd10", "read", "snomed"),</span></span>
+<span><span class="co">#&gt;   standardConcept = c("Standard", "Non-standard"),</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          8 From initi… Knee osteoa… v5.0 22-JUN-22     Condition Read         </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span>
 <span></span>
 <span><span class="co"># Exclusion looking for terms:</span></span>
 <span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
@@ -333,10 +498,26 @@ osteoarthritis”, it would be excluded.</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 0 × 7</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7 variables: concept_id &lt;int&gt;, found_from &lt;chr&gt;, found_id &lt;int&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   concept_name &lt;chr&gt;, domain_id &lt;chr&gt;, vocabulary_id &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   standard_concept &lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Knee",</span></span>
+<span><span class="co">#&gt;   exclude = "knee osteoarthritis",</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = c("icd10", "read", "snomed"),</span></span>
+<span><span class="co">#&gt;   standardConcept = c("Standard", "Non-standard"),</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 0 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 13 variables: concept_id &lt;int&gt;, found_from &lt;chr&gt;, concept_name &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   vocabulary_version &lt;chr&gt;, domain_id &lt;chr&gt;, vocabulary_id &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;, concept_code &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;, invalid_reason &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   found_id &lt;int&gt;</span></span></span>
 <span></span>
 <span><span class="co"># Exclusion looking for partial matching terms (without word boundaries)</span></span>
 <span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
@@ -350,10 +531,27 @@ osteoarthritis”, it would be excluded.</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initial… Osteoarthri… Condition SNOMED        S</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Knee",</span></span>
+<span><span class="co">#&gt;   exclude = "/knee osteoarthritis/",</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = c("icd10", "read", "snomed"),</span></span>
+<span><span class="co">#&gt;   standardConcept = c("Standard", "Non-standard"),</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span>
 <span></span>
 <span><span class="co"># Exclusion looking for partial matching terms (without word boundaries)</span></span>
 <span><span class="fu"><a href="../reference/getCandidateCodes.html">getCandidateCodes</a></span><span class="op">(</span></span>
@@ -367,10 +565,27 @@ osteoarthritis”, it would be excluded.</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initial… Osteoarthri… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Knee",</span></span>
+<span><span class="co">#&gt;   exclude = "/e osteoarthritis/",</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = c("icd10", "read", "snomed"),</span></span>
+<span><span class="co">#&gt;   standardConcept = c("Standard", "Non-standard"),</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <p>If we want to do exact matching (that means, to find the exact two
 words “knee osteoarthritis” in the concept name) we need to use “/ at
 the beginning and at the end of the expression.</p>
@@ -386,10 +601,27 @@ the beginning and at the end of the expression.</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initial… Osteoarthri… Condition SNOMED        S</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Knee",</span></span>
+<span><span class="co">#&gt;   exclude = "/Knee osteoarthritis/",</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = c("icd10", "read", "snomed"),</span></span>
+<span><span class="co">#&gt;   standardConcept = c("Standard", "Non-standard"),</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span>
 <span></span>
 <span><span class="co"># We will now only search for "ee osteoarthritis" to show that </span></span>
 <span><span class="co"># "knee osteoarthritis" won't be excluded:</span></span>
@@ -404,11 +636,28 @@ the beginning and at the end of the expression.</p>
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initial… Osteoarthri… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          8 From initial… Knee osteoa… Condition Read          <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Knee",</span></span>
+<span><span class="co">#&gt;   exclude = "/ee osteoarthritis/",</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = c("icd10", "read", "snomed"),</span></span>
+<span><span class="co">#&gt;   standardConcept = c("Standard", "Non-standard"),</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          4 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          8 From initi… Knee osteoa… v5.0 22-JUN-22     Condition Read         </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <pre><code>
 For example, if we look for 
 
@@ -437,11 +686,28 @@ codes &lt;- getCandidateCodes(
 )
 
 codes
-#&gt;  [38;5;246m# A tibble: 2 × 6 [39m
-#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept
-#&gt;         [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m          [3m [38;5;246m&lt;chr&gt; [39m [23m         [3m [38;5;246m&lt;chr&gt; [39m [23m      [3m [38;5;246m&lt;chr&gt; [39m [23m          [3m [38;5;246m&lt;chr&gt; [39m [23m           
-#&gt;  [38;5;250m1 [39m          3 From ancestor Arthritis    Condition SNOMED        S               
-#&gt;  [38;5;250m2 [39m          4 From initial… Osteoarthri… Condition SNOMED        S</code></pre>
+#&gt;  [1;34mi [0m This is a candidate code searh, see: &lt;link to vignette&gt;
+#&gt;  [3mCandidate codes [0m generated using  [32mCodelistGenerator [0m ( [1m4.1.0 [0m):
+#&gt; getCandidateCodes(
+#&gt;   cdm = cdm,
+#&gt;   keywords = "Osteoarthritis of knee",
+#&gt;   exclude = NULL,
+#&gt;   domains = "condition",
+#&gt;   vocabularyId = "snomed",
+#&gt;   standardConcept = "Standard",
+#&gt;   searchInSynonyms = FALSE,
+#&gt;   searchNonStandard = FALSE,
+#&gt;   includeDescendants = TRUE,
+#&gt;   includeAncestor = TRUE
+#&gt; )
+#&gt;  [38;5;246m# A tibble: 2 × 12 [39m
+#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id
+#&gt;  [38;5;250m* [39m       [3m [38;5;246m&lt;int&gt; [39m [23m  [3m [38;5;246m&lt;chr&gt; [39m [23m        [3m [38;5;246m&lt;chr&gt; [39m [23m         [3m [38;5;246m&lt;chr&gt; [39m [23m               [3m [38;5;246m&lt;chr&gt; [39m [23m      [3m [38;5;246m&lt;chr&gt; [39m [23m        
+#&gt;  [38;5;250m1 [39m          3 From ances… Arthritis    v5.0 22-JUN-22     Condition SNOMED       
+#&gt;  [38;5;250m2 [39m          4 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       
+#&gt;  [38;5;246m# ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;, [39m
+#&gt;  [38;5;246m#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;, [39m
+#&gt;  [38;5;246m#   invalid_reason &lt;chr&gt; [39m</code></pre>
 </div>
 <div class="section level2">
 <h2 id="search-using-synonyms">Search using synonyms<a class="anchor" aria-label="anchor" href="#search-using-synonyms"></a>
@@ -461,11 +727,28 @@ codes
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          2 From initial… Osteoarthro… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 In synonyms   Arthritis    Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "osteoarthrosis",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = TRUE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = FALSE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          2 From initi… Osteoarthro… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 In synonyms Arthritis    v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <p>Notice that if <code>includeDescendants = TRUE</code>,
 <strong>Arthritis</strong> descendants will also be included:
 <img src="Figures/9.png" class="r-plt" alt="" width="100%"></p>
@@ -480,13 +763,30 @@ codes
 <span>  searchNonStandard <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          2 From initial… Osteoarthro… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 In synonyms   Arthritis    Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          4 From descend… Osteoarthri… Condition SNOMED        S               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>          5 From descend… Osteoarthri… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "osteoarthrosis",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = TRUE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = TRUE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          2 From initi… Osteoarthro… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>          3 In synonyms Arthritis    v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>          4 From desce… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>          5 From desce… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="search-via-non-standard">Search via non-standard<a class="anchor" aria-label="anchor" href="#search-via-non-standard"></a>
@@ -506,10 +806,27 @@ non-standard search.
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">codes1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          2 From non-sta… Osteoarthro… Condition SNOMED        S</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Degenerative",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = "snomed",</span></span>
+<span><span class="co">#&gt;   standardConcept = "Standard",</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = TRUE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = FALSE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          2 From non-s… Osteoarthro… v5.0 22-JUN-22     Condition SNOMED       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 <p>Let’s take a moment to focus on the <code>standardConcept</code> and
 <code>searchNonStandard</code> arguments to clarify the difference
 between them. <code>standardConcept</code> specifies whether we want
@@ -536,10 +853,27 @@ codes:</p>
 <span>  includeAncestor <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">codes2</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 6</span></span></span>
-<span><span class="co">#&gt;   concept_id found_from    concept_name domain_id vocabulary_id standard_concept</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          7 From initial… Degenerativ… Condition Read          <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #0000BB; font-weight: bold;">i</span> This is a candidate code searh, see: &lt;link to vignette&gt;</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Candidate codes</span> generated using <span style="color: #00BB00;">CodelistGenerator</span> (<span style="font-weight: bold;">4.1.0</span>):</span></span>
+<span><span class="co">#&gt; getCandidateCodes(</span></span>
+<span><span class="co">#&gt;   cdm = cdm,</span></span>
+<span><span class="co">#&gt;   keywords = "Degenerative",</span></span>
+<span><span class="co">#&gt;   exclude = NULL,</span></span>
+<span><span class="co">#&gt;   domains = "condition",</span></span>
+<span><span class="co">#&gt;   vocabularyId = c("icd10", "read", "snomed"),</span></span>
+<span><span class="co">#&gt;   standardConcept = c("Non-standard", "Standard"),</span></span>
+<span><span class="co">#&gt;   searchInSynonyms = FALSE,</span></span>
+<span><span class="co">#&gt;   searchNonStandard = FALSE,</span></span>
+<span><span class="co">#&gt;   includeDescendants = FALSE,</span></span>
+<span><span class="co">#&gt;   includeAncestor = FALSE</span></span>
+<span><span class="co">#&gt; )</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 12</span></span></span>
+<span><span class="co">#&gt;   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          7 From initi… Degenerativ… v5.0 22-JUN-22     Condition Read         </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: concept_class_id &lt;chr&gt;, standard_concept &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   concept_code &lt;chr&gt;, valid_start_date &lt;date&gt;, valid_end_date &lt;date&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   invalid_reason &lt;chr&gt;</span></span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -552,7 +886,7 @@ codes:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

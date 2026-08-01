@@ -13,6 +13,7 @@ getCandidateCodes(
   keywords,
   exclude = NULL,
   domains = "Condition",
+  vocabularyId = NULL,
   standardConcept = "Standard",
   searchInSynonyms = FALSE,
   searchNonStandard = FALSE,
@@ -52,7 +53,7 @@ getCandidateCodes(
   Character vector of words to identify concepts to exclude. For
   example,
   `getCandidateCodes(cdm, keywords = "septic", exclude = "aseptic", domains = "condition")`
-  would remove concepts "aseptic" when seaching for concepts with
+  would remove concepts "aseptic" when searching for concepts with
   "septic" in their name.
 
   - When one term contains multiple words (e.g., "knee osteoarthritis"),
@@ -60,7 +61,7 @@ getCandidateCodes(
     knee" would also be excluded. If you only want to exclude partial
     matching terms, please add "/" at the beginning and the end of each
     term (e.g., `"/knee osteoarthritis/`"). Notice that, with this
-    options, concepts like "rightknee osteoarthritis" will also be
+    options, concepts like "right knee osteoarthritis" will also be
     excluded (as this is a partial match), but "osteoarthritis of knee"
     won't be excluded. Different terms can have different rules (e.g.,
     c("hip osteoarthritis", "/knee osteoarthritis/")).
@@ -68,7 +69,7 @@ getCandidateCodes(
   - With multiple words, if we want exact matches accounting for word
     boundaries, we need to use `/\b` at the beginning and at the end of
     each expression. In the previous example, using
-    `"/bknee osteoarthritis/\b"`, "rightknee osteoarthritis" won't be
+    `"/bknee osteoarthritis/\b"`, "right knee osteoarthritis" won't be
     excluded, but "History of knee osteoarthritis" will be excluded.
 
 - domains:
@@ -77,6 +78,13 @@ getCandidateCodes(
   search within. If NULL, all domains are included in the search. Use
   `availableDomains(cdm = cdm)` to identify available domains to search
   within.
+
+- vocabularyId:
+
+  Character vector with one or more vocabulary ID to restrict results
+  to. If NULL, all vocabularies will be included in the search. Use
+  `availableVocabularies(cdm)` to identify available vocabularies to
+  restrict search to.
 
 - standardConcept:
 
@@ -122,16 +130,33 @@ getCandidateCodes(
   cdm = cdm,
   keywords = "osteoarthritis"
  )
-#> Limiting to domains of interest
+#> Limiting to concept type, domains, and vocabularies of interest
 #> Getting concepts to include
 #> Adding descendants
 #> Search completed. Finishing up.
 #> ✔ 2 candidate concepts identified
 #> Time taken: 0 minutes and 0 seconds
-#> # A tibble: 2 × 6
-#>   concept_id found_from    concept_name domain_id vocabulary_id standard_concept
-#>        <int> <chr>         <chr>        <chr>     <chr>         <chr>           
-#> 1          4 From initial… Osteoarthri… Condition SNOMED        S               
-#> 2          5 From initial… Osteoarthri… Condition SNOMED        S               
+#> i This is a candidate code searh, see: <link to vignette>
+#> Candidate codes generated using CodelistGenerator (4.1.0):
+#> getCandidateCodes(
+#>   cdm = cdm,
+#>   keywords = "osteoarthritis",
+#>   exclude = NULL,
+#>   domains = "condition",
+#>   vocabularyId = "snomed",
+#>   standardConcept = "Standard",
+#>   searchInSynonyms = FALSE,
+#>   searchNonStandard = FALSE,
+#>   includeDescendants = TRUE,
+#>   includeAncestor = FALSE
+#> )
+#> # A tibble: 2 × 12
+#>   concept_id found_from  concept_name vocabulary_version domain_id vocabulary_id
+#> *      <int> <chr>       <chr>        <chr>              <chr>     <chr>        
+#> 1          4 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       
+#> 2          5 From initi… Osteoarthri… v5.0 22-JUN-22     Condition SNOMED       
+#> # ℹ 6 more variables: concept_class_id <chr>, standard_concept <chr>,
+#> #   concept_code <chr>, valid_start_date <date>, valid_end_date <date>,
+#> #   invalid_reason <chr>
 # }
 ```

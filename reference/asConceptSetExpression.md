@@ -5,24 +5,21 @@ Coerce to a concept set expression
 ## Usage
 
 ``` r
-asConceptSetExpression(x, ...)
+asConceptSetExpression(x)
 
 # S3 method for class 'codelist'
-asConceptSetExpression(x, ...)
+asConceptSetExpression(x)
 
 # S3 method for class 'codelist_with_details'
-asConceptSetExpression(x, ...)
+asConceptSetExpression(x)
 ```
 
 ## Arguments
 
 - x:
 
-  Codelist or codelist with details
-
-- ...:
-
-  For extensibility
+  A codelist, codelist_with_details, concept_set_expression, or a
+  candidate_codes.
 
 ## Value
 
@@ -37,7 +34,7 @@ library(CDMConnector)
 
 # Creating CDM object
 cdm <- mockCdmFromDataset(datasetName = "GiBleed")
-#> ℹ Reading GiBleed tables.
+#> ℹ Loading bundled GiBleed tables from package data.
 #> ℹ Adding drug_strength table.
 #> ℹ Creating local <cdm_reference> object.
 

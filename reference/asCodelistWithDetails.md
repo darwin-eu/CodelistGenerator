@@ -21,7 +21,8 @@ asCodelistWithDetails(x, cdm, ...)
 
 - x:
 
-  Only codelist and candidate_codes are currently supported.
+  A codelist, codelist_with_details, concept_set_expression, or a
+  candidate_codes.
 
 - cdm:
 
@@ -48,9 +49,9 @@ library(CDMConnector)
 path <- downloadMockDataset(datasetName = "GiBleed",
                             path = NULL,
                             overwrite = NULL)
-#> ℹ Deleting prior version of GiBleed.
+#> ℹ Attempting download with timeout = 120 seconds.
 cdm <- mockCdmFromDataset(datasetName = "GiBleed")
-#> ℹ Reading GiBleed tables.
+#> ℹ Loading bundled GiBleed tables from package data.
 #> ℹ Adding drug_strength table.
 #> ℹ Creating local <cdm_reference> object.
 
@@ -69,7 +70,7 @@ asCodelistWithDetails(codelist, cdm)
 # Create codelist from a candidate_codes
 codelist <- getCandidateCodes(cdm,
                              keywords = "arthritis")
-#> Limiting to domains of interest
+#> Limiting to concept type, domains, and vocabularies of interest
 #> Getting concepts to include
 #> Adding descendants
 #> Search completed. Finishing up.
@@ -77,9 +78,9 @@ codelist <- getCandidateCodes(cdm,
 #> Time taken: 0 minutes and 0 seconds
 
 asCodelistWithDetails(codelist)
+#> ! No column specifying T/F for the different codes is detected
 #> 
-#> ── 1 codelist with details ─────────────────────────────────────────────────────
+#> ── 0 codelists with details ────────────────────────────────────────────────────
 #> 
-#> - candidate_codes (2 codes)
 # }
 ```

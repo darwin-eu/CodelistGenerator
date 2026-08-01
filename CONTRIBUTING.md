@@ -20,6 +20,7 @@ do it.
 Run the below to update and check package documentation:
 
 ``` r
+
 devtools::document() 
 devtools::run_examples()
 devtools::build_readme()
@@ -42,6 +43,7 @@ the current tests and any you add continue to pass. All package tests
 can be run together with:
 
 ``` r
+
 devtools::test()
 ```
 
@@ -49,6 +51,7 @@ Code to add new functionality should be accompanied by tests. Code
 coverage can be checked using:
 
 ``` r
+
 # note, you may first have to detach the package
 # detach("package:CodelistGenerator", unload=TRUE)
 devtools::test_coverage()
@@ -61,6 +64,7 @@ restyle any code unrelated to your pull request as this will make code
 review more difficult.
 
 ``` r
+
 lintr::lint_package(".",
                     linters = lintr::linters_with_defaults(
                       lintr::object_name_linter(styles = "camelCase")
@@ -73,6 +77,7 @@ lintr::lint_package(".",
 Before opening any pull request please make sure to run:
 
 ``` r
+
 devtools::check() 
 ```
 
@@ -82,6 +87,7 @@ If the package is on CRAN or is close to being submitted to CRAN then
 please also run:
 
 ``` r
+
 rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"))
 devtools::check_win_devel()
 ```
@@ -89,6 +95,7 @@ devtools::check_win_devel()
 Also it can be worth checking spelling and any urls
 
 ``` r
+
 spelling::spell_check_package()
 urlchecker::url_check()
 ```
@@ -101,5 +108,6 @@ these results, they should be recomputed. Note you may need to change
 the database connection details in this script.
 
 ``` r
+
 source(here::here("extras", "precomputeVignetteData.R"))
 ```

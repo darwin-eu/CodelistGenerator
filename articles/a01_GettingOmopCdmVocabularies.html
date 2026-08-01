@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Getting the OMOP CDM vocabularies • CodelistGenerator</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting the OMOP CDM vocabularies">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,9 @@
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="navbar-nav"></ul>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/darwin-eu/CodelistGenerator/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+      </ul>
 </div>
 
 
@@ -69,7 +71,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Getting the OMOP CDM vocabularies</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CodelistGenerator/blob/main/vignettes/a01_GettingOmopCdmVocabularies.Rmd" class="external-link"><code>vignettes/a01_GettingOmopCdmVocabularies.Rmd</code></a></small>
       <div class="d-none name"><code>a01_GettingOmopCdmVocabularies.Rmd</code></div>
     </div>
 
@@ -104,11 +106,27 @@ which will include the vocabulary tables.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/requireEunomia.html" class="external-link">requireEunomia</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> `EUNOMIA_DATA_FOLDER` set to: <span style="color: #0000BB;">/tmp/RtmpWSebwi</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> `EUNOMIA_DATA_FOLDER` set to: <span style="color: #0000BB;">/tmp/RtmpXIvlvS</span>.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Download completed!</span></span>
 <span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Creating CDM database /tmp/RtmpWSebwi/GiBleed_5.3.zip</span></span>
+<span><span class="co">#&gt; duckdb keeps downloaded extensions and secrets in a temporary directory:</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> /tmp/RtmpXIvlvS/duckdb</span></span>
+<span><span class="co">#&gt; This is removed when the R session ends.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Extensions are re-downloaded each session.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Secrets are lost.</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> See ?duckdb_storage for details and alternatives.</span></span>
+<span><span class="co">#&gt; Creating CDM database /tmp/RtmpXIvlvS/GiBleed_5.3.zip</span></span>
+<span><span class="co">#&gt; duckdb keeps downloaded extensions and secrets in a temporary directory:</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> /tmp/RtmpXIvlvS/duckdb</span></span>
+<span><span class="co">#&gt; This is removed when the R session ends.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Extensions are re-downloaded each session.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Secrets are lost.</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).</span></span>
+<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> See ?duckdb_storage for details and alternatives.</span></span>
 <span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span><span class="va">db</span>, </span>
 <span>                  cdmSchema <span class="op">=</span> <span class="st">"main"</span>, </span>
 <span>                  writeSchema <span class="op">=</span> <span class="st">"main"</span>, </span>
@@ -132,7 +150,6 @@ can work with.</p>
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">concept</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 10</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]</span></span>
 <span><span class="co">#&gt; $ concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 35208414<span style="color: #949494;">, </span>1118088<span style="color: #949494;">, </span>40213201<span style="color: #949494;">, </span>1557272<span style="color: #949494;">, </span>4336464<span style="color: #949494;">, </span>429588…</span></span>
 <span><span class="co">#&gt; $ concept_name     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Gastrointestinal hemorrhage, unspecified"<span style="color: #949494;">, </span>"celecoxi…</span></span>
 <span><span class="co">#&gt; $ domain_id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Condition"<span style="color: #949494;">, </span>"Drug"<span style="color: #949494;">, </span>"Drug"<span style="color: #949494;">, </span>"Drug"<span style="color: #949494;">, </span>"Procedure"<span style="color: #949494;">, </span>"Pr…</span></span>
@@ -146,7 +163,6 @@ can work with.</p>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">concept_relationship</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 6</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]</span></span>
 <span><span class="co">#&gt; $ concept_id_1     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 192671<span style="color: #949494;">, </span>1118088<span style="color: #949494;">, </span>1569708<span style="color: #949494;">, </span>35208414<span style="color: #949494;">, </span>35208414<span style="color: #949494;">, </span>4016235…</span></span>
 <span><span class="co">#&gt; $ concept_id_2     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 35208414<span style="color: #949494;">, </span>44923712<span style="color: #949494;">, </span>35208414<span style="color: #949494;">, </span>192671<span style="color: #949494;">, </span>1569708<span style="color: #949494;">, </span>450118…</span></span>
 <span><span class="co">#&gt; $ relationship_id  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Mapped from"<span style="color: #949494;">, </span>"Mapped from"<span style="color: #949494;">, </span>"Subsumes"<span style="color: #949494;">, </span>"Maps to"<span style="color: #949494;">, </span>…</span></span>
@@ -156,7 +172,6 @@ can work with.</p>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">concept_ancestor</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 4</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]</span></span>
 <span><span class="co">#&gt; $ ancestor_concept_id      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 4180628<span style="color: #949494;">, </span>4179141<span style="color: #949494;">, </span>21500574<span style="color: #949494;">, </span>21505770<span style="color: #949494;">, </span>2150396…</span></span>
 <span><span class="co">#&gt; $ descendant_concept_id    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 313217<span style="color: #949494;">, </span>4146173<span style="color: #949494;">, </span>1118084<span style="color: #949494;">, </span>1119510<span style="color: #949494;">, </span>40162522<span style="color: #949494;">, </span>…</span></span>
 <span><span class="co">#&gt; $ min_levels_of_separation <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 5<span style="color: #949494;">, </span>2<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>5<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>2<span style="color: #949494;">, </span>2<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>0<span style="color: #949494;">, </span>…</span></span>
@@ -164,14 +179,12 @@ can work with.</p>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">concept_synonym</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 3</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]</span></span>
 <span><span class="co">#&gt; $ concept_id           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 964261<span style="color: #949494;">, </span>1322184<span style="color: #949494;">, </span>441267<span style="color: #949494;">, </span>1718412<span style="color: #949494;">, </span>4336464<span style="color: #949494;">, </span>410212…</span></span>
 <span><span class="co">#&gt; $ concept_synonym_name <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "cyanocobalamin 5000 MCG/ML Injectable Solution"<span style="color: #949494;">,</span>…</span></span>
 <span><span class="co">#&gt; $ language_concept_id  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 4180186<span style="color: #949494;">, </span>4180186<span style="color: #949494;">, </span>4180186<span style="color: #949494;">, </span>4180186<span style="color: #949494;">, </span>4180186<span style="color: #949494;">, </span>4180…</span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">drug_strength</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: ??</span></span>
 <span><span class="co">#&gt; Columns: 12</span></span>
-<span><span class="co">#&gt; Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]</span></span>
 <span><span class="co">#&gt; $ drug_concept_id             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span></span>
 <span><span class="co">#&gt; $ ingredient_concept_id       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> </span></span>
 <span><span class="co">#&gt; $ amount_value                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> </span></span>
@@ -219,10 +232,10 @@ select all available vocabularies.</p>
 <p>After downloading the vocabularies you will have a set of csvs (along
 with a tool to add the CPT-4 codes if you wish). To quickly create a
 duckdb vocab database you could use the following code. Here, after
-pointing to the unzipped folder containg the csvs, we’ll read each table
-into memory and write them to a duckdb database which we’ll save in the
-same folder. We’ll also add an empty person and observation period table
-so that you can create a cdm reference at the end.</p>
+pointing to the unzipped folder containing the csvs, we’ll read each
+table into memory and write them to a duckdb database which we’ll save
+in the same folder. We’ll also add an empty person and observation
+period table so that you can create a cdm reference at the end.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span></span>
@@ -294,7 +307,7 @@ other database management systems.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -12,7 +12,11 @@ subsetOnDoseUnit(x, cdm, doseUnit, negate = FALSE)
 
 - x:
 
-  A codelist.
+  A codelist, codelist_with_details, or a concept_set. See
+  [`newCodelist()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelist.html),
+  [`newCodelistWithDetails()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelistWithDetails.html),
+  [`newConceptSetExpression()`](https://darwin-eu.github.io/omopgenerics/reference/newConceptSetExpression.html)
+  functions for more details.
 
 - cdm:
 
@@ -24,7 +28,9 @@ subsetOnDoseUnit(x, cdm, doseUnit, negate = FALSE)
 
   Only codes with the specified dose unit will be returned. If NULL,
   descendant codes will be returned regardless of dose unit Use
-  'availableDoseUnits()' to see the available dose units.
+  'availableDoseUnits()' to see the available dose units, or
+  'associatedDoseUnits()' to see the associated dose forms in a
+  codelist.
 
 - negate:
 
@@ -47,7 +53,7 @@ cdm <- mockVocabRef()
 codes <- subsetOnDoseUnit(x = newCodelist(list("codes" = c(20,21))),
                           cdm = cdm,
                           doseUnit = c("milligram"))
-#> Warning: ! `codelist` casted to integers.
+#> Warning: ! `codelist` cast to integers.
 
 codes
 #> 

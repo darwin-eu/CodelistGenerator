@@ -18,6 +18,7 @@ database, and generating a codelist for example purposes. We’ll use
 to find our codes.
 
 ``` r
+
 library(DBI)
 library(duckdb)
 library(dplyr)
@@ -50,6 +51,7 @@ records and persons associated with each concept in a codelist. Notice
 that it requires that ACHILLES tables are available in the CDM.
 
 ``` r
+
 achilles_code_use <- summariseAchillesCodeUse(depression, 
                                               cdm, 
                                               countBy = c("record", "person"))
@@ -61,6 +63,7 @@ object. We can easily visualise the results using
 [`tableAchillesCodeUse()`](https://darwin-eu.github.io/CodelistGenerator/reference/tableAchillesCodeUse.md):
 
 ``` r
+
 tableAchillesCodeUse(achilles_code_use,
                      type = "gt")
 ```
@@ -80,6 +83,7 @@ available. It can be configured to stratify results by concept
 (`dateRange`).
 
 ``` r
+
 code_use <- summariseCodeUse(depression,
                              cdm,
                              countBy = c("record", "person"),
@@ -107,6 +111,7 @@ Additionally, if the cdm contains PHOEBE tables (*concept_recommended*
 table), they will also be used.
 
 ``` r
+
 orphan <- summariseOrphanCodes(depression, cdm)
 tableOrphanCodes(orphan, type = "gt")
 ```
@@ -121,6 +126,7 @@ First, we will define a cohort using the
 function from CohortConstructor package.
 
 ``` r
+
 cdm[["depression"]] <- conceptCohort(cdm, 
                                      conceptSet = depression, 
                                      name = "depression")
@@ -129,6 +135,7 @@ cdm[["depression"]] <- conceptCohort(cdm,
 Then, we can summarise the code use within this cohort:
 
 ``` r
+
 cohort_code_use <- summariseCohortCodeUse(cdm,
                                           cohortTable = "depression",
                                           countBy = c("record", "person"))
@@ -143,6 +150,7 @@ Use the `timing` argument to restrict diagnostics to codes used at the
 entry date of the cohort.
 
 ``` r
+
 cohort_code_use <- summariseCohortCodeUse(cdm,
                                           cohortTable = "depression",
                                           countBy = c("record", "person"),
@@ -160,6 +168,7 @@ we’d get counts for anxiety codes that occur on the same day as entry
 into the depression cohort.
 
 ``` r
+
 anxiety <- getCandidateCodes(cdm,
                              keywords = "anxiety")
 anxiety <- newCodelist(list("anxiety" = anxiety$concept_id))
@@ -180,6 +189,7 @@ You can also stratify cohort code use results by year (`byYear`), by sex
 (`bySex`), or by age group (`byAgeGroup`):
 
 ``` r
+
 cohort_code_use <- summariseCohortCodeUse(cdm = cdm,
                                           cohortTable = "depression",
                                           countBy = c("record", "person"),

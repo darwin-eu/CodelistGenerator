@@ -12,7 +12,11 @@ excludeConcepts(x, cdm, concepts, codelistName = NULL)
 
 - x:
 
-  A codelist.
+  A codelist, codelist_with_details, or a concept_set. See
+  [`newCodelist()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelist.html),
+  [`newCodelistWithDetails()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelistWithDetails.html),
+  [`newConceptSetExpression()`](https://darwin-eu.github.io/omopgenerics/reference/newConceptSetExpression.html)
+  functions for more details.
 
 - cdm:
 
@@ -43,7 +47,7 @@ library(CDMConnector)
 # Creating CDM object
 # downloadMockDataset(datasetName = "GiBleed")
 cdm <- mockCdmFromDataset(datasetName = "GiBleed")
-#> ℹ Reading GiBleed tables.
+#> ℹ Loading bundled GiBleed tables from package data.
 #> ℹ Adding drug_strength table.
 #> ℹ Creating local <cdm_reference> object.
 

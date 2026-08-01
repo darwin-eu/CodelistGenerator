@@ -43,7 +43,7 @@ codes <- CodelistGenerator::getCandidateCodes(
   cdm = cdm,
   keywords = "osteoarthritis"
 )
-#> Limiting to domains of interest
+#> Limiting to concept type, domains, and vocabularies of interest
 #> Getting concepts to include
 #> Adding descendants
 #> Search completed. Finishing up.

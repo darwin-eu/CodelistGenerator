@@ -12,7 +12,11 @@ subsetOnRouteCategory(x, cdm, routeCategory, negate = FALSE)
 
 - x:
 
-  A codelist.
+  A codelist, codelist_with_details, or a concept_set. See
+  [`newCodelist()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelist.html),
+  [`newCodelistWithDetails()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelistWithDetails.html),
+  [`newConceptSetExpression()`](https://darwin-eu.github.io/omopgenerics/reference/newConceptSetExpression.html)
+  functions for more details.
 
 - cdm:
 
@@ -24,7 +28,9 @@ subsetOnRouteCategory(x, cdm, routeCategory, negate = FALSE)
 
   Only codes with the specified route will be returned. If NULL,
   descendant codes will be returned regardless of route category. Use
-  getRoutes() to find the available route categories.
+  'availableRouteCategories()' to find the available route categories in
+  the database, and 'associatedRouteCategories()' to get drug routs
+  associated with a codelist.
 
 - negate:
 
@@ -50,7 +56,7 @@ codes <- subsetOnRouteCategory(
               x = newCodelist(list("codes" = c(20,21))),
               cdm = cdm,
               routeCategory = "topical")
-#> Warning: ! `codelist` casted to integers.
+#> Warning: ! `codelist` cast to integers.
 codes
 #> 
 #> ── 1 codelist ──────────────────────────────────────────────────────────────────

@@ -14,6 +14,7 @@ First of all, we will load the required packages and connect to a mock
 database.
 
 ``` r
+
 library(DBI)
 library(duckdb)
 library(dplyr)
@@ -36,6 +37,7 @@ We will start by generating a codelist for *acetaminophen* using
 [`getDrugIngredientCodes()`](https://darwin-eu.github.io/CodelistGenerator/reference/getDrugIngredientCodes.md)
 
 ``` r
+
 acetaminophen <- getDrugIngredientCodes(cdm,
                                         name = "acetaminophen",
                                         nameStyle = "{concept_name}",
@@ -55,6 +57,7 @@ use
 [`associatedDomains()`](https://darwin-eu.github.io/CodelistGenerator/reference/associatedDomains.md).
 
 ``` r
+
 acetaminophen_drug <- subsetOnDomain(acetaminophen, 
                                      cdm, 
                                      domain = "Drug")
@@ -70,6 +73,7 @@ We can use the `negate` argument to exclude concepts with a certain
 domain:
 
 ``` r
+
 acetaminophen_no_drug <- subsetOnDomain(acetaminophen, 
                                         cdm, 
                                         domain = "Drug", 
@@ -88,6 +92,7 @@ vocabulary. You can also use
 to explore the vocabularies available in your codelist.
 
 ``` r
+
 acetaminophen_rxnorm <- subsetOnVocabulary(acetaminophen_drug, 
                                            cdm, 
                                            c("RxNorm"))
@@ -106,6 +111,7 @@ Remember that you can use
 to explore the dose units available in your codelist.
 
 ``` r
+
 acetaminophen_mg_unit <- subsetOnDoseUnit(acetaminophen_rxnorm, 
                                           cdm, 
                                           c("milligram", "unit"))
@@ -123,6 +129,7 @@ As before, we can use argument `negate = TRUE` to exclude instead.
 We can now subset on those drugs with 3 to 30 ingredients:
 
 ``` r
+
 acetaminophen_ingredient <- subsetOnIngredientRange(acetaminophen_drug, 
                                                 cdm,
                                                 ingredientRange = c(3, 30))
@@ -146,6 +153,7 @@ We will now subset to those concepts that do not have an
 to explore route categories available in your codelist.
 
 ``` r
+
 acetaminophen_route <- subsetOnRouteCategory(acetaminophen_mg_unit, 
                                              cdm, 
                                              c("transmucosal_rectal","unclassified_route"), 
@@ -154,7 +162,7 @@ acetaminophen_route
 #> 
 #> ── 1 codelist ──────────────────────────────────────────────────────────────────
 #> 
-#> - acetaminophen (2850 codes)
+#> - acetaminophen (2836 codes)
 ```
 
 #### Subset on dose forms
@@ -163,6 +171,7 @@ We will now subset to those concepts with specific dose forms. See
 `associatedDseForms()` to explore dose forms available in your codelist.
 
 ``` r
+
 # First, check which dose forms are available in our codelist
 acetaminophen_drug |> 
   associatedDoseForms(cdm)
@@ -199,6 +208,7 @@ subgroups based on defined vocabulary properties.
 #### Stratify by Dose Unit
 
 ``` r
+
 acetaminophen_doses <- stratifyByDoseUnit(acetaminophen, cdm, keepOriginal = TRUE)
 
 acetaminophen_doses
@@ -214,6 +224,7 @@ acetaminophen_doses
 #### Stratify by Route Category
 
 ``` r
+
 acetaminophen_routes <- stratifyByRouteCategory(acetaminophen, cdm)
 
 acetaminophen_routes
@@ -221,27 +232,28 @@ acetaminophen_routes
 #> ── 6 codelists ─────────────────────────────────────────────────────────────────
 #> 
 #> - acetaminophen_inhalable (3 codes)
-#> - acetaminophen_injectable (689 codes)
-#> - acetaminophen_oral (17219 codes)
-#> - acetaminophen_topical (6 codes)
-#> - acetaminophen_transmucosal_rectal (1459 codes)
-#> - acetaminophen_unclassified_route_category (3332 codes)
+#> - acetaminophen_injectable (716 codes)
+#> - acetaminophen_oral (19747 codes)
+#> - acetaminophen_topical (7 codes)
+#> - acetaminophen_transmucosal_rectal (1681 codes)
+#> - acetaminophen_unclassified_route_category (554 codes)
 ```
 
 #### Stratify by Dose Form
 
 ``` r
+
 acetaminophen_dose_forms <- stratifyByDoseForm(acetaminophen, cdm)
 
 acetaminophen_dose_forms
 #> 
 #> ── 27 codelists ────────────────────────────────────────────────────────────────
 #> 
-#> - acetaminophen_chewable_tablet (90 codes)
-#> - acetaminophen_delayed_release_oral_capsule (95 codes)
-#> - acetaminophen_delayed_release_oral_tablet (528 codes)
-#> - acetaminophen_disintegrating_oral_tablet (517 codes)
-#> - acetaminophen_effervescent_oral_tablet (531 codes)
+#> - acetaminophen_chewable_tablet (109 codes)
+#> - acetaminophen_delayed_release_oral_capsule (98 codes)
+#> - acetaminophen_delayed_release_oral_tablet (543 codes)
+#> - acetaminophen_disintegrating_oral_tablet (523 codes)
+#> - acetaminophen_effervescent_oral_tablet (543 codes)
 #> - acetaminophen_enema (4 codes)
 #> along with 21 more codelists
 ```
@@ -252,6 +264,7 @@ We can also add specific concepts to our codelist. For example, we will
 add the ingredient “acetaminophen” to all our codelists:
 
 ``` r
+
 acetaminophen_routes1 <- addConcepts(acetaminophen_routes, 
                                      cdm,
                                      concepts = c(1125315L))
@@ -260,17 +273,18 @@ acetaminophen_routes1
 #> ── 6 codelists ─────────────────────────────────────────────────────────────────
 #> 
 #> - acetaminophen_inhalable (4 codes)
-#> - acetaminophen_injectable (690 codes)
-#> - acetaminophen_oral (17220 codes)
-#> - acetaminophen_topical (7 codes)
-#> - acetaminophen_transmucosal_rectal (1460 codes)
-#> - acetaminophen_unclassified_route_category (3332 codes)
+#> - acetaminophen_injectable (717 codes)
+#> - acetaminophen_oral (19748 codes)
+#> - acetaminophen_topical (8 codes)
+#> - acetaminophen_transmucosal_rectal (1682 codes)
+#> - acetaminophen_unclassified_route_category (554 codes)
 ```
 
 Or we can add acetaminophen + descendants, and only to some of the
 codelists
 
 ``` r
+
 x <- getDescendants(cdm = cdm, conceptId = c(1125315L))
 acetaminophen_routes2 <- addConcepts(acetaminophen_routes, 
                                      cdm,
@@ -281,10 +295,10 @@ acetaminophen_routes2
 #> ── 6 codelists ─────────────────────────────────────────────────────────────────
 #> 
 #> - acetaminophen_inhalable (3 codes)
-#> - acetaminophen_injectable (689 codes)
-#> - acetaminophen_oral (17219 codes)
-#> - acetaminophen_topical (6 codes)
-#> - acetaminophen_transmucosal_rectal (1459 codes)
+#> - acetaminophen_injectable (716 codes)
+#> - acetaminophen_oral (19747 codes)
+#> - acetaminophen_topical (7 codes)
+#> - acetaminophen_transmucosal_rectal (1681 codes)
 #> - acetaminophen_unclassified_route_category (23935 codes)
 ```
 
@@ -292,6 +306,7 @@ And similarly, we can exclude specific concepts and their descendants
 from our codelist:
 
 ``` r
+
 acetaminophen_routes3 <- excludeConcepts(acetaminophen_routes, 
                                          cdm,
                                          concepts = x$concept_id, 
@@ -300,11 +315,11 @@ acetaminophen_routes3
 #> 
 #> ── 5 codelists ─────────────────────────────────────────────────────────────────
 #> 
-#> - acetaminophen_injectable (689 codes)
-#> - acetaminophen_oral (17219 codes)
-#> - acetaminophen_topical (6 codes)
-#> - acetaminophen_transmucosal_rectal (1459 codes)
-#> - acetaminophen_unclassified_route_category (3332 codes)
+#> - acetaminophen_injectable (716 codes)
+#> - acetaminophen_oral (19747 codes)
+#> - acetaminophen_topical (7 codes)
+#> - acetaminophen_transmucosal_rectal (1681 codes)
+#> - acetaminophen_unclassified_route_category (554 codes)
 ```
 
 Notice that in this case, the codelist “acetaminophen_inhalable” is
@@ -317,6 +332,7 @@ Notice that all the functions introduced previously are “pipeble”,
 allowing for a tidy and clear codelist construction:
 
 ``` r
+
 acetaminophen <- getDrugIngredientCodes(cdm,
                                         name = "acetaminophen",
                                         nameStyle = "{concept_name}",
@@ -345,6 +361,7 @@ Now we will compare two codelists to identify overlapping and unique
 codes.
 
 ``` r
+
 acetaminophen <- getDrugIngredientCodes(cdm, 
                                         name = "acetaminophen", 
                                         nameStyle = "{concept_name}",
@@ -359,6 +376,7 @@ hydrocodone <- getDrugIngredientCodes(cdm,
 Compare the two sets:
 
 ``` r
+
 comparison <- compareCodelists(acetaminophen,
                                hydrocodone)
 

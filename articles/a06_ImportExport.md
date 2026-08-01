@@ -7,10 +7,15 @@ show how we can do this, let’s first create an empty folder to store our
 codelists in.
 
 ``` r
+
 library(CodelistGenerator)
+#> Registered S3 method overwritten by 'CodelistGenerator':
+#>   method            from        
+#>   print.code_search omopgenerics
 ```
 
 ``` r
+
 dir_codes <- file.path(tempdir(), "codelists")
 dir.create(dir_codes)
 list.files(dir_codes)
@@ -20,6 +25,7 @@ list.files(dir_codes)
 Now let’s create a couple of codelists that we will save.
 
 ``` r
+
 codelist <- list("codes1" = c(1L, 2L, 3L),
                  "codes2" = c(4L, 5L, 10L))
 codelist <- newCodelist(codelist)
@@ -37,6 +43,7 @@ We can use
 to save these as two CSVs, one for each codelist.
 
 ``` r
+
 exportCodelist(codelist, dir_codes, type = "csv")
 list.files(dir_codes)
 #> [1] "codes1.csv" "codes2.csv"
@@ -47,6 +54,7 @@ To import codelists, we have
 Here we can see that we can easily import our codelists back into R.
 
 ``` r
+
 importCodelist(dir_codes, type = "csv")
 #> 2 codelists imported.
 #> 
@@ -67,6 +75,7 @@ vocabulary. To import these we can use
 Take this example concept set expression.
 
 ``` r
+
 library(jsonlite)
 concept_set_path <- system.file("concepts_for_mock/arthritis_with_excluded.json", 
                                 package = "CodelistGenerator")
@@ -96,6 +105,7 @@ fromJSON(concept_set_path) |> toJSON(pretty = TRUE, auto_unbox = TRUE)
 We can bring this into R as a concept set expression.
 
 ``` r
+
 cse <- importConceptSetExpression(concept_set_path)
 cse
 #> 
@@ -107,6 +117,7 @@ to specify a cdm reference as the result will be tied to a given OMOP
 CDM vocabulary version which will specify the relevant descendants.
 
 ``` r
+
 cdm <- mockVocabRef()
 importConceptSetExpression(concept_set_path) |> 
   asCodelist(cdm)

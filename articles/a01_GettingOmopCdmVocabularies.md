@@ -25,6 +25,7 @@ format, you can use CodelistGenerator by first creating a cdm reference
 which will include the vocabulary tables.
 
 ``` r
+
 library(DBI)
 library(duckdb)
 library(dplyr)
@@ -33,12 +34,29 @@ library(CodelistGenerator)
 ```
 
 ``` r
+
 requireEunomia()
-#> ℹ `EUNOMIA_DATA_FOLDER` set to: /tmp/RtmpWSebwi.
+#> ℹ `EUNOMIA_DATA_FOLDER` set to: /tmp/RtmpXIvlvS.
 #> 
 #> Download completed!
 db <- dbConnect(duckdb(), dbdir = eunomiaDir())
-#> Creating CDM database /tmp/RtmpWSebwi/GiBleed_5.3.zip
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpXIvlvS/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
+#> Creating CDM database /tmp/RtmpXIvlvS/GiBleed_5.3.zip
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpXIvlvS/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 cdm <- cdmFromCon(db, 
                   cdmSchema = "main", 
                   writeSchema = "main", 
@@ -62,10 +80,10 @@ We can see that we know have various OMOP CDM vocabulary tables we can
 work with.
 
 ``` r
+
 cdm$concept |> glimpse()
 #> Rows: ??
 #> Columns: 10
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]
 #> $ concept_id       <int> 35208414, 1118088, 40213201, 1557272, 4336464, 429588…
 #> $ concept_name     <chr> "Gastrointestinal hemorrhage, unspecified", "celecoxi…
 #> $ domain_id        <chr> "Condition", "Drug", "Drug", "Drug", "Procedure", "Pr…
@@ -79,7 +97,6 @@ cdm$concept |> glimpse()
 cdm$concept_relationship |> glimpse()
 #> Rows: ??
 #> Columns: 6
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]
 #> $ concept_id_1     <int> 192671, 1118088, 1569708, 35208414, 35208414, 4016235…
 #> $ concept_id_2     <int> 35208414, 44923712, 35208414, 192671, 1569708, 450118…
 #> $ relationship_id  <chr> "Mapped from", "Mapped from", "Subsumes", "Maps to", …
@@ -89,7 +106,6 @@ cdm$concept_relationship |> glimpse()
 cdm$concept_ancestor |> glimpse()
 #> Rows: ??
 #> Columns: 4
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]
 #> $ ancestor_concept_id      <int> 4180628, 4179141, 21500574, 21505770, 2150396…
 #> $ descendant_concept_id    <int> 313217, 4146173, 1118084, 1119510, 40162522, …
 #> $ min_levels_of_separation <int> 5, 2, 4, 0, 5, 4, 0, 4, 2, 2, 0, 0, 0, 0, 0, …
@@ -97,14 +113,12 @@ cdm$concept_ancestor |> glimpse()
 cdm$concept_synonym |> glimpse()
 #> Rows: ??
 #> Columns: 3
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]
 #> $ concept_id           <int> 964261, 1322184, 441267, 1718412, 4336464, 410212…
 #> $ concept_synonym_name <chr> "cyanocobalamin 5000 MCG/ML Injectable Solution",…
 #> $ language_concept_id  <int> 4180186, 4180186, 4180186, 4180186, 4180186, 4180…
 cdm$drug_strength |> glimpse()
 #> Rows: ??
 #> Columns: 12
-#> Database: DuckDB 1.4.3 [unknown@Linux 6.11.0-1018-azure:R 4.5.2//tmp/RtmpWSebwi/file228866e6bfde.duckdb]
 #> $ drug_concept_id             <int> 
 #> $ ingredient_concept_id       <int> 
 #> $ amount_value                <dbl> 
@@ -126,11 +140,13 @@ A couple of CodelistGenerator utility functions can help us find this
 information.
 
 ``` r
+
 vocabularyVersion(cdm)
 #> [1] "v5.0 18-JAN-19"
 ```
 
 ``` r
+
 availableVocabularies(cdm)
 #> [1] "CVX"    "Gender" "LOINC"  "RxNorm" "SNOMED" "Visit"
 ```
@@ -156,12 +172,13 @@ select all available vocabularies.
 After downloading the vocabularies you will have a set of csvs (along
 with a tool to add the CPT-4 codes if you wish). To quickly create a
 duckdb vocab database you could use the following code. Here, after
-pointing to the unzipped folder containg the csvs, we’ll read each table
-into memory and write them to a duckdb database which we’ll save in the
-same folder. We’ll also add an empty person and observation period table
-so that you can create a cdm reference at the end.
+pointing to the unzipped folder containing the csvs, we’ll read each
+table into memory and write them to a duckdb database which we’ll save
+in the same folder. We’ll also add an empty person and observation
+period table so that you can create a cdm reference at the end.
 
 ``` r
+
 library(readr)
 library(DBI)
 library(duckdb)
@@ -213,6 +230,7 @@ dbDisconnect(db)
 Now we could create a cdm reference to our OMOP CDM vocabulary database.
 
 ``` r
+
 db <- dbConnect(duckdb(), here(vocab_folder,"vocab.duckdb"))
 cdm <- cdmFromCon(db, "main", "main", cdmName = "vocabularise", .softValidation = TRUE)
 ```

@@ -12,7 +12,11 @@ associatedVocabularies(x, cdm, standardConcept = "Standard", domain = NULL)
 
 - x:
 
-  A codelist.
+  A codelist, codelist_with_details, or a concept_set. See
+  [`newCodelist()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelist.html),
+  [`newCodelistWithDetails()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelistWithDetails.html),
+  [`newConceptSetExpression()`](https://darwin-eu.github.io/omopgenerics/reference/newConceptSetExpression.html)
+  functions for more details.
 
 - cdm:
 
@@ -29,10 +33,11 @@ associatedVocabularies(x, cdm, standardConcept = "Standard", domain = NULL)
 - domain:
 
   Character vector with one or more of the OMOP CDM domains. The results
-  will be restricted to the given domains. Check the available ones by
-  running availableDomains(). If NULL, all supported domains are
-  included: Condition, Drug, Procedure, Device, Observation, and
-  Measurement.
+  will be restricted to the given domains. Check the available domains
+  in the database by running 'availableDomains()', or
+  'associatedDomains()' to explore the domains associated with a
+  codelist. If NULL, all supported domains are included: Condition,
+  Drug, Procedure, Device, Observation, and Measurement.
 
 ## Value
 

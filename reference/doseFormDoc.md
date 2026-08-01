@@ -8,4 +8,6 @@ Helper for consistent documentation of `doseForm`.
 
   Only codes with the specified dose form will be returned. If NULL,
   descendant codes will be returned regardless of dose form. Use
-  'doseForms()' to see the available dose forms.
+  'availableDoseForms()' to see the available dose forms in the
+  database, or 'associatedDoseForms()' to see the associated dose forms
+  in a codelist.

@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Types of Codelist • CodelistGenerator</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Types of Codelist">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,9 @@
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="navbar-nav"></ul>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/darwin-eu/CodelistGenerator/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+      </ul>
 </div>
 
 
@@ -69,7 +71,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Types of Codelist</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CodelistGenerator/blob/main/vignettes/a03_TypesOfCodelist.Rmd" class="external-link"><code>vignettes/a03_TypesOfCodelist.Rmd</code></a></small>
       <div class="d-none name"><code>a03_TypesOfCodelist.Rmd</code></div>
     </div>
 
@@ -82,7 +84,15 @@ the demonstration.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/omopgenerics/" class="external-link">omopgenerics</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CodelistGenerator/">CodelistGenerator</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'CodelistGenerator':</span></span>
+<span><span class="co">#&gt;   method            from        </span></span>
+<span><span class="co">#&gt;   print.code_search omopgenerics</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'CodelistGenerator'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:omopgenerics':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     emptyCodeSearch, exportCodeSearch, importCodeSearch, searchStrategy</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="codelist">Codelist<a class="anchor" aria-label="anchor" href="#codelist"></a>
 </h2>
@@ -112,7 +122,7 @@ codelists that contains and the class:</p>
 <div class="section level3">
 <h3 id="create-an-empty-codelist">Create an empty codelist<a class="anchor" aria-label="anchor" href="#create-an-empty-codelist"></a>
 </h3>
-<p>We can create an empty codelist using omopGenerics package:</p>
+<p>We can create an empty codelist using omopgenerics package:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">empty_codelist</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/emptyCodelist.html" class="external-link">emptyCodelist</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -171,7 +181,7 @@ codes:</p>
 <div class="section level3">
 <h3 id="create-an-empty-codelist-with-details">Create an empty codelist with details<a class="anchor" aria-label="anchor" href="#create-an-empty-codelist-with-details"></a>
 </h3>
-<p>omopGenerics package also has a function to create an empty codelist
+<p>omopgenerics package also has a function to create an empty codelist
 with details.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">empty_codelist_with_details</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/emptyCodelistWithDetails.html" class="external-link">emptyCodelistWithDetails</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -220,7 +230,7 @@ containing the columns: <em>concept_id</em>, <em>excluded</em>,
 <div class="section level3">
 <h3 id="create-an-empty-concept-set-expression">Create an empty concept set expression<a class="anchor" aria-label="anchor" href="#create-an-empty-concept-set-expression"></a>
 </h3>
-<p>We can also use omopGenerics package to create an empty concept set
+<p>We can also use omopgenerics package to create an empty concept set
 expression:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">empty_concept_set_expression</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/emptyConceptSetExpression.html" class="external-link">emptyConceptSetExpression</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -312,7 +322,7 @@ of the concepts will be extracted from the <em>concept</em> table.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

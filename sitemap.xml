@@ -54,7 +54,9 @@
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/doseFormToRoute.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/doseUnitDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/dot-optionsDoc.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/emptyCodeSearch.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/excludeConcepts.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/exportCodeSearch.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getATCCodes.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getCandidateCodes.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/getDescendants.html</loc></url>
@@ -66,6 +68,7 @@
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/headerStrataDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/hideDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/hideStrataDoc.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/importCodeSearch.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/includeDescendantsDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/index.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/ingredientRangeDoc.html</loc></url>
@@ -77,6 +80,7 @@
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/minimumCountDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/mockVocabRef.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/nameStyleDoc.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/newCodeSearch.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/reexports.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/routeCategoryDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CodelistGenerator/reference/searchStrategy.html</loc></url>

@@ -6,6 +6,7 @@ the necessary packages and create a cdm reference using Eunomia
 synthetic data.
 
 ``` r
+
 library(DBI)
 library(duckdb)
 library(dplyr)
@@ -33,6 +34,7 @@ We can see that we have many drug ingredients for which we could create
 codelists.
 
 ``` r
+
 availableDrugIngredients(cdm) |> glimpse()
 #>  chr [1:15440] ".alpha.-(.alpha.-aminopropyl)benzyl alcohol" ...
 ```
@@ -42,6 +44,7 @@ interest. Say for example we would like a codelist for acetaminophen
 then we can get this easily enough.
 
 ``` r
+
 acetaminophen_codes <- getDrugIngredientCodes(
   cdm = cdm,
   name = c("acetaminophen")
@@ -58,6 +61,7 @@ Notice that either the concept name or the concept ID can be specified
 to find the relevant codes.
 
 ``` r
+
 acetaminophen_codes <- getDrugIngredientCodes(
   cdm = cdm,
   name = 1125315
@@ -77,6 +81,7 @@ therapies). Here instead of returning a codelist with only the concept
 IDs, we will get them with details so that we can see concept names.
 
 ``` r
+
 acetaminophen_two_or_more_ingredients <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
@@ -104,6 +109,7 @@ Or we could instead only return concepts associated with acetaminophen
 and no other drug ingredient.
 
 ``` r
+
 acetaminophen_one_ingredient <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
@@ -133,6 +139,7 @@ Perhaps we are just interested in a particular dose form. We can see
 that there are many available.
 
 ``` r
+
 availableDoseForms(cdm) |> glimpse()
 #>  chr [1:162] "Augmented Topical Cream" "Augmented Topical Gel" ...
 ```
@@ -142,6 +149,7 @@ when finding our relevant codes. Here, for example, we only include
 codes with a dose form of injection.
 
 ``` r
+
 acetaminophen_injections <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
@@ -165,6 +173,7 @@ Similarly, we can might also want to restrict to a specific dose unit.
 Again we have a number of options available in our vocabularies.
 
 ``` r
+
 availableDoseUnits(cdm) |> glimpse()
 #>  chr [1:29] "50% cell culture infectious dose" ...
 ```
@@ -172,6 +181,7 @@ availableDoseUnits(cdm) |> glimpse()
 Here we’ll just include codes with a dose unit of milligram.
 
 ``` r
+
 acetaminophen_miligram <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
@@ -195,6 +205,7 @@ Lastly, we can restrict to a specific route category. We can see we
 again have a number of options.
 
 ``` r
+
 availableRouteCategories(cdm) |> glimpse()
 #>  chr [1:11] "implant" "inhalable" "injectable" "oral" "topical" ...
 ```
@@ -202,6 +213,7 @@ availableRouteCategories(cdm) |> glimpse()
 Here we’ll include only concepts with a route category of inhalable.
 
 ``` r
+
 acetaminophen_inhalable <- getDrugIngredientCodes(
   cdm = cdm,
   name = "acetaminophen",
@@ -224,6 +236,7 @@ acetaminophen. We can though specify multiple ingredients, in which case
 we will get a codelist back for each.
 
 ``` r
+
 acetaminophen_heparin_codes <- getDrugIngredientCodes(
   cdm = cdm,
   name = c("acetaminophen", "heparin")
@@ -252,6 +265,7 @@ interested in. The first level is the broadest while the fifth is the
 narrowest.
 
 ``` r
+
 availableATC(cdm, level = c("ATC 1st")) |> glimpse()
 #>  chr [1:14] "ALIMENTARY TRACT AND METABOLISM" ...
 availableATC(cdm, level = c("ATC 2nd")) |> glimpse()
@@ -268,6 +282,7 @@ In this example, we will produce an ATC level 1 codelist based on
 Alimentary Tract and Metabolism Drugs.
 
 ``` r
+
 atc_codelist <- getATCCodes(
   cdm = cdm,
   level = "ATC 1st",

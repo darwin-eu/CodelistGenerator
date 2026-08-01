@@ -7,6 +7,7 @@ explore the different vocabularies and concepts characteristics.
 First of all, we will load the required packages and a eunomia database.
 
 ``` r
+
 library(DBI)
 library(dplyr)
 library(CDMConnector)
@@ -31,6 +32,7 @@ are used for some of the analyses.
 We can first start by getting the vocabulary version of our CDM object:
 
 ``` r
+
 vocabularyVersion(cdm)
 #> [1] "v5.0 06-AUG-21"
 ```
@@ -39,6 +41,7 @@ And the available vocabularies, which correspond to the column
 *vocabulary_id* from the concept table:
 
 ``` r
+
 availableVocabularies(cdm)
 #>  [1] "APC"                  "BDPM"                 "CMS Place of Service"
 #>  [4] "CPT4"                 "Currency"             "DRG"                 
@@ -57,6 +60,7 @@ We can also explore the domains that our CDM object has, which is the
 column *domain_id* from the concept table:
 
 ``` r
+
 availableDomains(cdm)
 #>  [1] "Condition"           "Currency"            "Device"             
 #>  [4] "Drug"                "Ethnicity"           "Gender"             
@@ -71,6 +75,7 @@ availableDomains(cdm)
 or restrict the search among *standard* concepts:
 
 ``` r
+
 availableDomains(cdm,
                  standardConcept = "Standard")
 #>  [1] "Condition"           "Currency"            "Device"             
@@ -89,6 +94,7 @@ We can further explore the different classes that we have (reported in
 *concept_class_id* column from the concept table):
 
 ``` r
+
 availableConceptClassIds(cdm)
 #>  [1] "2-dig nonbill code"   "3-dig billing code"   "3-dig nonbill code"  
 #>  [4] "4-dig billing code"   "Admitting Source"     "Answer"              
@@ -122,6 +128,7 @@ Or restrict the search among *non-standard* concepts with *condition*
 domain:
 
 ``` r
+
 availableConceptClassIds(cdm, 
                          standardConcept = "Non-standard", 
                          domain = "Condition")
@@ -148,6 +155,7 @@ We can also explore the different relationships that are present in our
 CDM:
 
 ``` r
+
 availableRelationshipIds(cdm)
 #>  [1] "Asso finding of"   "Asso with finding" "Due to of"        
 #>  [4] "Finding asso with" "Followed by"       "Follows"          
@@ -161,6 +169,7 @@ Or narrow the search among *standard* concepts with domain
 *observation*:
 
 ``` r
+
 availableRelationshipIds(cdm,
                          standardConcept1 = "Standard",
                          standardConcept2 = "Standard",

@@ -17,7 +17,11 @@ stratifyByDomain(
 
 - x:
 
-  A codelist.
+  A codelist, codelist_with_details, or a concept_set. See
+  [`newCodelist()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelist.html),
+  [`newCodelistWithDetails()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelistWithDetails.html),
+  [`newConceptSetExpression()`](https://darwin-eu.github.io/omopgenerics/reference/newConceptSetExpression.html)
+  functions for more details.
 
 - cdm:
 
@@ -48,6 +52,9 @@ library(CodelistGenerator)
 library(omopgenerics)
 #> 
 #> Attaching package: ‘omopgenerics’
+#> The following objects are masked from ‘package:CodelistGenerator’:
+#> 
+#>     emptyCodeSearch, exportCodeSearch, importCodeSearch, searchStrategy
 #> The following object is masked from ‘package:stats’:
 #> 
 #>     filter

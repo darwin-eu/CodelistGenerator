@@ -28,10 +28,11 @@ cdm <- mockVocabRef()
 
 timings <- benchmarkCodelistGenerator(cdm)
 #> Warning: - No matching Ingredient codes found for acetaminophen and codeine
-#> Limiting to domains of interest
+#> Limiting to concept type, domains, and vocabularies of interest
 #> Getting concepts to include
 #> Adding concepts using synonymns
 #> Adding codes from non-standard
-#> No codes found for the given search strategy
+#> ! No codes found for the given search strategy
+#> Time taken: 0 minutes and 0 seconds
 # }
 ```

@@ -10,6 +10,8 @@ Useful links:
 
 - <https://darwin-eu.github.io/CodelistGenerator/>
 
+- Report bugs at <https://github.com/darwin-eu/CodelistGenerator/issues>
+
 ## Author
 
 **Maintainer**: Edward Burn <edward.burn@ndorms.ox.ac.uk>

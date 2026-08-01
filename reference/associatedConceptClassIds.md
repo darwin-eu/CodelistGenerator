@@ -12,7 +12,11 @@ associatedConceptClassIds(x, cdm, standardConcept = "Standard", domain = NULL)
 
 - x:
 
-  A codelist.
+  A codelist, codelist_with_details, or a concept_set. See
+  [`newCodelist()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelist.html),
+  [`newCodelistWithDetails()`](https://darwin-eu.github.io/omopgenerics/reference/newCodelistWithDetails.html),
+  [`newConceptSetExpression()`](https://darwin-eu.github.io/omopgenerics/reference/newConceptSetExpression.html)
+  functions for more details.
 
 - cdm:
 
@@ -29,10 +33,11 @@ associatedConceptClassIds(x, cdm, standardConcept = "Standard", domain = NULL)
 - domain:
 
   Character vector with one or more of the OMOP CDM domains. The results
-  will be restricted to the given domains. Check the available ones by
-  running availableDomains(). If NULL, all supported domains are
-  included: Condition, Drug, Procedure, Device, Observation, and
-  Measurement.
+  will be restricted to the given domains. Check the available domains
+  in the database by running 'availableDomains()', or
+  'associatedDomains()' to explore the domains associated with a
+  codelist. If NULL, all supported domains are included: Condition,
+  Drug, Procedure, Device, Observation, and Measurement.
 
 ## Value
 
@@ -47,15 +52,16 @@ library(omock)
 
 # Create CDM object
 cdm <- mockCdmFromDataset(datasetName = "GiBleed")
-#> ℹ Reading GiBleed tables.
+#> ℹ Loading bundled GiBleed tables from package data.
 #> ℹ Adding drug_strength table.
 #> ℹ Creating local <cdm_reference> object.
 
 # Get concept_class_ids in a codelist
 x <- newCodelist(list("codes1" = c(1118088L, 40213201L, 35208414L),
                       "codes2" = c(1557272L, 4336464L, 4295880L)))
-associatedConceptClassIds(x, cdm,
-                         standardConcept = "Standard")
+associatedConceptClassIds(x,
+                          cdm,
+                          standardConcept = "Standard")
 #> $codes1
 #> [1] "Branded Drug" "CVX"         
 #> 

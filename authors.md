@@ -21,15 +21,18 @@
 
 ## Citation
 
+Source:
+[`DESCRIPTION`](https://github.com/darwin-eu/CodelistGenerator/blob/main/DESCRIPTION)
+
 Burn E, Alcalde-Herraiz M, Català M, Chen X, Mercade-Besora N, Du M,
 Newby D (2026). *CodelistGenerator: Identify Relevant Clinical Codes and
-Evaluate Their Use*. R package version 4.0.2,
+Evaluate Their Use*. R package version 4.1.0,
 <https://darwin-eu.github.io/CodelistGenerator/>.
 
     @Manual{,
       title = {CodelistGenerator: Identify Relevant Clinical Codes and Evaluate Their Use},
       author = {Edward Burn and Marta Alcalde-Herraiz and Martí Català and Xihang Chen and Nuria Mercade-Besora and Mike Du and Danielle Newby},
       year = {2026},
-      note = {R package version 4.0.2},
+      note = {R package version 4.1.0},
       url = {https://darwin-eu.github.io/CodelistGenerator/},
     }

@@ -34,8 +34,9 @@ downloadMockDataset(datasetName = "GiBleed",
                     path = NULL,
                     overwrite = NULL)
 #> ℹ Deleting prior version of GiBleed.
+#> ℹ Attempting download with timeout = 120 seconds.
 cdm <- mockCdmFromDataset(datasetName = "GiBleed")
-#> ℹ Reading GiBleed tables.
+#> ℹ Loading bundled GiBleed tables from package data.
 #> ℹ Adding drug_strength table.
 #> ℹ Creating local <cdm_reference> object.
 
@@ -45,7 +46,7 @@ codes1 <- getCandidateCodes(
   keywords = "Arthritis",
   domains = "Condition",
   includeDescendants = TRUE)
-#> Limiting to domains of interest
+#> Limiting to concept type, domains, and vocabularies of interest
 #> Getting concepts to include
 #> Adding descendants
 #> Search completed. Finishing up.
@@ -57,23 +58,17 @@ codes2 <- getCandidateCodes(
   keywords = c("osteo"),
   domains = "Condition",
   includeDescendants = TRUE)
-#> Limiting to domains of interest
+#> Limiting to concept type, domains, and vocabularies of interest
 #> Getting concepts to include
 #> Adding descendants
 #> Search completed. Finishing up.
 #> ✔ 3 candidate concepts identified
 #> Time taken: 0 minutes and 0 seconds
 
-compareCodelists(
-  codelist1 = codes1,
-  codelist2 = codes2)
-#> # A tibble: 4 × 3
-#>   concept_id concept_name                              codelist                 
-#>        <int> <chr>                                     <chr>                    
-#> 1      80180 Osteoarthritis                            Both                     
-#> 2      80502 Osteoporosis                              Only in codelist codelis…
-#> 3      80809 Rheumatoid arthritis                      Only in codelist codelis…
-#> 4   40480160 Pathological fracture due to osteoporosis Only in codelist codelis…
+# compareCodelists(
+#   codelist1 = codes1,
+#   codelist2 = codes2
+# )
 
 # Compare two codelists
 acetaminophen <- getDrugIngredientCodes(cdm,
@@ -114,7 +109,8 @@ hydrocodone <- getDrugIngredientCodes(cdm,
                                       type = "codelist_with_details")
 compareCodelists(
   codelist1 = acetaminophen,
-  codelist2 = hydrocodone)
+  codelist2 = hydrocodone
+)
 #> # A tibble: 8 × 3
 #>   concept_id concept_name                                               codelist
 #>        <int> <chr>                                                      <chr>   

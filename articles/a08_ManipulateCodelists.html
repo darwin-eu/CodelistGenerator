@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Manipulate codelists • CodelistGenerator</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Manipulate codelists">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CodelistGenerator</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,9 @@
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="navbar-nav"></ul>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/darwin-eu/CodelistGenerator/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+      </ul>
 </div>
 
 
@@ -69,7 +71,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Manipulate codelists</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CodelistGenerator/blob/main/vignettes/a08_ManipulateCodelists.Rmd" class="external-link"><code>vignettes/a08_ManipulateCodelists.Rmd</code></a></small>
       <div class="d-none name"><code>a08_ManipulateCodelists.Rmd</code></div>
     </div>
 
@@ -219,7 +221,7 @@ available in your codelist.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">1 codelist</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - acetaminophen (2850 codes)</span></span></code></pre></div>
+<span><span class="co">#&gt; - acetaminophen (2836 codes)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="subset-on-dose-forms">Subset on dose forms<a class="anchor" aria-label="anchor" href="#subset-on-dose-forms"></a>
@@ -287,11 +289,11 @@ into subgroups based on defined vocabulary properties.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">6 codelists</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - acetaminophen_inhalable (3 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_injectable (689 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_oral (17219 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_topical (6 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_transmucosal_rectal (1459 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_unclassified_route_category (3332 codes)</span></span></code></pre></div>
+<span><span class="co">#&gt; - acetaminophen_injectable (716 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_oral (19747 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_topical (7 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_transmucosal_rectal (1681 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_unclassified_route_category (554 codes)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="stratify-by-dose-form">Stratify by Dose Form<a class="anchor" aria-label="anchor" href="#stratify-by-dose-form"></a>
@@ -303,11 +305,11 @@ into subgroups based on defined vocabulary properties.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">27 codelists</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - acetaminophen_chewable_tablet (90 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_delayed_release_oral_capsule (95 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_delayed_release_oral_tablet (528 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_disintegrating_oral_tablet (517 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_effervescent_oral_tablet (531 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_chewable_tablet (109 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_delayed_release_oral_capsule (98 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_delayed_release_oral_tablet (543 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_disintegrating_oral_tablet (523 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_effervescent_oral_tablet (543 codes)</span></span>
 <span><span class="co">#&gt; - acetaminophen_enema (4 codes)</span></span>
 <span><span class="co">#&gt; along with 21 more codelists</span></span></code></pre></div>
 </div>
@@ -326,11 +328,11 @@ will add the ingredient “acetaminophen” to all our codelists:</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">6 codelists</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - acetaminophen_inhalable (4 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_injectable (690 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_oral (17220 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_topical (7 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_transmucosal_rectal (1460 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_unclassified_route_category (3332 codes)</span></span></code></pre></div>
+<span><span class="co">#&gt; - acetaminophen_injectable (717 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_oral (19748 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_topical (8 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_transmucosal_rectal (1682 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_unclassified_route_category (554 codes)</span></span></code></pre></div>
 <p>Or we can add acetaminophen + descendants, and only to some of the
 codelists</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -344,10 +346,10 @@ codelists</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">6 codelists</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; - acetaminophen_inhalable (3 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_injectable (689 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_oral (17219 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_topical (6 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_transmucosal_rectal (1459 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_injectable (716 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_oral (19747 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_topical (7 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_transmucosal_rectal (1681 codes)</span></span>
 <span><span class="co">#&gt; - acetaminophen_unclassified_route_category (23935 codes)</span></span></code></pre></div>
 <p>And similarly, we can exclude specific concepts and their descendants
 from our codelist:</p>
@@ -360,11 +362,11 @@ from our codelist:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">5 codelists</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; - acetaminophen_injectable (689 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_oral (17219 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_topical (6 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_transmucosal_rectal (1459 codes)</span></span>
-<span><span class="co">#&gt; - acetaminophen_unclassified_route_category (3332 codes)</span></span></code></pre></div>
+<span><span class="co">#&gt; - acetaminophen_injectable (716 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_oral (19747 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_topical (7 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_transmucosal_rectal (1681 codes)</span></span>
+<span><span class="co">#&gt; - acetaminophen_unclassified_route_category (554 codes)</span></span></code></pre></div>
 <p>Notice that in this case, the codelist “acetaminophen_inhalable” is
 removed as there are no elements left after the exclusion of the code
 35873016 and its descendants.</p>
@@ -450,7 +452,7 @@ codes.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>
