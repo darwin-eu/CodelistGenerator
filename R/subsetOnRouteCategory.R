@@ -44,12 +44,17 @@ subsetOnRouteCategory <- function(x,
                                   negate = FALSE){
 
   omopgenerics::assertCharacter(routeCategory, null = FALSE, na = FALSE)
-
+  st <- searchStrategyAttr(
+    function_name = "subsetOnRouteCategory",
+    cdm = "cdm",
+    routeCategory = cast(routeCategory)
+  )
   x <- subsetCodelistBy(x,
                         cdm,
                         by = "route_category",
                         group = routeCategory,
                         keepOriginal = FALSE,
+                        st = st,
                         negate = negate)
   return(x)
 }

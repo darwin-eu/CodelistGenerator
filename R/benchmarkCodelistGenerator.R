@@ -102,8 +102,9 @@ benchmarkCodelistGenerator <- function(cdm){
                     dplyr::pull()) |>
     dplyr::mutate(n_concepts = cdm$concept |>
                     dplyr::select("concept_id") |>
-                    dplyr::pull() |>
-                    dplyr::n_distinct())
+                    dplyr::distinct() |>
+                    dplyr::count() |>
+                    dplyr::pull())
 
   # As a summarised result
   timings <- timings |>
@@ -125,8 +126,9 @@ benchmarkCodelistGenerator <- function(cdm){
       ),
       additional_level = paste0(
         .data$dbms, " &&& ",
-        formatC(.data$n_person, big.mark = ","), " &&& ",
-        formatC(.data$n_concepts, big.mark = ",")
+        formatC(as.numeric(.data$n_person), format = "f", digits = 0, big.mark = ","),
+        " &&& ",
+        formatC(as.numeric(.data$n_concepts), format = "f", digits = 0, big.mark = ",")
       )
     ) |>
     dplyr::select(dplyr::all_of(

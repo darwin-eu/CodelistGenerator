@@ -6,16 +6,14 @@
 \alias{asConceptSetExpression.codelist_with_details}
 \title{Coerce to a concept set expression}
 \usage{
-asConceptSetExpression(x, ...)
+asConceptSetExpression(x)
 
-\method{asConceptSetExpression}{codelist}(x, ...)
+\method{asConceptSetExpression}{codelist}(x)
 
-\method{asConceptSetExpression}{codelist_with_details}(x, ...)
+\method{asConceptSetExpression}{codelist_with_details}(x)
 }
 \arguments{
-\item{x}{Codelist or codelist with details}
-
-\item{...}{For extensibility}
+\item{x}{A codelist, codelist_with_details, concept_set_expression, or a candidate_codes.}
 }
 \value{
 codelist

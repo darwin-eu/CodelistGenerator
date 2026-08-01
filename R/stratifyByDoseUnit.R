@@ -42,11 +42,16 @@ stratifyByDoseUnit <- function(x,
                                cdm,
                                nameStyle = "{codelist_name}_{dose_unit}",
                                keepOriginal = FALSE){
+  st <- searchStrategyAttr(
+    function_name = "stratifyByDoseUnit",
+    cdm = "cdm"
+  )
   stratifyCodelistBy(
     x = x,
     cdm = cdm,
     by = "dose_unit",
     nameStyle = nameStyle,
+    st = st,
     keepOriginal = keepOriginal
   )
 }

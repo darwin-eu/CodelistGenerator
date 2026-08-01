@@ -44,12 +44,17 @@ subsetOnDoseUnit <- function(x,
                              negate = FALSE){
 
   omopgenerics::assertCharacter(doseUnit, null = FALSE, na = FALSE)
-
+  st <- searchStrategyAttr(
+    function_name = "subsetOnDoseUnit",
+    cdm = "cdm",
+    doseUnit = cast(doseUnit)
+  )
   x <- subsetCodelistBy(x,
                         cdm,
                         by = "dose_unit",
                         group = doseUnit,
                         keepOriginal = FALSE,
+                        st = st,
                         negate = negate)
   return(x)
 }

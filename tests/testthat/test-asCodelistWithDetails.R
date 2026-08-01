@@ -20,7 +20,7 @@ test_that("asCodelistWithDetails", {
     a <- getCandidateCodes(cdm, keywords = "osteo")
     c <- asCodelistWithDetails(a)
     expect_true(inherits(c, "codelist_with_details"))
-    expect_true(!"candidate_codes" %in% class(c[[1]]))
+    expect_true(!"candidate_codes" %in% class(c))
 
     expect_no_error(omopgenerics::emptyCodelist() |>
       asCodelistWithDetails(cdm))

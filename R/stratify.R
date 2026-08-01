@@ -3,6 +3,7 @@ stratifyCodelistBy <- function(x,
                                by,
                                nameStyle,
                                keepOriginal,
+                               st,
                                call = parent.frame()) {
   # initial checks
   checkCodelist(x, allowConceptSetExpression = FALSE, call = call)
@@ -19,6 +20,10 @@ stratifyCodelistBy <- function(x,
 
   # codelist table
   nm <- omopgenerics::uniqueTableName()
+
+  if (inherits(x, "code_search")) {
+    x <- asCodelist(x)
+  }
   x <- dplyr::as_tibble(x) |>
     dplyr::rename(codelist_name = dplyr::any_of("codelist_with_details_name")) |>
     dplyr::select("codelist_name", "concept_id")
@@ -58,11 +63,11 @@ stratifyCodelistBy <- function(x,
   )
 
   # add class (and details)
-  x <- prepareCodelist(x = x, original = original)
+  x <- prepareCodelist(x = x, original = original, searchStrategy = st)
 
   # add original codes
   if (isTRUE(keepOriginal)) {
-    x <- c(x, original)
+    x <- keepOriginalCodelists(x = x, original = original)
   }
 
   return(x)
@@ -126,11 +131,44 @@ stratifyCodelist <- function(x, by, nameStyle) {
 
   return(x)
 }
-prepareCodelist <- function(x, original) {
+prepareCodelist <- function(x, original, searchStrategy) {
   if (inherits(original, "codelist")) {
     x <- x |>
       purrr::map(\(x) x$concept_id) |>
       omopgenerics::newCodelist()
+  } else if (inherits(original, "code_search")) {
+    st <- searchStrategy(original)
+    id <- max(st$strategy_id)
+    st <- st |>
+      dplyr::union_all(
+        searchStrategy |>
+          dplyr::mutate(strategy_id = .env$id + 1L)
+      )
+    codes <- x |>
+      dplyr::as_tibble() |>
+      dplyr::select("codelist_name", "concept_id") |>
+      dplyr::mutate(value = TRUE) |>
+      tidyr::pivot_wider(
+        names_from = "codelist_name",
+        values_from = "value",
+        values_fill = FALSE
+      )
+    for (nm in names(x)) {
+      if (!nm %in% colnames(codes)) {
+        codes[[nm]] <- FALSE
+      }
+    }
+    defCols <- codeSerachColumns |>
+      dplyr::filter(.data$table == "codes") |>
+      dplyr::pull("table")
+    x <- original |>
+      dplyr::select(dplyr::any_of(defCols)) |>
+      dplyr::left_join(codes, by = "concept_id") |>
+      dplyr::mutate(dplyr::across(
+        dplyr::all_of(names(x)),
+        \(x) dplyr::coalesce(x, FALSE)
+      )) |>
+      newCodeSearch(searchStrategy = st)
   } else {
     x <- x |>
       purrr::map(\(x) {

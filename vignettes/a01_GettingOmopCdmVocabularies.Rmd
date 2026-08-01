@@ -74,7 +74,7 @@ Your first step will be to get the vocabulary tables for the OMOP CDM. For this 
 
 ### Create a duckdb database
 
-After downloading the vocabularies you will have a set of csvs (along with a tool to add the CPT-4 codes if you wish). To quickly create a duckdb vocab database you could use the following code. Here, after pointing to the unzipped folder containg the csvs, we'll read each table into memory and write them to a duckdb database which we'll save in the same folder. We'll also add an empty person and observation period table so that you can create a cdm reference at the end.
+After downloading the vocabularies you will have a set of csvs (along with a tool to add the CPT-4 codes if you wish). To quickly create a duckdb vocab database you could use the following code. Here, after pointing to the unzipped folder containing the csvs, we'll read each table into memory and write them to a duckdb database which we'll save in the same folder. We'll also add an empty person and observation period table so that you can create a cdm reference at the end.
 
 ```{r, eval = FALSE}
 library(readr)

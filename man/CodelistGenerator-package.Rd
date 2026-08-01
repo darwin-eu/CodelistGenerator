@@ -14,6 +14,7 @@ Generate a candidate code list for the Observational Medical Outcomes Partnershi
 Useful links:
 \itemize{
   \item \url{https://darwin-eu.github.io/CodelistGenerator/}
+  \item Report bugs at \url{https://github.com/darwin-eu/CodelistGenerator/issues}
 }
 
 }

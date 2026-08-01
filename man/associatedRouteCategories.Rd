@@ -7,7 +7,7 @@
 associatedRouteCategories(x, cdm)
 }
 \arguments{
-\item{x}{A codelist.}
+\item{x}{A codelist, codelist_with_details, or a concept_set. See \code{newCodelist()}, \code{newCodelistWithDetails()}, \code{newConceptSetExpression()} functions for more details.}
 
 \item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
 database, the vocabulary tables should be in the same schema as the clinical
@@ -29,8 +29,12 @@ library(omock)
 # Create CDM object
 cdm <- mockCdmReference()
 
-# Get all dose forms available in a codelist
+# Create a codelist
 codelist <- newCodelist(list("codes1" = c(194152L, 1830279L, 40558872L),
                              "codes2" = c(44022939L)))
+
+# Get all route categories available in a codelist
+route_categories <- associatedRouteCategories(codelist, cdm)
+route_categories
 }
 }

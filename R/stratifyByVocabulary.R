@@ -45,11 +45,16 @@ stratifyByVocabulary <- function(x,
                                  cdm,
                                  nameStyle = "{codelist_name}_{vocabulary}",
                                  keepOriginal = FALSE) {
+  st <- searchStrategyAttr(
+    function_name = "stratifyByVocabulary",
+    cdm = "cdm"
+  )
   stratifyCodelistBy(
     x = x,
     cdm = cdm,
     by = "vocabulary",
     nameStyle = nameStyle,
+    st = st,
     keepOriginal = keepOriginal
   )
 }

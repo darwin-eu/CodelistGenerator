@@ -42,25 +42,51 @@ stratifyByRouteCategory <- function(x,
                                     cdm,
                                     nameStyle = "{codelist_name}_{route_category}",
                                     keepOriginal = FALSE) {
+  st <- searchStrategyAttr(
+    function_name = "stratifyByRouteCategory",
+    cdm = "cdm"
+  )
   stratifyCodelistBy(
     x = x,
     cdm = cdm,
     by = "route_category",
     nameStyle = nameStyle,
+    st = st,
     keepOriginal = keepOriginal
   )
 }
 
 addRouteCategory <- function(x) {
-  x |>
-    # add dose_form_concept_id
-    addDoseFormId() |>
-    # add route_category
+
+  x_route <- x |>
+    addDoseForm(keepDiscordant = TRUE) |>
     dplyr::left_join(
       CodelistGenerator::doseFormToRoute |>
-        dplyr::select("dose_form_concept_id", "route_category"),
-      by = "dose_form_concept_id"
+        dplyr::select("dose_form_concept_name", "route_category"),
+      by = c("dose_form" = "dose_form_concept_name")
     ) |>
-    dplyr::select(!"dose_form_concept_id") |>
+    dplyr::select(!"dose_form") |>
     dplyr::distinct()
+
+  # if multiple values and some are missing, keep only non-missing
+  # ie so do not get considered to have unclassified route
+  x_route <- x_route |>
+    dplyr::group_by(.data$concept_id) |>
+    dplyr::filter(!is.na(.data$route_category) | all(is.na(.data$route_category))) |>
+    dplyr::ungroup()
+
+
+  # if multiple discordant route, set to unknown
+  x_route <- x_route |>
+    dplyr::group_by(.data$codelist_name, .data$concept_id) |>
+    dplyr::mutate(discordant = dplyr::if_else(dplyr::n() == 1, 1L, 0L)) |>
+    dplyr::mutate(route_category = dplyr::if_else(.data$discordant == 1,
+                                                  .data$route_category,
+                                                  NA)) |>
+    dplyr::ungroup() |>
+    dplyr::select(!"discordant") |>
+    dplyr::distinct()
+
+  x_route
+
 }

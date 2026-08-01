@@ -69,7 +69,8 @@ availableRelationshipIds <- function(cdm,
   return(relationshipIds)
 }
 
-#' Get available relationships with concepts in a codelist
+#' Get all relationships types that exist in the OMOP vocabulary `concept_relationship`
+#' table for a given set of concepts in a codelist.
 #'
 #' @inheritParams xDoc
 #' @inheritParams cdmDoc
@@ -93,22 +94,34 @@ availableRelationshipIds <- function(cdm,
 #' # Create CDM object
 #' cdm <- mockCdmReference()
 #'
+#' # Create codelist
+#' codelist <- newCodelist(list("codes1" = c(8479L, 4117795L, 44022939L),
+#'                              "codes2" = c(8480L, 8600L, 8481L, 4189167L, 40371897L)))
 #'
-# Get all relationships within a codelist
-#' codelist <- newCodelist(list("codes1" = c(8479L, 4117795L),
-#'                              "codes2" = c(8480L, 8600L, 8481L, 4189167L)))
-#' associatedRelationshipIds(x = codelist, cdm = cdm,
-#'                          standardConcept1 = c("Standard", "Non-standard", "Classification"),
-#'                          standardConcept2 = c("Standard", "Non-standard", "Classification"),
-#'                          domains1 = NULL,
-#'                          domains2 = NULL)
+#' # You can optionally restrict to only relationships between concepts that are
+#' # "Standard" and "Non-standard". For example:
+#' relationships <- associatedRelationshipIds(x = codelist,
+#'                                            cdm = cdm,
+#'                                            standardConcept1 = "Standard",
+#'                                            standardConcept2 = "Non-standard")
+#' relationships
+#'
+#' # It returns the relationships between concepts where:
+#' #  - concept_id_1 is 'Standard'
+#' #  - concept_id_2 is 'Non-standard'
+#' # Similarly, we can obtain the relationships restricting by domain:
+#' relationships <- associatedRelationshipIds(x = codelist,
+#'                                            cdm = cdm,
+#'                                            domains1 = c("Drug", "Condition"),
+#'                                            domains2 = c("Drug", "Condition"))
+#' relationships
 #' }
 associatedRelationshipIds <- function(x,
                                       cdm,
-                                      standardConcept1 = "Standard",
-                                      standardConcept2 = "Standard",
-                                      domains1 = "Condition",
-                                      domains2 = "Condition") {
+                                      standardConcept1 = c("Standard", "Non-standard", "Classification"),
+                                      standardConcept2 = c("Standard", "Non-standard", "Classification"),
+                                      domains1 = NULL,
+                                      domains2 = NULL) {
 
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)

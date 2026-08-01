@@ -6,7 +6,7 @@
 \usage{
 tableCodeUse(
   result,
-  type = "gt",
+  type = NULL,
   header = c("cdm_name", "estimate_name"),
   groupColumn = character(),
   hide = c("date_range_start", "date_range_end"),
@@ -17,8 +17,8 @@ tableCodeUse(
 \arguments{
 \item{result}{A \verb{<summarised_result>} with results of the type "code_use".}
 
-\item{type}{Type of desired formatted table. To see supported formats
-use visOmopResults::tableType().}
+\item{type}{Type of desired formatted table. By default (type = NULL), it will
+create a 'gt' table. To see supported formats use visOmopResults::tableType().}
 
 \item{header}{A vector specifying the elements to include in the header. The
 order of elements matters, with the first being the topmost header.
@@ -43,7 +43,7 @@ These cannot be used in header.}
 \item{style}{A character string or custom R code to define the visual formatting
 of the table. This argument can be provided in two ways: (1) Pre-defined Styles
 (Character String): Use a name for a built-in style (e.g., "darwin"). See
-visOmopResults::tableStyle() for available options. (2) Custome Code (Advanced):
+visOmopResults::tableStyle() for available options. (2) Custom Code (Advanced):
 Supply a block of custom R code. This code must be specific to the table type.
 See visOmopResults::tableStyleCode() for structural examples.}
 
@@ -75,6 +75,5 @@ results <- summariseCodeUse(newCodelist(cs),cdm = cdm)
 tableCodeUse(results)
 CDMConnector::cdmDisconnect(cdm)
 }
-
 
 }

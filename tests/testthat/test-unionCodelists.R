@@ -11,6 +11,9 @@ test_that("union codelists - mock", {
   expect_true(length(ing_codes_union) == 1)
   expect_identical(ing_codes_union[[1]],
                    unique(c(ing_codes[[1]], ing_codes[[2]])))
+  expect_identical(names(ing_codes_union), "adalimumab_other_ingredient")
+  ing_codes_union <- unionCodelists(ing_codes, newCodelistName = "my_name")
+  expect_identical(names(ing_codes_union), "my_name")
 
   # codelist with details
   x1 <- asCodelistWithDetails(ing_codes, cdm)
@@ -68,6 +71,23 @@ test_that("union codelists - eunomia", {
                 "acetaminophen_aspirin_codeine") %in%
                 names(meds_2_union_keep)))
 
+  expect_no_error(
+    xx <- unionCodelists(
+      x = meds,
+      keepOriginal = TRUE,
+      newCodelistName = "new_codelist",
+      codelistsToJoin = c("acetaminophen", "aspirin")
+    )
+  )
+  expect_true(length(xx) == 4)
+  expect_true(all(
+    c("acetaminophen", "aspirin", "codeine", "new_codelist") %in%
+      names(xx)
+  ))
+  expect_true(all(xx$new_codelist %in% c(xx$acetaminophen, xx$aspirin)))
+  expect_true(!all(xx$new_codelist %in% xx$codeine))
+  expect_true(length(xx$new_codelist) ==
+                length(unique(unlist(xx[c("acetaminophen", "aspirin")]))))
 
   omopgenerics::cdmDisconnect(cdm)
 })

@@ -47,9 +47,10 @@
 #'   domains = "Condition",
 #'   includeDescendants = TRUE)
 #'
-#' compareCodelists(
-#'   codelist1 = codes1,
-#'   codelist2 = codes2)
+#' # compareCodelists(
+#' #   codelist1 = codes1,
+#' #   codelist2 = codes2
+#' # )
 #'
 #' # Compare two codelists
 #' acetaminophen <- getDrugIngredientCodes(cdm,
@@ -79,7 +80,8 @@
 #'                                       type = "codelist_with_details")
 #' compareCodelists(
 #'   codelist1 = acetaminophen,
-#'   codelist2 = hydrocodone)
+#'   codelist2 = hydrocodone
+#' )
 #'
 #' }
 compareCodelists <- function(codelist1,

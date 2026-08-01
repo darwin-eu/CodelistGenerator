@@ -2,19 +2,20 @@
 % Please edit documentation in R/availableRelationshipIds.R
 \name{associatedRelationshipIds}
 \alias{associatedRelationshipIds}
-\title{Get available relationships with concepts in a codelist}
+\title{Get all relationships types that exist in the OMOP vocabulary \code{concept_relationship}
+table for a given set of concepts in a codelist.}
 \usage{
 associatedRelationshipIds(
   x,
   cdm,
-  standardConcept1 = "Standard",
-  standardConcept2 = "Standard",
-  domains1 = "Condition",
-  domains2 = "Condition"
+  standardConcept1 = c("Standard", "Non-standard", "Classification"),
+  standardConcept2 = c("Standard", "Non-standard", "Classification"),
+  domains1 = NULL,
+  domains2 = NULL
 )
 }
 \arguments{
-\item{x}{A codelist.}
+\item{x}{A codelist, codelist_with_details, or a concept_set. See \code{newCodelist()}, \code{newCodelistWithDetails()}, \code{newConceptSetExpression()} functions for more details.}
 
 \item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
 database, the vocabulary tables should be in the same schema as the clinical
@@ -36,7 +37,8 @@ for the standard_concept field in the concept table of the cdm.}
 A character vector with unique concept relationship values.
 }
 \description{
-Get available relationships with concepts in a codelist
+Get all relationships types that exist in the OMOP vocabulary \code{concept_relationship}
+table for a given set of concepts in a codelist.
 }
 \examples{
 \donttest{
@@ -46,13 +48,26 @@ library(omock)
 # Create CDM object
 cdm <- mockCdmReference()
 
+# Create codelist
+codelist <- newCodelist(list("codes1" = c(8479L, 4117795L, 44022939L),
+                             "codes2" = c(8480L, 8600L, 8481L, 4189167L, 40371897L)))
 
-codelist <- newCodelist(list("codes1" = c(8479L, 4117795L),
-                             "codes2" = c(8480L, 8600L, 8481L, 4189167L)))
-associatedRelationshipIds(x = codelist, cdm = cdm,
-                         standardConcept1 = c("Standard", "Non-standard", "Classification"),
-                         standardConcept2 = c("Standard", "Non-standard", "Classification"),
-                         domains1 = NULL,
-                         domains2 = NULL)
+# You can optionally restrict to only relationships between concepts that are
+# "Standard" and "Non-standard". For example:
+relationships <- associatedRelationshipIds(x = codelist,
+                                           cdm = cdm,
+                                           standardConcept1 = "Standard",
+                                           standardConcept2 = "Non-standard")
+relationships
+
+# It returns the relationships between concepts where:
+#  - concept_id_1 is 'Standard'
+#  - concept_id_2 is 'Non-standard'
+# Similarly, we can obtain the relationships restricting by domain:
+relationships <- associatedRelationshipIds(x = codelist,
+                                           cdm = cdm,
+                                           domains1 = c("Drug", "Condition"),
+                                           domains2 = c("Drug", "Condition"))
+relationships
 }
 }

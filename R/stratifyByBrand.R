@@ -45,11 +45,16 @@ stratifyByBrand <- function(x,
                             cdm,
                             nameStyle = "{codelist_name}_{brand}",
                             keepOriginal = FALSE) {
+  st <- searchStrategyAttr(
+    function_name = "stratifyByBrand",
+    cdm = "cdm"
+  )
   stratifyCodelistBy(
     x = x,
     cdm = cdm,
     by = "brand",
     nameStyle = nameStyle,
+    st = st,
     keepOriginal = keepOriginal
   )
 }

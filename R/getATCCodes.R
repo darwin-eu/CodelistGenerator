@@ -91,7 +91,15 @@ getATCCodes <- function(cdm,
   omopgenerics::assertCharacter(doseForm, null = TRUE)
   omopgenerics::assertCharacter(doseUnit, null = TRUE)
   omopgenerics::assertCharacter(routeCategory, null = TRUE)
-  omopgenerics::assertCharacter(type, len = 1)
+  type <- validateType(type = type)
+
+  searchStrategy <- searchStrategyAttr(
+    function_name = "getATCCodes",
+    cdm = "cdm",
+    level = cast(level),
+    name = cast(name),
+    doseForm = cast(doseForm)
+  )
 
   atc_groups <- cdm$concept |>
     dplyr::filter(.data$vocabulary_id == "ATC") |>
@@ -105,65 +113,71 @@ getATCCodes <- function(cdm,
   }
 
   if (nrow(atc_groups) > 0) {
+    if (nrow(atc_groups) > 1 & type == "code_search") {
+      cli::cli_abort(c(x = "Only one ATC type is supported when type = {.cls code_search}"))
+    }
     # to avoid potential memory problems will batch
     atc_descendants <- fetchBatchedDescendants(cdm = cdm,
                                                codes = atc_groups$concept_id,
                                                batchSize = 500,
                                                doseForm = doseForm)
-  }else{
-    cli::cli_abort(
-      "- No matching ATC codes found"
-    )
+  } else {
+    cli::cli_inform(c("!" = "- No matching ATC codes found"))
+    return(emptyObject(type = type, searchStrategy = searchStrategy))
   }
 
-  if (nrow(atc_descendants) > 0) {
-    atc_descendants <- atc_descendants |>
-      dplyr::select("concept_id", "concept_name",
-                    "domain_id", "vocabulary_id",
-                    "ancestor_concept_id") |>
-      # split different ancestors into multiple cols
-      tidyr::separate_wider_delim(
-        cols = "ancestor_concept_id",
-        delim = ";",
-        names_sep = "",
-        too_few = "align_start"
-      )
+  atc_descendants <- atc_descendants |>
+    dplyr::select(!dplyr::any_of(c("min_levels_of_separation", "max_levels_of_separation"))) |>
+    # split different ancestors into multiple cols
+    tidyr::separate_wider_delim(
+      cols = "ancestor_concept_id",
+      delim = ";",
+      names_sep = "",
+      too_few = "align_start"
+    )
 
-    atc_descendants <- atc_descendants |>
-      # one row per concept + ancestor
-      tidyr::pivot_longer(cols = !c("concept_id", "concept_name",
-                                    "domain_id", "vocabulary_id"),
-                          names_to = NULL,
-                          values_to = "ancestor_concept_id",
-                          values_drop_na = TRUE
-      )
+  atc_descendants <- atc_descendants |>
+    # one row per concept + ancestor
+    tidyr::pivot_longer(cols = dplyr::starts_with("ancestor_concept_id"),
+                        names_to = NULL,
+                        values_to = "ancestor_concept_id",
+                        values_drop_na = TRUE
+    )
 
-    atc_descendants <- atc_descendants |>
-      dplyr::left_join(
-        atc_groups |>
-          dplyr::mutate("concept_name" = omopgenerics::toSnakeCase(.data$concept_name),
-                        "concept_id" = as.character(.data$concept_id)) |>
-          dplyr::mutate("name" = glue::glue(.env$nameStyle)) |>
-          dplyr::select("concept_id", "name"),
-        by = c("ancestor_concept_id" = "concept_id")
-      )
+  atc_descendants <- atc_descendants |>
+    dplyr::left_join(
+      atc_groups |>
+        dplyr::mutate("concept_name" = omopgenerics::toSnakeCase(.data$concept_name),
+                      "concept_id" = as.character(.data$concept_id)) |>
+        dplyr::mutate("name" = glue::glue(.env$nameStyle)) |>
+        dplyr::select("concept_id", "name"),
+      by = c("ancestor_concept_id" = "concept_id")
+    )
 
-    if(type == "codelist"){
-      atc_descendants <- split(
-        x = atc_descendants$concept_id,
-        f = as.factor(atc_descendants$name),
-        drop = TRUE
+  if(type == "codelist"){
+    atc_descendants <- split(
+      x = atc_descendants$concept_id,
+      f = as.factor(atc_descendants$name),
+      drop = TRUE
+    ) |>
+      omopgenerics::newCodelist()
+  }else if(type == "codelist_with_details"){
+    atc_descendants <- split(
+      x = atc_descendants,
+      f = as.factor(atc_descendants$name),
+      drop = TRUE
+    ) |>
+      purrr::map(~dplyr::select(., -"name")) |>
+      omopgenerics::newCodelistWithDetails()
+  } else if (type == "code_search") {
+    nm <- unique(atc_descendants$name)
+    atc_descendants <- atc_descendants |>
+      dplyr::select(!c("name", "ancestor_concept_id")) |>
+      dplyr::mutate(
+        found_from = "Descendants",
+        vocabulary_version = vocabularyVersion(cdm = cdm),
       ) |>
-        omopgenerics::newCodelist()
-    }else if(type == "codelist_with_details"){
-      atc_descendants <- split(
-        x = atc_descendants,
-        f = as.factor(atc_descendants$name),
-        drop = TRUE
-      ) |>
-        purrr::map(~dplyr::select(., -"name")) |>
-        omopgenerics::newCodelistWithDetails()
-    }
+      newCodeSearch(searchStrategy = searchStrategy)
   }
 
 

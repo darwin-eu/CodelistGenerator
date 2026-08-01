@@ -79,7 +79,7 @@ getCandidateCodes(
 
 Notice that currently we are only looking for concepts with `domain = "Condition"`. However, we can expand the search to all domains using `domain = NULL`.
 
-`getCandidateCodes()` function will generate a table with class "candidate_codes", which contains an atribute with the details of the search strategy:
+`getCandidateCodes()` function will generate a table with class "candidate_codes", which contains an attribute with the details of the search strategy:
 ```{r, message=FALSE}
 candidate_codes <- getCandidateCodes(
   cdm = cdm,
@@ -199,7 +199,7 @@ getCandidateCodes(
 
 If we only want to exclude exact matching terms (without accounting for words boundaries) we need to add "/" at the beginning and
 at the end of the term. Hence, using "knee osteoarthritis", "osteoarthritis of knee" **won't** be excluded. However, if we had 
-"rightknee osteoarthritis", it would be excluded.
+"right knee osteoarthritis", it would be excluded.
 ```{r, message=FALSE}
 # No exclusion:
 getCandidateCodes(

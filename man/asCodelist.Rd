@@ -19,7 +19,7 @@ asCodelist(x, ...)
 \method{asCodelist}{candidate_codes}(x, ...)
 }
 \arguments{
-\item{x}{Only codelist_with_details and candidate_codes are currently supported.}
+\item{x}{A codelist, codelist_with_details, concept_set_expression, or a candidate_codes.}
 
 \item{...}{For extensibility}
 

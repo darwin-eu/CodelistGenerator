@@ -142,7 +142,26 @@ achillesAnalisisDetails <- dplyr::tibble(
   type = rep(c("person_count", "record_count", "record_count"), 7)
 )
 
+codeSerachColumns <- dplyr::tribble(
+  ~table, ~column, ~type, ~convert,
+  "search_strategy", "strategy_id", "integer", "as.integer",
+  "search_strategy", "strategy_name", "character", "as.character",
+  "search_strategy", "strategy_value", "character", "as.character",
+  "codes", "concept_id", "integer", "as.integer",
+  "codes", "found_from", "character", "as.character",
+  "codes", "concept_name", "character", "as.character",
+  "codes", "vocabulary_version", "character", "as.character",
+  "codes", "domain_id", "character", "as.character",
+  "codes", "vocabulary_id", "character", "as.character",
+  "codes", "concept_class_id", "character", "as.character",
+  "codes", "standard_concept", "character", "as.character",
+  "codes", "concept_code", "character", "as.character",
+  "codes", "valid_start_date", "date", "as.Date",
+  "codes", "valid_end_date", "date", "as.Date",
+  "codes", "invalid_reason", "character", "as.character",
+)
+
 usethis::use_data(
-  conceptDomainsData, achillesAnalisisDetails,
+  conceptDomainsData, achillesAnalisisDetails, codeSerachColumns,
   overwrite = TRUE, internal = TRUE
 )

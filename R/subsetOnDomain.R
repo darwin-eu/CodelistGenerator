@@ -44,12 +44,17 @@ subsetOnDomain <- function(x,
                            negate = FALSE){
 
   omopgenerics::assertCharacter(domain, null = FALSE, na = FALSE)
-
+  st <- searchStrategyAttr(
+    function_name = "subsetOnDomain",
+    cdm = "cdm",
+    domain = cast(domain)
+  )
   x <- subsetCodelistBy(x,
                         cdm,
                         by = "domain",
                         group = domain,
                         keepOriginal = FALSE,
+                        st = st,
                         negate = negate)
   return(x)
 }

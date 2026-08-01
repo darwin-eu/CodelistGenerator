@@ -45,9 +45,6 @@ subsetOnIngredientRange <- function(x,
                                     negate = FALSE){
 
   # Initial checks
-  checkCodelist(x, allowConceptSetExpression = FALSE)
-  omopgenerics::validateCdmArgument(cdm)
-  omopgenerics::assertLogical(negate, length = 1)
   omopgenerics::assertNumeric(ingredientRange, length = 2, min = 0)
   omopgenerics::assertTrue(ingredientRange[1] <= ingredientRange[2])
 
@@ -55,57 +52,17 @@ subsetOnIngredientRange <- function(x,
     ingredientRange[2] <- 9999999
   }
 
-  x_original <- x
-  if(inherits(x_original, "codelist_with_details")){
-    x <- asCodelist(x)
-    newX <- omopgenerics::emptyCodelistWithDetails()
-  }
-  if(inherits(x_original, "codelist")){
-    newX <- omopgenerics::emptyCodelist()
-  }
+  st <- searchStrategyAttr(
+    function_name = "subsetOnIngredientRange",
+    cdm = "cdm",
+    ingredientRange = cast(ingredientRange)
+  )
+  x <- subsetCodelistBy(x,
+                   cdm,
+                   by = "ingredient_range",
+                   group = ingredientRange,
+                   st = st,
+                   negate = negate)
 
-  result <- list()
-  newOmopTable <- paste0(omopgenerics::uniqueTableName(),
-                         omopgenerics::uniqueId())
-
-  for(i in seq_along(x)){
-    cdm <- CDMConnector::insertTable(cdm,
-                                     name = newOmopTable,
-                                     table = dplyr::tibble("concept_id" = x[[i]]),
-                                     overwrite = TRUE,
-                                     temporary = FALSE)
-
-    if(isTRUE(negate)){
-      result[[i]] <- addIngredientCount(cdm = cdm, concepts = cdm[[newOmopTable]]) |>
-        dplyr::filter(.data$ingredient_count < !!ingredientRange[1] |
-                        .data$ingredient_count > !!ingredientRange[2]) |>
-        dplyr::select(!c("ingredient_count")) |>
-        dplyr::collect()
-    }else{
-      result[[i]] <- addIngredientCount(cdm = cdm, concepts = cdm[[newOmopTable]]) |>
-        dplyr::filter(.data$ingredient_count >= !!ingredientRange[1],
-                      .data$ingredient_count <= !!ingredientRange[2]) |>
-        dplyr::select(!c("ingredient_count")) |>
-        dplyr::collect()
-    }
-
-    if(inherits(x_original, "codelist_with_details")){
-      newX[[names(x_original)[[i]]]] <- x_original[[i]] |>
-        dplyr::inner_join(
-          result[[i]], by = "concept_id"
-        ) |>
-        dplyr::arrange(.data$concept_id)
-    }
-    if(inherits(x_original, "codelist")){
-      newX[[names(x_original)[[i]]]] <- result[[i]] |>
-        dplyr::pull("concept_id") |>
-        sort()
-    }
-  }
-
-  newX <- dropEmptyCodelist(x_original, newX)
-
-  omopgenerics::dropSourceTable(cdm = cdm, name = newOmopTable)
-
-  return(newX)
+  return(x)
 }

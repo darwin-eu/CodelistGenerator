@@ -36,22 +36,26 @@
 #' both "osteoarthritis of knee" and "osteoarthritis of hip"
 #' @param exclude  Character vector of words to identify concepts to exclude.
 #' For example, `getCandidateCodes(cdm,  keywords = "septic", exclude = "aseptic",  domains = "condition")`
-#' would remove concepts "aseptic" when seaching for concepts with "septic" in
+#' would remove concepts "aseptic" when searching for concepts with "septic" in
 #' their name.
 #' * When one term contains multiple words (e.g., "knee osteoarthritis"),
 #' each word will be search individually, so that "osteoarthritis of knee" would also be excluded.
 #' If you only want to exclude partial matching terms, please add "/" at the beginning and the end of each term
 #' (e.g., `"/knee osteoarthritis/`"). Notice that, with this options,
-#' concepts like "rightknee osteoarthritis" will also be excluded (as this is a partial match), but
+#' concepts like "right knee osteoarthritis" will also be excluded (as this is a partial match), but
 #' "osteoarthritis of knee" won't be excluded. Different terms can have different rules (e.g.,
 #' c("hip osteoarthritis", "/knee osteoarthritis/")).
 #' * With multiple words, if we want exact matches accounting for word boundaries, we need to use
 #' `/\b` at the beginning and at the end of each expression. In the previous example, using
-#' `"/bknee osteoarthritis/\b"`, "rightknee osteoarthritis" won't be excluded, but
+#' `"/bknee osteoarthritis/\b"`, "right knee osteoarthritis" won't be excluded, but
 #' "History of knee osteoarthritis" will be excluded.
 #' @param domains Character vector with one or more of the OMOP CDM domain for
 #' which to search within. If NULL, all domains are included in the search. Use
 #' `availableDomains(cdm = cdm)` to identify available domains to search within.
+#' @param vocabularyId Character vector with one or more vocabulary ID to
+#' restrict results to. If NULL, all vocabularies will be included in the
+#' search. Use `availableVocabularies(cdm)` to identify available vocabularies
+#' to restrict search to.
 #' @inheritParams standardConceptDoc
 #' @param searchInSynonyms Either TRUE or FALSE. If TRUE the code will also
 #' search using both the primary name in the concept table and synonyms from
@@ -80,18 +84,19 @@ getCandidateCodes <- function(cdm,
                               keywords,
                               exclude = NULL,
                               domains = "Condition",
+                              vocabularyId = NULL,
                               standardConcept = "Standard",
                               searchInSynonyms = FALSE,
                               searchNonStandard = FALSE,
                               includeDescendants = TRUE,
                               includeAncestor = FALSE) {
-
   start <- Sys.time()
 
   ## checks for standard types of user error
   omopgenerics::assertCharacter(keywords, null = FALSE, na = FALSE)
   domains <- assertDomain(domains, cdm)
   omopgenerics::assertChoice(standardConcept, choices = c("Standard", "Classification", "Non-standard"))
+  vocabularyId <- assertVocab(vocabularyId, domain = domains, cdm, standardConcept = standardConcept)
   omopgenerics::assertLogical(searchInSynonyms)
   omopgenerics::assertLogical(searchNonStandard)
   omopgenerics::assertLogical(includeDescendants)
@@ -118,6 +123,7 @@ getCandidateCodes <- function(cdm,
                              cdm = cdm,
                              exclude = exclude,
                              domains = domains,
+                             vocabularyId = vocabularyId,
                              standardConcept = standardConcept,
                              searchInSynonyms = searchInSynonyms,
                              searchNonStandard = searchNonStandard,
@@ -127,30 +133,35 @@ getCandidateCodes <- function(cdm,
     dplyr::arrange(.data$concept_id)
 
   if (nrow(searchResults) == 0) {
-    cli::cli_inform("No codes found for the given search strategy")
-    return(searchResults)
+    cli::cli_inform(c("!" = "No codes found for the given search strategy"))
+  } else {
+    cli::cli_alert_success(
+      "{nrow(searchResults)} candidate concept{?s} identified"
+    )
   }
 
-  cli::cli_alert_success(
-    "{nrow(searchResults)} candidate concept{?s} identified"
-  )
   duration <- abs(as.numeric(Sys.time() - start, units = "secs"))
   cli::cli_inform(
     "Time taken: {floor(duration/60)} minutes and {duration %% 60 %/% 1} seconds"
   )
 
-  searchResults <- newCandidateCodesClass(searchResults)
-  searchResults <- addAtribute(searchResults,
-                               cdm,
-                               keywords = keywords,
-                               exclude = exclude,
-                               domains = domains,
-                               standardConcept = standardConcept,
-                               searchInSynonyms = searchInSynonyms,
-                               searchNonStandard = searchNonStandard,
-                               includeDescendants = includeDescendants,
-                               includeAncestor = includeAncestor)
-  return(searchResults)
+  searchResults |>
+    dplyr::mutate(
+      vocabulary_version = vocabularyVersion(cdm = cdm),
+    ) |>
+    newCodeSearch(searchStrategy = searchStrategyAttr(
+      function_name = "getCandidateCodes",
+      cdm = "cdm",
+      keywords = cast(keywords),
+      exclude = cast(exclude),
+      domains = cast(domains),
+      vocabularyId = cast(vocabularyId),
+      standardConcept = cast(standardConcept),
+      searchInSynonyms = cast(searchInSynonyms),
+      searchNonStandard = cast(searchNonStandard),
+      includeDescendants = cast(includeDescendants),
+      includeAncestor = cast(includeAncestor)
+    ))
 }
 
 newCandidateCodesClass <- function(x){
@@ -244,7 +255,7 @@ validateCandidateCodes <- function(x, call = parent.frame()) {
   return(x)
 }
 
-addAtribute <- function(x, cdm, keywords, exclude, domains, standardConcept,
+addAttribute <- function(x, cdm, keywords, exclude, domains, standardConcept,
                         searchInSynonyms, searchNonStandard, includeDescendants,
                         includeAncestor){
   attr(x, "search_strategy") <- dplyr::tibble(

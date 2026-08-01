@@ -4,8 +4,8 @@
 \alias{typeTableDoc}
 \title{Helper for consistent documentation of \code{type}.}
 \arguments{
-\item{type}{Type of desired formatted table. To see supported formats
-use visOmopResults::tableType().}
+\item{type}{Type of desired formatted table. By default (type = NULL), it will
+create a 'gt' table. To see supported formats use visOmopResults::tableType().}
 }
 \description{
 Helper for consistent documentation of \code{type}.

@@ -1,8 +1,7 @@
 test_that("summarise code use - eunomia", {
   skip_on_cran()
 
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
+  cdm <- omock::mockCdmFromDataset("GiBleed", source = "duckdb")
 
   acetiminophen <- c(1125315L,  1127433L, 40229134L,
                      40231925L, 40162522L, 19133768L,  1127078L)
@@ -361,8 +360,7 @@ test_that("summarise code use - eunomia", {
 test_that("summarise cohort code use - eunomia", {
   skip_on_cran()
 
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(cdmName = "cdm", con, cdmSchema = "main", writeSchema = "main")
+  cdm <- omock::mockCdmFromDataset("GiBleed", source = "duckdb")
 
   pharyngitis_codes <- omopgenerics::newCodelist(list("ph" = c(4112343L)))
 
@@ -597,6 +595,56 @@ test_that("summarise cohort code use - eunomia", {
                                       cdm = cdm,
                                       cohortTable = "pharyngitis",
                                       timing = c("any", "entry")))
+
+  CDMConnector::cdmDisconnect(cdm)
+
+})
+
+test_that("summarise cohort code use - event type", {
+  skip_on_cran()
+
+  cdm <- omock::mockCdmFromDataset("GiBleed", source = "duckdb")
+
+  pharyngitis_codes <- omopgenerics::newCodelist(list("ph" = c(4112343L)))
+  acetiminophen_codes <- list(acetiminophen = c(1125315,  1127433, 40229134,
+                     40231925, 40162522, 19133768,  1127078) |>
+    as.integer()) |>
+    omopgenerics::newCodelist()
+
+  cdm$pharyngitis <- CohortConstructor::conceptCohort(cdm, pharyngitis_codes,
+                                                      name = "pharyngitis") |>
+    CohortConstructor::requireConceptIntersect(acetiminophen_codes,
+                                               window = c(-Inf, Inf))
+
+  # all event types by default
+  result_all_types <- summariseCohortCodeUse(cdm, "pharyngitis",
+                                             codelistType = c("index event",
+                                                              "inclusion criteria",
+                                                              "exit criteria"))
+  expect_true("acetiminophen" %in%
+              (result_all_types |>
+    omopgenerics::tidy() |>
+    dplyr::pull("codelist_name") |>
+    unique()))
+
+  # only index event
+  result_index <- summariseCohortCodeUse(cdm, "pharyngitis",
+                                             codelistType = "index event")
+  expect_false("acetiminophen" %in%
+                (result_index |>
+                   omopgenerics::tidy() |>
+                   dplyr::pull("codelist_name") |>
+                   unique()))
+
+  # only index event
+  result_inclusion <- summariseCohortCodeUse(cdm, "pharyngitis",
+                                         codelistType = "inclusion criteria")
+  expect_false("ph" %in%
+                 (result_inclusion |>
+                    omopgenerics::tidy() |>
+                    dplyr::pull("codelist_name") |>
+                    unique()))
+
 
   CDMConnector::cdmDisconnect(cdm)
 
@@ -862,8 +910,7 @@ test_that("summarise code use - redshift", {
 test_that("summarise code use - eunomia source concept id NA", {
   skip_on_cran()
 
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
+  cdm <- omock::mockCdmFromDataset("GiBleed", source = "duckdb")
 
   acetiminophen <- c(1125315,  1127433, 40229134,
                      40231925, 40162522, 19133768,  1127078) |>
@@ -876,12 +923,12 @@ test_that("summarise code use - eunomia source concept id NA", {
   results <- summariseCodeUse(cs,
                               cdm = cdm)
 
-  expect_true(all(omopgenerics::splitAdditional(results) |>
+  expect_true(all(is.na(omopgenerics::splitAdditional(results) |>
                     dplyr::filter(variable_name != "overall") |>
-                    dplyr::pull("source_concept_name") == "NA"))
-  expect_true(all(omopgenerics::splitAdditional(results) |>
+                    dplyr::pull("source_concept_name"))))
+  expect_true(all(is.na(omopgenerics::splitAdditional(results) |>
                     dplyr::filter(variable_name != "overall") |>
-                    dplyr::pull("source_concept_id") == "NA"))
+                    dplyr::pull("source_concept_id"))))
 
   CDMConnector::cdmDisconnect(cdm)
 })
@@ -889,8 +936,7 @@ test_that("summarise code use - eunomia source concept id NA", {
 test_that("summarise cohort code use - eunomia source concept id NA", {
   skip_on_cran()
 
-  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(con, cdmSchema = "main", writeSchema = "main")
+  cdm <- omock::mockCdmFromDataset("GiBleed", source = "duckdb")
 
   pharyngitis <- c(4112343L)
 
@@ -908,12 +954,12 @@ test_that("summarise cohort code use - eunomia source concept id NA", {
                                            cohortTable = "pharyngitis",
                                            timing = "any")
 
-  expect_true(all(omopgenerics::splitAdditional(results_cohort) |>
+  expect_true(all(is.na(omopgenerics::splitAdditional(results_cohort) |>
                     dplyr::filter(variable_name != "overall") |>
-                    dplyr::pull("source_concept_name") == "NA"))
-  expect_true(all(omopgenerics::splitAdditional(results_cohort) |>
+                    dplyr::pull("source_concept_name"))))
+  expect_true(all(is.na(omopgenerics::splitAdditional(results_cohort) |>
                     dplyr::filter(variable_name != "overall") |>
-                    dplyr::pull("source_concept_id") == "NA"))
+                    dplyr::pull("source_concept_id"))))
 
   CDMConnector::cdmDisconnect(cdm)
 
@@ -922,12 +968,7 @@ test_that("summarise cohort code use - eunomia source concept id NA", {
 test_that("empty cohort", {
   skip_on_cran()
 
-  con <- DBI::dbConnect(duckdb::duckdb(),
-                        dbdir = CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(con,
-                                  cdmSchema = "main",
-                                  writeSchema = "main",
-                                  cdmName = "test")
+  cdm <- omock::mockCdmFromDataset("GiBleed", source = "duckdb")
 
   # Empty cohort
   cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,

@@ -6,7 +6,8 @@
 \arguments{
 \item{doseForm}{Only codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
-of dose form. Use 'doseForms()' to see the available dose forms.}
+of dose form. Use 'availableDoseForms()' to see the available dose forms in the database,
+or 'associatedDoseForms()' to see the associated dose forms in a codelist.}
 }
 \description{
 Helper for consistent documentation of \code{doseForm}.

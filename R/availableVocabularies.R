@@ -126,3 +126,17 @@ assertDomain <- function(domains, cdm, call = parent.frame()){
 
   return(invisible(tolower(domains)))
 }
+
+assertVocab <- function(vocabularyId, domain, standardConcept, cdm, call = parent.frame()){
+  if(is.null(vocabularyId)){
+    vocabs <- availableVocabularies(cdm, domain = domain, standardConcept = standardConcept)
+  }else{
+    vocabs <- omopgenerics::assertCharacter(vocabularyId, null = TRUE)
+    dif <- setdiff(vocabs, availableVocabularies(cdm))
+    if(length(dif) > 0){
+      cli::cli_warn("The vocab{?s} {.val {dif}} {?is/are} not present in the cdm.", call = call)
+    }
+  }
+
+  return(invisible(tolower(vocabs)))
+}

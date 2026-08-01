@@ -65,8 +65,7 @@ codesFromConceptSet <- function(path,
 
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
-  omopgenerics::assertCharacter(type, length = 1)
-  omopgenerics::assertChoice(type, choices = c("codelist", "codelist_with_details", "concept_set_expression"))
+  type <- validateType(type = type)
   checkInputs(path = path, cdm = cdm)
 
   if (dir.exists(path)) {
@@ -187,10 +186,11 @@ codesFromCohort <- function(path,
                             cdm,
                             type = c("codelist")) {
 
+  rlang::check_installed("jsonlite")
+
   # initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
-  omopgenerics::assertCharacter(type, length = 1)
-  omopgenerics::assertChoice(type, choices = c("codelist", "codelist_with_details", "concept_set_expression"))
+  type <- validateType(type = type)
   checkInputs(path = path, cdm = cdm)
 
   # list jsons

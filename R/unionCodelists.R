@@ -18,7 +18,11 @@
 #' will come out in alphabetical order.
 #'
 #' @inheritParams xDoc
+#' @param newCodelistName Character vector with the name of the new codelist. If
+#' NULL all codelists names will be combined.
 #' @inheritParams keepOriginalDoc
+#' @param codelistsToJoin Character vector with the names of the codelists to be
+#' unioned.
 #'
 #' @return A codelist
 #' @export
@@ -32,30 +36,36 @@
 #' unionCodelists()
 #' }
 unionCodelists <- function(x,
-                           keepOriginal = FALSE) {
+                           newCodelistName = NULL,
+                           keepOriginal = FALSE,
+                           codelistsToJoin = names(x)) {
 
   checkCodelist(x)
   omopgenerics::assertLogical(keepOriginal, length = 1)
+  omopgenerics::assertCharacter(newCodelistName, length = 1, null = TRUE)
+  omopgenerics::assertChoice(codelistsToJoin, names(x), unique = TRUE)
 
-  xNames <- names(x)
+  xNames <- codelistsToJoin
 
-  allCodes <- purrr::list_c(x) |>
+  allCodes <- purrr::list_c(x[codelistsToJoin]) |>
     unique()
-  allCodesName <- paste0(xNames, collapse = "_")
+  if (is.null(newCodelistName)) {
+    newCodelistName <- paste0(xNames, collapse = "_")
+  }
 
   newX <- list()
-  newX[[allCodesName]] <- allCodes
-  if(isTRUE(keepOriginal)){
+  newX[[newCodelistName]] <- allCodes
+  if (isTRUE(keepOriginal)) {
     newX <- purrr::list_flatten(list(x, newX))
   }
 
-  if(inherits(x, "codelist")){
+  if (inherits(x, "codelist")) {
     newX <- newX |> omopgenerics::newCodelist()
   }
-  if(inherits(x, "codelist_with_details")){
+  if (inherits(x, "codelist_with_details")) {
     newX <- newX |> omopgenerics::newCodelistWithDetails()
   }
-  if(inherits(x, "concept_set_expression")){
+  if (inherits(x, "concept_set_expression")) {
     newX <- newX |> omopgenerics::newConceptSetExpression()
   }
 

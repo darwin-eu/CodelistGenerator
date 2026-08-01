@@ -7,7 +7,7 @@
 subsetOnDoseUnit(x, cdm, doseUnit, negate = FALSE)
 }
 \arguments{
-\item{x}{A codelist.}
+\item{x}{A codelist, codelist_with_details, or a concept_set. See \code{newCodelist()}, \code{newCodelistWithDetails()}, \code{newConceptSetExpression()} functions for more details.}
 
 \item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
 database, the vocabulary tables should be in the same schema as the clinical
@@ -15,7 +15,8 @@ tables (person, observation period, and so on).}
 
 \item{doseUnit}{Only codes with the specified dose unit
 will be returned. If NULL, descendant codes will be returned regardless
-of dose unit Use 'availableDoseUnits()' to see the available dose units.}
+of dose unit Use 'availableDoseUnits()' to see the available dose units,
+or 'associatedDoseUnits()' to see the associated dose forms in a codelist.}
 
 \item{negate}{If FALSE, only concepts with the dose unit specified will be
 returned. If TRUE, concepts with the dose unit specified will be excluded.}

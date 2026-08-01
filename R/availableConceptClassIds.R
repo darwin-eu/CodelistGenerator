@@ -81,16 +81,17 @@ availableConceptClassIds <- function(cdm,
 #' # Get concept_class_ids in a codelist
 #' x <- newCodelist(list("codes1" = c(1118088L, 40213201L, 35208414L),
 #'                       "codes2" = c(1557272L, 4336464L, 4295880L)))
-#' associatedConceptClassIds(x, cdm,
-#'                          standardConcept = "Standard")
+#' associatedConceptClassIds(x,
+#'                           cdm,
+#'                           standardConcept = "Standard")
 #'
 #' # Notice that this corresponds to the information provided by `concept_class_id`
 #' # column in the `concept` table
 #' }
 associatedConceptClassIds <- function(x,
                                       cdm,
-                                     standardConcept = "Standard",
-                                     domain = NULL) {
+                                      standardConcept = "Standard",
+                                      domain = NULL) {
   #initial checks
   cdm <- omopgenerics::validateCdmArgument(cdm = cdm)
   domain <- assertDomain(domain, cdm)

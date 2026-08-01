@@ -58,12 +58,9 @@ addIngredientCount <- function(cdm, concepts) {
 
   concepts <- concepts |>
     dplyr::left_join(ingredient_count,
-                     by = "concept_id")
-
-  if(!is.null(attr(cdm, "dbcon"))){
-    concepts <- concepts |>
-      dplyr::compute()}
-
+                     by = "concept_id") |>
+    dplyr::collect() |>
+    dplyr::distinct()
   return(concepts)
 }
 

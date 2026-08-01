@@ -34,14 +34,15 @@ test_that("getATCCodes working", {
   }
 })
 
-test_that("getATCCodes expected errors", {
+test_that("getATCCodes expected errors/warning", {
   skip_on_cran()
   backends <- c("database", "data_frame")
   for (i in seq_along(backends)) {
     cdm <- mockVocabRef(backend = backends[i])
     expect_error(getATCCodes(cdm, level = "Not an ATC level"))
-    expect_error(getATCCodes(cdm, level = "ATC 1st",
+    expect_message(x <- getATCCodes(cdm, level = "ATC 1st",
                              name = "Not an ATC name"))
+    expect_true(length(x) == 0)
     expect_error(getATCCodes(cdm, nameStyle = "hello"))
 
     if (backends[[i]] == "database") {
@@ -65,6 +66,9 @@ test_that("getDrugIngredientCodes working", {
     ing_codes1 <- getDrugIngredientCodes(cdm, nameStyle = "{concept_id}_{concept_name}")
     expect_true(all(ing_codes1[[1]] == c(10L, 13L)))
     expect_identical(names(ing_codes1),  c("10_adalimumab", "19_other_ingredient"))
+
+    expect_warning(x <- getDrugIngredientCodes(cdm, name = c(1L,10L)))
+    expect_true(names(x) == "1234_adalimumab")
 
     ing_codes2 <- getDrugIngredientCodes(cdm, name = "Adalimumab")
     expect_true(all(ing_codes2[[1]] == c(10L, 13L)))

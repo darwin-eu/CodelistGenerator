@@ -3,6 +3,7 @@ subsetCodelistBy <- function(x,
                              by,
                              group,
                              negate,
+                             st,
                              keepOriginal = FALSE,
                              call = parent.frame()){
   # initial checks
@@ -20,6 +21,9 @@ subsetCodelistBy <- function(x,
 
   # codelist table
   nm <- omopgenerics::uniqueTableName()
+  if (inherits(x, "code_search")) {
+    x <- asCodelist(x)
+  }
   x <- dplyr::as_tibble(x) |>
     dplyr::rename(codelist_name = dplyr::any_of("codelist_with_details_name")) |>
     dplyr::select("codelist_name", "concept_id")
@@ -36,28 +40,69 @@ subsetCodelistBy <- function(x,
     x <- addVocabulary(x = cdm[[nm]])
   } else if (by == "route_category") {
     x <- addRouteCategory(x = cdm[[nm]])
+  } else if (by == "ingredient_range") {
+    x <- addIngredientCount(cdm, x <- cdm[[nm]])
   }
 
-  # correct missing
-  x <- correctMissingValue(x, by)
+  if (by == "ingredient_range") {
+    if (isTRUE(negate)) {
+      x <- x |>
+        dplyr::filter(.data$ingredient_count < !!group[1] |
+                      .data$ingredient_count > !!group[2])
+    } else {
+      x <- x |>
+        dplyr::filter(.data$ingredient_count >= !!group[1],
+                      .data$ingredient_count <= !!group[2])
+    }
+  } else {
 
-  if(isTRUE(negate)){
-    x <- x |>
-      dplyr::filter(!.data[[by]] %in% omopgenerics::toSnakeCase(.env$group))
-  }else{
-    x <- x |>
-      dplyr::filter(.data[[by]] %in% omopgenerics::toSnakeCase(.env$group))
+    # correct missing
+    x <- correctMissingValue(x, by)
+
+    if(isTRUE(negate)){
+      x <- x |>
+        dplyr::filter(!.data[[by]] %in% omopgenerics::toSnakeCase(.env$group))
+    }else{
+      x <- x |>
+        dplyr::filter(.data[[by]] %in% omopgenerics::toSnakeCase(.env$group))
+    }
   }
 
   x <- stratifyCodelist(x, by = "codelist_name", nameStyle = "{codelist_name}")
 
   # add class (and details)
-  x <- prepareCodelist(x = x, original = original)
+  x <- prepareCodelist(x = x, original = original, searchStrategy = st)
 
-  x <- dropEmptyCodelist(original, x, call = call)
+  if (!inherits(x, "code_search")) {
+    x <- dropEmptyCodelist(original, x, call = call)
+  }
 
   # add original codes
   if (isTRUE(keepOriginal)) {
+    x <- keepOriginalCodelists(x = x, original = original)
+  }
+
+  return(x)
+}
+
+keepOriginalCodelists <- function(x, original) {
+  if (inherits(x, "code_search")) {
+    cols <- codeSerachColumns |>
+      dplyr::filter(.data$table == "codes") |>
+      dplyr::pull("table")
+    codelists <- setdiff(colnames(original), cols)
+    x <- x |>
+      dplyr::full_join(
+        original |>
+          dplyr::select("concept_id", dplyr::all_of(codelists)),
+        by = "concept_id",
+        suffix = c(".new", ".original")
+      ) |>
+      dplyr::mutate(dplyr::across(
+        !dplyr::all_of(cols),
+        \(x) dplyr::coalesce(x, FALSE)
+      ))
+  } else {
     x <- c(x, original)
   }
   return(x)

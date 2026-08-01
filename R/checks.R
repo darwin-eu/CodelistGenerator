@@ -40,7 +40,7 @@ checkPath <- function(path) {
 }
 
 checkCdm <- function(cdm) {
-  if (!("cdm_reference" %in% class(cdm))) {
+  if (!(inherits(cdm, "cdm_reference"))) {
     cli::cli_abort(
       "Argument cdm is not a valid cdm reference, please use
       CDMConnector::cdmFromCon() to create a valid cdm reference"
@@ -52,38 +52,45 @@ checkCodelist <- function(x, allowNULL = TRUE, allowConceptSetExpression = TRUE,
   type <- class(x)
 
   # If X is NULL
-  if(is.null(x) && isFALSE(allowNULL)){
-    cli::cli_abort("`x` cannot be NULL.")
+  if (is.null(x)) {
+    if (allowNULL) {
+      return(x)
+    } else {
+      cli::cli_abort(c(x = "`x` cannot be NULL."), call = call)
+    }
   }
-  # If X is NULL and is allowed
-  if(is.null(x) && isTRUE(allowNULL)){
-    return(invisible(x))
+
+  opts <- c("codelist", "codelist_with_details")
+  if (allowConceptSetExpression) {
+    funs <- "newCodelist()/newCodelistWithDetails()/newConceptSetExpression()/newCodeSearch()"
+    opts <- c(opts, "concept_set_expression")
+  } else {
+    funs <- "newCodelist()/newCodelistWithDetails()/newCodeSearch()"
   }
-  # If x is not a codelist_with_details, codelist and concept set expression is allowed
-  if(!any(c("codelist_with_details", "codelist", "concept_set_expression") %in% type) && isTRUE(allowConceptSetExpression)){
-    cli::cli_abort("Please convert your list `x` into a codelist using newCodelist()/newCodelistWithDetails()/newConceptSetExpression() functions from omopgenerics package.
-                     If you are unfamiliar with this classes, please visit: https://darwin-eu.github.io/CodelistGenerator/articles/a03_TypesOfCodelist.html", call = call)
+  opts <- c(opts, "code_search")
+
+  # if x is a list ask to convert
+  if ("list" %in% type & !any(opts %in% type)) {
+    cli::cli_abort(
+      message = c(x = "Please convert your list `x` into a codelist using {funs} functions from omopgenerics package.
+                       If you are unfamiliar with this classes, please visit: https://darwin-eu.github.io/CodelistGenerator/articles/a03_TypesOfCodelist.html"),
+      call = call
+    )
   }
-  # If x is not a codelist_with_details, codelist and concept set expression is not supported
-  if(!any(c("codelist_with_details", "codelist", "concept_set_expression") %in% type) && isFALSE(allowConceptSetExpression)){
-    cli::cli_abort("Please convert your list `x` into a codelist using newCodelist()/newCodelistWithDetails() functions from omopgenerics package.
-                     If you are unfamiliar with this classes, please visit: https://darwin-eu.github.io/CodelistGenerator/articles/a03_TypesOfCodelist.html", call = call)
+
+  # if x is concept_set_expression but not allowed
+  if ("concept_set_expression" %in% type & !allowConceptSetExpression) {
+    cli::cli_abort(c(x = "concept_set_expression is not supported for this function yet. Please convert your codelist to a codelist or a codelist with details using asCodelist() or asCodelistWithDetails().
+                     If you are unfamiliar with this classes, please visit: https://darwin-eu.github.io/CodelistGenerator/articles/a03_TypesOfCodelist.html"), call = call)
   }
-  # If x is a concept_set_expression but is not yet supported
-  if("concept_set_expression" %in% type && isFALSE(allowConceptSetExpression)){
-    cli::cli_abort("concept_set_expression is not supported for this function yet. Please convert your codelist to a codelist or a codelist with details using asCodelist() or asCodelistWithDetails().
-                     If you are unfamiliar with this classes, please visit: https://darwin-eu.github.io/CodelistGenerator/articles/a03_TypesOfCodelist.html", call = call)
+
+  # If x is not any of the supported classes
+  if (!any(opts %in% type)) {
+    cli::cli_abort(c(x = "Please convert your list `x` into a codelist using {funs} functions from omopgenerics package.
+                     If you are unfamiliar with this classes, please visit: https://darwin-eu.github.io/CodelistGenerator/articles/a03_TypesOfCodelist.html"), call = call)
   }
-  # If x is a list and concept_set_expression is supported
-  if(!any(c("codelist_with_details", "codelist", "concept_set_expression") %in% type) && "list" %in% type && isTRUE(allowConceptSetExpression)){
-    cli::cli_abort("Please convert your list `x` into a codelist using newCodelist()/newCodelistWithDetails()/newConceptSetExpression() functions from omopgenerics package.
-                     If you are unfamiliar with this classes, please visit: https://darwin-eu.github.io/CodelistGenerator/articles/a03_TypesOfCodelist.html", call = call)
-  }
-  # If x is a list and concept_set_expression is not supported
-  if(!any(c("codelist_with_details", "codelist", "concept_set_expression") %in% type) && "list" %in% type && isTRUE(allowConceptSetExpression)){
-    cli::cli_abort("Please convert your list `x` into a codelist using newCodelist()/newCodelistWithDetails()functions from omopgenerics package.
-                     If you are unfamiliar with this classes, please visit: https://darwin-eu.github.io/CodelistGenerator/articles/a03_TypesOfCodelist.html", call = call)
-  }
+
+  return(x)
 }
 
 dropEmptyCodelist <- function(x_original, newX, call = parent.frame()){
@@ -115,3 +122,12 @@ createEmptyCodelist <- function(x){
   return(x)
 }
 
+validateType <- function(type, call = parent.frame()) {
+  if (is.null(type)) {
+    type <- getOption("CodelistGenerator.type", NULL)
+  }
+  omopgenerics::assertChoice(type, choices = c(
+    "codelist", "codelist_with_details", "concept_set_expression", "code_search"
+  ), call = call)
+  return(type)
+}

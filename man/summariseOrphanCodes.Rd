@@ -13,7 +13,7 @@ summariseOrphanCodes(
 )
 }
 \arguments{
-\item{x}{A codelist.}
+\item{x}{A codelist, codelist_with_details, or a concept_set. See \code{newCodelist()}, \code{newCodelistWithDetails()}, \code{newConceptSetExpression()} functions for more details.}
 
 \item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
 database, the vocabulary tables should be in the same schema as the clinical
@@ -21,11 +21,12 @@ tables (person, observation period, and so on).}
 
 \item{domain}{Character vector with one or more of the OMOP CDM domains.
 The results will be restricted to the given domains. Check the available
-ones by running availableDomains(). If NULL, all supported domains are included:
-Condition, Drug, Procedure, Device, Observation, and Measurement.}
+domains in the database by running 'availableDomains()', or 'associatedDomains()'
+to explore the domains associated with a codelist. If NULL, all supported domains
+are included: Condition, Drug, Procedure, Device, Observation, and Measurement.}
 }
 \value{
-A summarised result containg the frequency of codes related
+A summarised result containing the frequency of codes related
 to (but not in) the codelist.
 }
 \description{

@@ -16,8 +16,7 @@
 
 #' Coerce to a concept set expression
 #'
-#' @param x Codelist or codelist with details
-#' @param ... For extensibility
+#' @param x A codelist, codelist_with_details, concept_set_expression, or a candidate_codes.
 #'
 #' @returns codelist
 #' @export
@@ -46,13 +45,13 @@
 #'
 #' asConceptSetExpression(codelist)
 #' }
-asConceptSetExpression <- function(x, ...){
+asConceptSetExpression <- function(x){
   UseMethod("asConceptSetExpression")
 }
 
 #' @export
 #' @rdname asConceptSetExpression
-asConceptSetExpression.codelist <- function(x, ...){
+asConceptSetExpression.codelist <- function(x){
   x |>
     purrr::map(\(x) {
       dplyr::tibble(
@@ -67,7 +66,7 @@ asConceptSetExpression.codelist <- function(x, ...){
 
 #' @export
 #' @rdname asConceptSetExpression
-asConceptSetExpression.codelist_with_details  <- function(x, ...){
+asConceptSetExpression.codelist_with_details  <- function(x){
   asCodelist(x) |>
     purrr::map(\(x) {
       dplyr::tibble(

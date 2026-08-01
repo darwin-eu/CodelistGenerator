@@ -16,7 +16,7 @@ asCodelistWithDetails(x, cdm, ...)
 \method{asCodelistWithDetails}{candidate_codes}(x, cdm, ...)
 }
 \arguments{
-\item{x}{Only codelist and candidate_codes are currently supported.}
+\item{x}{A codelist, codelist_with_details, concept_set_expression, or a candidate_codes.}
 
 \item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
 database, the vocabulary tables should be in the same schema as the clinical

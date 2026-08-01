@@ -43,7 +43,7 @@ attributes(codelist)
 
 ### Create an empty codelist 
 
-We can create an empty codelist using omopGenerics package:
+We can create an empty codelist using omopgenerics package:
 
 ```{r}
 empty_codelist  <- emptyCodelist()
@@ -89,7 +89,7 @@ attributes(codelist_with_details)
 
 ### Create an empty codelist with details
 
-omopGenerics package also has a function to create an empty codelist with details.
+omopgenerics package also has a function to create an empty codelist with details.
 
 ```{r}
 empty_codelist_with_details <- emptyCodelistWithDetails()
@@ -125,7 +125,7 @@ attributes(concept_set_expression)
 
 ### Create an empty concept set expression
 
-We can also use omopGenerics package to create an empty concept set expression:
+We can also use omopgenerics package to create an empty concept set expression:
 
 ```{r}
 empty_concept_set_expression <- emptyConceptSetExpression()

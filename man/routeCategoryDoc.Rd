@@ -6,7 +6,9 @@
 \arguments{
 \item{routeCategory}{Only codes with the specified route will be
 returned. If NULL, descendant codes will be returned regardless of route
-category. Use getRoutes() to find the available route categories.}
+category. Use 'availableRouteCategories()' to find the available route categories in
+the database, and 'associatedRouteCategories()' to get drug routs associated with
+a codelist.}
 }
 \description{
 Helper for consistent documentation of \code{routeCategory}.

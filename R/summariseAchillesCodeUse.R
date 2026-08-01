@@ -103,15 +103,6 @@ summariseAchillesCodeUse <- function(x,
     return(omopgenerics::emptySummarisedResult())
   } else {
     codeUse <- dplyr::bind_rows(codeUse)
-    records <- getSourceCodes(cdm = cdm,
-                              codes = codeUse |> dplyr::rename("concept_id" = "variable_level"))
-    codeUse <- codeUse |>
-      dplyr::left_join(
-        records |>
-          dplyr::mutate("variable_level" = as.character(.data$standard_concept_id)) |>
-          dplyr::select(-"standard_concept_id"),
-        by = "variable_level"
-      )
 
     codeUse <- codeUse |>
       dplyr::mutate(
@@ -122,7 +113,7 @@ summariseAchillesCodeUse <- function(x,
         estimate_type = "integer",
         estimate_value = as.character(.data$n)
       ) |>
-      omopgenerics::uniteAdditional(cols = c("vocabulary_id", "source_concept_name", "source_concept_id", "source_concept_value")) |>
+      omopgenerics::uniteAdditional(cols = "vocabulary_id") |>
       omopgenerics::uniteStrata(cols = c("domain_id")) |>
       dplyr::select(dplyr::any_of(omopgenerics::resultColumns("summarised_result")))
 

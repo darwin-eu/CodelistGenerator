@@ -51,17 +51,14 @@ getDrugIngredientCodes <- function(cdm,
   # Initial checks
   omopgenerics::validateCdmArgument(cdm)
   nameStyle <- checkNameStyle(nameStyle)
-  omopgenerics::assertChoice(type, length = 1,
-                             choices = c("codelist",
-                                         "concept_set_expression",
-                                         "codelist_with_details"))
+  type <- validateType(type = type)
   omopgenerics::assertNumeric(ingredientRange, length = 2, min = 0)
   omopgenerics::assertTrue(ingredientRange[1] <= ingredientRange[2])
   omopgenerics::assertCharacter(doseForm, null = TRUE)
   omopgenerics::assertCharacter(doseUnit, null = TRUE)
   omopgenerics::assertCharacter(routeCategory, null = TRUE)
 
-  if(type == "concept_set_expression"){
+  if(type == "concept_set_expression") {
     if(!is.null(doseForm)){
       cli::cli_abort("Dose forms not yet supported for concept set expressions")
     }
@@ -73,6 +70,14 @@ getDrugIngredientCodes <- function(cdm,
     }
   }
 
+  searchStrategy <- searchStrategyAttr(
+    functionName = "getDrugIngredientCodes",
+    cdm = "cdm",
+    name = cast(name),
+    doseForm = cast(doseForm),
+    ingredientRange = cast(ingredientRange)
+  )
+
   if(!is.null(name)){
     if(is.character(name)){
       omopgenerics::assertCharacter(name)
@@ -83,34 +88,32 @@ getDrugIngredientCodes <- function(cdm,
                                 numerical vector with the ingredients' concepts ID or NULL")
     }
   }
+
   ingredientConcepts <- cdm$concept |>
     dplyr::filter(.data$standard_concept == "S",
                   .data$concept_class_id == "Ingredient") |>
     dplyr::select("concept_id", "concept_name", "concept_code") |>
     dplyr::collect()
 
-  if (!is.null(name)){
+  if (!is.null(name)) {
     ingredientConcepts <- ingredientConcepts |>
       filterIngredientConcepts(name)
 
-    if(nrow(ingredientConcepts) == 0) {
-      if(type == "codelist"){
-        return(omopgenerics::emptyCodelist())
-      } else if(type == "codelist_with_details"){
-        return(omopgenerics::emptyCodelistWithDetails())
-      } else {
-        # note, currently no empty concept set expression function
-        return(omopgenerics::newConceptSetExpression(list()))
-      }
+    if (nrow(ingredientConcepts) == 0) {
+      return(emptyObject(type = type, searchStrategy = searchStrategy))
+    }
+
+    if (nrow(ingredientConcepts) != 1 & type == "code_search") {
+      cli::cli_abort(c(x = "`code_search` type only supports one ingredient at a time."))
     }
   }
 
   # simple case can just return concept set expression with descendants
-  if(all(type == "concept_set_expression",
+  if (all(type == "concept_set_expression",
          is.null(doseForm),
          is.null(doseUnit),
          is.null(routeCategory),
-         ingredientRange == c(1, Inf))){
+         ingredientRange == c(1, Inf))) {
     cse <- ingredientConcepts |>
       dplyr::mutate(name = glue::glue(.env$nameStyle)) |>
       dplyr::select("concept_id",
@@ -141,15 +144,15 @@ getDrugIngredientCodes <- function(cdm,
 
   if (nrow(ingredientCodes) == 0) {
     cli::cli_warn("No descendant codes found")
-    return(invisible(list()))
+    return(emptyObject(type = type, searchStrategy = searchStrategy))
   }
 
-
   ingredientCodes <- ingredientCodes  |>
-    dplyr::select("concept_id", "concept_name",
-                  "domain_id", "vocabulary_id",
-                  "standard_concept",
-                  "ancestor_concept_id") |>
+    dplyr::select(
+      "concept_id", "concept_name", "domain_id", "vocabulary_id",
+      "standard_concept", "ancestor_concept_id", "concept_class_id",
+      "concept_code", "valid_start_date", "valid_end_date", "invalid_reason"
+    ) |>
     # split different ancestors into multiple cols
     tidyr::separate_wider_delim(
       cols = "ancestor_concept_id",
@@ -160,13 +163,10 @@ getDrugIngredientCodes <- function(cdm,
 
   ingredientCodes <- ingredientCodes |>
     # one row per concept + ancestor
-    tidyr::pivot_longer(cols = !c("concept_id", "concept_name",
-                                  "domain_id", "vocabulary_id",
-                                  "standard_concept"),
+    tidyr::pivot_longer(cols = dplyr::starts_with("ancestor_concept_id"),
                         names_to = NULL,
                         values_to = "ancestor_concept_id",
-                        values_drop_na = TRUE
-    )
+                        values_drop_na = TRUE)
 
   ingredientCodes <- ingredientCodes |>
     dplyr::left_join(
@@ -178,14 +178,14 @@ getDrugIngredientCodes <- function(cdm,
       by = c("ancestor_concept_id" = "concept_id")
     )
 
-  if(type == "codelist"){
+  if (type == "codelist") {
     ingredientCodes <- split(
       x = ingredientCodes$concept_id,
       f = as.factor(ingredientCodes$name),
       drop = TRUE
     ) |>
       omopgenerics::newCodelist()
-  }else if(type == "codelist_with_details"){
+  } else if (type == "codelist_with_details") {
     ingredientCodes <- split(
       x = ingredientCodes,
       f = as.factor(ingredientCodes$name),
@@ -193,7 +193,7 @@ getDrugIngredientCodes <- function(cdm,
     ) |>
       purrr::map(~dplyr::select(., -"name")) |>
       omopgenerics::newCodelistWithDetails()
-  } else {
+  } else if (type == "concept_set_expression") {
     ingredientCodes <- split(
       x = ingredientCodes|>
         dplyr::select("concept_id") |>
@@ -204,15 +204,25 @@ getDrugIngredientCodes <- function(cdm,
       drop = TRUE
     )|>
       omopgenerics::newConceptSetExpression()
+  } else if (type == "code_search") {
+    nm <- unique(ingredientCodes$name)
+    ingredientCodes <- ingredientCodes |>
+      dplyr::select(!c("name", "ancestor_concept_id")) |>
+      dplyr::mutate(
+        !!nm := TRUE,
+        found_from = "Descendants",
+        vocabulary_version = vocabularyVersion(cdm = cdm)
+      ) |>
+      newCodeSearch(searchStrategy = searchStrategy)
   }
 
-  if(!is.null(routeCategory)){
+  if (!is.null(routeCategory)) {
     ingredientCodes <- subsetOnRouteCategory(ingredientCodes,
                                              cdm = cdm,
                                              routeCategory = routeCategory)
   }
 
-  if(!is.null(doseUnit)){
+  if (!is.null(doseUnit)) {
     ingredientCodes <- subsetOnDoseUnit(ingredientCodes,
                                         cdm = cdm,
                                         doseUnit = doseUnit)
@@ -233,14 +243,16 @@ filterIngredientConcepts <- function(ingredientConcepts, name){
   if(nrow(ingredientConcepts) == 0){
     cli::cli_warn("- No matching Ingredient codes found")
   } else if(nrow(ingredientConcepts) < length(name)){
-    missingIngredientConcepts <-  dplyr::tibble(concept_name = tidyWords(.env$name)) |>
-      dplyr::anti_join(ingredientConcepts |>
-                         dplyr::mutate(concept_name = tidyWords(.data$concept_name)),
-                       by = "concept_name") |>
-      dplyr::pull("concept_name")
-    cli::cli_warn("- No matching Ingredient codes found for {missingIngredientConcepts}")
+
+    if(is.character(name)) {
+      missingIngredientConcepts <- setdiff(tidyWords(name), tidyWords(ingredientConcepts$concept_name))
+      cli::cli_warn("- No matching Ingredient codes found for {missingIngredientConcepts}")
+    }else if(is.numeric(name)){
+      missingIngredientConcepts <- setdiff(name, ingredientConcepts$concept_id)
+      cli::cli_warn("- No matching Ingredient codes found for Concept ID {missingIngredientConcepts}")
+    }
   }
-  ingredientConcepts
+  return(ingredientConcepts)
 }
 
 fetchBatchedDescendants <- function(cdm,
@@ -315,4 +327,30 @@ checkNameStyle <- function(nameStyle){
                    or any combination of the three separated by `_` (i.e., {{concept_id}}_{{concept_name}}.")}
 
   return(nameStyle)
+}
+
+emptyObject <- function(type, searchStrategy) {
+  if (type == "codelist") {
+    omopgenerics::emptyCodelist()
+  } else if (type == "codelist_with_details") {
+    omopgenerics::emptyCodelistWithDetails()
+  } else if (type == "concept_set_expression") {
+    # note, currently no empty concept set expression function
+    omopgenerics::newConceptSetExpression(list())
+  } else if (type == "code_search") {
+    emptyCodeSearch(searchStrategy = searchStrategy)
+  }
+}
+searchStrategyAttr <- function(...) {
+  dplyr::tibble(
+    strategy_id = 1L,
+    package_name = "CodelistGenerator",
+    package_version = as.character(utils::packageVersion("CodelistGenerator")),
+    ...
+  ) |>
+    tidyr::pivot_longer(
+      !"strategy_id",
+      names_to = "strategy_name",
+      values_to = "strategy_value"
+    )
 }

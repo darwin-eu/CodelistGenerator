@@ -7,7 +7,7 @@
 subsetOnRouteCategory(x, cdm, routeCategory, negate = FALSE)
 }
 \arguments{
-\item{x}{A codelist.}
+\item{x}{A codelist, codelist_with_details, or a concept_set. See \code{newCodelist()}, \code{newCodelistWithDetails()}, \code{newConceptSetExpression()} functions for more details.}
 
 \item{cdm}{A cdm reference to an OMOP CDM dataset. If data is held within a
 database, the vocabulary tables should be in the same schema as the clinical
@@ -15,7 +15,9 @@ tables (person, observation period, and so on).}
 
 \item{routeCategory}{Only codes with the specified route will be
 returned. If NULL, descendant codes will be returned regardless of route
-category. Use getRoutes() to find the available route categories.}
+category. Use 'availableRouteCategories()' to find the available route categories in
+the database, and 'associatedRouteCategories()' to get drug routs associated with
+a codelist.}
 
 \item{negate}{If FALSE, only concepts with the routeCategory specified will
 be returned. If TRUE, concepts with the routeCategory specified will be excluded.}

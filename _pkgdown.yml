@@ -35,6 +35,10 @@ reference:
 - contents:
   - getCandidateCodes
   - searchStrategy
+  - exportCodeSearch
+  - importCodeSearch
+  - newCodeSearch
+  - emptyCodeSearch
 - subtitle: Create vocabulary-based codelists
 - contents:
   - getDrugIngredientCodes

@@ -10,6 +10,7 @@ getCandidateCodes(
   keywords,
   exclude = NULL,
   domains = "Condition",
+  vocabularyId = NULL,
   standardConcept = "Standard",
   searchInSynonyms = FALSE,
   searchNonStandard = FALSE,
@@ -38,25 +39,30 @@ both "osteoarthritis of knee" and "osteoarthritis of hip"
 
 \item{exclude}{Character vector of words to identify concepts to exclude.
 For example, \code{getCandidateCodes(cdm,  keywords = "septic", exclude = "aseptic",  domains = "condition")}
-would remove concepts "aseptic" when seaching for concepts with "septic" in
+would remove concepts "aseptic" when searching for concepts with "septic" in
 their name.
 \itemize{
 \item When one term contains multiple words (e.g., "knee osteoarthritis"),
 each word will be search individually, so that "osteoarthritis of knee" would also be excluded.
 If you only want to exclude partial matching terms, please add "/" at the beginning and the end of each term
 (e.g., \verb{"/knee osteoarthritis/}"). Notice that, with this options,
-concepts like "rightknee osteoarthritis" will also be excluded (as this is a partial match), but
+concepts like "right knee osteoarthritis" will also be excluded (as this is a partial match), but
 "osteoarthritis of knee" won't be excluded. Different terms can have different rules (e.g.,
 c("hip osteoarthritis", "/knee osteoarthritis/")).
 \item With multiple words, if we want exact matches accounting for word boundaries, we need to use
 \verb{/\\b} at the beginning and at the end of each expression. In the previous example, using
-\code{"/bknee osteoarthritis/\\b"}, "rightknee osteoarthritis" won't be excluded, but
+\code{"/bknee osteoarthritis/\\b"}, "right knee osteoarthritis" won't be excluded, but
 "History of knee osteoarthritis" will be excluded.
 }}
 
 \item{domains}{Character vector with one or more of the OMOP CDM domain for
 which to search within. If NULL, all domains are included in the search. Use
 \code{availableDomains(cdm = cdm)} to identify available domains to search within.}
+
+\item{vocabularyId}{Character vector with one or more vocabulary ID to
+restrict results to. If NULL, all vocabularies will be included in the
+search. Use \code{availableVocabularies(cdm)} to identify available vocabularies
+to restrict search to.}
 
 \item{standardConcept}{Character vector with one or more of "Standard",
 "Classification", and "Non-standard". These correspond to the flags used

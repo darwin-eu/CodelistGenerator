@@ -1,5 +1,11 @@
 test_that("table achilles code use expcted columns", {
   skip_on_cran()
+
+  testthat::local_mocked_bindings(
+    system_fonts = function(...) data.frame(family = "sans", path = ""),
+    .package = "systemfonts"
+  )
+
   # mock db
   cdm <- mockVocabRef("database")
 
@@ -81,8 +87,7 @@ test_that("table achilles code use expcted columns", {
   x <- omopgenerics::newCodelistWithDetails(list("codes" = x))
   result <- summariseAchillesCodeUse(x, cdm)
   expect_no_error(tab <- tableAchillesCodeUse(result))
-  expect_true("Source concept ID" %in% colnames(tab$`_data`))
-  expect_true("Source concept value" %in% colnames(tab$`_data`))
-  expect_true("Source concept name" %in% colnames(tab$`_data`))
+  expect_true("Standard concept ID" %in% colnames(tab$`_data`))
+  expect_true("Standard concept name" %in% colnames(tab$`_data`))
   CDMConnector::cdmDisconnect(cdm)
 })

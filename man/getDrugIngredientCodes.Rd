@@ -31,15 +31,19 @@ concept ID instead of the name (e.g., c(1125315, 42948451)) using a numeric vect
 
 \item{doseForm}{Only codes with the specified dose form
 will be returned. If NULL, descendant codes will be returned regardless
-of dose form. Use 'doseForms()' to see the available dose forms.}
+of dose form. Use 'availableDoseForms()' to see the available dose forms in the database,
+or 'associatedDoseForms()' to see the associated dose forms in a codelist.}
 
 \item{doseUnit}{Only codes with the specified dose unit
 will be returned. If NULL, descendant codes will be returned regardless
-of dose unit Use 'availableDoseUnits()' to see the available dose units.}
+of dose unit Use 'availableDoseUnits()' to see the available dose units,
+or 'associatedDoseUnits()' to see the associated dose forms in a codelist.}
 
 \item{routeCategory}{Only codes with the specified route will be
 returned. If NULL, descendant codes will be returned regardless of route
-category. Use getRoutes() to find the available route categories.}
+category. Use 'availableRouteCategories()' to find the available route categories in
+the database, and 'associatedRouteCategories()' to get drug routs associated with
+a codelist.}
 
 \item{ingredientRange}{Used to restrict descendant codes to those
 associated with a specific number of drug ingredients. Must be a vector of

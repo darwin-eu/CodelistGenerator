@@ -33,6 +33,8 @@ test_that("achilles code use", {
                     dplyr::pull("estimate_value") == "-"
   ))
 
+  expect_equal(unique(result_achilles$additional_name), "vocabulary_id")
+  expect_equal(unique(result_achilles$additional_level), "SNOMED")
 
   # edge cases
   # concept id not in achilles

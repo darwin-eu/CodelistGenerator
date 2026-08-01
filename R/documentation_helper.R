@@ -74,8 +74,9 @@ NULL
 #'
 #' @param domain Character vector with one or more of the OMOP CDM domains.
 #' The results will be restricted to the given domains. Check the available
-#' ones by running availableDomains(). If NULL, all supported domains are included:
-#' Condition, Drug, Procedure, Device, Observation, and Measurement.
+#' domains in the database by running 'availableDomains()', or 'associatedDomains()'
+#' to explore the domains associated with a codelist. If NULL, all supported domains
+#' are included: Condition, Drug, Procedure, Device, Observation, and Measurement.
 #'
 #' @name domainDoc
 #' @keywords internal
@@ -85,7 +86,8 @@ NULL
 #'
 #' @param doseForm Only codes with the specified dose form
 #' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose form. Use 'doseForms()' to see the available dose forms.
+#' of dose form. Use 'availableDoseForms()' to see the available dose forms in the database,
+#' or 'associatedDoseForms()' to see the associated dose forms in a codelist.
 #'
 #' @name doseFormDoc
 #' @keywords internal
@@ -95,7 +97,8 @@ NULL
 #'
 #' @param doseUnit Only codes with the specified dose unit
 #' will be returned. If NULL, descendant codes will be returned regardless
-#' of dose unit Use 'availableDoseUnits()' to see the available dose units.
+#' of dose unit Use 'availableDoseUnits()' to see the available dose units,
+#' or 'associatedDoseUnits()' to see the associated dose forms in a codelist.
 #'
 #' @name doseUnitDoc
 #' @keywords internal
@@ -167,7 +170,7 @@ NULL
 #' @param style A character string or custom R code to define the visual formatting
 #' of the table. This argument can be provided in two ways: (1) Pre-defined Styles
 #' (Character String): Use a name for a built-in style (e.g., "darwin"). See
-#' visOmopResults::tableStyle() for available options. (2) Custome Code (Advanced):
+#' visOmopResults::tableStyle() for available options. (2) Custom Code (Advanced):
 #' Supply a block of custom R code. This code must be specific to the table type.
 #' See visOmopResults::tableStyleCode() for structural examples.
 #'
@@ -267,7 +270,9 @@ NULL
 #'
 #' @param routeCategory Only codes with the specified route will be
 #' returned. If NULL, descendant codes will be returned regardless of route
-#' category. Use getRoutes() to find the available route categories.
+#' category. Use 'availableRouteCategories()' to find the available route categories in
+#' the database, and 'associatedRouteCategories()' to get drug routs associated with
+#' a codelist.
 #'
 #' @name routeCategoryDoc
 #' @keywords internal
@@ -310,8 +315,8 @@ NULL
 
 #' Helper for consistent documentation of `type`.
 #'
-#' @param type Type of desired formatted table. To see supported formats
-#' use visOmopResults::tableType().
+#' @param type Type of desired formatted table. By default (type = NULL), it will
+#' create a 'gt' table. To see supported formats use visOmopResults::tableType().
 #'
 #' @name typeTableDoc
 #' @keywords internal
@@ -319,7 +324,7 @@ NULL
 
 #' Helper for consistent documentation of `x`.
 #'
-#' @param x A codelist.
+#' @param x A codelist, codelist_with_details, or a concept_set. See `newCodelist()`, `newCodelistWithDetails()`, `newConceptSetExpression()` functions for more details.
 #'
 #' @name xDoc
 #' @keywords internal
@@ -327,7 +332,7 @@ NULL
 
 #' Helper for consistent documentation of `x` where input can be codelist or cohort.
 #'
-#' @param x A codelist or cohort table name.
+#' @param x  A codelist, codelist_with_details, or a concept_set. See `newCodelist()`, `newCodelistWithDetails()`, `newConceptSetExpression()` functions for more details. If set to NULL, the codelist associated with the cohort will be extracted
 #'
 #' @name xDocCohort
 #' @keywords internal

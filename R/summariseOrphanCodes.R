@@ -5,7 +5,7 @@
 #' @inheritParams cdmDoc
 #' @inheritParams domainDoc
 #'
-#' @return A summarised result containg the frequency of codes related
+#' @return A summarised result containing the frequency of codes related
 #' to (but not in) the codelist.
 #' @export
 #'

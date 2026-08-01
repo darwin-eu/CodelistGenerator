@@ -1,6 +1,12 @@
 
 test_that("test table orphan codes work", {
   skip_on_cran()
+
+  testthat::local_mocked_bindings(
+    system_fonts = function(...) data.frame(family = "sans", path = ""),
+    .package = "systemfonts"
+  )
+
   cdm <- mockVocabRef("database")
 
   codes <- getCandidateCodes(
@@ -58,9 +64,8 @@ test_that("test table orphan codes work", {
   x <- omopgenerics::newCodelistWithDetails(list("codes" = x))
   expect_warning(result <- summariseOrphanCodes(x, cdm))
   expect_no_error(tab <- tableOrphanCodes(result))
-  expect_true("Source concept ID" %in% colnames(tab$`_data`))
-  expect_true("Source concept value" %in% colnames(tab$`_data`))
-  expect_true("Source concept name" %in% colnames(tab$`_data`))
+  expect_true("Standard concept ID" %in% colnames(tab$`_data`))
+  expect_true("Standard concept name" %in% colnames(tab$`_data`))
   CDMConnector::cdmDisconnect(cdm)
 })
 

@@ -4,7 +4,7 @@
 \alias{xDoc}
 \title{Helper for consistent documentation of \code{x}.}
 \arguments{
-\item{x}{A codelist.}
+\item{x}{A codelist, codelist_with_details, or a concept_set. See \code{newCodelist()}, \code{newCodelistWithDetails()}, \code{newConceptSetExpression()} functions for more details.}
 }
 \description{
 Helper for consistent documentation of \code{x}.

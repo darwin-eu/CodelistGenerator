@@ -319,6 +319,38 @@ test_that("tests with mock db", {
     )
     expect_true(all((codes$domain_id |> sort() |> unique()) == c("Condition", "Drug", "Observation")))
 
+    # filter on vocabulary
+    codes <- getCandidateCodes(
+      cdm = cdm,
+      keywords = c("arthritis", "adalimumab"),
+      vocabularyId = c("RxNorm", "LOINC"),
+      domains = NULL,
+      searchInSynonyms = TRUE,
+      includeDescendants = TRUE,
+      includeAncestor = TRUE
+    )
+    expect_true(all(codes |> dplyr::pull("vocabulary_id") %in% c("RxNorm","LOINC")))
+
+   expect_warning(getCandidateCodes(
+      cdm = cdm,
+      keywords = c("arthritis", "adalimumab"),
+      vocabularyId = c("RxNorm", "xyz"),
+      domains = NULL,
+      searchInSynonyms = TRUE,
+      includeDescendants = TRUE,
+      includeAncestor = TRUE
+    ))
+
+   expect_true(nrow(getCandidateCodes(
+     cdm = cdm,
+     keywords = c("arthritis"),
+     vocabularyId = c("RxNorm"),
+     domains = NULL,
+     searchInSynonyms = TRUE,
+     includeDescendants = TRUE,
+     includeAncestor = TRUE
+   )) == 0)
+
     ## Edge cases
     # check empty candidate set
     codes <- getCandidateCodes(

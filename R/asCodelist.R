@@ -16,7 +16,7 @@
 
 #' Coerce to a codelist
 #'
-#' @param x Only codelist_with_details and candidate_codes are currently supported.
+#' @param x A codelist, codelist_with_details, concept_set_expression, or a candidate_codes.
 #' @inheritParams cdmDoc
 #' @param ... For extensibility
 #'

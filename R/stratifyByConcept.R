@@ -44,11 +44,16 @@ stratifyByConcept <- function(x,
                               cdm,
                               nameStyle = "{codelist_name}_{concept}",
                               keepOriginal = FALSE) {
+  st <- searchStrategyAttr(
+    function_name = "stratifyByConcept",
+    cdm = "cdm"
+  )
   stratifyCodelistBy(
     x = x,
     cdm = cdm,
     by = "concept",
     nameStyle = nameStyle,
+    st = st,
     keepOriginal = keepOriginal
   )
 }

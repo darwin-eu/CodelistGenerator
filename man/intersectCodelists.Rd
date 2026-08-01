@@ -8,7 +8,7 @@ codelist will come out in alphabetical order.}
 intersectCodelists(x, keepOriginal = FALSE)
 }
 \arguments{
-\item{x}{A codelist.}
+\item{x}{A codelist, codelist_with_details, or a concept_set. See \code{newCodelist()}, \code{newCodelistWithDetails()}, \code{newConceptSetExpression()} functions for more details.}
 
 \item{keepOriginal}{Whether to keep the original codelist (TRUE) or just return
 the stratified ones (FALSE).}

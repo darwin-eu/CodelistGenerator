@@ -43,11 +43,16 @@ stratifyByDomain <- function(x,
                              cdm,
                              nameStyle = "{codelist_name}_{domain}",
                              keepOriginal = FALSE) {
+  st <- searchStrategyAttr(
+    function_name = "stratifyByDomain",
+    cdm = "cdm"
+  )
   stratifyCodelistBy(
     x = x,
     cdm = cdm,
     by = "domain",
     nameStyle = nameStyle,
+    st = st,
     keepOriginal = keepOriginal
   )
 }

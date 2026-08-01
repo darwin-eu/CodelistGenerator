@@ -4,7 +4,7 @@
 \alias{xDocCohort}
 \title{Helper for consistent documentation of \code{x} where input can be codelist or cohort.}
 \arguments{
-\item{x}{A codelist or cohort table name.}
+\item{x}{A codelist, codelist_with_details, or a concept_set. See \code{newCodelist()}, \code{newCodelistWithDetails()}, \code{newConceptSetExpression()} functions for more details. If set to NULL, the codelist associated with the cohort will be extracted}
 }
 \description{
 Helper for consistent documentation of \code{x} where input can be codelist or cohort.

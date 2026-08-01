@@ -18,6 +18,7 @@ runSearch <- function(keywords,
                       cdm,
                       exclude,
                       domains,
+                      vocabularyId,
                       standardConcept,
                       searchInSynonyms,
                       searchNonStandard,
@@ -47,6 +48,7 @@ runSearch <- function(keywords,
   conceptDb <- conceptDb |>
     dplyr::mutate(
       domain_id = tolower(.data$domain_id),
+      vocabulary_id = tolower(.data$vocabulary_id),
       standard_concept = dplyr::case_when(
         is.na(.data$standard_concept) ~ "non-standard",
         .data$standard_concept == "C" ~ "classification",
@@ -55,10 +57,11 @@ runSearch <- function(keywords,
       )
     )
 
-  cli::cli_inform("Limiting to domains of interest")
+  cli::cli_inform("Limiting to concept type, domains, and vocabularies of interest")
   concept <- conceptDb |>
     dplyr::filter(.data$standard_concept %in% .env$standardConceptFlags,
-                  .data$domain_id %in% .env$domains) |>
+                  .data$domain_id %in% .env$domains,
+                  .data$vocabulary_id %in% .env$vocabularyId) |>
     dplyr::compute()
 
   # will only collect conceptSynonym later if needed
@@ -66,10 +69,11 @@ runSearch <- function(keywords,
     conceptSynonym <- conceptSynonymDb |>
       dplyr::left_join(
         conceptDb |>
-          dplyr::select("concept_id", "domain_id", "standard_concept"),
+          dplyr::select("concept_id", "domain_id", "vocabulary_id", "standard_concept"),
         by = "concept_id"
       ) |>
       dplyr::filter(.data$domain_id %in% .env$domains &
+                      .data$vocabulary_id %in% .env$vocabularyId &
                       .data$standard_concept %in% .env$standardConceptFlags) |>
       dplyr::rename_with(tolower)
   } else {
@@ -82,11 +86,12 @@ runSearch <- function(keywords,
       dplyr::left_join(
         conceptDb |>
           dplyr::rename("drug_concept_id" = "concept_id") |>
-          dplyr::select("drug_concept_id", "domain_id", "standard_concept"),
+          dplyr::select("drug_concept_id", "domain_id", "vocabulary_id", "standard_concept"),
         by = "drug_concept_id"
       ) |>
       dplyr::filter(.data$domain_id %in% .env$domains &
-                      .data$standard_concept %in% .env$standardConceptFlags) |>
+                    .data$vocabulary_id %in% .env$vocabularyId &
+                    .data$standard_concept %in% .env$standardConceptFlags) |>
       dplyr::rename_with(tolower)
   }
 
@@ -94,7 +99,8 @@ runSearch <- function(keywords,
   candidateCodesList <- list()
 
   workingConcept <- concept |>
-    dplyr::filter(.data$domain_id %in% .env$domains)
+    dplyr::filter(.data$domain_id %in% .env$domains,
+                  .data$vocabulary_id %in% .env$vocabularyId)
 
 
   # Start finding candidate codes
@@ -329,11 +335,7 @@ runSearch <- function(keywords,
 
   candidateCodes <- candidateCodes |>
     dplyr::select(c("concept_id", "found_from", "found_id")) |>
-    dplyr::inner_join(cdm[["concept"]] |>
-                        dplyr::select("concept_id", "concept_name",
-                                      "domain_id", "vocabulary_id",
-                                      "standard_concept"),
-                      by = "concept_id") |>
+    dplyr::inner_join(cdm$concept, by = "concept_id") |>
     dplyr::distinct() |>
     dplyr::collect()
 
@@ -363,6 +365,7 @@ runSearch <- function(keywords,
         )
       ) |>
       dplyr::filter(tolower(.data$domain_id) %in% tolower(.env$domains),
+                    tolower(.data$vocabulary_id) %in% tolower(.env$vocabularyId),
                     tolower(.data$standard_concept1) %in% .env$standardConceptFlags) |>
       dplyr::select(-"standard_concept1")
   }
