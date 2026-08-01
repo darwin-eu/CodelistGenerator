@@ -22,7 +22,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/darwin-eu/CodelistGenerator/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/darwin-eu/CodelistGenerator/blob/v4.1.0/DESCRIPTION)
 
 Burn E, Alcalde-Herraiz M, Català M, Chen X, Mercade-Besora N, Du M,
 Newby D (2026). *CodelistGenerator: Identify Relevant Clinical Codes and

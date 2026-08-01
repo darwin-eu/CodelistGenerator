@@ -40,7 +40,7 @@ A tibble with summarised counts.
 library(CodelistGenerator)
 cdm <- mockVocabRef("database")
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpApflCg/duckdb
+#> ℹ /tmp/RtmpD7xYPw/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -67,7 +67,7 @@ oa <- getCandidateCodes(cdm = cdm, keywords = "osteoarthritis")
 #> Adding descendants
 #> Search completed. Finishing up.
 #> ✔ 2 candidate concepts identified
-#> Time taken: 0 minutes and 1 seconds
+#> Time taken: 0 minutes and 0 seconds
 codelist <- omopgenerics::newCodelist(list(oa = oa$concept_id))
 result_achilles <- summariseAchillesCodeUse(codelist, cdm = cdm)
 #> 

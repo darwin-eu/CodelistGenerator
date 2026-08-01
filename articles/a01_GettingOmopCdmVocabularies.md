@@ -36,21 +36,21 @@ library(CodelistGenerator)
 ``` r
 
 requireEunomia()
-#> ℹ `EUNOMIA_DATA_FOLDER` set to: /tmp/RtmpXIvlvS.
+#> ℹ `EUNOMIA_DATA_FOLDER` set to: /tmp/RtmpJCKzhT.
 #> 
 #> Download completed!
 db <- dbConnect(duckdb(), dbdir = eunomiaDir())
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpXIvlvS/duckdb
+#> ℹ /tmp/RtmpJCKzhT/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> Creating CDM database /tmp/RtmpXIvlvS/GiBleed_5.3.zip
+#> Creating CDM database /tmp/RtmpJCKzhT/GiBleed_5.3.zip
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpXIvlvS/duckdb
+#> ℹ /tmp/RtmpJCKzhT/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
